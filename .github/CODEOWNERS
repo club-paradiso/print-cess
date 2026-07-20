@@ -1,0 +1,16 @@
+# Default owner
+* @club-paradiso
+
+# Security-critical contracts and delivery
+/packages/protocol/ @club-paradiso
+/packages/crypto/ @club-paradiso
+/apps/web/src/app/api/ @club-paradiso
+/apps/web/src/server/ @club-paradiso
+/apps/kiosk/Paradiso.PrintCess.Core/ @club-paradiso
+/apps/kiosk/Paradiso.PrintCess.Infrastructure/ @club-paradiso
+/.github/workflows/ @club-paradiso
+/docs/SECURITY.md @club-paradiso
+/docs/THREAT_MODEL.md @club-paradiso
+/docs/CRYPTOGRAPHY.md @club-paradiso
+/docs/PRIVACY.md @club-paradiso
+/docs/PRODUCTION_BLOCKERS.md @club-paradiso
