@@ -28,7 +28,8 @@ public sealed class WindowsPrintEngine : IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null)
+        Func<CancellationToken, Task>? onReadyToSubmit = null,
+        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         settings.EnsureKioskPolicy();
@@ -38,7 +39,12 @@ public sealed class WindowsPrintEngine : IPrintEngine
         {
             try
             {
-                completion.TrySetResult(PrintOnStaAsync(document, settings, onReadyToSubmit, cancellationToken).GetAwaiter().GetResult());
+                completion.TrySetResult(PrintOnStaAsync(
+                    document,
+                    settings,
+                    onReadyToSubmit,
+                    authorizeQuotaOverride,
+                    cancellationToken).GetAwaiter().GetResult());
             }
             catch (OperationCanceledException exception)
             {
@@ -82,6 +88,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         Func<CancellationToken, Task>? onReadyToSubmit,
+        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -123,6 +130,20 @@ public sealed class WindowsPrintEngine : IPrintEngine
             catch (Exception exception) when (exception is InvalidDataException or ArgumentException or COMException or ProtocolException)
             {
                 return PrintResult.Rejected("F-01");
+            }
+
+            var renderedPageCount = fixedDocument.Pages.Count;
+            var quotaDecision = PrintQuotaPolicy.Decide(renderedPageCount);
+            if (quotaDecision == PrintQuotaDecision.HardLimitExceeded)
+            {
+                return PrintResult.Rejected("Q-02");
+            }
+
+            if (quotaDecision == PrintQuotaDecision.StaffOverrideRequired &&
+                (authorizeQuotaOverride is null ||
+                 !await authorizeQuotaOverride(renderedPageCount, cancellationToken)))
+            {
+                return PrintResult.Rejected("Q-01");
             }
 
             cancellationToken.ThrowIfCancellationRequested();

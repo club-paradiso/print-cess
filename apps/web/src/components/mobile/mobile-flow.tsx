@@ -29,6 +29,7 @@ import {
   timingSafeEqual,
 } from "@print-cess/crypto";
 import { LOCALE_NAMES, SUPPORTED_LOCALES, type SupportedLocale } from "@print-cess/i18n";
+import { decidePrintQuota, type PrintQuotaDecision } from "@print-cess/protocol";
 import {
   PrimaryButton,
   ProgressSteps,
@@ -53,11 +54,13 @@ import {
   validateMobileDocument,
   type ValidatedMobileFile,
 } from "@/lib/mobile-document-validation";
+import { quotaDocument } from "@/lib/print-quota-document";
 import { watchPrintStatus, type PrintWatchState } from "@/lib/print-status";
 import { parseSessionFragment } from "@/lib/session-fragment";
 import { clearBrowserSiteData } from "@/lib/session-teardown";
 import { useVisitorLocale, type Text } from "@/lib/use-visitor-locale";
 import { DocumentPreview } from "./document-preview";
+import { PrintQuotaDialog } from "./print-quota-dialog";
 
 /**
  * The printing flow, in the order a visitor experiences it.
@@ -183,6 +186,7 @@ export function MobileFlow({
   const [errorKey, setErrorKey] = useState("networkError");
   const [fileErrorKey, setFileErrorKey] = useState<string>();
   const [fileNoticeKey, setFileNoticeKey] = useState<string>();
+  const [quotaBlock, setQuotaBlock] = useState<PrintQuotaDecision>();
   const [progressKey, setProgressKey] = useState("encrypting");
   const [watching, setWatching] = useState<PrintWatchState>({ kind: "waiting" });
   const [supportsHwpx, setSupportsHwpx] = useState(false);
@@ -298,10 +302,17 @@ export function MobileFlow({
       try {
         setFileErrorKey(undefined);
         setFileNoticeKey(undefined);
+        setQuotaBlock(undefined);
         const result = await validateMobileDocument(selected, {
           allowHwp: supportsHwp,
           allowHwpx: supportsHwpx,
         });
+        const quota = decidePrintQuota([quotaDocument(result)]);
+        if (quota.kind !== "allowed") {
+          result.bytes.fill(0);
+          setQuotaBlock(quota);
+          return;
+        }
         setFile(selected);
         setValidated(result);
         setStage("preview");
@@ -574,6 +585,17 @@ export function MobileFlow({
         hancomLabel={hancomLabel}
         onClose={() => setHelpOpen(false)}
       />
+      {quotaBlock ? (
+        <PrintQuotaDialog
+          decision={quotaBlock}
+          text={text}
+          onReselect={() => {
+            setQuotaBlock(undefined);
+            fileInput.current?.click();
+          }}
+          onCancel={() => setQuotaBlock(undefined)}
+        />
+      ) : null}
     </ScreenShell>
   );
 }
