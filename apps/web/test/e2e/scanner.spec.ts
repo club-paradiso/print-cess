@@ -134,6 +134,6 @@ test("smart camera falls back cleanly when browser camera permission is unavaila
   await page.getByTestId("scan-smart-camera").click();
   const dialog = page.getByRole("dialog", { name: "Smart camera" });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByText("Camera access is unavailable.")).toBeVisible();
+  await expect(dialog.getByRole("paragraph")).toHaveText("Camera access is unavailable.");
   await expect(dialog.getByRole("button", { name: "Use the device camera instead" })).toBeVisible();
 });
