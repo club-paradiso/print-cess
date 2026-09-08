@@ -36,7 +36,7 @@ describe("searchable scan PDF round trip", () => {
       expect(extracted).toContain("HELLO");
       expect(extracted).toContain("한국어");
     } finally {
-      await document.destroy();
+      await task.destroy();
     }
   });
 });
