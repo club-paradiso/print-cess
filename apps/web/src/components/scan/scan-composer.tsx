@@ -7,6 +7,7 @@ import {
   ArrowUp,
   Camera,
   Crop,
+  FileSearch,
   Images,
   Plus,
   RotateCw,
@@ -23,9 +24,12 @@ import {
   type DocumentQuad,
   type ScanFilter,
 } from "@/lib/document-scan-engine";
+import { recognizeDocument, terminateOcrWorker } from "@/lib/scan-ocr";
 import { buildScannedPdf, type PdfImagePage } from "@/lib/scan-pdf";
 import { advancedScanCopy } from "./scan-advanced-copy";
 import { DocumentCropEditor } from "./document-crop-editor";
+import { LiveDocumentCamera } from "./live-document-camera";
+import { proScanCopy } from "./scan-pro-copy";
 import { formatScanCopy, scanCopy } from "./scan-copy";
 
 const MAX_PAGES = 10;
@@ -53,11 +57,15 @@ export function ScanComposer({
 }) {
   const copy = scanCopy(locale);
   const advanced = advancedScanCopy(locale);
+  const pro = proScanCopy(locale);
   const [pages, setPages] = useState<ScanPage[]>([]);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [searchablePdf, setSearchablePdf] = useState(true);
+  const [ocrFallbackPages, setOcrFallbackPages] = useState<PdfImagePage[] | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const previewUrls = useRef(new Set<string>());
@@ -66,6 +74,7 @@ export function ScanComposer({
     () => () => {
       for (const url of previewUrls.current) URL.revokeObjectURL(url);
       previewUrls.current.clear();
+      void terminateOcrWorker();
     },
     [],
   );
@@ -75,13 +84,14 @@ export function ScanComposer({
     [editingId, pages],
   );
 
-  const addFiles = useCallback(
-    async (selection: FileList | null) => {
-      if (!selection?.length || busy) return;
+  const addSelectedFiles = useCallback(
+    async (files: readonly File[]) => {
+      if (files.length === 0 || busy) return;
       setError("");
+      setOcrFallbackPages(null);
       const remaining = MAX_PAGES - pages.length;
-      if (selection.length > remaining) setError(copy.tooMany);
-      const selected = Array.from(selection).slice(0, remaining);
+      if (files.length > remaining) setError(copy.tooMany);
+      const selected = Array.from(files).slice(0, remaining);
       if (selected.length === 0) return;
 
       setBusy(true);
@@ -114,6 +124,7 @@ export function ScanComposer({
           setStatus(advanced.detecting);
         }
         setPages((current) => [...current, ...added]);
+        if (pages.length + added.length >= MAX_PAGES) setCameraOpen(false);
       } catch {
         for (const page of added) {
           URL.revokeObjectURL(page.sourcePreviewUrl);
@@ -132,11 +143,18 @@ export function ScanComposer({
     [advanced.detecting, advanced.processing, busy, copy.imageError, copy.tooMany, pages.length],
   );
 
+  const addFiles = useCallback(
+    (selection: FileList | null) => addSelectedFiles(selection ? Array.from(selection) : []),
+    [addSelectedFiles],
+  );
+
   const updatePage = useCallback((id: string, update: (page: ScanPage) => ScanPage) => {
+    setOcrFallbackPages(null);
     setPages((current) => current.map((page) => (page.id === id ? update(page) : page)));
   }, []);
 
   const movePage = useCallback((index: number, direction: -1 | 1) => {
+    setOcrFallbackPages(null);
     setPages((current) => {
       const destination = index + direction;
       if (destination < 0 || destination >= current.length) return current;
@@ -147,6 +165,7 @@ export function ScanComposer({
   }, []);
 
   const removePage = useCallback((id: string) => {
+    setOcrFallbackPages(null);
     setPages((current) => {
       const removed = current.find((page) => page.id === id);
       if (removed) {
@@ -167,6 +186,7 @@ export function ScanComposer({
       setBusy(true);
       setStatus(advanced.processing);
       setError("");
+      setOcrFallbackPages(null);
       try {
         const processed = await processDocument(page.file, {
           quad: value.quad,
@@ -196,38 +216,114 @@ export function ScanComposer({
     [advanced.processing, busy, copy.imageError, pages, updatePage],
   );
 
-  const makePdf = useCallback(async () => {
-    if (pages.length === 0 || busy) return;
-    setBusy(true);
-    setStatus(advanced.processing);
-    setError("");
-    try {
-      const normalized: PdfImagePage[] = [];
-      for (const page of pages) {
-        const processed = await processDocument(page.file, {
-          quad: page.quad,
-          filter: page.filter,
-          rotation: page.rotation,
-        });
-        normalized.push({
-          bytes: new Uint8Array(await processed.blob.arrayBuffer()),
-          width: processed.width,
-          height: processed.height,
-        });
-      }
+  const completePdf = useCallback(
+    async (normalized: readonly PdfImagePage[]) => {
       const bytes = buildScannedPdf(normalized);
       const file = new File([bytes.buffer as ArrayBuffer], copy.scannedFile, {
         type: "application/pdf",
         lastModified: Date.now(),
       });
       await onComplete(file);
+    },
+    [copy.scannedFile, onComplete],
+  );
+
+  const makePdf = useCallback(async () => {
+    if (pages.length === 0 || busy) return;
+    setBusy(true);
+    setStatus(advanced.processing);
+    setError("");
+    setOcrFallbackPages(null);
+    try {
+      const normalized: PdfImagePage[] = [];
+      for (let index = 0; index < pages.length; index += 1) {
+        const page = pages[index]!;
+        const processed = await processDocument(page.file, {
+          quad: page.quad,
+          filter: page.filter,
+          rotation: page.rotation,
+        });
+        const pdfPage: PdfImagePage = {
+          bytes: new Uint8Array(await processed.blob.arrayBuffer()),
+          width: processed.width,
+          height: processed.height,
+        };
+
+        if (searchablePdf) {
+          setStatus(`${pro.ocrPreparing} ${index + 1}/${pages.length}`);
+          try {
+            const ocr = await recognizeDocument(
+              processed.blob,
+              locale,
+              { width: processed.width, height: processed.height },
+              ({ progress }) => {
+                setStatus(
+                  `${pro.ocrRecognizing} ${index + 1}/${pages.length} · ${Math.round(progress * 100)}%`,
+                );
+              },
+            );
+            pdfPage.ocrWords = ocr.words;
+          } catch {
+            const fallback = [
+              ...normalized.map((entry) => ({
+                bytes: entry.bytes,
+                width: entry.width,
+                height: entry.height,
+              })),
+              { bytes: pdfPage.bytes, width: pdfPage.width, height: pdfPage.height },
+            ];
+            for (let remaining = index + 1; remaining < pages.length; remaining += 1) {
+              const source = pages[remaining]!;
+              setStatus(advanced.processing);
+              const rendered = await processDocument(source.file, {
+                quad: source.quad,
+                filter: source.filter,
+                rotation: source.rotation,
+              });
+              fallback.push({
+                bytes: new Uint8Array(await rendered.blob.arrayBuffer()),
+                width: rendered.width,
+                height: rendered.height,
+              });
+            }
+            setOcrFallbackPages(fallback);
+            setError(pro.ocrFailed);
+            return;
+          }
+        }
+        normalized.push(pdfPage);
+      }
+      await completePdf(normalized);
+    } catch {
+      setError(copy.genericError);
+    } finally {
+      await terminateOcrWorker();
+      setBusy(false);
+      setStatus("");
+    }
+  }, [
+    advanced.processing,
+    busy,
+    completePdf,
+    copy.genericError,
+    locale,
+    pages,
+    pro,
+    searchablePdf,
+  ]);
+
+  const makeImageOnlyFallback = useCallback(async () => {
+    if (!ocrFallbackPages || busy) return;
+    setBusy(true);
+    setError("");
+    try {
+      await completePdf(ocrFallbackPages);
     } catch {
       setError(copy.genericError);
     } finally {
       setBusy(false);
-      setStatus("");
     }
-  }, [advanced.processing, busy, copy.genericError, copy.scannedFile, onComplete, pages]);
+  }, [busy, completePdf, copy.genericError, ocrFallbackPages]);
 
   return (
     <section className="scan-composer" aria-busy={busy}>
@@ -344,6 +440,29 @@ export function ScanComposer({
         </>
       )}
 
+      {pages.length > 0 ? (
+        <label className="scan-ocr-option">
+          <input
+            type="checkbox"
+            checked={searchablePdf}
+            disabled={busy}
+            onChange={(event) => {
+              setSearchablePdf(event.target.checked);
+              setOcrFallbackPages(null);
+              setError("");
+            }}
+          />
+          <span>
+            <strong>
+              <FileSearch aria-hidden="true" /> {pro.searchablePdf}
+            </strong>
+            <small>{pro.searchableHelp}</small>
+            <small>{pro.privacyOcr}</small>
+            <small>{pro.ocrNetwork}</small>
+          </span>
+        </label>
+      ) : null}
+
       {status ? (
         <p className="scan-notice" role="status" aria-live="polite">
           {status}
@@ -354,14 +473,20 @@ export function ScanComposer({
           {error}
         </p>
       ) : null}
+      {ocrFallbackPages ? (
+        <SecondaryButton onClick={() => void makeImageOnlyFallback()} disabled={busy}>
+          {pro.imageOnlyPdf}
+        </SecondaryButton>
+      ) : null}
 
       <div className="scan-primary-actions">
         <PrimaryButton
-          onClick={() => cameraInput.current?.click()}
+          data-testid="scan-smart-camera"
+          onClick={() => setCameraOpen(true)}
           disabled={busy || pages.length >= MAX_PAGES}
         >
           {pages.length === 0 ? <Camera aria-hidden="true" /> : <Plus aria-hidden="true" />}
-          {pages.length === 0 ? copy.camera : copy.addPage}
+          {pro.liveCamera}
         </PrimaryButton>
         <SecondaryButton
           onClick={() => galleryInput.current?.click()}
@@ -385,6 +510,16 @@ export function ScanComposer({
           initialFilter={editingPage.filter}
           onApply={(value) => void applyCrop(editingPage.id, value)}
           onCancel={() => setEditingId(null)}
+        />
+      ) : null}
+
+      {cameraOpen ? (
+        <LiveDocumentCamera
+          locale={locale}
+          disabled={busy}
+          onCapture={(file) => addSelectedFiles([file])}
+          onFallback={() => cameraInput.current?.click()}
+          onClose={() => setCameraOpen(false)}
         />
       ) : null}
     </section>

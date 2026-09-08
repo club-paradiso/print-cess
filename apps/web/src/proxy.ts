@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+const OCR_ASSET_ORIGINS = ["https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com"];
+
 /**
  * Both halves of the service upload and download ciphertext straight from the
  * browser to blob storage, so the configured provider's origin has to be
@@ -38,10 +40,13 @@ export function buildContentSecurityPolicy(
   isDevelopment: boolean,
   environment: NodeJS.ProcessEnv = process.env,
 ): string {
-  const connectSources = ["'self'", ...blobConnectOrigins(environment)].join(" ");
-  // The document scanner dynamically loads OpenCV.js, whose browser runtime
-  // compiles WebAssembly locally. `wasm-unsafe-eval` permits WebAssembly
-  // compilation without granting JavaScript string evaluation (`unsafe-eval`).
+  const connectSources = ["'self'", ...blobConnectOrigins(environment), ...OCR_ASSET_ORIGINS].join(
+    " ",
+  );
+  // OpenCV and the optional OCR engine compile WebAssembly locally.
+  // `wasm-unsafe-eval` permits that without granting JavaScript string
+  // evaluation (`unsafe-eval`) in production. OCR code/models are pinned to
+  // two explicit HTTPS asset origins; page pixels are never posted there.
   const scriptEvaluation = ` 'wasm-unsafe-eval'${isDevelopment ? " 'unsafe-eval'" : ""}`;
   return [
     "default-src 'self'",
@@ -54,10 +59,10 @@ export function buildContentSecurityPolicy(
     "img-src 'self' blob: data:",
     "media-src 'self' blob:",
     `connect-src ${connectSources}`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
+    `script-src 'self' https://cdn.jsdelivr.net 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
     "script-src-attr 'none'",
     `style-src 'self' ${isDevelopment ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
-    "worker-src 'self' blob:",
+    "worker-src 'self' blob: https://cdn.jsdelivr.net",
     ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 }
