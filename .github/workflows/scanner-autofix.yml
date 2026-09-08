@@ -1,0 +1,52 @@
+name: Scanner Autofix
+
+on:
+  push:
+    branches: [feat/pro-grade-document-scanner]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: feat/pro-grade-document-scanner
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.18.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Fix scanner strict-index typing
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'apps/web/src/lib/document-scan-engine.ts';
+          let source = fs.readFileSync(path, 'utf8');
+          source = source.replace('tileSamples[tileIndex] += 1;', 'tileSamples[tileIndex] = (tileSamples[tileIndex] ?? 0) + 1;');
+          source = source.replace('if (center >= 252) clipped[tileIndex] += 1;', 'if (center >= 252) clipped[tileIndex] = (clipped[tileIndex] ?? 0) + 1;');
+          fs.writeFileSync(path, source);
+          NODE
+      - name: Format scanner changes
+        run: >-
+          pnpm exec prettier --write
+          apps/web/src/app/scan-pro.css
+          apps/web/src/components/scan/live-document-camera.tsx
+          apps/web/src/components/scan/scan-composer.tsx
+          apps/web/src/lib/document-scan-engine.ts
+          apps/web/src/lib/scan-ocr.ts
+          apps/web/src/proxy.ts
+      - name: Commit fixes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/src/app/scan-pro.css apps/web/src/components/scan/live-document-camera.tsx apps/web/src/components/scan/scan-composer.tsx apps/web/src/lib/document-scan-engine.ts apps/web/src/lib/scan-ocr.ts apps/web/src/proxy.ts
+          if git diff --cached --quiet; then
+            exit 0
+          fi
+          git commit -m 'chore(scan): format and satisfy strict typing'
+          git push origin HEAD:feat/pro-grade-document-scanner
