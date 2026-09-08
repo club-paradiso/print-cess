@@ -18,6 +18,13 @@ describe("Content Security Policy", () => {
     expect(policy).not.toContain("https://*.vercel.com");
   });
 
+  it("permits WebAssembly compilation without enabling JavaScript eval in production", () => {
+    const policy = buildContentSecurityPolicy("test-nonce", false, env());
+
+    expect(policy).toContain("'wasm-unsafe-eval'");
+    expect(policy).not.toContain(" 'unsafe-eval'");
+  });
+
   it("admits the configured S3 endpoint so the browser can reach it", () => {
     // The phone PUTs and GETs ciphertext directly. Without its origin here the
     // S3 provider is selectable but unusable from a browser.
