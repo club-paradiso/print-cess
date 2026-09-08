@@ -79,10 +79,6 @@ export function ScanComposer({
     [],
   );
 
-  useEffect(() => {
-    if (pages.length >= MAX_PAGES) setCameraOpen(false);
-  }, [pages.length]);
-
   const editingPage = useMemo(
     () => pages.find((page) => page.id === editingId),
     [editingId, pages],
@@ -128,6 +124,7 @@ export function ScanComposer({
           setStatus(advanced.detecting);
         }
         setPages((current) => [...current, ...added]);
+        if (pages.length + added.length >= MAX_PAGES) setCameraOpen(false);
       } catch {
         for (const page of added) {
           URL.revokeObjectURL(page.sourcePreviewUrl);
