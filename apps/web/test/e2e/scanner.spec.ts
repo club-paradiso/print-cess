@@ -17,20 +17,23 @@ const DOCUMENT_SVG = `
   </g>
 </svg>`;
 
-test("document scanner detects edges, lets the user refine them, and produces a PDF", async ({
+async function uploadSyntheticDocument(page: import("@playwright/test").Page) {
+  await page.getByTestId("scan-gallery-input").setInputFiles({
+    name: "skewed-document.svg",
+    mimeType: "image/svg+xml",
+    buffer: Buffer.from(DOCUMENT_SVG),
+  });
+  await expect(page.getByText("Document edges detected")).toBeVisible({ timeout: 60_000 });
+}
+
+test("document scanner detects edges, lets the user refine them, and produces an image PDF", async ({
   page,
 }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
   await page.goto("/scan");
-  await page.getByTestId("scan-gallery-input").setInputFiles({
-    name: "skewed-document.svg",
-    mimeType: "image/svg+xml",
-    buffer: Buffer.from(DOCUMENT_SVG),
-  });
-
-  await expect(page.getByText("Document edges detected")).toBeVisible({ timeout: 60_000 });
+  await uploadSyntheticDocument(page);
   await page.getByRole("button", { name: "Adjust edges" }).click();
 
   const dialog = page.getByRole("dialog", { name: "Adjust edges" });
@@ -40,10 +43,97 @@ test("document scanner detects edges, lets the user refine them, and produces a 
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(dialog).toBeHidden({ timeout: 60_000 });
 
+  await page.getByRole("checkbox", { name: /Searchable PDF/u }).uncheck();
   await page.getByRole("button", { name: "Make PDF" }).click();
   await expect(page.getByRole("heading", { name: "Your scan is ready" })).toBeVisible({
     timeout: 60_000,
   });
   await expect(page.getByText("Print-cess-scan.pdf")).toBeVisible();
   expect(errors).toEqual([]);
+});
+
+test("searchable PDF runs local OCR and completes without sending the page to an OCR API", async ({
+  page,
+}) => {
+  const requestedUrls: string[] = [];
+  page.on("request", (request) => requestedUrls.push(request.url()));
+  await page.addInitScript(() => {
+    const worker = {
+      recognize: async () => ({
+        data: {
+          text: "HELLO IMMIGRATION 한국어",
+          confidence: 96,
+          blocks: [
+            {
+              paragraphs: [
+                {
+                  lines: [
+                    {
+                      words: [
+                        {
+                          text: "HELLO",
+                          confidence: 97,
+                          bbox: { x0: 180, y0: 245, x1: 330, y1: 285 },
+                        },
+                        {
+                          text: "IMMIGRATION",
+                          confidence: 95,
+                          bbox: { x0: 345, y0: 245, x1: 610, y1: 285 },
+                        },
+                        {
+                          text: "한국어",
+                          confidence: 94,
+                          bbox: { x0: 180, y0: 330, x1: 340, y1: 375 },
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        },
+      }),
+      terminate: async () => undefined,
+    };
+    Object.defineProperty(window, "Tesseract", {
+      configurable: true,
+      value: {
+        createWorker: async () => worker,
+      },
+    });
+  });
+
+  await page.goto("/scan");
+  await uploadSyntheticDocument(page);
+  await expect(page.getByRole("checkbox", { name: /Searchable PDF/u })).toBeChecked();
+  await page.getByRole("button", { name: "Make PDF" }).click();
+  await expect(page.getByRole("heading", { name: "Your scan is ready" })).toBeVisible({
+    timeout: 60_000,
+  });
+  expect(
+    requestedUrls.some((url) => /(?:ocr|recognize|vision|document-ai|textract)/iu.test(url)),
+  ).toBe(false);
+});
+
+test("smart camera falls back cleanly when browser camera permission is unavailable", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: {
+        getUserMedia: async () => {
+          throw new DOMException("Permission denied", "NotAllowedError");
+        },
+      },
+    });
+  });
+
+  await page.goto("/scan");
+  await page.getByTestId("scan-smart-camera").click();
+  const dialog = page.getByRole("dialog", { name: "Smart camera" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByRole("paragraph")).toHaveText("Camera access is unavailable.");
+  await expect(dialog.getByRole("button", { name: "Use the device camera instead" })).toBeVisible();
 });
