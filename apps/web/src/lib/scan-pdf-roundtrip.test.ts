@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { getDocument } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { describe, expect, it } from "vitest";
 
 import { buildScannedPdf } from "./scan-pdf";
 
@@ -11,8 +11,16 @@ describe("searchable scan PDF round trip", () => {
         width: 1200,
         height: 1800,
         ocrWords: [
-          { text: "HELLO", bbox: { x0: 120, y0: 180, x1: 420, y1: 260 }, confidence: 97 },
-          { text: "한국어", bbox: { x0: 120, y0: 300, x1: 430, y1: 390 }, confidence: 95 },
+          {
+            text: "HELLO",
+            bbox: { x0: 120, y0: 180, x1: 420, y1: 260 },
+            confidence: 97,
+          },
+          {
+            text: "한국어",
+            bbox: { x0: 120, y0: 300, x1: 430, y1: 390 },
+            confidence: 95,
+          },
         ],
       },
     ]);
