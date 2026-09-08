@@ -1,0 +1,56 @@
+name: Temporary sophisticated scanner verification
+
+on:
+  push:
+    branches: [feat/sophisticated-document-scanner]
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      CI: "true"
+      PUBLIC_BASE_URL: http://127.0.0.1:3000
+      ALLOWED_ORIGINS: http://127.0.0.1:3000
+      PRINT_CESS_ADAPTER_MODE: local
+      SESSION_TTL_SECONDS: "180"
+      SIGNED_URL_TTL_SECONDS: "120"
+      ENABLE_DEMO_ROUTES: "true"
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.18.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Refresh lockfile
+        run: pnpm install --lockfile-only
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Format implementation
+        run: pnpm format
+      - name: Lint
+        run: pnpm lint
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Unit tests
+        run: pnpm test
+      - name: Production build
+        run: pnpm build
+      - name: Commit verified lockfile and formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "chore(scan): refresh lockfile and formatting"
+            git push
+          fi
