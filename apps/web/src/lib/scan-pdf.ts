@@ -49,7 +49,7 @@ export function buildScannedPdf(pages: readonly PdfImagePage[]): Uint8Array {
     if (page.width <= 0 || page.height <= 0 || page.bytes.byteLength === 0) {
       throw new Error("scanInvalidPage");
     }
-    const pageId = pageIds[index];
+    const pageId = pageIds[index]!;
     const imageId = pageId + 1;
     const contentId = pageId + 2;
     const landscape = page.width > page.height;
@@ -74,9 +74,10 @@ export function buildScannedPdf(pages: readonly PdfImagePage[]): Uint8Array {
     objects[contentId - 1] = stream("", content);
   });
 
-  const output: Uint8Array[] = [text("%PDF-1.4\n% Print-cess scan\n")];
+  const header = text("%PDF-1.4\n% Print-cess scan\n");
+  const output: Uint8Array[] = [header];
   const offsets = [0];
-  let byteOffset = output[0].byteLength;
+  let byteOffset = header.byteLength;
   objects.forEach((body, index) => {
     offsets[index + 1] = byteOffset;
     const object = join([text(`${index + 1} 0 obj\n`), body, text("\nendobj\n")]);

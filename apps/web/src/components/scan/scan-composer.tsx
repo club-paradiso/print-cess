@@ -85,7 +85,7 @@ export function ScanComposer({
       const destination = index + direction;
       if (destination < 0 || destination >= current.length) return current;
       const next = [...current];
-      [next[index], next[destination]] = [next[destination], next[index]];
+      [next[index], next[destination]] = [next[destination]!, next[index]!];
       return next;
     });
   }, []);
@@ -268,7 +268,7 @@ async function normalizeScanPage(
   let image: CanvasImageSource;
   let width: number;
   let height: number;
-  let release = () => undefined;
+  let release: () => void = () => {};
   try {
     if (typeof createImageBitmap === "function") {
       const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
