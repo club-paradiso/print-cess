@@ -25,7 +25,7 @@ function fixture(width: number, height: number, valueAt: (x: number, y: number) 
       bytes[offset + 3] = 255;
     }
   }
-  return new ImageData(bytes, width, height);
+  return { data: bytes, width, height };
 }
 
 describe("scanner capture fixtures", () => {

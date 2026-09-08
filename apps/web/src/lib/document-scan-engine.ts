@@ -1,4 +1,5 @@
 export type ScanPoint = { x: number; y: number };
+export type ScanPixelData = { data: Uint8ClampedArray; width: number; height: number };
 export type DocumentQuad = [ScanPoint, ScanPoint, ScanPoint, ScanPoint];
 export type ScanFilter = "auto" | "color" | "grayscale" | "bw";
 export type CaptureIssue =
@@ -95,7 +96,7 @@ export function quadDrift(first: DocumentQuad, second: DocumentQuad): number {
 }
 
 export function analyzeCapturePixels(
-  imageData: ImageData,
+  imageData: ScanPixelData,
   detection: DocumentDetection,
 ): CaptureQuality {
   const { data, width, height } = imageData;

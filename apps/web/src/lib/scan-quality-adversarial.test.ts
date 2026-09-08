@@ -14,7 +14,7 @@ function imageData(width: number, height: number, pixel: (x: number, y: number) 
       data[index + 3] = 255;
     }
   }
-  return new ImageData(data, width, height);
+  return { data, width, height };
 }
 
 const LARGE_DOCUMENT: DocumentDetection = {
