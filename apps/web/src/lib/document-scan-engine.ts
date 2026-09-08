@@ -119,8 +119,8 @@ export function analyzeCapturePixels(
   let laplacianTotal = 0;
   let laplacianSquared = 0;
   let laplacianSamples = 0;
-  const tileColumns = 6;
-  const tileRows = 8;
+  const tileColumns = 8;
+  const tileRows = 10;
   const clipped = new Uint32Array(tileColumns * tileRows);
   const tileSamples = new Uint32Array(tileColumns * tileRows);
 
@@ -164,7 +164,9 @@ export function analyzeCapturePixels(
     const count = tileSamples[index]!;
     if (count === 0) continue;
     const ratio = clipped[index]! / count;
-    if (ratio > 0.58 && ratio < 0.985) glare = Math.max(glare, ratio);
+    // A fully clipped local tile is the strongest glare signal. Whole-frame
+    // overexposure is classified earlier by the average brightness gate.
+    if (ratio > 0.58) glare = Math.max(glare, ratio);
   }
 
   const coverage = detection.detected ? quadArea(detection.quad) : 0;
