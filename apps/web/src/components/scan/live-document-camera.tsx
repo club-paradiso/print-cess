@@ -59,6 +59,8 @@ export function LiveDocumentCamera({
   const streamRef = useRef<MediaStream | null>(null);
   const analysisBusy = useRef(false);
   const captureBusy = useRef(false);
+  const autoCaptureRef = useRef(true);
+  const disabledRef = useRef(Boolean(disabled));
   const lastQuad = useRef<DocumentQuad | null>(null);
   const capturedQuad = useRef<DocumentQuad | null>(null);
   const stableFrames = useRef(0);
@@ -66,11 +68,16 @@ export function LiveDocumentCamera({
   const [started, setStarted] = useState(false);
   const [error, setError] = useState(false);
   const [autoCapture, setAutoCapture] = useState(true);
+  const [capturing, setCapturing] = useState(false);
   const [quad, setQuad] = useState<DocumentQuad>(FULL_FRAME_QUAD);
   const [detected, setDetected] = useState(false);
   const [qualityScore, setQualityScore] = useState(0);
   const [message, setMessage] = useState(copy.cameraStarting);
   const [aspectRatio, setAspectRatio] = useState("3 / 4");
+
+  useEffect(() => {
+    disabledRef.current = Boolean(disabled);
+  }, [disabled]);
 
   const stopCamera = useCallback(() => {
     for (const track of streamRef.current?.getTracks() ?? []) track.stop();
@@ -81,8 +88,17 @@ export function LiveDocumentCamera({
 
   const captureFrame = useCallback(async () => {
     const video = videoRef.current;
-    if (!video || video.videoWidth === 0 || video.videoHeight === 0 || captureBusy.current) return;
+    if (
+      !video ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0 ||
+      captureBusy.current ||
+      disabledRef.current
+    ) {
+      return;
+    }
     captureBusy.current = true;
+    setCapturing(true);
     try {
       const maxEdge = 3200;
       const scale = Math.min(1, maxEdge / Math.max(video.videoWidth, video.videoHeight));
@@ -106,20 +122,22 @@ export function LiveDocumentCamera({
       capturedQuad.current = lastQuad.current;
       waitingForNewPage.current = true;
       stableFrames.current = 0;
+      setMessage(copy.nextPage);
       await onCapture(file);
     } finally {
       window.setTimeout(() => {
         captureBusy.current = false;
+        setCapturing(false);
       }, 650);
     }
-  }, [onCapture]);
+  }, [copy.nextPage, onCapture]);
 
   useEffect(() => {
     let cancelled = false;
     let timer: number | undefined;
 
     const inspect = async () => {
-      if (cancelled || disabled || analysisBusy.current || captureBusy.current) return;
+      if (cancelled || disabledRef.current || analysisBusy.current || captureBusy.current) return;
       const video = videoRef.current;
       if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
       analysisBusy.current = true;
@@ -147,8 +165,9 @@ export function LiveDocumentCamera({
           ) {
             waitingForNewPage.current = false;
             capturedQuad.current = null;
+            lastQuad.current = null;
           } else {
-            setMessage(copy.holdSteady);
+            setMessage(copy.nextPage);
             lastQuad.current = inspection.detection.quad;
             return;
           }
@@ -172,7 +191,7 @@ export function LiveDocumentCamera({
         }
 
         setMessage(copy.ready);
-        if (autoCapture) await captureFrame();
+        if (autoCaptureRef.current) await captureFrame();
       } catch {
         stableFrames.current = 0;
         setMessage(copy.holdSteady);
@@ -222,13 +241,21 @@ export function LiveDocumentCamera({
       if (timer) window.clearInterval(timer);
       stopCamera();
     };
-  }, [autoCapture, captureFrame, copy, disabled, stopCamera]);
+  }, [captureFrame, copy, stopCamera]);
 
   const close = () => {
     stopCamera();
     onClose();
   };
   const polygon = quad.map((point) => `${point.x * 1000},${point.y * 1000}`).join(" ");
+  const toggleAutoCapture = () => {
+    setAutoCapture((current) => {
+      const next = !current;
+      autoCaptureRef.current = next;
+      stableFrames.current = 0;
+      return next;
+    });
+  };
 
   return (
     <div className="scan-live-dialog" role="dialog" aria-modal="true" aria-label={copy.liveCamera}>
@@ -278,16 +305,24 @@ export function LiveDocumentCamera({
 
             <div className="scan-quality" aria-label={copy.quality}>
               <span>{copy.quality}</span>
-              <div role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(qualityScore * 100)}>
+              <div
+                role="progressbar"
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-valuenow={Math.round(qualityScore * 100)}
+              >
                 <i style={{ width: `${Math.round(qualityScore * 100)}%` }} />
               </div>
             </div>
 
             <div className="scan-live-controls">
-              <SecondaryButton onClick={() => setAutoCapture((value) => !value)} disabled={disabled}>
+              <SecondaryButton onClick={toggleAutoCapture} disabled={disabled || capturing}>
                 {autoCapture ? copy.autoCaptureOn : copy.autoCaptureOff}
               </SecondaryButton>
-              <PrimaryButton onClick={() => void captureFrame()} disabled={!started || disabled || captureBusy.current}>
+              <PrimaryButton
+                onClick={() => void captureFrame()}
+                disabled={!started || disabled || capturing}
+              >
                 <Camera aria-hidden="true" /> {copy.manualCapture}
               </PrimaryButton>
             </div>
