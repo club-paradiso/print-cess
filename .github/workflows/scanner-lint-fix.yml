@@ -1,0 +1,44 @@
+name: Scanner Lint Fix
+
+on:
+  push:
+    branches: [feat/pro-grade-document-scanner]
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: feat/pro-grade-document-scanner
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24.18.0
+          cache: pnpm
+          cache-dependency-path: pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - name: Move max-page camera close into the add transaction
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const path = 'apps/web/src/components/scan/scan-composer.tsx';
+          let source = fs.readFileSync(path, 'utf8');
+          source = source.replace(`\n  useEffect(() => {\n    if (pages.length >= MAX_PAGES) setCameraOpen(false);\n  }, [pages.length]);\n`, '');
+          source = source.replace(
+            '        setPages((current) => [...current, ...added]);',
+            '        setPages((current) => [...current, ...added]);\n        if (pages.length + added.length >= MAX_PAGES) setCameraOpen(false);',
+          );
+          fs.writeFileSync(path, source);
+          NODE
+      - run: pnpm exec prettier --write apps/web/src/components/scan/scan-composer.tsx
+      - run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add apps/web/src/components/scan/scan-composer.tsx
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m 'fix(scan): close smart camera without effect cascade'
+          git push origin HEAD:feat/pro-grade-document-scanner
