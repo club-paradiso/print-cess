@@ -30,167 +30,129 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
+          import re
 
-          def replace_once(path: str, old: str, new: str) -> None:
+          def sub_once(path: str, pattern: str, replacement: str, flags: int = 0) -> None:
               p = Path(path)
               text = p.read_text()
-              if old not in text:
-                  raise SystemExit(f"expected snippet not found in {path}")
-              p.write_text(text.replace(old, new, 1))
+              updated, count = re.subn(pattern, replacement, text, count=1, flags=flags)
+              if count != 1:
+                  raise SystemExit(f"expected one match in {path}, found {count}")
+              p.write_text(updated)
 
-          replace_once(
+          sub_once(
               "apps/web/src/components/scan/scan-composer.tsx",
+              r'''    if \(typeof createImageBitmap === "function"\) \{\n      const bitmap = await createImageBitmap\(file, \{ imageOrientation: "from-image" \}\);\n      image = bitmap;\n      width = bitmap\.width;\n      height = bitmap\.height;\n      release = \(\) => bitmap\.close\(\);\n    \} else \{\n      const loaded = await loadImage\(file\);\n      image = loaded\.image;\n      width = loaded\.image\.naturalWidth;\n      height = loaded\.image\.naturalHeight;\n      release = loaded\.release;\n    \}''',
               '''    if (typeof createImageBitmap === "function") {
+              try {
                 const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
                 image = bitmap;
                 width = bitmap.width;
                 height = bitmap.height;
                 release = () => bitmap.close();
-              } else {
+              } catch {
                 const loaded = await loadImage(file);
                 image = loaded.image;
                 width = loaded.image.naturalWidth;
                 height = loaded.image.naturalHeight;
                 release = loaded.release;
-              }'''.replace('              ', '    ', 1),
-              '''    if (typeof createImageBitmap === "function") {
-                try {
-                  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-                  image = bitmap;
-                  width = bitmap.width;
-                  height = bitmap.height;
-                  release = () => bitmap.close();
-                } catch {
-                  const loaded = await loadImage(file);
-                  image = loaded.image;
-                  width = loaded.image.naturalWidth;
-                  height = loaded.image.naturalHeight;
-                  release = loaded.release;
-                }
-              } else {
-                const loaded = await loadImage(file);
-                image = loaded.image;
-                width = loaded.image.naturalWidth;
-                height = loaded.image.naturalHeight;
-                release = loaded.release;
-              }'''.replace('              ', '    ', 1),
+              }
+            } else {
+              const loaded = await loadImage(file);
+              image = loaded.image;
+              width = loaded.image.naturalWidth;
+              height = loaded.image.naturalHeight;
+              release = loaded.release;
+            }''',
           )
 
-          replace_once(
+          sub_once(
               "apps/web/src/components/mobile/mobile-flow.tsx",
+              r'''  const chooseFile = useCallback\(\n.*?\n  \);\n\n  const print = useCallback''',
               '''  const chooseFile = useCallback(
-                async (selected: File | undefined) => {
-                  if (!selected) return;
-                  try {
-                    setFileErrorKey(undefined);
-                    setFileNoticeKey(undefined);
-                    const result = await validateMobileDocument(selected, {
-                      allowHwp: supportsHwp,
-                      allowHwpx: supportsHwpx,
-                    });
-                    setFile(selected);
-                    setValidated(result);
-                    setStage("preview");
-                  } catch (error) {
-                    clearDocument();
-                    setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
-                  }
-                },
-                [clearDocument, supportsHwp, supportsHwpx],
-              );'''.replace('              ', '', 1),
-              '''  const chooseFile = useCallback(
-                async (
-                  selected: File | undefined,
-                  options: { trustedGeneratedPdf?: boolean } = {},
-                ) => {
-                  if (!selected) return false;
-                  try {
-                    setFileErrorKey(undefined);
-                    setFileNoticeKey(undefined);
-                    const result = await validateMobileDocument(selected, {
-                      allowHwp: supportsHwp,
-                      allowHwpx: supportsHwpx,
-                      trustedGeneratedPdf: options.trustedGeneratedPdf,
-                    });
-                    setFile(selected);
-                    setValidated(result);
-                    setStage("preview");
-                    return true;
-                  } catch (error) {
-                    clearDocument();
-                    setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
-                    return false;
-                  }
-                },
-                [clearDocument, supportsHwp, supportsHwpx],
-              );'''.replace('              ', '', 1),
-          )
-
-          replace_once(
-              "apps/web/src/components/mobile/mobile-flow.tsx",
-              '''          onComplete={async (scanned) => {
-                        setScannerOpen(false);
-                        await chooseFile(scanned);
-                      }}'''.replace('                      ', '          ', 1),
-              '''          onComplete={async (scanned) => {
-                        const accepted = await chooseFile(scanned, { trustedGeneratedPdf: true });
-                        if (accepted) setScannerOpen(false);
-                      }}'''.replace('                      ', '          ', 1),
-          )
-
-          replace_once(
-              "apps/web/src/lib/mobile-document-validation.ts",
-              'options: { allowHwp?: boolean; allowHwpx?: boolean } = {},',
-              'options: { allowHwp?: boolean; allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},',
-          )
-          replace_once(
-              "apps/web/src/lib/mobile-document-validation.ts",
-              '''  if (!isHwpSelection(file)) {
-                return options.allowHwpx === undefined
-                  ? validateFileForMobile(file)
-                  : validateFileForMobile(file, { allowHwpx: options.allowHwpx });
-              }'''.replace('              ', '', 1),
-              '''  if (!isHwpSelection(file)) {
-                return validateFileForMobile(file, {
-                  allowHwpx: options.allowHwpx,
+            async (
+              selected: File | undefined,
+              options: { trustedGeneratedPdf?: boolean } = {},
+            ) => {
+              if (!selected) return false;
+              try {
+                setFileErrorKey(undefined);
+                setFileNoticeKey(undefined);
+                const result = await validateMobileDocument(selected, {
+                  allowHwp: supportsHwp,
+                  allowHwpx: supportsHwpx,
                   trustedGeneratedPdf: options.trustedGeneratedPdf,
                 });
-              }'''.replace('              ', '', 1),
+                setFile(selected);
+                setValidated(result);
+                setStage("preview");
+                return true;
+              } catch (error) {
+                clearDocument();
+                setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
+                return false;
+              }
+            },
+            [clearDocument, supportsHwp, supportsHwpx],
+          );
+
+          const print = useCallback''',
+              re.S,
           )
 
-          replace_once(
+          sub_once(
+              "apps/web/src/components/mobile/mobile-flow.tsx",
+              r'''onComplete=\{async \(scanned\) => \{\s*setScannerOpen\(false\);\s*await chooseFile\(scanned\);\s*\}\}''',
+              '''onComplete={async (scanned) => {
+            const accepted = await chooseFile(scanned, { trustedGeneratedPdf: true });
+            if (accepted) setScannerOpen(false);
+          }}''',
+          )
+
+          sub_once(
+              "apps/web/src/lib/mobile-document-validation.ts",
+              r'''options: \{ allowHwp\?: boolean; allowHwpx\?: boolean \} = \{\},''',
+              'options: { allowHwp?: boolean; allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},',
+          )
+          sub_once(
+              "apps/web/src/lib/mobile-document-validation.ts",
+              r'''  if \(!isHwpSelection\(file\)\) \{\n    return options\.allowHwpx === undefined\n      \? validateFileForMobile\(file\)\n      : validateFileForMobile\(file, \{ allowHwpx: options\.allowHwpx \}\);\n  \}''',
+              '''  if (!isHwpSelection(file)) {
+            return validateFileForMobile(file, {
+              allowHwpx: options.allowHwpx,
+              trustedGeneratedPdf: options.trustedGeneratedPdf,
+            });
+          }''',
+          )
+
+          sub_once(
               "apps/web/src/lib/file-validation.ts",
-              'options: { allowHwpx?: boolean } = {},',
+              r'''options: \{ allowHwpx\?: boolean \} = \{\},''',
               'options: { allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},',
           )
-          replace_once(
+          sub_once(
               "apps/web/src/lib/file-validation.ts",
-              'pageCount: await validatePdf(bytes),',
+              r'''pageCount: await validatePdf\(bytes\),''',
               'pageCount: await validatePdf(bytes, { skipActiveContentScan: options.trustedGeneratedPdf }),',
           )
-          replace_once(
+          sub_once(
               "apps/web/src/lib/file-validation.ts",
-              'export async function validatePdf(bytes: Uint8Array): Promise<number> {',
+              r'''export async function validatePdf\(bytes: Uint8Array\): Promise<number> \{''',
               '''export async function validatePdf(
-                bytes: Uint8Array,
-                options: { skipActiveContentScan?: boolean } = {},
-              ): Promise<number> {'''.replace('              ', '', 1),
+            bytes: Uint8Array,
+            options: { skipActiveContentScan?: boolean } = {},
+          ): Promise<number> {''',
           )
-          replace_once(
+          sub_once(
               "apps/web/src/lib/file-validation.ts",
+              r'''  if \(\n    ACTIVE_PDF_MARKERS\.some\(\n      \(marker\) => searchable\.includes\(marker\) \|\| decodedNames\.includes\(marker\),\n    \)\n  \)\n    throw new FileValidationError\("damagedFile"\);''',
               '''  if (
-                ACTIVE_PDF_MARKERS.some(
-                  (marker) => searchable.includes(marker) || decodedNames.includes(marker),
-                )
-              )
-                throw new FileValidationError("damagedFile");'''.replace('              ', '', 1),
-              '''  if (
-                !options.skipActiveContentScan &&
-                ACTIVE_PDF_MARKERS.some(
-                  (marker) => searchable.includes(marker) || decodedNames.includes(marker),
-                )
-              )
-                throw new FileValidationError("damagedFile");'''.replace('              ', '', 1),
+            !options.skipActiveContentScan &&
+            ACTIVE_PDF_MARKERS.some(
+              (marker) => searchable.includes(marker) || decodedNames.includes(marker),
+            )
+          )
+            throw new FileValidationError("damagedFile");''',
           )
       - name: Format changed files
         run: pnpm exec prettier --write apps/web/src/components/scan/scan-composer.tsx apps/web/src/components/mobile/mobile-flow.tsx apps/web/src/lib/mobile-document-validation.ts apps/web/src/lib/file-validation.ts apps/web/src/components/scan/scan-copy.ts
