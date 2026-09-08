@@ -122,7 +122,7 @@ export function LiveDocumentCamera({
       capturedQuad.current = lastQuad.current;
       waitingForNewPage.current = true;
       stableFrames.current = 0;
-      setMessage(copy.nextPage);
+      setMessage(copy.holdSteady);
       await onCapture(file);
     } finally {
       window.setTimeout(() => {
@@ -130,7 +130,7 @@ export function LiveDocumentCamera({
         setCapturing(false);
       }, 650);
     }
-  }, [copy.nextPage, onCapture]);
+  }, [copy.holdSteady, onCapture]);
 
   useEffect(() => {
     let cancelled = false;
@@ -167,7 +167,7 @@ export function LiveDocumentCamera({
             capturedQuad.current = null;
             lastQuad.current = null;
           } else {
-            setMessage(copy.nextPage);
+            setMessage(copy.holdSteady);
             lastQuad.current = inspection.detection.quad;
             return;
           }
