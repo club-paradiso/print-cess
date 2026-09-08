@@ -1,0 +1,291 @@
+.scan-ocr-option {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 15px 16px;
+  border: 1px solid var(--pc-line);
+  border-radius: 14px;
+  background: #f6fbfb;
+  color: var(--pc-ink);
+  cursor: pointer;
+}
+
+.scan-ocr-option > input {
+  width: 22px;
+  height: 22px;
+  margin: 2px 0 0;
+  accent-color: var(--pc-teal);
+}
+
+.scan-ocr-option > span {
+  display: grid;
+  gap: 4px;
+}
+
+.scan-ocr-option strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+
+.scan-ocr-option strong svg {
+  width: 19px;
+  height: 19px;
+  color: var(--pc-teal-dark);
+}
+
+.scan-ocr-option small {
+  color: var(--pc-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.scan-live-dialog {
+  position: fixed;
+  z-index: 120;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom));
+  background: #05090d;
+}
+
+.scan-live-panel {
+  display: grid;
+  width: min(100%, 760px);
+  max-height: 100dvh;
+  gap: 12px;
+  overflow: auto;
+  color: white;
+}
+
+.scan-live-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 4px 0;
+}
+
+.scan-live-header > div {
+  display: grid;
+  gap: 2px;
+}
+
+.scan-live-header strong {
+  font-size: 19px;
+}
+
+.scan-live-header span {
+  color: #b9c5cc;
+  font-size: 13px;
+}
+
+.scan-live-header > button {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 50%;
+  background: rgb(255 255 255 / 8%);
+  color: white;
+  cursor: pointer;
+}
+
+.scan-live-header > button svg {
+  width: 23px;
+  height: 23px;
+}
+
+.scan-live-stage {
+  position: relative;
+  width: 100%;
+  max-height: calc(100dvh - 190px);
+  overflow: hidden;
+  border-radius: 22px;
+  background: #111820;
+  box-shadow: 0 20px 60px rgb(0 0 0 / 42%);
+}
+
+.scan-live-stage video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.scan-live-overlay {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.scan-live-overlay polygon {
+  fill: rgb(255 255 255 / 3%);
+  stroke: #ffd166;
+  stroke-width: 5;
+  stroke-dasharray: 18 12;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 1px 3px rgb(0 0 0 / 80%));
+  transition: stroke 160ms ease, fill 160ms ease;
+}
+
+.scan-live-overlay.is-detected polygon {
+  fill: rgb(20 224 206 / 8%);
+  stroke: #14e0ce;
+  stroke-dasharray: none;
+}
+
+.scan-live-loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgb(5 9 13 / 72%);
+  color: white;
+  font-weight: 800;
+}
+
+.scan-live-guidance {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 1px solid rgb(255 255 255 / 18%);
+  border-radius: 999px;
+  padding: 9px 14px;
+  background: rgb(5 9 13 / 76%);
+  color: white;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
+  backdrop-filter: blur(12px);
+}
+
+.scan-live-guidance.is-ready {
+  border-color: rgb(20 224 206 / 60%);
+  background: rgb(0 95 87 / 88%);
+}
+
+.scan-live-guidance svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.scan-quality {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 0 4px;
+  color: #dbe5e9;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.scan-quality [role="progressbar"] {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 14%);
+}
+
+.scan-quality [role="progressbar"] i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #14e0ce;
+  transition: width 180ms ease;
+}
+
+.scan-live-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.scan-live-controls .pc-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.scan-live-controls .pc-button svg {
+  width: 22px;
+  height: 22px;
+}
+
+.scan-camera-error {
+  display: grid;
+  min-height: 55dvh;
+  place-items: center;
+  align-content: center;
+  gap: 16px;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 22px;
+  padding: 28px;
+  background: #101820;
+  text-align: center;
+}
+
+.scan-camera-error > svg {
+  width: 54px;
+  height: 54px;
+  color: #ffd166;
+}
+
+.scan-camera-error p {
+  margin: 0;
+  color: #dbe5e9;
+}
+
+@media (min-width: 760px) {
+  .scan-live-dialog {
+    padding: 24px;
+  }
+
+  .scan-live-stage {
+    max-height: calc(100dvh - 220px);
+  }
+}
+
+@media (max-width: 430px) {
+  .scan-live-dialog {
+    place-items: stretch;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .scan-live-panel {
+    align-content: center;
+  }
+
+  .scan-live-header,
+  .scan-quality,
+  .scan-live-controls {
+    margin-inline: 10px;
+  }
+
+  .scan-live-stage {
+    border-radius: 0;
+  }
+
+  .scan-live-controls {
+    grid-template-columns: 1fr;
+  }
+}
