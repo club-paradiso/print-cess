@@ -75,6 +75,88 @@ test("benchmark fails closed on external OCR upload or generative reconstruction
   assert.equal(report.violations.length, 2);
 });
 
+test("benchmark rejects missing privacy attestations instead of assuming they are safe", () => {
+  const report = scoreBenchmark({
+    version: 1,
+    suite: "missing-attestations",
+    cases: [
+      {
+        id: "legacy-case",
+        image: { width: 3000, height: 4000 },
+        expectedQuad: UNIT_SQUARE,
+        detectedQuad: UNIT_SQUARE,
+        groundTruthText: "privacy evidence",
+        ocrText: "privacy evidence",
+        shouldAutoCapture: true,
+        didAutoCapture: true,
+        processingMs: 500,
+        pdfBytes: 200 * 1024,
+        pages: 1,
+        ocrRequested: true,
+        searchablePdf: true,
+      },
+      {
+        id: "safe-2",
+        image: { width: 3000, height: 4000 },
+        expectedQuad: UNIT_SQUARE,
+        detectedQuad: UNIT_SQUARE,
+        groundTruthText: "privacy evidence",
+        ocrText: "privacy evidence",
+        shouldAutoCapture: true,
+        didAutoCapture: true,
+        processingMs: 500,
+        pdfBytes: 200 * 1024,
+        pages: 1,
+        ocrRequested: true,
+        searchablePdf: true,
+        externalOcrUpload: false,
+        generativeReconstructionUsed: false,
+      },
+      {
+        id: "safe-3",
+        image: { width: 3000, height: 4000 },
+        expectedQuad: UNIT_SQUARE,
+        detectedQuad: UNIT_SQUARE,
+        groundTruthText: "privacy evidence",
+        ocrText: "privacy evidence",
+        shouldAutoCapture: false,
+        didAutoCapture: false,
+        processingMs: 500,
+        pdfBytes: 200 * 1024,
+        pages: 1,
+        ocrRequested: true,
+        searchablePdf: true,
+        externalOcrUpload: false,
+        generativeReconstructionUsed: false,
+      },
+      {
+        id: "safe-4",
+        image: { width: 3000, height: 4000 },
+        expectedQuad: UNIT_SQUARE,
+        detectedQuad: UNIT_SQUARE,
+        groundTruthText: "privacy evidence",
+        ocrText: "privacy evidence",
+        shouldAutoCapture: false,
+        didAutoCapture: false,
+        processingMs: 500,
+        pdfBytes: 200 * 1024,
+        pages: 1,
+        ocrRequested: true,
+        searchablePdf: true,
+        externalOcrUpload: false,
+        generativeReconstructionUsed: false,
+      },
+    ],
+  });
+
+  assert.equal(report.passed, false);
+  assert.equal(report.metrics.privacyIntegrityViolations, 2);
+  assert.deepEqual(report.violations, [
+    "legacy-case: external OCR upload attestation must be explicitly false",
+    "legacy-case: generative reconstruction attestation must be explicitly false",
+  ]);
+});
+
 test("benchmark produces a passing release-style verdict when all gates are met", () => {
   const cases = Array.from({ length: 4 }, (_, index) => ({
     id: `case-${index + 1}`,
