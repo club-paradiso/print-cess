@@ -39,6 +39,10 @@ export function buildContentSecurityPolicy(
   environment: NodeJS.ProcessEnv = process.env,
 ): string {
   const connectSources = ["'self'", ...blobConnectOrigins(environment)].join(" ");
+  // The document scanner dynamically loads OpenCV.js, whose browser runtime
+  // compiles WebAssembly locally. `wasm-unsafe-eval` permits WebAssembly
+  // compilation without granting JavaScript string evaluation (`unsafe-eval`).
+  const scriptEvaluation = ` 'wasm-unsafe-eval'${isDevelopment ? " 'unsafe-eval'" : ""}`;
   return [
     "default-src 'self'",
     "base-uri 'none'",
@@ -50,7 +54,7 @@ export function buildContentSecurityPolicy(
     "img-src 'self' blob: data:",
     "media-src 'self' blob:",
     `connect-src ${connectSources}`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDevelopment ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
     "script-src-attr 'none'",
     `style-src 'self' ${isDevelopment ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
     "worker-src 'self' blob:",

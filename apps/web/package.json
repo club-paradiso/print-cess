@@ -18,6 +18,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "3.1126.0",
     "@aws-sdk/s3-request-presigner": "3.1126.0",
+    "@opencvjs/web": "5.0.0-release.2",
     "@print-cess/crypto": "workspace:*",
     "@print-cess/i18n": "workspace:*",
     "@print-cess/protocol": "workspace:*",

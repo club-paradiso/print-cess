@@ -52,6 +52,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: 3.1126.0
         version: 3.1126.0
+      '@opencvjs/web':
+        specifier: 5.0.0-release.2
+        version: 5.0.0-release.2
       '@print-cess/crypto':
         specifier: workspace:*
         version: link:../../packages/crypto
@@ -1004,6 +1007,12 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@opencvjs/types@5.0.0-release.2':
+    resolution: {integrity: sha512-f0ufjw6QDVKyR/I6gxc14V6xDnS/FD1cIwTrwUorPQDd8Rn1SBssUTo+OE92V2jg+eynDjGev8ud2pnLaUvVww==}
+
+  '@opencvjs/web@5.0.0-release.2':
+    resolution: {integrity: sha512-Rdu/mJ4qeNLlqwI1D5AEltyM2zuW03Z7nejTVTSCnwiTMZXnPHfXa+SXgP6+NvVMYCl3FiINGPwF1+pXwUO3dw==}
 
   '@oxc-project/types@0.139.0':
     resolution: {integrity: sha512-r9gHphtCs+1M7J0pw6Sn/hh/Wpa/iQrOOkrNAlVLF/gHq+/CJmHIWKKUUhdWjcD6CIa8idarspCsASiXCXvFUw==}
@@ -4069,6 +4078,12 @@ snapshots:
       fastq: 1.20.1
 
   '@nolyfill/is-core-module@1.0.39': {}
+
+  '@opencvjs/types@5.0.0-release.2': {}
+
+  '@opencvjs/web@5.0.0-release.2':
+    dependencies:
+      '@opencvjs/types': 5.0.0-release.2
 
   '@oxc-project/types@0.139.0': {}
 
