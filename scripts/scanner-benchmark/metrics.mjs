@@ -280,13 +280,15 @@ export function scoreBenchmark(input) {
       if (benchmarkCase.searchablePdf === true) searchablePassed += 1;
     }
 
-    if (benchmarkCase.externalOcrUpload === true) {
-      violations.push(`${benchmarkCase.id}: page pixels were uploaded to an external OCR service`);
+    if (benchmarkCase.externalOcrUpload !== false) {
+      violations.push(
+        `${benchmarkCase.id}: external OCR upload attestation must be explicitly false`,
+      );
     }
 
-    if (benchmarkCase.generativeReconstructionUsed === true) {
+    if (benchmarkCase.generativeReconstructionUsed !== false) {
       violations.push(
-        `${benchmarkCase.id}: generative reconstruction modified source document content`,
+        `${benchmarkCase.id}: generative reconstruction attestation must be explicitly false`,
       );
     }
   }
