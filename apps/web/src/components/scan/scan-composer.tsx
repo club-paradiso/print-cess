@@ -275,11 +275,19 @@ async function normalizeScanPage(
   let release: () => void = () => {};
   try {
     if (typeof createImageBitmap === "function") {
-      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-      image = bitmap;
-      width = bitmap.width;
-      height = bitmap.height;
-      release = () => bitmap.close();
+      try {
+        const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+        image = bitmap;
+        width = bitmap.width;
+        height = bitmap.height;
+        release = () => bitmap.close();
+      } catch {
+        const loaded = await loadImage(file);
+        image = loaded.image;
+        width = loaded.image.naturalWidth;
+        height = loaded.image.naturalHeight;
+        release = loaded.release;
+      }
     } else {
       const loaded = await loadImage(file);
       image = loaded.image;

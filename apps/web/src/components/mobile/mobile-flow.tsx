@@ -296,21 +296,26 @@ export function MobileFlow({
   }, [sessionId]);
 
   const chooseFile = useCallback(
-    async (selected: File | undefined) => {
-      if (!selected) return;
+    async (selected: File | undefined, options: { trustedGeneratedPdf?: boolean } = {}) => {
+      if (!selected) return false;
       try {
         setFileErrorKey(undefined);
         setFileNoticeKey(undefined);
         const result = await validateMobileDocument(selected, {
           allowHwp: supportsHwp,
           allowHwpx: supportsHwpx,
+          ...(options.trustedGeneratedPdf === undefined
+            ? {}
+            : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
         });
         setFile(selected);
         setValidated(result);
         setStage("preview");
+        return true;
       } catch (error) {
         clearDocument();
         setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
+        return false;
       }
     },
     [clearDocument, supportsHwp, supportsHwpx],
@@ -450,8 +455,8 @@ export function MobileFlow({
           locale={locale}
           onCancel={() => setScannerOpen(false)}
           onComplete={async (scanned) => {
-            setScannerOpen(false);
-            await chooseFile(scanned);
+            const accepted = await chooseFile(scanned, { trustedGeneratedPdf: true });
+            if (accepted) setScannerOpen(false);
           }}
         />
       ) : null}

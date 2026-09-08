@@ -149,7 +149,8 @@ const fil: typeof en = {
   making: "Ginagawa ang PDF…",
   back: "Bumalik",
   done: "Handa na ang na-scan na dokumento",
-  private: "Mananatili sa device na ito ang mga larawan at PDF maliban kung ibabahagi mo ang mga ito.",
+  private:
+    "Mananatili sa device na ito ang mga larawan at PDF maliban kung ibabahagi mo ang mga ito.",
   share: "Ipadala sa ibang device",
   download: "I-download ang PDF",
   print: "I-print ngayon",
