@@ -48,6 +48,8 @@ import {
   uploadCiphertext,
   ApiClientError,
 } from "@/lib/api-client";
+import { ScanComposer } from "@/components/scan/scan-composer";
+import { scanCopy } from "@/components/scan/scan-copy";
 import {
   FileValidationError,
   validateMobileDocument,
@@ -189,6 +191,7 @@ export function MobileFlow({
   const [supportsHwp, setSupportsHwp] = useState(false);
   const [reminderStage, setReminderStage] = useState<Stage>();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const photoInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const watchAbort = useRef<AbortController>(null);
@@ -442,7 +445,17 @@ export function MobileFlow({
         </p>
       ) : null}
       {stage === "boot" ? <Loading text={text("preparingSession")} /> : null}
-      {stage === "file" ? (
+      {stage === "file" && scannerOpen ? (
+        <ScanComposer
+          locale={locale}
+          onCancel={() => setScannerOpen(false)}
+          onComplete={async (scanned) => {
+            setScannerOpen(false);
+            await chooseFile(scanned);
+          }}
+        />
+      ) : null}
+      {stage === "file" && !scannerOpen ? (
         <section className="mobile-step">
           <StatusIcon>
             <FileImage size={32} aria-hidden="true" />
@@ -476,9 +489,12 @@ export function MobileFlow({
             </p>
           ) : null}
           <div className="mobile-source-actions">
-            <PrimaryButton onClick={() => photoInput.current?.click()}>
-              <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
+            <PrimaryButton onClick={() => setScannerOpen(true)}>
+              <ScanLine aria-hidden="true" /> {scanCopy(locale).title}
             </PrimaryButton>
+            <SecondaryButton onClick={() => photoInput.current?.click()}>
+              <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
+            </SecondaryButton>
             <SecondaryButton onClick={() => fileInput.current?.click()}>
               <Files aria-hidden="true" /> {text("locationFiles")}
             </SecondaryButton>
