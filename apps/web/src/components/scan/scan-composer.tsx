@@ -226,7 +226,11 @@ export function ScanComposer({
         </>
       )}
 
-      {error ? <p className="scan-error" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="scan-error" role="alert">
+          {error}
+        </p>
+      ) : null}
       <label className="scan-enhance">
         <input
           type="checkbox"

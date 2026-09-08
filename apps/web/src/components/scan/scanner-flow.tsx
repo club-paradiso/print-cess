@@ -4,13 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Download, Languages, Printer, RotateCcw, Send, ShieldCheck } from "lucide-react";
 
 import { LOCALE_NAMES, SUPPORTED_LOCALES, type SupportedLocale } from "@print-cess/i18n";
-import {
-  PrimaryButton,
-  ScreenShell,
-  SecondaryButton,
-  StatusIcon,
-  Wordmark,
-} from "@print-cess/ui";
+import { PrimaryButton, ScreenShell, SecondaryButton, StatusIcon, Wordmark } from "@print-cess/ui";
 
 import { useVisitorLocale } from "@/lib/use-visitor-locale";
 import { ScanComposer } from "./scan-composer";

@@ -55,9 +55,7 @@ describe("home page", () => {
     const page = await HomePage();
     const hrefs = hrefsOf(page);
 
-    expect(hrefs).toEqual(
-      expect.arrayContaining(["/scan", "/send", "/receive", "/workstation"]),
-    );
+    expect(hrefs).toEqual(expect.arrayContaining(["/scan", "/send", "/receive", "/workstation"]));
     expect(hrefs).not.toContain("/kiosk");
   });
 
