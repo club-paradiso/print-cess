@@ -16,8 +16,11 @@ export const DEFAULT_GATES = Object.freeze({
   searchablePdfRate: 0.99,
 });
 
-function cross(a, b, p) {
-  return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+function cross(a, b, point) {
+  return (
+    (b.x - a.x) * (point.y - a.y) -
+    (b.y - a.y) * (point.x - a.x)
+  );
 }
 
 function signedArea(points) {
@@ -48,6 +51,7 @@ function lineIntersection(segmentStart, segmentEnd, clipStart, clipEnd) {
   const offsetX = clipStart.x - segmentStart.x;
   const offsetY = clipStart.y - segmentStart.y;
   const t = (offsetX * clipY - offsetY * clipX) / denominator;
+
   return {
     x: segmentStart.x + t * segmentX,
     y: segmentStart.y + t * segmentY,
@@ -65,21 +69,27 @@ export function intersectConvexPolygons(subject, clip) {
     const clipEnd = clip[(edge + 1) % clip.length];
     const input = output;
     output = [];
+
     if (input.length === 0) break;
 
     let previous = input[input.length - 1];
     for (const current of input) {
-      const currentInside = orientation * cross(clipStart, clipEnd, current) >= -EPSILON;
-      const previousInside = orientation * cross(clipStart, clipEnd, previous) >= -EPSILON;
+      const currentInside =
+        orientation * cross(clipStart, clipEnd, current) >= -EPSILON;
+      const previousInside =
+        orientation * cross(clipStart, clipEnd, previous) >= -EPSILON;
 
       if (currentInside) {
         if (!previousInside) {
-          output.push(lineIntersection(previous, current, clipStart, clipEnd));
+          output.push(
+            lineIntersection(previous, current, clipStart, clipEnd),
+          );
         }
         output.push(current);
       } else if (previousInside) {
         output.push(lineIntersection(previous, current, clipStart, clipEnd));
       }
+
       previous = current;
     }
   }
@@ -90,13 +100,17 @@ export function intersectConvexPolygons(subject, clip) {
 export function polygonIou(expected, actual) {
   const expectedArea = polygonArea(expected);
   const actualArea = polygonArea(actual);
-  const intersectionArea = polygonArea(intersectConvexPolygons(expected, actual));
+  const intersectionArea = polygonArea(
+    intersectConvexPolygons(expected, actual),
+  );
   const unionArea = expectedArea + actualArea - intersectionArea;
+
   return unionArea <= EPSILON ? 0 : intersectionArea / unionArea;
 }
 
 export function cornerErrorPercent(expected, actual, image) {
   if (expected.length !== actual.length || expected.length === 0) return null;
+
   const diagonal = Math.hypot(image.width, image.height);
   if (diagonal <= EPSILON) return null;
 
@@ -106,6 +120,7 @@ export function cornerErrorPercent(expected, actual, image) {
     const dy = (expected[index].y - actual[index].y) * image.height;
     squared += dx * dx + dy * dy;
   }
+
   return (Math.sqrt(squared / expected.length) / diagonal) * 100;
 }
 
@@ -116,6 +131,7 @@ export function levenshteinDistance(left, right) {
 
   for (let row = 1; row <= a.length; row += 1) {
     const current = [row];
+
     for (let column = 1; column <= b.length; column += 1) {
       current[column] = Math.min(
         current[column - 1] + 1,
@@ -123,6 +139,7 @@ export function levenshteinDistance(left, right) {
         previous[column - 1] + (a[row - 1] === b[column - 1] ? 0 : 1),
       );
     }
+
     previous = current;
   }
 
@@ -139,22 +156,29 @@ export function normalizeOcrText(value) {
 export function characterErrorRate(expected, actual) {
   const reference = normalizeOcrText(expected);
   const candidate = normalizeOcrText(actual);
+
   if (reference.length === 0) return candidate.length === 0 ? 0 : 1;
+
   return levenshteinDistance(reference, candidate) / Array.from(reference).length;
 }
 
 export function wordErrorRate(expected, actual) {
   const reference = normalizeOcrText(expected).split(" ").filter(Boolean);
   const candidate = normalizeOcrText(actual).split(" ").filter(Boolean);
+
   if (reference.length === 0) return candidate.length === 0 ? 0 : 1;
+
   return levenshteinDistance(reference, candidate) / reference.length;
 }
 
 export function percentile(values, percentileValue) {
   if (values.length === 0) return null;
+
   const sorted = [...values].sort((a, b) => a - b);
   const rank = Math.ceil(percentileValue * sorted.length) - 1;
-  return sorted[Math.max(0, Math.min(sorted.length - 1, rank))];
+  const boundedRank = Math.max(0, Math.min(sorted.length - 1, rank));
+
+  return sorted[boundedRank];
 }
 
 function mean(values) {
@@ -166,9 +190,61 @@ function ratio(numerator, denominator) {
   return denominator === 0 ? null : numerator / denominator;
 }
 
+function isCaptureObservation(benchmarkCase) {
+  return (
+    typeof benchmarkCase.shouldAutoCapture === "boolean" &&
+    typeof benchmarkCase.didAutoCapture === "boolean"
+  );
+}
+
+function hasOcrObservation(benchmarkCase) {
+  return (
+    typeof benchmarkCase.groundTruthText === "string" &&
+    typeof benchmarkCase.ocrText === "string"
+  );
+}
+
+function hasGeometryObservation(benchmarkCase) {
+  return Boolean(
+    benchmarkCase.expectedQuad &&
+      benchmarkCase.detectedQuad &&
+      benchmarkCase.image,
+  );
+}
+
+function createCheck(name, passed, value, threshold, operator) {
+  return { name, passed, value, threshold, operator };
+}
+
+function minimumCheck(name, value, threshold) {
+  return createCheck(name, value >= threshold, value, threshold, ">=");
+}
+
+function atLeastCheck(name, value, threshold) {
+  return createCheck(
+    name,
+    value !== null && value >= threshold,
+    value,
+    threshold,
+    ">=",
+  );
+}
+
+function atMostCheck(name, value, threshold) {
+  return createCheck(
+    name,
+    value !== null && value <= threshold,
+    value,
+    threshold,
+    "<=",
+  );
+}
+
 export function scoreBenchmark(input) {
   if (input?.version !== 1 || !Array.isArray(input.cases)) {
-    throw new Error("Scanner benchmark input must use version 1 and contain a cases array.");
+    throw new Error(
+      "Scanner benchmark input must use version 1 and contain a cases array.",
+    );
   }
 
   const gates = { ...DEFAULT_GATES, ...(input.gates ?? {}) };
@@ -178,41 +254,64 @@ export function scoreBenchmark(input) {
   const werValues = [];
   const processingTimes = [];
   const pdfKibPerPage = [];
+  const violations = [];
   let truePositive = 0;
   let falsePositive = 0;
   let falseNegative = 0;
   let searchableRequested = 0;
   let searchablePassed = 0;
-  const violations = [];
 
   for (const benchmarkCase of input.cases) {
-    if (benchmarkCase.expectedQuad && benchmarkCase.detectedQuad && benchmarkCase.image) {
-      geometryIous.push(polygonIou(benchmarkCase.expectedQuad, benchmarkCase.detectedQuad));
+    if (hasGeometryObservation(benchmarkCase)) {
+      geometryIous.push(
+        polygonIou(benchmarkCase.expectedQuad, benchmarkCase.detectedQuad),
+      );
+
       const cornerError = cornerErrorPercent(
         benchmarkCase.expectedQuad,
         benchmarkCase.detectedQuad,
         benchmarkCase.image,
       );
+
       if (cornerError !== null) cornerErrors.push(cornerError);
     }
 
-    if (typeof benchmarkCase.groundTruthText === "string" && typeof benchmarkCase.ocrText === "string") {
-      cerValues.push(characterErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText));
-      werValues.push(wordErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText));
+    if (hasOcrObservation(benchmarkCase)) {
+      cerValues.push(
+        characterErrorRate(
+          benchmarkCase.groundTruthText,
+          benchmarkCase.ocrText,
+        ),
+      );
+      werValues.push(
+        wordErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText),
+      );
+    }
+
+    if (isCaptureObservation(benchmarkCase)) {
+      if (benchmarkCase.shouldAutoCapture && benchmarkCase.didAutoCapture) {
+        truePositive += 1;
+      }
+      if (!benchmarkCase.shouldAutoCapture && benchmarkCase.didAutoCapture) {
+        falsePositive += 1;
+      }
+      if (benchmarkCase.shouldAutoCapture && !benchmarkCase.didAutoCapture) {
+        falseNegative += 1;
+      }
+    }
+
+    if (Number.isFinite(benchmarkCase.processingMs)) {
+      processingTimes.push(benchmarkCase.processingMs);
     }
 
     if (
-      typeof benchmarkCase.shouldAutoCapture === "boolean" &&
-      typeof benchmarkCase.didAutoCapture === "boolean"
+      Number.isFinite(benchmarkCase.pdfBytes) &&
+      Number.isFinite(benchmarkCase.pages) &&
+      benchmarkCase.pages > 0
     ) {
-      if (benchmarkCase.shouldAutoCapture && benchmarkCase.didAutoCapture) truePositive += 1;
-      if (!benchmarkCase.shouldAutoCapture && benchmarkCase.didAutoCapture) falsePositive += 1;
-      if (benchmarkCase.shouldAutoCapture && !benchmarkCase.didAutoCapture) falseNegative += 1;
-    }
-
-    if (Number.isFinite(benchmarkCase.processingMs)) processingTimes.push(benchmarkCase.processingMs);
-    if (Number.isFinite(benchmarkCase.pdfBytes) && Number.isFinite(benchmarkCase.pages) && benchmarkCase.pages > 0) {
-      pdfKibPerPage.push(benchmarkCase.pdfBytes / 1024 / benchmarkCase.pages);
+      pdfKibPerPage.push(
+        benchmarkCase.pdfBytes / 1024 / benchmarkCase.pages,
+      );
     }
 
     if (benchmarkCase.ocrRequested === true) {
@@ -221,17 +320,19 @@ export function scoreBenchmark(input) {
     }
 
     if (benchmarkCase.externalOcrUpload === true) {
-      violations.push(`${benchmarkCase.id}: page pixels were uploaded to an external OCR service`);
+      violations.push(
+        `${benchmarkCase.id}: page pixels were uploaded to an external OCR service`,
+      );
     }
+
     if (benchmarkCase.generativeReconstructionUsed === true) {
-      violations.push(`${benchmarkCase.id}: generative reconstruction modified source document content`);
+      violations.push(
+        `${benchmarkCase.id}: generative reconstruction modified source document content`,
+      );
     }
   }
 
-  const captureSamples = truePositive + falsePositive + falseNegative + input.cases.filter(
-    (item) => item.shouldAutoCapture === false && item.didAutoCapture === false,
-  ).length;
-
+  const captureSamples = input.cases.filter(isCaptureObservation).length;
   const metrics = {
     cases: input.cases.length,
     geometryCases: geometryIous.length,
@@ -250,27 +351,59 @@ export function scoreBenchmark(input) {
   };
 
   const checks = [
-    ["minimum total cases", metrics.cases >= gates.minCases, metrics.cases, gates.minCases, ">="],
-    ["minimum geometry cases", metrics.geometryCases >= gates.minGeometryCases, metrics.geometryCases, gates.minGeometryCases, ">="],
-    ["minimum OCR cases", metrics.ocrCases >= gates.minOcrCases, metrics.ocrCases, gates.minOcrCases, ">="],
-    ["minimum capture cases", metrics.captureCases >= gates.minCaptureCases, metrics.captureCases, gates.minCaptureCases, ">="],
-    ["mean edge IoU", metrics.meanEdgeIou !== null && metrics.meanEdgeIou >= gates.meanEdgeIou, metrics.meanEdgeIou, gates.meanEdgeIou, ">="],
-    ["p95 corner error (%)", metrics.p95CornerErrorPercent !== null && metrics.p95CornerErrorPercent <= gates.p95CornerErrorPercent, metrics.p95CornerErrorPercent, gates.p95CornerErrorPercent, "<="],
-    ["mean OCR CER", metrics.meanCer !== null && metrics.meanCer <= gates.meanCer, metrics.meanCer, gates.meanCer, "<="],
-    ["mean OCR WER", metrics.meanWer !== null && metrics.meanWer <= gates.meanWer, metrics.meanWer, gates.meanWer, "<="],
-    ["auto-capture precision", metrics.autoCapturePrecision !== null && metrics.autoCapturePrecision >= gates.autoCapturePrecision, metrics.autoCapturePrecision, gates.autoCapturePrecision, ">="],
-    ["auto-capture recall", metrics.autoCaptureRecall !== null && metrics.autoCaptureRecall >= gates.autoCaptureRecall, metrics.autoCaptureRecall, gates.autoCaptureRecall, ">="],
-    ["p95 processing time (ms)", metrics.p95ProcessingMs !== null && metrics.p95ProcessingMs <= gates.p95ProcessingMs, metrics.p95ProcessingMs, gates.p95ProcessingMs, "<="],
-    ["p95 PDF KiB/page", metrics.p95PdfKibPerPage !== null && metrics.p95PdfKibPerPage <= gates.p95PdfKibPerPage, metrics.p95PdfKibPerPage, gates.p95PdfKibPerPage, "<="],
-    ["searchable PDF rate", metrics.searchablePdfRate !== null && metrics.searchablePdfRate >= gates.searchablePdfRate, metrics.searchablePdfRate, gates.searchablePdfRate, ">="],
-    ["privacy/integrity violations", metrics.privacyIntegrityViolations === 0, metrics.privacyIntegrityViolations, 0, "=="],
-  ].map(([name, passed, value, threshold, operator]) => ({
-    name,
-    passed,
-    value,
-    threshold,
-    operator,
-  }));
+    minimumCheck("minimum total cases", metrics.cases, gates.minCases),
+    minimumCheck(
+      "minimum geometry cases",
+      metrics.geometryCases,
+      gates.minGeometryCases,
+    ),
+    minimumCheck("minimum OCR cases", metrics.ocrCases, gates.minOcrCases),
+    minimumCheck(
+      "minimum capture cases",
+      metrics.captureCases,
+      gates.minCaptureCases,
+    ),
+    atLeastCheck("mean edge IoU", metrics.meanEdgeIou, gates.meanEdgeIou),
+    atMostCheck(
+      "p95 corner error (%)",
+      metrics.p95CornerErrorPercent,
+      gates.p95CornerErrorPercent,
+    ),
+    atMostCheck("mean OCR CER", metrics.meanCer, gates.meanCer),
+    atMostCheck("mean OCR WER", metrics.meanWer, gates.meanWer),
+    atLeastCheck(
+      "auto-capture precision",
+      metrics.autoCapturePrecision,
+      gates.autoCapturePrecision,
+    ),
+    atLeastCheck(
+      "auto-capture recall",
+      metrics.autoCaptureRecall,
+      gates.autoCaptureRecall,
+    ),
+    atMostCheck(
+      "p95 processing time (ms)",
+      metrics.p95ProcessingMs,
+      gates.p95ProcessingMs,
+    ),
+    atMostCheck(
+      "p95 PDF KiB/page",
+      metrics.p95PdfKibPerPage,
+      gates.p95PdfKibPerPage,
+    ),
+    atLeastCheck(
+      "searchable PDF rate",
+      metrics.searchablePdfRate,
+      gates.searchablePdfRate,
+    ),
+    createCheck(
+      "privacy/integrity violations",
+      metrics.privacyIntegrityViolations === 0,
+      metrics.privacyIntegrityViolations,
+      0,
+      "==",
+    ),
+  ];
 
   return {
     version: 1,
