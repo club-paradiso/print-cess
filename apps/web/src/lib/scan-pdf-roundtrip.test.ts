@@ -31,9 +31,7 @@ describe("searchable scan PDF round trip", () => {
       expect(document.numPages).toBe(1);
       const page = await document.getPage(1);
       const content = await page.getTextContent();
-      const extracted = content.items
-        .map((item) => ("str" in item ? item.str : ""))
-        .join(" ");
+      const extracted = content.items.map((item) => ("str" in item ? item.str : "")).join(" ");
 
       expect(extracted).toContain("HELLO");
       expect(extracted).toContain("한국어");
