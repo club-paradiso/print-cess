@@ -39,11 +39,15 @@ async function getOpenCv(): Promise<CvRuntime> {
 
 export function orderDocumentQuad(points: readonly ScanPoint[]): DocumentQuad {
   if (points.length !== 4) throw new Error("documentQuadRequiresFourPoints");
-  const topLeft = points.reduce((best, point) => (point.x + point.y < best.x + best.y ? point : best));
+  const topLeft = points.reduce((best, point) =>
+    point.x + point.y < best.x + best.y ? point : best,
+  );
   const bottomRight = points.reduce((best, point) =>
     point.x + point.y > best.x + best.y ? point : best,
   );
-  const topRight = points.reduce((best, point) => (point.x - point.y > best.x - best.y ? point : best));
+  const topRight = points.reduce((best, point) =>
+    point.x - point.y > best.x - best.y ? point : best,
+  );
   const bottomLeft = points.reduce((best, point) =>
     point.y - point.x > best.y - best.x ? point : best,
   );
@@ -76,7 +80,9 @@ export async function detectDocument(file: File): Promise<DocumentDetection> {
   }
 }
 
-export async function detectDocumentOnCanvas(canvas: HTMLCanvasElement): Promise<DocumentDetection> {
+export async function detectDocumentOnCanvas(
+  canvas: HTMLCanvasElement,
+): Promise<DocumentDetection> {
   const cv = await getOpenCv();
   const src = cv.imread(canvas);
   const gray = new cv.Mat();
@@ -305,11 +311,12 @@ function documentDimensions(quad: DocumentQuad, sourceWidth: number, sourceHeigh
 }
 
 function detectionScore(quad: DocumentQuad, coverage: number): number {
-  const angleScore = quad.reduce((total, point, index) => {
-    const previous = quad[(index + 3) % 4]!;
-    const next = quad[(index + 1) % 4]!;
-    return total + rightAngleScore(previous, point, next);
-  }, 0) / 4;
+  const angleScore =
+    quad.reduce((total, point, index) => {
+      const previous = quad[(index + 3) % 4]!;
+      const next = quad[(index + 1) % 4]!;
+      return total + rightAngleScore(previous, point, next);
+    }, 0) / 4;
   const coverageScore = Math.min(1, Math.max(0, (coverage - 0.16) / 0.62));
   const borderPenalty = quad.some(
     (point) => point.x < 0.006 || point.x > 0.994 || point.y < 0.006 || point.y > 0.994,

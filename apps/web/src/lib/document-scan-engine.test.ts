@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-  clampQuad,
-  orderDocumentQuad,
-  quadArea,
-  type DocumentQuad,
-} from "./document-scan-engine";
+import { clampQuad, orderDocumentQuad, quadArea, type DocumentQuad } from "./document-scan-engine";
 
 describe("document scan geometry", () => {
   it("orders detected corners as top-left, top-right, bottom-right, bottom-left", () => {
