@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
 
-import { analyzeCapturePixels, type DocumentDetection } from "./document-scan-engine";
+import {
+  analyzeCapturePixels,
+  type DocumentDetection,
+} from "./document-scan-engine";
 
-function imageData(width: number, height: number, pixel: (x: number, y: number) => number) {
+function imageData(
+  width: number,
+  height: number,
+  pixel: (x: number, y: number) => number,
+) {
   const data = new Uint8ClampedArray(width * height * 4);
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
@@ -31,7 +38,9 @@ const LARGE_DOCUMENT: DocumentDetection = {
 describe("adversarial live capture quality gates", () => {
   it("rejects a detected document whose boundary confidence is too low", () => {
     const quality = analyzeCapturePixels(
-      imageData(120, 160, (x, y) => (y % 18 < 4 && x > 16 && x < 104 ? 45 : 214)),
+      imageData(120, 160, (x, y) =>
+        y % 18 < 4 && x > 16 && x < 104 ? 45 : 214,
+      ),
       { ...LARGE_DOCUMENT, confidence: 0.42 },
     );
 
@@ -41,7 +50,9 @@ describe("adversarial live capture quality gates", () => {
 
   it("asks the user to move closer when the page occupies too little of the frame", () => {
     const quality = analyzeCapturePixels(
-      imageData(120, 160, (x, y) => (y % 18 < 4 && x > 16 && x < 104 ? 45 : 214)),
+      imageData(120, 160, (x, y) =>
+        y % 18 < 4 && x > 16 && x < 104 ? 45 : 214,
+      ),
       {
         detected: true,
         confidence: 0.94,
