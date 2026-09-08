@@ -17,10 +17,7 @@ export const DEFAULT_GATES = Object.freeze({
 });
 
 function cross(a, b, point) {
-  return (
-    (b.x - a.x) * (point.y - a.y) -
-    (b.y - a.y) * (point.x - a.x)
-  );
+  return (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x);
 }
 
 function signedArea(points) {
@@ -74,16 +71,12 @@ export function intersectConvexPolygons(subject, clip) {
 
     let previous = input[input.length - 1];
     for (const current of input) {
-      const currentInside =
-        orientation * cross(clipStart, clipEnd, current) >= -EPSILON;
-      const previousInside =
-        orientation * cross(clipStart, clipEnd, previous) >= -EPSILON;
+      const currentInside = orientation * cross(clipStart, clipEnd, current) >= -EPSILON;
+      const previousInside = orientation * cross(clipStart, clipEnd, previous) >= -EPSILON;
 
       if (currentInside) {
         if (!previousInside) {
-          output.push(
-            lineIntersection(previous, current, clipStart, clipEnd),
-          );
+          output.push(lineIntersection(previous, current, clipStart, clipEnd));
         }
         output.push(current);
       } else if (previousInside) {
@@ -100,9 +93,7 @@ export function intersectConvexPolygons(subject, clip) {
 export function polygonIou(expected, actual) {
   const expectedArea = polygonArea(expected);
   const actualArea = polygonArea(actual);
-  const intersectionArea = polygonArea(
-    intersectConvexPolygons(expected, actual),
-  );
+  const intersectionArea = polygonArea(intersectConvexPolygons(expected, actual));
   const unionArea = expectedArea + actualArea - intersectionArea;
 
   return unionArea <= EPSILON ? 0 : intersectionArea / unionArea;
@@ -199,17 +190,12 @@ function isCaptureObservation(benchmarkCase) {
 
 function hasOcrObservation(benchmarkCase) {
   return (
-    typeof benchmarkCase.groundTruthText === "string" &&
-    typeof benchmarkCase.ocrText === "string"
+    typeof benchmarkCase.groundTruthText === "string" && typeof benchmarkCase.ocrText === "string"
   );
 }
 
 function hasGeometryObservation(benchmarkCase) {
-  return Boolean(
-    benchmarkCase.expectedQuad &&
-      benchmarkCase.detectedQuad &&
-      benchmarkCase.image,
-  );
+  return Boolean(benchmarkCase.expectedQuad && benchmarkCase.detectedQuad && benchmarkCase.image);
 }
 
 function createCheck(name, passed, value, threshold, operator) {
@@ -221,30 +207,16 @@ function minimumCheck(name, value, threshold) {
 }
 
 function atLeastCheck(name, value, threshold) {
-  return createCheck(
-    name,
-    value !== null && value >= threshold,
-    value,
-    threshold,
-    ">=",
-  );
+  return createCheck(name, value !== null && value >= threshold, value, threshold, ">=");
 }
 
 function atMostCheck(name, value, threshold) {
-  return createCheck(
-    name,
-    value !== null && value <= threshold,
-    value,
-    threshold,
-    "<=",
-  );
+  return createCheck(name, value !== null && value <= threshold, value, threshold, "<=");
 }
 
 export function scoreBenchmark(input) {
   if (input?.version !== 1 || !Array.isArray(input.cases)) {
-    throw new Error(
-      "Scanner benchmark input must use version 1 and contain a cases array.",
-    );
+    throw new Error("Scanner benchmark input must use version 1 and contain a cases array.");
   }
 
   const gates = { ...DEFAULT_GATES, ...(input.gates ?? {}) };
@@ -263,9 +235,7 @@ export function scoreBenchmark(input) {
 
   for (const benchmarkCase of input.cases) {
     if (hasGeometryObservation(benchmarkCase)) {
-      geometryIous.push(
-        polygonIou(benchmarkCase.expectedQuad, benchmarkCase.detectedQuad),
-      );
+      geometryIous.push(polygonIou(benchmarkCase.expectedQuad, benchmarkCase.detectedQuad));
 
       const cornerError = cornerErrorPercent(
         benchmarkCase.expectedQuad,
@@ -277,15 +247,8 @@ export function scoreBenchmark(input) {
     }
 
     if (hasOcrObservation(benchmarkCase)) {
-      cerValues.push(
-        characterErrorRate(
-          benchmarkCase.groundTruthText,
-          benchmarkCase.ocrText,
-        ),
-      );
-      werValues.push(
-        wordErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText),
-      );
+      cerValues.push(characterErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText));
+      werValues.push(wordErrorRate(benchmarkCase.groundTruthText, benchmarkCase.ocrText));
     }
 
     if (isCaptureObservation(benchmarkCase)) {
@@ -309,9 +272,7 @@ export function scoreBenchmark(input) {
       Number.isFinite(benchmarkCase.pages) &&
       benchmarkCase.pages > 0
     ) {
-      pdfKibPerPage.push(
-        benchmarkCase.pdfBytes / 1024 / benchmarkCase.pages,
-      );
+      pdfKibPerPage.push(benchmarkCase.pdfBytes / 1024 / benchmarkCase.pages);
     }
 
     if (benchmarkCase.ocrRequested === true) {
@@ -320,9 +281,7 @@ export function scoreBenchmark(input) {
     }
 
     if (benchmarkCase.externalOcrUpload === true) {
-      violations.push(
-        `${benchmarkCase.id}: page pixels were uploaded to an external OCR service`,
-      );
+      violations.push(`${benchmarkCase.id}: page pixels were uploaded to an external OCR service`);
     }
 
     if (benchmarkCase.generativeReconstructionUsed === true) {
@@ -352,23 +311,11 @@ export function scoreBenchmark(input) {
 
   const checks = [
     minimumCheck("minimum total cases", metrics.cases, gates.minCases),
-    minimumCheck(
-      "minimum geometry cases",
-      metrics.geometryCases,
-      gates.minGeometryCases,
-    ),
+    minimumCheck("minimum geometry cases", metrics.geometryCases, gates.minGeometryCases),
     minimumCheck("minimum OCR cases", metrics.ocrCases, gates.minOcrCases),
-    minimumCheck(
-      "minimum capture cases",
-      metrics.captureCases,
-      gates.minCaptureCases,
-    ),
+    minimumCheck("minimum capture cases", metrics.captureCases, gates.minCaptureCases),
     atLeastCheck("mean edge IoU", metrics.meanEdgeIou, gates.meanEdgeIou),
-    atMostCheck(
-      "p95 corner error (%)",
-      metrics.p95CornerErrorPercent,
-      gates.p95CornerErrorPercent,
-    ),
+    atMostCheck("p95 corner error (%)", metrics.p95CornerErrorPercent, gates.p95CornerErrorPercent),
     atMostCheck("mean OCR CER", metrics.meanCer, gates.meanCer),
     atMostCheck("mean OCR WER", metrics.meanWer, gates.meanWer),
     atLeastCheck(
@@ -376,26 +323,10 @@ export function scoreBenchmark(input) {
       metrics.autoCapturePrecision,
       gates.autoCapturePrecision,
     ),
-    atLeastCheck(
-      "auto-capture recall",
-      metrics.autoCaptureRecall,
-      gates.autoCaptureRecall,
-    ),
-    atMostCheck(
-      "p95 processing time (ms)",
-      metrics.p95ProcessingMs,
-      gates.p95ProcessingMs,
-    ),
-    atMostCheck(
-      "p95 PDF KiB/page",
-      metrics.p95PdfKibPerPage,
-      gates.p95PdfKibPerPage,
-    ),
-    atLeastCheck(
-      "searchable PDF rate",
-      metrics.searchablePdfRate,
-      gates.searchablePdfRate,
-    ),
+    atLeastCheck("auto-capture recall", metrics.autoCaptureRecall, gates.autoCaptureRecall),
+    atMostCheck("p95 processing time (ms)", metrics.p95ProcessingMs, gates.p95ProcessingMs),
+    atMostCheck("p95 PDF KiB/page", metrics.p95PdfKibPerPage, gates.p95PdfKibPerPage),
+    atLeastCheck("searchable PDF rate", metrics.searchablePdfRate, gates.searchablePdfRate),
     createCheck(
       "privacy/integrity violations",
       metrics.privacyIntegrityViolations === 0,
