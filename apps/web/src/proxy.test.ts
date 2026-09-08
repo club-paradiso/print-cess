@@ -25,6 +25,16 @@ describe("Content Security Policy", () => {
     expect(policy).not.toContain(" 'unsafe-eval'");
   });
 
+  it("allows only the pinned OCR asset origins required for local recognition", () => {
+    const policy = buildContentSecurityPolicy("test-nonce", false, env());
+
+    expect(policy).toContain("https://cdn.jsdelivr.net");
+    expect(policy).toContain("https://tessdata.projectnaptha.com");
+    expect(policy).toContain("worker-src 'self' blob: https://cdn.jsdelivr.net");
+    expect(policy).not.toContain("worker-src *");
+    expect(policy).not.toContain("connect-src *");
+  });
+
   it("admits the configured S3 endpoint so the browser can reach it", () => {
     // The phone PUTs and GETs ciphertext directly. Without its origin here the
     // S3 provider is selectable but unusable from a browser.
