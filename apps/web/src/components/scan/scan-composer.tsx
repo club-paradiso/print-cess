@@ -1,11 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowDown,
   ArrowLeft,
   ArrowUp,
   Camera,
+  Crop,
   Images,
   Plus,
   RotateCw,
@@ -16,18 +17,29 @@ import {
 import type { SupportedLocale } from "@print-cess/i18n";
 import { PrimaryButton, SecondaryButton, StatusIcon } from "@print-cess/ui";
 
+import {
+  detectDocument,
+  processDocument,
+  type DocumentQuad,
+  type ScanFilter,
+} from "@/lib/document-scan-engine";
 import { buildScannedPdf, type PdfImagePage } from "@/lib/scan-pdf";
+import { advancedScanCopy } from "./scan-advanced-copy";
+import { DocumentCropEditor } from "./document-crop-editor";
 import { formatScanCopy, scanCopy } from "./scan-copy";
 
 const MAX_PAGES = 10;
-const MAX_IMAGE_EDGE = 1600;
-const JPEG_QUALITY = 0.78;
 
 type ScanPage = {
   id: string;
   file: File;
+  sourcePreviewUrl: string;
   previewUrl: string;
   rotation: number;
+  quad: DocumentQuad;
+  filter: ScanFilter;
+  detected: boolean;
+  confidence: number;
 };
 
 export function ScanComposer({
@@ -40,10 +52,12 @@ export function ScanComposer({
   onCancel?: () => void;
 }) {
   const copy = scanCopy(locale);
+  const advanced = advancedScanCopy(locale);
   const [pages, setPages] = useState<ScanPage[]>([]);
-  const [enhance, setEnhance] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [status, setStatus] = useState("");
   const [error, setError] = useState("");
+  const [editingId, setEditingId] = useState<string | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);
   const previewUrls = useRef(new Set<string>());
@@ -56,24 +70,66 @@ export function ScanComposer({
     [],
   );
 
+  const editingPage = useMemo(
+    () => pages.find((page) => page.id === editingId),
+    [editingId, pages],
+  );
+
   const addFiles = useCallback(
-    (selection: FileList | null) => {
-      if (!selection?.length) return;
+    async (selection: FileList | null) => {
+      if (!selection?.length || busy) return;
       setError("");
       const remaining = MAX_PAGES - pages.length;
       if (selection.length > remaining) setError(copy.tooMany);
-      const added = Array.from(selection)
-        .slice(0, remaining)
-        .map((file) => {
-          const previewUrl = URL.createObjectURL(file);
+      const selected = Array.from(selection).slice(0, remaining);
+      if (selected.length === 0) return;
+
+      setBusy(true);
+      setStatus(advanced.detecting);
+      const added: ScanPage[] = [];
+      try {
+        for (const file of selected) {
+          const sourcePreviewUrl = URL.createObjectURL(file);
+          previewUrls.current.add(sourcePreviewUrl);
+          const detection = await detectDocument(file);
+          setStatus(advanced.processing);
+          const processed = await processDocument(file, {
+            quad: detection.quad,
+            filter: "auto",
+            preview: true,
+          });
+          const previewUrl = URL.createObjectURL(processed.blob);
           previewUrls.current.add(previewUrl);
-          return { id: crypto.randomUUID(), file, previewUrl, rotation: 0 };
-        });
-      setPages((current) => [...current, ...added]);
-      if (cameraInput.current) cameraInput.current.value = "";
-      if (galleryInput.current) galleryInput.current.value = "";
+          added.push({
+            id: crypto.randomUUID(),
+            file,
+            sourcePreviewUrl,
+            previewUrl,
+            rotation: 0,
+            quad: detection.quad,
+            filter: "auto",
+            detected: detection.detected,
+            confidence: detection.confidence,
+          });
+          setStatus(advanced.detecting);
+        }
+        setPages((current) => [...current, ...added]);
+      } catch {
+        for (const page of added) {
+          URL.revokeObjectURL(page.sourcePreviewUrl);
+          URL.revokeObjectURL(page.previewUrl);
+          previewUrls.current.delete(page.sourcePreviewUrl);
+          previewUrls.current.delete(page.previewUrl);
+        }
+        setError(copy.imageError);
+      } finally {
+        setBusy(false);
+        setStatus("");
+        if (cameraInput.current) cameraInput.current.value = "";
+        if (galleryInput.current) galleryInput.current.value = "";
+      }
     },
-    [copy.tooMany, pages.length],
+    [advanced.detecting, advanced.processing, busy, copy.imageError, copy.tooMany, pages.length],
   );
 
   const updatePage = useCallback((id: string, update: (page: ScanPage) => ScanPage) => {
@@ -94,21 +150,70 @@ export function ScanComposer({
     setPages((current) => {
       const removed = current.find((page) => page.id === id);
       if (removed) {
-        URL.revokeObjectURL(removed.previewUrl);
-        previewUrls.current.delete(removed.previewUrl);
+        for (const url of [removed.sourcePreviewUrl, removed.previewUrl]) {
+          URL.revokeObjectURL(url);
+          previewUrls.current.delete(url);
+        }
       }
       return current.filter((page) => page.id !== id);
     });
+    setEditingId((current) => (current === id ? null : current));
   }, []);
+
+  const applyCrop = useCallback(
+    async (id: string, value: { quad: DocumentQuad; filter: ScanFilter }) => {
+      const page = pages.find((entry) => entry.id === id);
+      if (!page || busy) return;
+      setBusy(true);
+      setStatus(advanced.processing);
+      setError("");
+      try {
+        const processed = await processDocument(page.file, {
+          quad: value.quad,
+          filter: value.filter,
+          preview: true,
+        });
+        const nextPreviewUrl = URL.createObjectURL(processed.blob);
+        previewUrls.current.add(nextPreviewUrl);
+        const previousPreviewUrl = page.previewUrl;
+        updatePage(id, (current) => ({
+          ...current,
+          quad: value.quad,
+          filter: value.filter,
+          previewUrl: nextPreviewUrl,
+          detected: true,
+        }));
+        URL.revokeObjectURL(previousPreviewUrl);
+        previewUrls.current.delete(previousPreviewUrl);
+        setEditingId(null);
+      } catch {
+        setError(copy.imageError);
+      } finally {
+        setBusy(false);
+        setStatus("");
+      }
+    },
+    [advanced.processing, busy, copy.imageError, pages, updatePage],
+  );
 
   const makePdf = useCallback(async () => {
     if (pages.length === 0 || busy) return;
     setBusy(true);
+    setStatus(advanced.processing);
     setError("");
     try {
       const normalized: PdfImagePage[] = [];
       for (const page of pages) {
-        normalized.push(await normalizeScanPage(page.file, page.rotation, enhance));
+        const processed = await processDocument(page.file, {
+          quad: page.quad,
+          filter: page.filter,
+          rotation: page.rotation,
+        });
+        normalized.push({
+          bytes: new Uint8Array(await processed.blob.arrayBuffer()),
+          width: processed.width,
+          height: processed.height,
+        });
       }
       const bytes = buildScannedPdf(normalized);
       const file = new File([bytes.buffer as ArrayBuffer], copy.scannedFile, {
@@ -116,16 +221,13 @@ export function ScanComposer({
         lastModified: Date.now(),
       });
       await onComplete(file);
-    } catch (caught) {
-      setError(
-        caught instanceof Error && caught.message === "scanImageError"
-          ? copy.imageError
-          : copy.genericError,
-      );
+    } catch {
+      setError(copy.genericError);
     } finally {
       setBusy(false);
+      setStatus("");
     }
-  }, [busy, copy.genericError, copy.imageError, copy.scannedFile, enhance, onComplete, pages]);
+  }, [advanced.processing, busy, copy.genericError, copy.scannedFile, onComplete, pages]);
 
   return (
     <section className="scan-composer" aria-busy={busy}>
@@ -148,7 +250,7 @@ export function ScanComposer({
         type="file"
         accept="image/*"
         capture="environment"
-        onChange={(event) => addFiles(event.target.files)}
+        onChange={(event) => void addFiles(event.target.files)}
       />
       <input
         ref={galleryInput}
@@ -157,7 +259,7 @@ export function ScanComposer({
         type="file"
         accept="image/*"
         multiple
-        onChange={(event) => addFiles(event.target.files)}
+        onChange={(event) => void addFiles(event.target.files)}
       />
 
       {pages.length === 0 ? (
@@ -173,14 +275,22 @@ export function ScanComposer({
           <ol className="scan-pages">
             {pages.map((page, index) => (
               <li key={page.id}>
-                {/* These are local object URLs; Next image optimization cannot improve them. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={page.previewUrl}
-                  alt={`${index + 1}`}
-                  style={{ transform: `rotate(${page.rotation}deg)` }}
-                />
-                <span className="scan-page-number">{index + 1}</span>
+                <div className="scan-page-preview">
+                  {/* These are local object URLs; Next image optimization cannot improve them. */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={page.previewUrl}
+                    alt={`${index + 1}`}
+                    style={{ transform: `rotate(${page.rotation}deg)` }}
+                  />
+                  <span className="scan-page-number">{index + 1}</span>
+                  <span
+                    className={`scan-detection-badge ${page.detected ? "is-detected" : "is-review"}`}
+                    title={`${Math.round(page.confidence * 100)}%`}
+                  >
+                    {page.detected ? advanced.edgeFound : advanced.edgeNotFound}
+                  </span>
+                </div>
                 <div className="scan-page-actions">
                   <button
                     type="button"
@@ -197,6 +307,14 @@ export function ScanComposer({
                     aria-label={copy.moveLater}
                   >
                     <ArrowDown aria-hidden="true" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setEditingId(page.id)}
+                    disabled={busy}
+                    aria-label={advanced.adjustCrop}
+                  >
+                    <Crop aria-hidden="true" />
                   </button>
                   <button
                     type="button"
@@ -226,20 +344,17 @@ export function ScanComposer({
         </>
       )}
 
+      {status ? (
+        <p className="scan-notice" role="status" aria-live="polite">
+          {status}
+        </p>
+      ) : null}
       {error ? (
         <p className="scan-error" role="alert">
           {error}
         </p>
       ) : null}
-      <label className="scan-enhance">
-        <input
-          type="checkbox"
-          checked={enhance}
-          onChange={(event) => setEnhance(event.target.checked)}
-          disabled={busy}
-        />
-        <span>{copy.enhance}</span>
-      </label>
+
       <div className="scan-primary-actions">
         <PrimaryButton
           onClick={() => cameraInput.current?.click()}
@@ -260,101 +375,18 @@ export function ScanComposer({
           <ScanLine aria-hidden="true" /> {busy ? copy.making : copy.makePdf}
         </PrimaryButton>
       ) : null}
+
+      {editingPage ? (
+        <DocumentCropEditor
+          locale={locale}
+          file={editingPage.file}
+          previewUrl={editingPage.sourcePreviewUrl}
+          initialQuad={editingPage.quad}
+          initialFilter={editingPage.filter}
+          onApply={(value) => void applyCrop(editingPage.id, value)}
+          onCancel={() => setEditingId(null)}
+        />
+      ) : null}
     </section>
   );
-}
-
-async function normalizeScanPage(
-  file: File,
-  rotation: number,
-  enhance: boolean,
-): Promise<PdfImagePage> {
-  let image: CanvasImageSource;
-  let width: number;
-  let height: number;
-  let release: () => void = () => {};
-  try {
-    if (typeof createImageBitmap === "function") {
-      try {
-        const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-        image = bitmap;
-        width = bitmap.width;
-        height = bitmap.height;
-        release = () => bitmap.close();
-      } catch {
-        const loaded = await loadImage(file);
-        image = loaded.image;
-        width = loaded.image.naturalWidth;
-        height = loaded.image.naturalHeight;
-        release = loaded.release;
-      }
-    } else {
-      const loaded = await loadImage(file);
-      image = loaded.image;
-      width = loaded.image.naturalWidth;
-      height = loaded.image.naturalHeight;
-      release = loaded.release;
-    }
-  } catch {
-    throw new Error("scanImageError");
-  }
-
-  try {
-    const scale = Math.min(1, MAX_IMAGE_EDGE / Math.max(width, height));
-    const drawnWidth = Math.max(1, Math.round(width * scale));
-    const drawnHeight = Math.max(1, Math.round(height * scale));
-    const sideways = rotation % 180 !== 0;
-    const canvas = document.createElement("canvas");
-    canvas.width = sideways ? drawnHeight : drawnWidth;
-    canvas.height = sideways ? drawnWidth : drawnHeight;
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("scanImageError");
-    context.fillStyle = "white";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    if (enhance) context.filter = "grayscale(1) contrast(1.12) brightness(1.04)";
-    context.save();
-    if (rotation === 90) {
-      context.translate(canvas.width, 0);
-      context.rotate(Math.PI / 2);
-    } else if (rotation === 180) {
-      context.translate(canvas.width, canvas.height);
-      context.rotate(Math.PI);
-    } else if (rotation === 270) {
-      context.translate(0, canvas.height);
-      context.rotate(-Math.PI / 2);
-    }
-    context.drawImage(image, 0, 0, drawnWidth, drawnHeight);
-    context.restore();
-    const blob = await canvasBlob(canvas);
-    return {
-      bytes: new Uint8Array(await blob.arrayBuffer()),
-      width: canvas.width,
-      height: canvas.height,
-    };
-  } finally {
-    release();
-  }
-}
-
-async function loadImage(file: File): Promise<{ image: HTMLImageElement; release: () => void }> {
-  const url = URL.createObjectURL(file);
-  const image = new Image();
-  image.src = url;
-  try {
-    await image.decode();
-    return { image, release: () => URL.revokeObjectURL(url) };
-  } catch (error) {
-    URL.revokeObjectURL(url);
-    throw error;
-  }
-}
-
-function canvasBlob(canvas: HTMLCanvasElement): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("scanImageError"))),
-      "image/jpeg",
-      JPEG_QUALITY,
-    );
-  });
 }
