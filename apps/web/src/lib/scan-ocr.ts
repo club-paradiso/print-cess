@@ -59,7 +59,7 @@ const TESSERACT_WORKER = `https://cdn.jsdelivr.net/npm/tesseract.js@${TESSERACT_
 const TESSERACT_CORE = `https://cdn.jsdelivr.net/npm/tesseract.js-core@${TESSERACT_VERSION}`;
 const TESSDATA_FAST = "https://tessdata.projectnaptha.com/4.0.0_fast";
 
-export const OCR_LANGUAGE_BY_LOCALE: Record<SupportedLocale, string> = {
+const PRIMARY_OCR_LANGUAGE: Record<SupportedLocale, string> = {
   en: "eng",
   ko: "kor",
   "zh-CN": "chi_sim",
@@ -75,8 +75,13 @@ export const OCR_LANGUAGE_BY_LOCALE: Record<SupportedLocale, string> = {
   uk: "ukr",
 };
 
+export function ocrLanguagesForLocale(locale: SupportedLocale): string[] {
+  const primary = PRIMARY_OCR_LANGUAGE[locale];
+  return primary === "eng" ? ["eng"] : [primary, "eng"];
+}
+
 let scriptPromise: Promise<TesseractGlobal> | undefined;
-let workerState: { language: string; worker: TesseractWorker } | undefined;
+let workerState: { languageKey: string; worker: TesseractWorker } | undefined;
 let activeProgress: ((value: OcrProgress) => void) | undefined;
 
 function getTesseractGlobal(): TesseractGlobal | undefined {
@@ -117,15 +122,16 @@ async function loadTesseract(): Promise<TesseractGlobal> {
   return scriptPromise;
 }
 
-async function getWorker(language: string): Promise<TesseractWorker> {
-  if (workerState?.language === language) return workerState.worker;
+async function getWorker(languages: string[]): Promise<TesseractWorker> {
+  const languageKey = languages.join("+");
+  if (workerState?.languageKey === languageKey) return workerState.worker;
   if (workerState) {
     await workerState.worker.terminate().catch(() => undefined);
     workerState = undefined;
   }
 
   const tesseract = await loadTesseract();
-  const worker = await tesseract.createWorker(language, 1, {
+  const worker = await tesseract.createWorker(languages, 1, {
     workerPath: TESSERACT_WORKER,
     corePath: TESSERACT_CORE,
     langPath: TESSDATA_FAST,
@@ -137,7 +143,7 @@ async function getWorker(language: string): Promise<TesseractWorker> {
       });
     },
   });
-  workerState = { language, worker };
+  workerState = { languageKey, worker };
   return worker;
 }
 
@@ -168,10 +174,10 @@ export async function recognizeDocument(
   dimensions: { width: number; height: number },
   onProgress?: (value: OcrProgress) => void,
 ): Promise<OcrResult> {
-  const language = OCR_LANGUAGE_BY_LOCALE[locale];
+  const languages = ocrLanguagesForLocale(locale);
   activeProgress = onProgress;
   try {
-    const worker = await getWorker(language);
+    const worker = await getWorker(languages);
     const { data } = await worker.recognize(image, { rotateAuto: false }, { text: true, blocks: true });
     let words = extractWords(data.blocks);
     if (words.length === 0 && data.text.trim()) {
@@ -192,7 +198,7 @@ export async function recognizeDocument(
       text: data.text,
       words,
       confidence: data.confidence,
-      language,
+      language: languages.join("+"),
     };
   } finally {
     activeProgress = undefined;
