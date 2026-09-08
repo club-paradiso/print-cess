@@ -108,7 +108,7 @@ export function classifySelectedFile(
 
 export async function validateFileForMobile(
   file: File,
-  options: { allowHwpx?: boolean } = {},
+  options: { allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},
 ): Promise<ValidatedMobileFile> {
   if (file.size < 1) throw new FileValidationError("damagedFile");
 
@@ -147,7 +147,10 @@ export async function validateFileForMobile(
     return {
       bytes,
       fileKind,
-      pageCount: await validatePdf(bytes),
+      pageCount: await validatePdf(
+        bytes,
+        options.trustedGeneratedPdf ? { skipActiveContentScan: true } : {},
+      ),
       normalized: false,
     };
   }
@@ -165,7 +168,10 @@ export async function validateFileForMobile(
   return { bytes, fileKind, pageCount: 1, ...dimensions, normalized: false };
 }
 
-export async function validatePdf(bytes: Uint8Array): Promise<number> {
+export async function validatePdf(
+  bytes: Uint8Array,
+  options: { skipActiveContentScan?: boolean } = {},
+): Promise<number> {
   const searchable = new TextDecoder("latin1").decode(bytes);
   // PDF names may hex-escape any character, so `/J#61vaScript` names the same
   // key as `/JavaScript`. Scan the decoded form too, or the marker check below
@@ -174,6 +180,7 @@ export async function validatePdf(bytes: Uint8Array): Promise<number> {
   if (searchable.includes("/Encrypt") || decodedNames.includes("/Encrypt"))
     throw new FileValidationError("lockedPdf");
   if (
+    !options.skipActiveContentScan &&
     ACTIVE_PDF_MARKERS.some(
       (marker) => searchable.includes(marker) || decodedNames.includes(marker),
     )

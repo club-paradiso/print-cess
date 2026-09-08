@@ -1,8 +1,9 @@
-import { Building2, Download, Monitor, Send, ShieldCheck } from "lucide-react";
+import { Building2, Download, Monitor, ScanLine, Send, ShieldCheck } from "lucide-react";
 
 import { translate } from "@print-cess/i18n";
 import { Wordmark } from "@print-cess/ui";
 
+import { SCAN_HOME_CTA } from "@/components/scan/scan-copy";
 import { requestLocale } from "@/lib/request-locale";
 import { isBrowserKioskEnabled } from "@/server/demo";
 
@@ -56,6 +57,9 @@ export default async function HomePage() {
         <h1>{text("homeTitle")}</h1>
         <p>{text("dropIntro")}</p>
         <nav className="status-page__actions" aria-label={text("dropTitle")}>
+          <a href="/scan">
+            <ScanLine aria-hidden="true" /> {SCAN_HOME_CTA[locale]}
+          </a>
           <a href="/send">
             <Send aria-hidden="true" /> {text("dropSendCta")}
           </a>

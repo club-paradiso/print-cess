@@ -12,12 +12,15 @@ export type { ValidatedMobileFile } from "./file-validation";
 
 export async function validateMobileDocument(
   file: File,
-  options: { allowHwp?: boolean; allowHwpx?: boolean } = {},
+  options: { allowHwp?: boolean; allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},
 ): Promise<ValidatedMobileFile> {
   if (!isHwpSelection(file)) {
-    return options.allowHwpx === undefined
-      ? validateFileForMobile(file)
-      : validateFileForMobile(file, { allowHwpx: options.allowHwpx });
+    return validateFileForMobile(file, {
+      ...(options.allowHwpx === undefined ? {} : { allowHwpx: options.allowHwpx }),
+      ...(options.trustedGeneratedPdf === undefined
+        ? {}
+        : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
+    });
   }
 
   if (file.size < 1) throw new FileValidationError("damagedFile");
