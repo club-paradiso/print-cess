@@ -2,13 +2,7 @@ export type ScanPoint = { x: number; y: number };
 export type DocumentQuad = [ScanPoint, ScanPoint, ScanPoint, ScanPoint];
 export type ScanFilter = "auto" | "color" | "grayscale" | "bw";
 export type CaptureIssue =
-  | "ready"
-  | "no-document"
-  | "move-closer"
-  | "too-dark"
-  | "too-bright"
-  | "glare"
-  | "blurry";
+  "ready" | "no-document" | "move-closer" | "too-dark" | "too-bright" | "glare" | "blurry";
 
 export type DocumentDetection = {
   quad: DocumentQuad;
@@ -96,8 +90,7 @@ export function clampQuad(quad: DocumentQuad): DocumentQuad {
 
 export function quadDrift(first: DocumentQuad, second: DocumentQuad): number {
   return (
-    first.reduce((total, point, index) => total + distance(point, second[index]!), 0) /
-    first.length
+    first.reduce((total, point, index) => total + distance(point, second[index]!), 0) / first.length
   );
 }
 
@@ -143,8 +136,8 @@ export function analyzeCapturePixels(
       const tileX = Math.min(tileColumns - 1, Math.floor((x / width) * tileColumns));
       const tileY = Math.min(tileRows - 1, Math.floor((y / height) * tileRows));
       const tileIndex = tileY * tileColumns + tileX;
-      tileSamples[tileIndex] += 1;
-      if (center >= 252) clipped[tileIndex] += 1;
+      tileSamples[tileIndex] = (tileSamples[tileIndex] ?? 0) + 1;
+      if (center >= 252) clipped[tileIndex] = (clipped[tileIndex] ?? 0) + 1;
 
       const laplacian =
         4 * center -

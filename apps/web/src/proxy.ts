@@ -40,11 +40,9 @@ export function buildContentSecurityPolicy(
   isDevelopment: boolean,
   environment: NodeJS.ProcessEnv = process.env,
 ): string {
-  const connectSources = [
-    "'self'",
-    ...blobConnectOrigins(environment),
-    ...OCR_ASSET_ORIGINS,
-  ].join(" ");
+  const connectSources = ["'self'", ...blobConnectOrigins(environment), ...OCR_ASSET_ORIGINS].join(
+    " ",
+  );
   // OpenCV and the optional OCR engine compile WebAssembly locally.
   // `wasm-unsafe-eval` permits that without granting JavaScript string
   // evaluation (`unsafe-eval`) in production. OCR code/models are pinned to

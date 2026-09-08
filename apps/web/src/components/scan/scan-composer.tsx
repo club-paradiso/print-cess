@@ -304,7 +304,16 @@ export function ScanComposer({
       setBusy(false);
       setStatus("");
     }
-  }, [advanced.processing, busy, completePdf, copy.genericError, locale, pages, pro, searchablePdf]);
+  }, [
+    advanced.processing,
+    busy,
+    completePdf,
+    copy.genericError,
+    locale,
+    pages,
+    pro,
+    searchablePdf,
+  ]);
 
   const makeImageOnlyFallback = useCallback(async () => {
     if (!ocrFallbackPages || busy) return;

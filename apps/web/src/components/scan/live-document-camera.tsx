@@ -181,7 +181,9 @@ export function LiveDocumentCamera({
         }
 
         const previous = lastQuad.current;
-        const stable = previous ? quadDrift(previous, inspection.detection.quad) <= STABLE_DRIFT : false;
+        const stable = previous
+          ? quadDrift(previous, inspection.detection.quad) <= STABLE_DRIFT
+          : false;
         stableFrames.current = stable ? stableFrames.current + 1 : 0;
         lastQuad.current = inspection.detection.quad;
 
@@ -298,7 +300,11 @@ export function LiveDocumentCamera({
               </svg>
               {!started ? <div className="scan-live-loading">{copy.cameraStarting}</div> : null}
               <div className={`scan-live-guidance ${message === copy.ready ? "is-ready" : ""}`}>
-                {message === copy.ready ? <Check aria-hidden="true" /> : <ScanLine aria-hidden="true" />}
+                {message === copy.ready ? (
+                  <Check aria-hidden="true" />
+                ) : (
+                  <ScanLine aria-hidden="true" />
+                )}
                 <span>{message}</span>
               </div>
             </div>

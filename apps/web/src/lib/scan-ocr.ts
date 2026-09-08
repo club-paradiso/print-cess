@@ -178,7 +178,11 @@ export async function recognizeDocument(
   activeProgress = onProgress;
   try {
     const worker = await getWorker(languages);
-    const { data } = await worker.recognize(image, { rotateAuto: false }, { text: true, blocks: true });
+    const { data } = await worker.recognize(
+      image,
+      { rotateAuto: false },
+      { text: true, blocks: true },
+    );
     let words = extractWords(data.blocks);
     if (words.length === 0 && data.text.trim()) {
       words = [

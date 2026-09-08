@@ -133,7 +133,9 @@
   stroke-dasharray: 18 12;
   vector-effect: non-scaling-stroke;
   filter: drop-shadow(0 1px 3px rgb(0 0 0 / 80%));
-  transition: stroke 160ms ease, fill 160ms ease;
+  transition:
+    stroke 160ms ease,
+    fill 160ms ease;
 }
 
 .scan-live-overlay.is-detected polygon {
