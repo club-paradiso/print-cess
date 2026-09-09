@@ -1,0 +1,112 @@
+{
+  "version": 1,
+  "suite": "scanner-ci-smoke",
+  "source": "synthetic-ci",
+  "device": "deterministic fixture; not a real-device claim",
+  "cases": [
+    {
+      "id": "flat-letter-en",
+      "image": { "width": 3024, "height": 4032 },
+      "expectedQuad": [
+        { "x": 0.1, "y": 0.08 },
+        { "x": 0.9, "y": 0.09 },
+        { "x": 0.91, "y": 0.92 },
+        { "x": 0.09, "y": 0.91 }
+      ],
+      "detectedQuad": [
+        { "x": 0.105, "y": 0.084 },
+        { "x": 0.895, "y": 0.094 },
+        { "x": 0.906, "y": 0.916 },
+        { "x": 0.094, "y": 0.905 }
+      ],
+      "groundTruthText": "Print-cess document scanner quality benchmark",
+      "ocrText": "Print-cess document scanner quality benchmark",
+      "shouldAutoCapture": true,
+      "didAutoCapture": true,
+      "processingMs": 760,
+      "pdfBytes": 286720,
+      "pages": 1,
+      "ocrRequested": true,
+      "searchablePdf": true,
+      "externalOcrUpload": false,
+      "generativeReconstructionUsed": false
+    },
+    {
+      "id": "perspective-a4-ko",
+      "image": { "width": 3024, "height": 4032 },
+      "expectedQuad": [
+        { "x": 0.16, "y": 0.11 },
+        { "x": 0.86, "y": 0.17 },
+        { "x": 0.9, "y": 0.88 },
+        { "x": 0.1, "y": 0.84 }
+      ],
+      "detectedQuad": [
+        { "x": 0.165, "y": 0.115 },
+        { "x": 0.855, "y": 0.174 },
+        { "x": 0.895, "y": 0.875 },
+        { "x": 0.105, "y": 0.836 }
+      ],
+      "groundTruthText": "문서 스캔 품질 확인",
+      "ocrText": "문서 스캔 품질 확인",
+      "shouldAutoCapture": true,
+      "didAutoCapture": true,
+      "processingMs": 1040,
+      "pdfBytes": 348160,
+      "pages": 1,
+      "ocrRequested": true,
+      "searchablePdf": true,
+      "externalOcrUpload": false,
+      "generativeReconstructionUsed": false
+    },
+    {
+      "id": "localized-glare-reject",
+      "image": { "width": 3024, "height": 4032 },
+      "expectedQuad": [
+        { "x": 0.12, "y": 0.1 },
+        { "x": 0.88, "y": 0.1 },
+        { "x": 0.89, "y": 0.9 },
+        { "x": 0.11, "y": 0.9 }
+      ],
+      "detectedQuad": [
+        { "x": 0.126, "y": 0.105 },
+        { "x": 0.874, "y": 0.105 },
+        { "x": 0.885, "y": 0.895 },
+        { "x": 0.115, "y": 0.895 }
+      ],
+      "shouldAutoCapture": false,
+      "didAutoCapture": false,
+      "processingMs": 420,
+      "pdfBytes": 245760,
+      "pages": 1,
+      "ocrRequested": false,
+      "searchablePdf": false,
+      "externalOcrUpload": false,
+      "generativeReconstructionUsed": false
+    },
+    {
+      "id": "low-light-reject",
+      "image": { "width": 3024, "height": 4032 },
+      "expectedQuad": [
+        { "x": 0.13, "y": 0.12 },
+        { "x": 0.87, "y": 0.12 },
+        { "x": 0.88, "y": 0.89 },
+        { "x": 0.12, "y": 0.89 }
+      ],
+      "detectedQuad": [
+        { "x": 0.136, "y": 0.125 },
+        { "x": 0.864, "y": 0.125 },
+        { "x": 0.875, "y": 0.884 },
+        { "x": 0.125, "y": 0.884 }
+      ],
+      "shouldAutoCapture": false,
+      "didAutoCapture": false,
+      "processingMs": 390,
+      "pdfBytes": 225280,
+      "pages": 1,
+      "ocrRequested": false,
+      "searchablePdf": false,
+      "externalOcrUpload": false,
+      "generativeReconstructionUsed": false
+    }
+  ]
+}

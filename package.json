@@ -8,6 +8,7 @@
     "node": ">=24.14.0 <25"
   },
   "scripts": {
+    "benchmark:scanner:smoke": "node scripts/scanner-benchmark/score.mjs benchmarks/scanner/fixtures/ci-smoke.json artifacts/scanner-benchmark/scanner-quality-report.json",
     "build": "turbo run build",
     "create:readiness-evidence-template": "node scripts/acceptance/create-readiness-evidence-template.mjs",
     "dev": "turbo run dev --parallel",
@@ -20,6 +21,7 @@
     "test:provider": "turbo run build --filter=@print-cess/web^... && pnpm --filter @print-cess/web test:provider",
     "test:acceptance-evidence": "node --test scripts/acceptance/*.test.mjs",
     "test:kiosk-scripts": "node --test scripts/kiosk/*.test.mjs",
+    "test:scanner-benchmark": "node --test scripts/scanner-benchmark/*.test.mjs",
     "test:workflow": "node --test scripts/github/*.test.mjs",
     "validate:readiness-evidence": "node scripts/acceptance/validate-readiness-evidence.mjs",
     "test:e2e": "pnpm --filter @print-cess/web test:e2e",

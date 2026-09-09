@@ -61,6 +61,12 @@ jobs:
       - name: Unit tests
         run: pnpm test
 
+      - name: Scanner benchmark metric tests
+        run: pnpm test:scanner-benchmark
+
+      - name: Scanner benchmark smoke gate
+        run: pnpm benchmark:scanner:smoke
+
       - name: Workflow policy tests
         run: pnpm test:workflow
 
@@ -122,6 +128,7 @@ jobs:
           path: |
             **/coverage/**
             **/playwright-report/**
+            artifacts/scanner-benchmark/**
           if-no-files-found: warn
           retention-days: 3
 
