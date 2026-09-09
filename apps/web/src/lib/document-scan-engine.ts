@@ -539,7 +539,37 @@ function distance(first: ScanPoint, second: ScanPoint): number {
   return Math.hypot(first.x - second.x, first.y - second.y);
 }
 
+async function normalizeScanSource(file: File): Promise<Blob> {
+  if (!isHeicScanFile(file)) return file;
+  try {
+    const { heicTo } = await import("heic-to/csp");
+    const converted = await heicTo({
+      blob: file,
+      type: "image/jpeg",
+      quality: 0.94,
+    });
+    if (!(converted instanceof Blob) || converted.size < 1) throw new Error("scanImageError");
+    return converted;
+  } catch {
+    throw new Error("scanImageError");
+  }
+}
+
+function isHeicScanFile(file: File): boolean {
+  const separator = file.name.lastIndexOf(".");
+  const extension = separator < 0 ? "" : file.name.slice(separator + 1).toLowerCase();
+  return (
+    extension === "heic" ||
+    extension === "heif" ||
+    file.type === "image/heic" ||
+    file.type === "image/heif" ||
+    file.type === "image/heic-sequence" ||
+    file.type === "image/heif-sequence"
+  );
+}
+
 async function fileToCanvas(file: File, maxEdge: number) {
+  const source = await normalizeScanSource(file);
   let image: CanvasImageSource;
   let width: number;
   let height: number;
@@ -547,20 +577,20 @@ async function fileToCanvas(file: File, maxEdge: number) {
 
   if (typeof createImageBitmap === "function") {
     try {
-      const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+      const bitmap = await createImageBitmap(source, { imageOrientation: "from-image" });
       image = bitmap;
       width = bitmap.width;
       height = bitmap.height;
       release = () => bitmap.close();
     } catch {
-      const loaded = await loadHtmlImage(file);
+      const loaded = await loadHtmlImage(source);
       image = loaded.image;
       width = loaded.image.naturalWidth;
       height = loaded.image.naturalHeight;
       release = loaded.release;
     }
   } else {
-    const loaded = await loadHtmlImage(file);
+    const loaded = await loadHtmlImage(source);
     image = loaded.image;
     width = loaded.image.naturalWidth;
     height = loaded.image.naturalHeight;
@@ -582,7 +612,7 @@ async function fileToCanvas(file: File, maxEdge: number) {
   return { canvas, release };
 }
 
-async function loadHtmlImage(file: File) {
+async function loadHtmlImage(file: Blob) {
   const url = URL.createObjectURL(file);
   const image = new Image();
   image.src = url;
