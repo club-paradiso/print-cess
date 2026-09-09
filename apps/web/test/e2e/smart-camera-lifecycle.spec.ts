@@ -43,9 +43,8 @@ test("smart camera keeps its media stream across parent re-renders", async ({ pa
   // A locale change re-renders the scanner parent. It must not tear down and
   // reacquire the camera merely because callback/copy identities changed.
   await page.waitForTimeout(750);
-  await expect(
-    page.evaluate(
-      () => (window as typeof window & { __printCessCameraStarts?: number }).__printCessCameraStarts,
-    ),
-  ).resolves.toBe(1);
+  const cameraStarts = await page.evaluate(
+    () => (window as typeof window & { __printCessCameraStarts?: number }).__printCessCameraStarts,
+  );
+  expect(cameraStarts).toBe(1);
 });
