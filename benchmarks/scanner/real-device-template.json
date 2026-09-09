@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "suite": "scanner-real-device",
+  "source": "real-device",
+  "device": "REPLACE_WITH_DEVICE_AND_OS",
+  "gates": {
+    "minCases": 30,
+    "minGeometryCases": 20,
+    "minOcrCases": 10,
+    "minCaptureCases": 30
+  },
+  "cases": []
+}
