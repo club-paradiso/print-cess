@@ -61,6 +61,8 @@ export function LiveDocumentCamera({
   const captureBusy = useRef(false);
   const autoCaptureRef = useRef(true);
   const disabledRef = useRef(Boolean(disabled));
+  const copyRef = useRef(copy);
+  const onCaptureRef = useRef(onCapture);
   const lastQuad = useRef<DocumentQuad | null>(null);
   const capturedQuad = useRef<DocumentQuad | null>(null);
   const stableFrames = useRef(0);
@@ -78,6 +80,14 @@ export function LiveDocumentCamera({
   useEffect(() => {
     disabledRef.current = Boolean(disabled);
   }, [disabled]);
+
+  useEffect(() => {
+    copyRef.current = copy;
+  }, [copy]);
+
+  useEffect(() => {
+    onCaptureRef.current = onCapture;
+  }, [onCapture]);
 
   const stopCamera = useCallback(() => {
     for (const track of streamRef.current?.getTracks() ?? []) track.stop();
@@ -122,15 +132,15 @@ export function LiveDocumentCamera({
       capturedQuad.current = lastQuad.current;
       waitingForNewPage.current = true;
       stableFrames.current = 0;
-      setMessage(copy.holdSteady);
-      await onCapture(file);
+      setMessage(copyRef.current.holdSteady);
+      await onCaptureRef.current(file);
     } finally {
       window.setTimeout(() => {
         captureBusy.current = false;
         setCapturing(false);
       }, 650);
     }
-  }, [copy.holdSteady, onCapture]);
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -152,6 +162,7 @@ export function LiveDocumentCamera({
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const inspection = await inspectDocumentFrame(canvas);
         if (cancelled) return;
+        const activeCopy = copyRef.current;
 
         setQuad(inspection.detection.quad);
         setDetected(inspection.detection.detected);
@@ -167,7 +178,7 @@ export function LiveDocumentCamera({
             capturedQuad.current = null;
             lastQuad.current = null;
           } else {
-            setMessage(copy.holdSteady);
+            setMessage(activeCopy.holdSteady);
             lastQuad.current = inspection.detection.quad;
             return;
           }
@@ -175,7 +186,7 @@ export function LiveDocumentCamera({
 
         if (!inspection.quality.ready) {
           stableFrames.current = 0;
-          setMessage(captureIssueText(inspection.quality.issue, copy));
+          setMessage(captureIssueText(inspection.quality.issue, activeCopy));
           lastQuad.current = inspection.detection.quad;
           return;
         }
@@ -188,15 +199,16 @@ export function LiveDocumentCamera({
         lastQuad.current = inspection.detection.quad;
 
         if (stableFrames.current < STABLE_FRAMES) {
-          setMessage(copy.holdSteady);
+          setMessage(activeCopy.holdSteady);
           return;
         }
 
-        setMessage(copy.ready);
+        setMessage(activeCopy.ready);
         if (autoCaptureRef.current) await captureFrame();
-      } catch {
+      } catch (analysisError) {
+        console.error("[scan-camera] frame analysis failed", analysisError);
         stableFrames.current = 0;
-        setMessage(copy.holdSteady);
+        setMessage(copyRef.current.holdSteady);
       } finally {
         analysisBusy.current = false;
       }
@@ -205,7 +217,7 @@ export function LiveDocumentCamera({
     const start = async () => {
       if (!navigator.mediaDevices?.getUserMedia) {
         setError(true);
-        setMessage(copy.cameraDenied);
+        setMessage(copyRef.current.cameraDenied);
         return;
       }
       try {
@@ -229,11 +241,12 @@ export function LiveDocumentCamera({
         if (cancelled) return;
         setAspectRatio(`${video.videoWidth || 3} / ${video.videoHeight || 4}`);
         setStarted(true);
-        setMessage(copy.holdSteady);
+        setMessage(copyRef.current.holdSteady);
         timer = window.setInterval(() => void inspect(), ANALYSIS_INTERVAL_MS);
-      } catch {
+      } catch (cameraError) {
+        console.error("[scan-camera] unable to start camera", cameraError);
         setError(true);
-        setMessage(copy.cameraDenied);
+        setMessage(copyRef.current.cameraDenied);
       }
     };
 
@@ -243,7 +256,7 @@ export function LiveDocumentCamera({
       if (timer) window.clearInterval(timer);
       stopCamera();
     };
-  }, [captureFrame, copy, stopCamera]);
+  }, [captureFrame, stopCamera]);
 
   const close = () => {
     stopCamera();
@@ -289,7 +302,7 @@ export function LiveDocumentCamera({
         ) : (
           <>
             <div className="scan-live-stage" style={{ aspectRatio }}>
-              <video ref={videoRef} muted playsInline aria-label={copy.liveCamera} />
+              <video ref={videoRef} muted playsInline autoPlay aria-label={copy.liveCamera} />
               <svg
                 className={`scan-live-overlay ${detected ? "is-detected" : ""}`}
                 viewBox="0 0 1000 1000"
