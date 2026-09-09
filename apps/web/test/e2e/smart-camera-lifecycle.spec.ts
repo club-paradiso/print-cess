@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("smart camera keeps its media stream across parent re-renders", async ({ page }) => {
+test("smart camera keeps its media stream while a captured page is processed", async ({ page }) => {
   await page.addInitScript(() => {
     Object.defineProperty(navigator, "mediaDevices", {
       configurable: true,
@@ -17,6 +17,17 @@ test("smart camera keeps its media stream across parent re-renders", async ({ pa
       Object.defineProperty(this, "videoWidth", { configurable: true, value: 1280 });
       Object.defineProperty(this, "videoHeight", { configurable: true, value: 720 });
     };
+
+    Object.defineProperty(CanvasRenderingContext2D.prototype, "drawImage", {
+      configurable: true,
+      value: () => {},
+    });
+    Object.defineProperty(HTMLCanvasElement.prototype, "toBlob", {
+      configurable: true,
+      value: (callback: BlobCallback) => {
+        callback(new Blob(["scanner-lifecycle-test"], { type: "image/jpeg" }));
+      },
+    });
   });
 
   const cameraStarts = () =>
@@ -27,11 +38,10 @@ test("smart camera keeps its media stream across parent re-renders", async ({ pa
   await expect(page.getByRole("dialog", { name: "Smart camera" })).toBeVisible();
   await expect.poll(cameraStarts).toBe(1);
 
-  await page.locator(".drop-language select").selectOption("ko");
-  await expect(page.getByRole("dialog", { name: "스마트 카메라" })).toBeVisible();
-
-  // A locale change re-renders the scanner parent. It must not tear down and
-  // reacquire the camera merely because callback/copy identities changed.
-  await page.waitForTimeout(750);
+  // Processing a capture toggles ScanComposer's busy state and therefore
+  // re-renders the parent that provides the inline onCapture callback. The
+  // live stream must survive that re-render instead of being reacquired.
+  await page.locator(".scan-live-controls button").last().click();
+  await page.waitForTimeout(900);
   expect(await cameraStarts()).toBe(1);
 });
