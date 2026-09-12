@@ -17,39 +17,40 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.1115.0",
-    "@aws-sdk/s3-request-presigner": "3.1115.0",
+    "@aws-sdk/client-s3": "3.1126.0",
+    "@aws-sdk/s3-request-presigner": "3.1126.0",
+    "@opencvjs/web": "5.0.0-release.2",
     "@print-cess/crypto": "workspace:*",
     "@print-cess/i18n": "workspace:*",
     "@print-cess/protocol": "workspace:*",
     "@print-cess/ui": "workspace:*",
     "@upstash/qstash": "2.11.3",
-    "@upstash/redis": "1.38.2",
+    "@upstash/redis": "1.38.3",
     "@vercel/blob": "2.8.0",
     "heic-to": "1.5.2",
-    "i18next": "26.4.0",
-    "lucide-react": "1.33.0",
-    "next": "16.3.1",
-    "pdfjs-dist": "6.2.108",
+    "i18next": "26.4.2",
+    "lucide-react": "1.40.0",
+    "next": "16.3.4",
+    "pdfjs-dist": "6.3.289",
     "pg": "8.23.0",
     "qrcode": "1.5.4",
     "react": "19.2.8",
     "react-dom": "19.2.8",
-    "react-i18next": "17.0.12",
+    "react-i18next": "17.0.13",
     "redis": "6.2.1",
-    "zod": "4.4.3"
+    "zod": "4.5.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
-    "@playwright/test": "1.62.1",
+    "@playwright/test": "1.63.0",
     "@print-cess/test-fixtures": "workspace:*",
     "@types/pg": "8.23.1",
     "@types/qrcode": "1.5.6",
     "@types/react": "19.2.18",
-    "@types/react-dom": "19.2.4",
-    "@vitest/coverage-v8": "4.1.11",
+    "@types/react-dom": "19.2.7",
+    "@vitest/coverage-v8": "5.0.0",
     "jsdom": "30.0.1",
     "typescript": "7.0.2",
-    "vitest": "4.1.11"
+    "vitest": "5.0.0"
   }
 }

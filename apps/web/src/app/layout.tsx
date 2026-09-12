@@ -14,6 +14,8 @@ import "./drop.css";
 import "./quota.css";
 import "./workstation.css";
 import "./multi-print.css";
+import "./scan.css";
+import "./scan-pro.css";
 
 export const metadata: Metadata = {
   title: "Print-cess by Club Paradiso",

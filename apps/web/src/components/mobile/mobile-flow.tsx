@@ -49,6 +49,8 @@ import {
   uploadCiphertext,
   ApiClientError,
 } from "@/lib/api-client";
+import { ScanComposer } from "@/components/scan/scan-composer";
+import { scanCopy } from "@/components/scan/scan-copy";
 import {
   FileValidationError,
   validateMobileDocument,
@@ -193,6 +195,7 @@ export function MobileFlow({
   const [supportsHwp, setSupportsHwp] = useState(false);
   const [reminderStage, setReminderStage] = useState<Stage>();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
   const photoInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const watchAbort = useRef<AbortController>(null);
@@ -297,8 +300,8 @@ export function MobileFlow({
   }, [sessionId]);
 
   const chooseFile = useCallback(
-    async (selected: File | undefined) => {
-      if (!selected) return;
+    async (selected: File | undefined, options: { trustedGeneratedPdf?: boolean } = {}) => {
+      if (!selected) return false;
       try {
         setFileErrorKey(undefined);
         setFileNoticeKey(undefined);
@@ -306,6 +309,9 @@ export function MobileFlow({
         const result = await validateMobileDocument(selected, {
           allowHwp: supportsHwp,
           allowHwpx: supportsHwpx,
+          ...(options.trustedGeneratedPdf === undefined
+            ? {}
+            : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
         });
         const quota = decidePrintQuota([quotaDocument(result)]);
         if (quota.kind !== "allowed") {
@@ -316,9 +322,11 @@ export function MobileFlow({
         setFile(selected);
         setValidated(result);
         setStage("preview");
+        return true;
       } catch (error) {
         clearDocument();
         setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
+        return false;
       }
     },
     [clearDocument, supportsHwp, supportsHwpx],
@@ -453,7 +461,17 @@ export function MobileFlow({
         </p>
       ) : null}
       {stage === "boot" ? <Loading text={text("preparingSession")} /> : null}
-      {stage === "file" ? (
+      {stage === "file" && scannerOpen ? (
+        <ScanComposer
+          locale={locale}
+          onCancel={() => setScannerOpen(false)}
+          onComplete={async (scanned) => {
+            const accepted = await chooseFile(scanned, { trustedGeneratedPdf: true });
+            if (accepted) setScannerOpen(false);
+          }}
+        />
+      ) : null}
+      {stage === "file" && !scannerOpen ? (
         <section className="mobile-step">
           <StatusIcon>
             <FileImage size={32} aria-hidden="true" />
@@ -487,9 +505,12 @@ export function MobileFlow({
             </p>
           ) : null}
           <div className="mobile-source-actions">
-            <PrimaryButton onClick={() => photoInput.current?.click()}>
-              <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
+            <PrimaryButton onClick={() => setScannerOpen(true)}>
+              <ScanLine aria-hidden="true" /> {scanCopy(locale).title}
             </PrimaryButton>
+            <SecondaryButton onClick={() => photoInput.current?.click()}>
+              <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
+            </SecondaryButton>
             <SecondaryButton onClick={() => fileInput.current?.click()}>
               <Files aria-hidden="true" /> {text("locationFiles")}
             </SecondaryButton>

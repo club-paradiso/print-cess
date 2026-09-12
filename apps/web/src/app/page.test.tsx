@@ -42,7 +42,7 @@ describe("home page", () => {
 
     expect(page.props.className).toBe("status-page");
     expect(hrefsOf(page)).toEqual(
-      expect.arrayContaining(["/send", "/receive", "/workstation", "/kiosk"]),
+      expect.arrayContaining(["/scan", "/send", "/receive", "/workstation", "/kiosk"]),
     );
   });
 
@@ -55,7 +55,7 @@ describe("home page", () => {
     const page = await HomePage();
     const hrefs = hrefsOf(page);
 
-    expect(hrefs).toEqual(expect.arrayContaining(["/send", "/receive", "/workstation"]));
+    expect(hrefs).toEqual(expect.arrayContaining(["/scan", "/send", "/receive", "/workstation"]));
     expect(hrefs).not.toContain("/kiosk");
   });
 
@@ -68,7 +68,7 @@ describe("home page", () => {
 
     expect(page.props.className).toBe("status-page");
     expect(hrefsOf(page)).toEqual(
-      expect.arrayContaining(["/send", "/receive", "/workstation", "/kiosk"]),
+      expect.arrayContaining(["/scan", "/send", "/receive", "/workstation", "/kiosk"]),
     );
   });
 
@@ -78,6 +78,7 @@ describe("home page", () => {
     const copy = textOf(await HomePage());
 
     expect(copy).toContain("안전하게 인쇄하고 주고받아요");
+    expect(copy).toContain("문서 스캔");
     expect(copy).toContain("파일 보내기");
     expect(copy).toContain("파일 받기");
     expect(copy).toContain("업무용 PC");
@@ -89,6 +90,7 @@ describe("home page", () => {
     const copy = textOf(await HomePage());
 
     expect(copy).toContain("Secure print and transfer service");
+    expect(copy).toContain("Scan a document");
     expect(copy).toContain("Send files");
     expect(copy).toContain("Receive files");
     expect(copy).toContain("Work computer");
