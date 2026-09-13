@@ -218,8 +218,8 @@ public sealed class WindowsPrintEngine : IPrintEngine
             : await RenderPagesAsync(
                 document.Content,
                 document.Kind,
-                cancellationToken,
-                PrintQuotaPolicy.SystemPageLimit);
+                PrintQuotaPolicy.SystemPageLimit,
+                cancellationToken);
 
         if (renderedPages.Count == 0)
         {
@@ -273,8 +273,8 @@ public sealed class WindowsPrintEngine : IPrintEngine
             var rendered = await RenderPagesAsync(
                 entry.Bytes,
                 entry.Kind,
-                cancellationToken,
-                remainingPageCapacity);
+                remainingPageCapacity,
+                cancellationToken);
             pages.AddRange(rendered);
         }
         return pages;
@@ -283,8 +283,8 @@ public sealed class WindowsPrintEngine : IPrintEngine
     private static async Task<IReadOnlyList<BitmapSource>> RenderPagesAsync(
         byte[] content,
         DocumentKind kind,
-        CancellationToken cancellationToken,
-        int maximumPages)
+        int maximumPages,
+        CancellationToken cancellationToken)
     {
         if (maximumPages < 1)
         {
@@ -293,13 +293,13 @@ public sealed class WindowsPrintEngine : IPrintEngine
 
         return kind switch
         {
-            DocumentKind.Pdf => await RenderPdfAsync(content, cancellationToken, maximumPages),
+            DocumentKind.Pdf => await RenderPdfAsync(content, maximumPages, cancellationToken),
             DocumentKind.Jpeg or DocumentKind.Png => [DecodeImage(content)],
             DocumentKind.Hwp or DocumentKind.Hwpx => await RenderHangulAsync(
                 content,
                 kind,
-                cancellationToken,
-                maximumPages),
+                maximumPages,
+                cancellationToken),
             _ => throw new InvalidDataException("Unsupported document kind inside the print job."),
         };
     }
@@ -324,13 +324,13 @@ public sealed class WindowsPrintEngine : IPrintEngine
     private static async Task<IReadOnlyList<BitmapSource>> RenderHangulAsync(
         byte[] content,
         DocumentKind kind,
-        CancellationToken cancellationToken,
-        int maximumPages)
+        int maximumPages,
+        CancellationToken cancellationToken)
     {
         var pdf = await HancomHwpxRenderer.RenderToPdfAsync(content, kind, cancellationToken);
         try
         {
-            return await RenderPdfAsync(pdf, cancellationToken, maximumPages);
+            return await RenderPdfAsync(pdf, maximumPages, cancellationToken);
         }
         finally
         {
@@ -340,8 +340,8 @@ public sealed class WindowsPrintEngine : IPrintEngine
 
     private static async Task<IReadOnlyList<BitmapSource>> RenderPdfAsync(
         byte[] content,
-        CancellationToken cancellationToken,
-        int maximumPages)
+        int maximumPages,
+        CancellationToken cancellationToken)
     {
         using var input = new InMemoryRandomAccessStream();
         using (var writer = new DataWriter(input.GetOutputStreamAt(0)))
