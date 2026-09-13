@@ -40,6 +40,16 @@ export function PrintQuotaDialog({
     dialogRef.current?.focus();
   }, []);
 
+  const handleReselect = useCallback(() => {
+    // Browsers do not fire `change` when the same file path is selected twice.
+    // Clear every file input before the caller reopens its picker so a visitor
+    // can edit/overwrite a rejected document and choose that same path again.
+    for (const input of document.querySelectorAll<HTMLInputElement>('input[type="file"]')) {
+      input.value = "";
+    }
+    onReselect();
+  }, [onReselect]);
+
   const onKeyDown = useCallback(
     (event: React.KeyboardEvent<HTMLDivElement>) => {
       if (event.key === "Escape") {
@@ -68,7 +78,7 @@ export function PrintQuotaDialog({
         )}
 
         <div className="quota-actions">
-          <PrimaryButton type="button" onClick={onReselect}>
+          <PrimaryButton type="button" onClick={handleReselect}>
             {text("quotaReselect")}
           </PrimaryButton>
           {hardLimit ? null : (
