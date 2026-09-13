@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import {
   FileValidationError,
@@ -9,6 +9,11 @@ import {
   validateFileForMobile,
   validatePdf,
 } from "./file-validation";
+
+vi.mock("pdfjs-dist", () => ({
+  GlobalWorkerOptions: { workerSrc: "" },
+  getDocument: vi.fn(),
+}));
 
 describe("file validation", () => {
   it("detects signatures instead of trusting filenames", () => {
@@ -96,5 +101,18 @@ describe("file validation", () => {
     await expect(validatePdf(escaped)).rejects.toThrow(
       expect.objectContaining({ code: "lockedPdf" }),
     );
+  });
+
+  it("returns page counts above the system ceiling so the quota screen can explain the denial", async () => {
+    const pdfjs = await import("pdfjs-dist");
+    vi.mocked(pdfjs.getDocument).mockReturnValue({
+      promise: Promise.resolve({
+        numPages: 51,
+        cleanup: vi.fn(),
+      }),
+      destroy: vi.fn(),
+    } as never);
+
+    await expect(validatePdf(new TextEncoder().encode("%PDF-1.7\n%%EOF"))).resolves.toBe(51);
   });
 });

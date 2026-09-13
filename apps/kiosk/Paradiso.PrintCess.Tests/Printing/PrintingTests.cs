@@ -84,6 +84,38 @@ public sealed class PrintingTests : IDisposable
     }
 
     [Fact]
+    public async Task MockEngineRequiresStaffApprovalForTwelvePages()
+    {
+        using var document = new PortableDocumentValidator().Validate(
+            TestDocuments.PdfWithPages(12),
+            DocumentKind.Pdf,
+            "application/pdf",
+            TestDocuments.SessionId);
+        var engine = new MockPrintEngine(new MockPrintEngineOptions(true, _temporaryDirectory));
+
+        var rejected = await engine.PrintAsync(
+            document,
+            PrintSettings.KioskDefault("Mock Printer"),
+            CancellationToken.None);
+        var approvedPageCount = 0;
+        var approved = await engine.PrintAsync(
+            document,
+            PrintSettings.KioskDefault("Mock Printer"),
+            CancellationToken.None,
+            authorizeQuotaOverride: (pageCount, _) =>
+            {
+                approvedPageCount = pageCount;
+                return Task.FromResult(true);
+            });
+
+        Assert.Equal(PrintOutcome.RejectedBeforeSubmission, rejected.Outcome);
+        Assert.Equal("Q-01", rejected.Code);
+        Assert.Equal(PrintOutcome.Completed, approved.Outcome);
+        Assert.Equal(12, approvedPageCount);
+        Assert.Single(Directory.GetFiles(_temporaryDirectory, "*.json"));
+    }
+
+    [Fact]
     public void PrintSettingsRejectAnyUserConfigurableVariation()
     {
         PrintSettings.KioskDefault("Configured Printer").EnsureKioskPolicy();
@@ -117,7 +149,8 @@ public sealed class PrintingTests : IDisposable
             ValidatedDocument document,
             PrintSettings settings,
             CancellationToken cancellationToken,
-            Func<CancellationToken, Task>? onReadyToSubmit = null)
+            Func<CancellationToken, Task>? onReadyToSubmit = null,
+            Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
         {
             Interlocked.Increment(ref _callCount);
             if (onReadyToSubmit is not null)
@@ -138,7 +171,8 @@ public sealed class PrintingTests : IDisposable
             ValidatedDocument document,
             PrintSettings settings,
             CancellationToken cancellationToken,
-            Func<CancellationToken, Task>? onReadyToSubmit = null)
+            Func<CancellationToken, Task>? onReadyToSubmit = null,
+            Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
         {
             CallCount++;
             throw new InvalidOperationException("Synthetic engine failure");

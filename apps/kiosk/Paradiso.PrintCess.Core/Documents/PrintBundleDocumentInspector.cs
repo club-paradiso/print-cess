@@ -9,9 +9,11 @@ internal static class PrintBundleDocumentInspector
         try
         {
             using var bundle = PrintBundle.Parse(content);
+            var exactPageCount = 0;
+            var paginationVerified = true;
             foreach (var entry in bundle.Entries)
             {
-                _ = entry.Kind switch
+                var properties = entry.Kind switch
                 {
                     DocumentKind.Pdf => PdfDocumentInspector.Validate(entry.Bytes),
                     DocumentKind.Png => PngDocumentInspector.Validate(entry.Bytes),
@@ -20,8 +22,20 @@ internal static class PrintBundleDocumentInspector
                     DocumentKind.Hwp => HwpDocumentInspector.Validate(entry.Bytes),
                     _ => throw new DocumentValidationException(DocumentValidationError.CorruptBundle),
                 };
+                if (properties.PageCount is { } pageCount)
+                {
+                    exactPageCount = checked(exactPageCount + pageCount);
+                    if (exactPageCount > PortableDocumentValidator.MaximumPdfPages)
+                    {
+                        throw new DocumentValidationException(DocumentValidationError.TooManyPages);
+                    }
+                }
+                else
+                {
+                    paginationVerified = false;
+                }
             }
-            return new DocumentProperties(null, null, null);
+            return new DocumentProperties(paginationVerified ? exactPageCount : null, null, null);
         }
         catch (DocumentValidationException)
         {

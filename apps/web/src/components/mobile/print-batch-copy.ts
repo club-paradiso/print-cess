@@ -21,8 +21,8 @@ export type PrintBatchCopy = {
 const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   en: {
     chooseFiles: "Pick files to print",
-    rules: "Up to 10 photos or PDFs · 32 MB total · each PDF up to 10 pages",
-    rulesHancom: "Up to 10 photos, PDFs or HWP/HWPX files · 32 MB total · each PDF up to 10 pages",
+    rules: "Up to 10 photos or PDFs · 32 MB total · 50 pages maximum",
+    rulesHancom: "Up to 10 photos, PDFs or HWP/HWPX files · 32 MB total · 50 pages maximum",
     checkFiles: "Check these files",
     previewHelp: "They print once each, in the order shown below.",
     printFiles: "Print {{count}} files",
@@ -41,8 +41,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   ko: {
     chooseFiles: "출력할 파일을 선택하세요",
-    rules: "사진·PDF 최대 10개 · 전체 32MB 이하 · PDF는 파일당 최대 10쪽",
-    rulesHancom: "사진·PDF·HWP/HWPX 최대 10개 · 전체 32MB 이하 · PDF는 파일당 최대 10쪽",
+    rules: "사진·PDF 최대 10개 · 전체 32MB 이하 · 전체 최대 50쪽",
+    rulesHancom: "사진·PDF·HWP/HWPX 최대 10개 · 전체 32MB 이하 · 전체 최대 50쪽",
     checkFiles: "선택한 파일을 확인하세요",
     previewHelp: "아래 순서대로 각 파일을 1부씩 출력합니다.",
     printFiles: "파일 {{count}}개 출력하기",
@@ -62,8 +62,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   "zh-CN": {
     chooseFiles: "选择要打印的文件",
-    rules: "最多10个照片或PDF · 总计不超过32MB · 每个PDF最多10页",
-    rulesHancom: "最多10个照片、PDF或HWP/HWPX文件 · 总计不超过32MB · 每个PDF最多10页",
+    rules: "最多10个照片或PDF · 总计不超过32MB · 最多50页",
+    rulesHancom: "最多10个照片、PDF或HWP/HWPX文件 · 总计不超过32MB · 最多50页",
     checkFiles: "确认所选文件",
     previewHelp: "将按以下顺序每个文件打印1份。",
     printFiles: "打印{{count}}个文件",
@@ -79,8 +79,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   id: {
     chooseFiles: "Pilih file yang akan dicetak",
-    rules: "Maks. 10 foto atau PDF · total 32 MB · tiap PDF maks. 10 halaman",
-    rulesHancom: "Maks. 10 foto, PDF, atau HWP/HWPX · total 32 MB · tiap PDF maks. 10 halaman",
+    rules: "Maks. 10 foto atau PDF · total 32 MB · maks. 50 halaman",
+    rulesHancom: "Maks. 10 foto, PDF, atau HWP/HWPX · total 32 MB · maks. 50 halaman",
     checkFiles: "Periksa file yang dipilih",
     previewHelp: "Setiap file dicetak 1 salinan sesuai urutan di bawah.",
     printFiles: "Cetak {{count}} file",
@@ -98,9 +98,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   fil: {
     chooseFiles: "Piliin ang mga file na ipi-print",
-    rules: "Hanggang 10 larawan o PDF · 32 MB kabuuan · hanggang 10 pahina bawat PDF",
-    rulesHancom:
-      "Hanggang 10 larawan, PDF o HWP/HWPX · 32 MB kabuuan · hanggang 10 pahina bawat PDF",
+    rules: "Hanggang 10 larawan o PDF · 32 MB kabuuan · hanggang 50 pahina",
+    rulesHancom: "Hanggang 10 larawan, PDF o HWP/HWPX · 32 MB kabuuan · hanggang 50 pahina",
     checkFiles: "Suriin ang napiling mga file",
     previewHelp: "Tig-iisang kopya ang ipi-print sa pagkakasunod na nasa ibaba.",
     printFiles: "I-print ang {{count}} file",
@@ -119,8 +118,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   vi: {
     chooseFiles: "Chọn các tệp cần in",
-    rules: "Tối đa 10 ảnh hoặc PDF · tổng 32 MB · mỗi PDF tối đa 10 trang",
-    rulesHancom: "Tối đa 10 ảnh, PDF hoặc HWP/HWPX · tổng 32 MB · mỗi PDF tối đa 10 trang",
+    rules: "Tối đa 10 ảnh hoặc PDF · tổng 32 MB · tối đa 50 trang",
+    rulesHancom: "Tối đa 10 ảnh, PDF hoặc HWP/HWPX · tổng 32 MB · tối đa 50 trang",
     checkFiles: "Kiểm tra các tệp đã chọn",
     previewHelp: "Mỗi tệp sẽ được in 1 bản theo thứ tự bên dưới.",
     printFiles: "In {{count}} tệp",
@@ -136,8 +135,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   th: {
     chooseFiles: "เลือกไฟล์ที่จะพิมพ์",
-    rules: "สูงสุด 10 รูปหรือ PDF · รวมไม่เกิน 32 MB · PDF ละไม่เกิน 10 หน้า",
-    rulesHancom: "สูงสุด 10 รูป, PDF หรือ HWP/HWPX · รวมไม่เกิน 32 MB · PDF ละไม่เกิน 10 หน้า",
+    rules: "สูงสุด 10 รูปหรือ PDF · รวมไม่เกิน 32 MB · ไม่เกิน 50 หน้า",
+    rulesHancom: "สูงสุด 10 รูป, PDF หรือ HWP/HWPX · รวมไม่เกิน 32 MB · ไม่เกิน 50 หน้า",
     checkFiles: "ตรวจสอบไฟล์ที่เลือก",
     previewHelp: "แต่ละไฟล์จะพิมพ์ 1 ชุดตามลำดับด้านล่าง",
     printFiles: "พิมพ์ {{count}} ไฟล์",
@@ -153,8 +152,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   ne: {
     chooseFiles: "प्रिन्ट गर्ने फाइलहरू छान्नुहोस्",
-    rules: "बढीमा १० फोटो वा PDF · जम्मा ३२ MB · प्रत्येक PDF बढीमा १० पृष्ठ",
-    rulesHancom: "बढीमा १० फोटो, PDF वा HWP/HWPX · जम्मा ३२ MB · प्रत्येक PDF बढीमा १० पृष्ठ",
+    rules: "बढीमा १० फोटो वा PDF · जम्मा ३२ MB · बढीमा ५० पृष्ठ",
+    rulesHancom: "बढीमा १० फोटो, PDF वा HWP/HWPX · जम्मा ३२ MB · बढीमा ५० पृष्ठ",
     checkFiles: "छानिएका फाइलहरू जाँच्नुहोस्",
     previewHelp: "तल देखिएको क्रमअनुसार प्रत्येक फाइलको १ प्रति प्रिन्ट हुन्छ।",
     printFiles: "{{count}} फाइल प्रिन्ट गर्नुहोस्",
@@ -171,8 +170,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   km: {
     chooseFiles: "ជ្រើសឯកសារដែលត្រូវបោះពុម្ព",
-    rules: "អតិបរមា 10 រូប ឬ PDF · សរុប 32 MB · PDF នីមួយៗអតិបរមា 10 ទំព័រ",
-    rulesHancom: "អតិបរមា 10 រូប, PDF ឬ HWP/HWPX · សរុប 32 MB · PDF នីមួយៗអតិបរមា 10 ទំព័រ",
+    rules: "អតិបរមា 10 រូប ឬ PDF · សរុប 32 MB · អតិបរមា 50 ទំព័រ",
+    rulesHancom: "អតិបរមា 10 រូប, PDF ឬ HWP/HWPX · សរុប 32 MB · អតិបរមា 50 ទំព័រ",
     checkFiles: "ពិនិត្យឯកសារដែលបានជ្រើស",
     previewHelp: "ឯកសារនីមួយៗនឹងបោះពុម្ព 1 ច្បាប់តាមលំដាប់ខាងក្រោម។",
     printFiles: "បោះពុម្ព {{count}} ឯកសារ",
@@ -188,8 +187,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   ar: {
     chooseFiles: "اختر الملفات للطباعة",
-    rules: "حتى 10 صور أو ملفات PDF · إجمالي 32 MB · كل PDF حتى 10 صفحات",
-    rulesHancom: "حتى 10 صور أو PDF أو HWP/HWPX · إجمالي 32 MB · كل PDF حتى 10 صفحات",
+    rules: "حتى 10 صور أو ملفات PDF · إجمالي 32 MB · حتى 50 صفحة",
+    rulesHancom: "حتى 10 صور أو PDF أو HWP/HWPX · إجمالي 32 MB · حتى 50 صفحة",
     checkFiles: "تحقق من الملفات المحددة",
     previewHelp: "ستُطبع نسخة واحدة من كل ملف بالترتيب أدناه.",
     printFiles: "طباعة {{count}} ملفات",
@@ -205,8 +204,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   ru: {
     chooseFiles: "Выберите файлы для печати",
-    rules: "До 10 фото или PDF · всего до 32 МБ · каждый PDF до 10 страниц",
-    rulesHancom: "До 10 фото, PDF или HWP/HWPX · всего до 32 МБ · каждый PDF до 10 страниц",
+    rules: "До 10 фото или PDF · всего до 32 МБ · до 50 страниц",
+    rulesHancom: "До 10 фото, PDF или HWP/HWPX · всего до 32 МБ · до 50 страниц",
     checkFiles: "Проверьте выбранные файлы",
     previewHelp: "Каждый файл будет напечатан в 1 экземпляре в указанном порядке.",
     printFiles: "Напечатать {{count}} файлов",
@@ -224,8 +223,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   mn: {
     chooseFiles: "Хэвлэх файлуудаа сонгоно уу",
-    rules: "10 хүртэл зураг эсвэл PDF · нийт 32 MB · PDF бүр 10 хүртэл хуудас",
-    rulesHancom: "10 хүртэл зураг, PDF эсвэл HWP/HWPX · нийт 32 MB · PDF бүр 10 хүртэл хуудас",
+    rules: "10 хүртэл зураг эсвэл PDF · нийт 32 MB · 50 хүртэл хуудас",
+    rulesHancom: "10 хүртэл зураг, PDF эсвэл HWP/HWPX · нийт 32 MB · 50 хүртэл хуудас",
     checkFiles: "Сонгосон файлуудаа шалгана уу",
     previewHelp: "Доорх дарааллаар файл бүрийг 1 хувь хэвлэнэ.",
     printFiles: "{{count}} файл хэвлэх",
@@ -243,8 +242,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   uk: {
     chooseFiles: "Виберіть файли для друку",
-    rules: "До 10 фото або PDF · загалом до 32 МБ · кожен PDF до 10 сторінок",
-    rulesHancom: "До 10 фото, PDF або HWP/HWPX · загалом до 32 МБ · кожен PDF до 10 сторінок",
+    rules: "До 10 фото або PDF · загалом до 32 МБ · до 50 сторінок",
+    rulesHancom: "До 10 фото, PDF або HWP/HWPX · загалом до 32 МБ · до 50 сторінок",
     checkFiles: "Перевірте вибрані файли",
     previewHelp: "Кожен файл буде надруковано в 1 примірнику в наведеному порядку.",
     printFiles: "Надрукувати {{count}} файлів",
