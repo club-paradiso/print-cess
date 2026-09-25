@@ -1,11 +1,19 @@
-import { MAX_PDF_PAGES, MAX_PLAINTEXT_BYTES, type FileKind } from "@print-cess/protocol";
+import { MAX_PLAINTEXT_BYTES, type FileKind } from "@print-cess/protocol";
 
 import { isHwpxSelection, validateHwpxHeader } from "./hwpx-validation";
 
 export type ValidatedMobileFile = {
   bytes: Uint8Array;
   fileKind: FileKind;
+  /** Exact for PDFs and images. A floor when `pageCountIsExact` is false. */
   pageCount: number;
+  /**
+   * False for HWP and HWPX: Hangul decides their pagination while rendering,
+   * and only the kiosk runs Hangul. Counting them as one page would let a
+   * fifty-page document through the free limit, so the quota carries the
+   * uncertainty instead of hiding it.
+   */
+  pageCountIsExact: boolean;
   width?: number;
   height?: number;
   normalized: boolean;
@@ -124,7 +132,7 @@ export async function validateFileForMobile(
     } catch {
       throw new FileValidationError("damagedFile");
     }
-    return { bytes, fileKind: "hwpx", pageCount: 1, normalized: false };
+    return { bytes, fileKind: "hwpx", pageCount: 1, pageCountIsExact: false, normalized: false };
   }
 
   let fileKind: FileKind;
@@ -139,7 +147,7 @@ export async function validateFileForMobile(
 
   if (fileKind === "hwpx") {
     if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
-    return { bytes, fileKind, pageCount: 1, normalized: false };
+    return { bytes, fileKind, pageCount: 1, pageCountIsExact: false, normalized: false };
   }
 
   if (fileKind === "pdf") {
@@ -147,10 +155,8 @@ export async function validateFileForMobile(
     return {
       bytes,
       fileKind,
-      pageCount: await validatePdf(
-        bytes,
-        options.trustedGeneratedPdf ? { skipActiveContentScan: true } : {},
-      ),
+      pageCount: await validatePdf(bytes),
+      pageCountIsExact: true,
       normalized: false,
     };
   }
@@ -165,7 +171,14 @@ export async function validateFileForMobile(
 
   validateDimensions(dimensions.width, dimensions.height);
   await verifyBrowserImageDecode(file, dimensions);
-  return { bytes, fileKind, pageCount: 1, ...dimensions, normalized: false };
+  return {
+    bytes,
+    fileKind,
+    pageCount: 1,
+    pageCountIsExact: true,
+    ...dimensions,
+    normalized: false,
+  };
 }
 
 export async function validatePdf(
@@ -206,7 +219,6 @@ export async function validatePdf(
     const document = await task.promise;
     try {
       if (passwordRequested) throw new FileValidationError("lockedPdf");
-      if (document.numPages > MAX_PDF_PAGES) throw new FileValidationError("tooManyPages");
       if (document.numPages < 1) throw new FileValidationError("damagedFile");
       return document.numPages;
     } finally {
@@ -274,6 +286,7 @@ async function normalizeBrowserImage(file: File): Promise<ValidatedMobileFile> {
       bytes,
       fileKind: "jpeg",
       pageCount: 1,
+      pageCountIsExact: true,
       ...dimensions,
       normalized: true,
     };

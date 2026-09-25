@@ -22,3 +22,10 @@ id = "generic-api-key"
   regexTarget = "match"
   paths = ['''^\.env\.example$''']
   regexes = ['''^UPSTASH_REDIS_REST_TOKEN=\r?\nUPSTASH_DISABLE_TELEMETRY=1\r?$''']
+
+  [[rules.allowlists]]
+  description = "Public Figma file identifier documented in the Royal promo handoff"
+  condition = "AND"
+  regexTarget = "match"
+  paths = ['''^docs/design/ROYAL_PROMO_FIGMA\.md$''']
+  regexes = ['''tqEGayhvXtIhAC1WQ89fps''']
