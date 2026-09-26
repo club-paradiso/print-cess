@@ -98,12 +98,15 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright system dependencies
-        timeout-minutes: 12
-        run: pnpm --filter @print-cess/web exec playwright install-deps chromium webkit
-
+      # ubuntu-latest already carries the browser runtime libraries used by
+      # GitHub's hosted image. Running Playwright's install-deps here invokes
+      # apt against external mirrors and has repeatedly stalled this required
+      # check for tens of minutes even though every application check passed.
+      # Keep CI deterministic: install only the pinned browser binaries. If the
+      # hosted image ever lacks a runtime library, the E2E step will fail
+      # explicitly instead of hanging in package-manager I/O.
       - name: Install Playwright browsers
-        timeout-minutes: 12
+        timeout-minutes: 8
         run: pnpm --filter @print-cess/web exec playwright install chromium webkit
 
       - name: End-to-end tests
