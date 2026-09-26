@@ -8,7 +8,8 @@ public interface IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null);
+        Func<CancellationToken, Task>? onReadyToSubmit = null,
+        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null);
 }
 
 public sealed record PrintSettings(
