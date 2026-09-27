@@ -25,6 +25,9 @@ export default defineConfig({
     { name: "android", grep: /@viewport/u, use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
+    // Keep the default Next.js dev server here. The E2E local adapter stores
+    // transfer state in-process, and forcing webpack can split the request
+    // lifecycle in a way that makes sender and receiver flows lose shared state.
     command: "pnpm dev",
     env: {
       ...process.env,

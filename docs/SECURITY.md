@@ -66,7 +66,7 @@ beyond the stated threat model.
 
 ## File handling
 
-- Accept exactly one PDF, JPEG, or PNG; 10 MiB plaintext maximum; PDF maximum 10 pages.
+- Accept validated PDF, JPEG, PNG, HWP, HWPX, or authenticated print bundles; 10 MiB per document and 32 MiB per bundle. The kiosk enforces an absolute 50-page ceiling after rendering.
 - Mobile validation improves feedback. Kiosk validation is mandatory after authenticated
   decryption and checks magic bytes, actual type, bounded size, file-kind match, parse/decode
   success, page count, PDF encryption/actions, and image dimensions/resource budget.

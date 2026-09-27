@@ -106,10 +106,10 @@ const en = {
   guideCollectBody: "The printer stands next to the big screen. Take your paper there.",
 
   chooseFile: "Pick one file to print",
-  fileRules: "Photo or PDF · photos up to 20 MB · PDF up to 10 MB and 10 pages",
+  fileRules: "Photo or PDF · photos up to 20 MB · PDF up to 10 MB and 50 pages",
   guideChooseBodyHwpx: "One photo, one PDF, or one HWPX file from your phone.",
   fileRulesHwpx:
-    "Photo, PDF or HWPX · photos up to 20 MB · documents up to 10 MB · PDF up to 10 pages",
+    "Photo, PDF or HWPX · photos up to 20 MB · documents up to 10 MB · 50 pages maximum",
   documentNeedsPdf:
     "Save this document as a PDF on your phone, then pick it again. Your document is never sent to another company to be converted.",
   imageConversionUnsupported:
@@ -151,7 +151,7 @@ const en = {
     "Pick a photo or a PDF. Save a HWP, Word, Excel or PowerPoint file as a PDF first, then pick it.",
   tooLarge:
     "This file is too big. Keep photos under 20 MB and PDFs under 10 MB, or save only the pages you need.",
-  tooManyPages: "This PDF has more than 10 pages. Save only the pages you need.",
+  tooManyPages: "This document has more than 50 pages. Save only the pages you need.",
   lockedPdf:
     "This PDF has a password. Open it on your phone and take a screenshot of the pages you need.",
   damagedFile: "This file will not open. Save it again, or take a clear screenshot.",
@@ -312,6 +312,45 @@ const en = {
   fileKind_text: "Text",
   fileKind_hancom: "HWP",
   fileKind_file: "File",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "For everyone who wants to print more.",
+  quotaSelectedLabel: "Your documents",
+  quotaPagesValue: "{{pages}} pages",
+  quotaFreeLabel: "Free plan",
+  quotaFreePagesValue: "Up to {{pages}} pages",
+  quotaOverBody: "This print job is over the free limit.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ month",
+  quotaPerYear: "/ year",
+  quotaBadgePopular: "MOST POPULAR",
+  quotaBadgeValue: "BEST VALUE",
+  quotaCompareTitle: "What you get",
+  quotaComparePrinter: "Printer",
+  quotaCompareQuality: "Print quality",
+  quotaComparePaper: "Paper",
+  quotaCompareSame: "Identical",
+  quotaCta: "Upgrade to Print-cess+",
+  quotaCtaSearching: "Looking for the payment screen…",
+  quotaNotFoundTitle: "We could not find a payment screen.",
+  quotaNotFoundBody:
+    "Do not worry. Nobody here intends to charge you ₩999,000 a month. Please choose {{pages}} pages or fewer.",
+  quotaReselect: "Choose files again",
+  quotaCancel: "Cancel",
+  quotaDisclaimer:
+    "This is not a product for sale. It is a notice that keeps one print job from taking the whole printer.",
+  quotaStaffAccess: "Staff access",
+  quotaStaffBody:
+    "Staff authorize printing above the free limit at the kiosk itself. It cannot be granted from this phone.",
+  quotaHardTitle: "This is more than the printer can take.",
+  quotaHardMaxLabel: "Print-cess maximum",
+  quotaHardJoke: "No subscription fixes this one.",
+  quotaAtLimit: "You have reached the free printing limit.",
+  quotaUnverified:
+    "Hangul documents are counted at the kiosk, so the final page count is confirmed there.",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -338,9 +377,9 @@ const ko = {
   guideCollectBody: "프린터는 큰 화면 옆에 있어요. 거기에서 종이를 가져가세요.",
 
   chooseFile: "인쇄할 문서 한 개를 고르세요",
-  fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 10페이지 이하",
+  fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 50페이지 이하",
   guideChooseBodyHwpx: "사진, PDF, HWPX 파일 중 한 개를 고르세요.",
-  fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하 · PDF 10페이지 이하",
+  fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하 · 전체 50페이지 이하",
   documentNeedsPdf:
     "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 문서를 변환하려고 다른 회사에 보내지 않아요.",
   imageConversionUnsupported:
@@ -380,7 +419,7 @@ const ko = {
   unsupportedType:
     "사진이나 PDF를 고르세요. HWP, 워드, 엑셀, 파워포인트 파일은 먼저 PDF로 저장한 뒤 고르세요.",
   tooLarge: "파일이 너무 커요. 사진은 20MB, PDF는 10MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
-  tooManyPages: "PDF가 10페이지보다 많아요. 필요한 페이지만 저장하세요.",
+  tooManyPages: "문서가 50페이지보다 많아요. 필요한 페이지만 저장하세요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
   damagedFile: "파일이 열리지 않아요. 다시 저장하거나 화면을 선명하게 캡처하세요.",
   fingerprintMismatch: "안전한 연결을 확인하지 못했어요. 큰 화면의 QR코드를 다시 스캔하세요.",
@@ -536,6 +575,44 @@ const ko = {
   fileKind_text: "텍스트",
   fileKind_hancom: "HWP",
   fileKind_file: "파일",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "더 많이 출력하고 싶은 당신을 위해.",
+  quotaSelectedLabel: "선택한 문서",
+  quotaPagesValue: "{{pages}} pages",
+  quotaFreeLabel: "무료 플랜",
+  quotaFreePagesValue: "최대 {{pages}} pages",
+  quotaOverBody: "지금 고른 문서는 무료 한도를 넘었어요.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ month",
+  quotaPerYear: "/ year",
+  quotaBadgePopular: "MOST POPULAR",
+  quotaBadgeValue: "BEST VALUE",
+  quotaCompareTitle: "제공되는 것",
+  quotaComparePrinter: "프린터",
+  quotaCompareQuality: "출력 품질",
+  quotaComparePaper: "종이",
+  quotaCompareSame: "동일함",
+  quotaCta: "Upgrade to Print-cess+",
+  quotaCtaSearching: "결제 기능을 찾고 있습니다…",
+  quotaNotFoundTitle: "결제 기능을 찾지 못했어요.",
+  quotaNotFoundBody:
+    "걱정하지 마세요. 월 999,000원을 받을 생각은 정말 없어요. {{pages}}페이지 이하로 다시 골라주세요.",
+  quotaReselect: "파일 다시 선택",
+  quotaCancel: "취소",
+  quotaDisclaimer:
+    "실제로 파는 상품이 아니에요. 한 번에 너무 많이 출력하지 않도록 안내하는 화면이에요.",
+  quotaStaffAccess: "Staff access",
+  quotaStaffBody:
+    "무료 한도를 넘는 출력은 키오스크에서 직원이 직접 승인해요. 휴대폰에서는 승인할 수 없어요.",
+  quotaHardTitle: "출력할 수 있는 최대 페이지 수를 넘었어요.",
+  quotaHardMaxLabel: "Print-cess 시스템 최대 출력량",
+  quotaHardJoke: "이건 구독으로도 안 돼요.",
+  quotaAtLimit: "무료 출력 한도에 딱 맞췄어요.",
+  quotaUnverified: "한글 문서는 키오스크에서 페이지 수를 세요. 최종 장수는 키오스크에서 확정돼요.",
 } satisfies Translation;
 
 const zhCN = {
@@ -559,9 +636,9 @@ const zhCN = {
   guideCollectBody: "打印机就在大屏幕旁边，到那里拿纸。",
 
   chooseFile: "选一个要打印的文件",
-  fileRules: "照片或 PDF · 照片不超过 20 MB · PDF 不超过 10 MB、10 页",
+  fileRules: "照片或 PDF · 照片不超过 20 MB · PDF 不超过 10 MB、50 页",
   guideChooseBodyHwpx: "一张照片、一个 PDF，或者一个 HWPX 文件。",
-  fileRulesHwpx: "照片、PDF 或 HWPX · 照片不超过 20 MB · 文档不超过 10 MB · PDF 不超过 10 页",
+  fileRulesHwpx: "照片、PDF 或 HWPX · 照片不超过 20 MB · 文档不超过 10 MB · 总计不超过 50 页",
   documentNeedsPdf:
     "请在手机上把这个文档存成 PDF，然后重新选。我们不会把你的文档发给别的公司去转换。",
   imageConversionUnsupported: "这台手机打不开这种照片。请在相册里存成 JPG，或者截图，然后重新选。",
@@ -599,7 +676,7 @@ const zhCN = {
   usedQr: "这个二维码已经有人在用。请扫大屏幕上新的二维码。",
   unsupportedType: "请选照片或 PDF。HWP、Word、Excel、PowerPoint 文件要先存成 PDF 再选。",
   tooLarge: "文件太大了。照片要小于 20 MB，PDF 要小于 10 MB，或者只保存需要的几页。",
-  tooManyPages: "这个 PDF 超过 10 页。只保存你需要的几页。",
+  tooManyPages: "这个文档超过 50 页。只保存你需要的几页。",
   lockedPdf: "这个 PDF 有密码。请在手机上打开，把需要的页截图保存。",
   damagedFile: "这个文件打不开。请重新保存，或者截一张清楚的图。",
   fingerprintMismatch: "没办法确认这个连接。请重新扫大屏幕上的二维码。",
@@ -749,6 +826,42 @@ const zhCN = {
   fileKind_text: "文本",
   fileKind_hancom: "HWP",
   fileKind_file: "文件",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "致每一位想多打印一些的你。",
+  quotaSelectedLabel: "您选择的文件",
+  quotaPagesValue: "{{pages}} 页",
+  quotaFreeLabel: "免费方案",
+  quotaFreePagesValue: "最多 {{pages}} 页",
+  quotaOverBody: "本次打印已超出免费额度。",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ 月",
+  quotaPerYear: "/ 年",
+  quotaBadgePopular: "最受欢迎",
+  quotaBadgeValue: "最超值",
+  quotaCompareTitle: "您将获得",
+  quotaComparePrinter: "打印机",
+  quotaCompareQuality: "打印质量",
+  quotaComparePaper: "纸张",
+  quotaCompareSame: "完全相同",
+  quotaCta: "升级到 Print-cess+",
+  quotaCtaSearching: "正在寻找付款页面…",
+  quotaNotFoundTitle: "没有找到付款页面。",
+  quotaNotFoundBody:
+    "请放心，我们并不打算每月收取 999,000 韩元。请重新选择 {{pages}} 页以内的文件。",
+  quotaReselect: "重新选择文件",
+  quotaCancel: "取消",
+  quotaDisclaimer: "这不是在售商品，只是为了避免一次打印占用整台打印机的提示。",
+  quotaStaffAccess: "工作人员授权",
+  quotaStaffBody: "超出免费额度的打印由工作人员在自助机上授权，无法在手机上完成。",
+  quotaHardTitle: "超出了本机可打印的最大页数。",
+  quotaHardMaxLabel: "Print-cess 最大打印量",
+  quotaHardJoke: "这个订阅也解决不了。",
+  quotaAtLimit: "已达到免费打印额度。",
+  quotaUnverified: "韩文文档的页数在自助机上计算，最终页数以自助机为准。",
 } satisfies Translation;
 
 const id = {
@@ -772,10 +885,10 @@ const id = {
   guideCollectBody: "Printer ada di samping layar besar. Ambil kertas Anda di sana.",
 
   chooseFile: "Pilih satu berkas untuk dicetak",
-  fileRules: "Foto atau PDF · foto maks. 20 MB · PDF maks. 10 MB dan 10 halaman",
+  fileRules: "Foto atau PDF · foto maks. 20 MB · PDF maks. 10 MB dan 50 halaman",
   guideChooseBodyHwpx: "Satu foto, satu PDF, atau satu berkas HWPX dari ponsel Anda.",
   fileRulesHwpx:
-    "Foto, PDF, atau HWPX · foto maks. 20 MB · dokumen maks. 10 MB · PDF maks. 10 halaman",
+    "Foto, PDF, atau HWPX · foto maks. 20 MB · dokumen maks. 10 MB · total maks. 50 halaman",
   documentNeedsPdf:
     "Simpan dokumen ini sebagai PDF di ponsel Anda, lalu pilih lagi. Dokumen Anda tidak pernah dikirim ke perusahaan lain untuk dikonversi.",
   imageConversionUnsupported:
@@ -817,7 +930,7 @@ const id = {
     "Pilih foto atau PDF. Simpan berkas HWP, Word, Excel, atau PowerPoint sebagai PDF dulu, lalu pilih lagi.",
   tooLarge:
     "Berkas ini terlalu besar. Foto harus di bawah 20 MB dan PDF di bawah 10 MB, atau simpan hanya halaman yang diperlukan.",
-  tooManyPages: "PDF ini lebih dari 10 halaman. Simpan hanya halaman yang Anda perlukan.",
+  tooManyPages: "Dokumen ini lebih dari 50 halaman. Simpan hanya halaman yang Anda perlukan.",
   lockedPdf:
     "PDF ini punya kata sandi. Buka di ponsel Anda, lalu simpan halaman yang perlu sebagai tangkapan layar.",
   damagedFile: "Berkas ini tidak bisa dibuka. Simpan ulang, atau ambil tangkapan layar yang jelas.",
@@ -980,6 +1093,44 @@ const id = {
   fileKind_text: "Teks",
   fileKind_hancom: "HWP",
   fileKind_file: "Berkas",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Untuk Anda yang ingin mencetak lebih banyak.",
+  quotaSelectedLabel: "Dokumen Anda",
+  quotaPagesValue: "{{pages}} halaman",
+  quotaFreeLabel: "Paket gratis",
+  quotaFreePagesValue: "Maksimal {{pages}} halaman",
+  quotaOverBody: "Cetakan ini melebihi batas gratis.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ bulan",
+  quotaPerYear: "/ tahun",
+  quotaBadgePopular: "PALING POPULER",
+  quotaBadgeValue: "PALING HEMAT",
+  quotaCompareTitle: "Yang Anda dapatkan",
+  quotaComparePrinter: "Printer",
+  quotaCompareQuality: "Kualitas cetak",
+  quotaComparePaper: "Kertas",
+  quotaCompareSame: "Sama persis",
+  quotaCta: "Tingkatkan ke Print-cess+",
+  quotaCtaSearching: "Mencari layar pembayaran…",
+  quotaNotFoundTitle: "Layar pembayaran tidak ditemukan.",
+  quotaNotFoundBody:
+    "Tenang saja. Tidak ada yang berniat menagih ₩999.000 per bulan. Silakan pilih {{pages}} halaman atau kurang.",
+  quotaReselect: "Pilih berkas lagi",
+  quotaCancel: "Batal",
+  quotaDisclaimer:
+    "Ini bukan produk yang dijual. Ini pemberitahuan agar satu cetakan tidak menghabiskan seluruh printer.",
+  quotaStaffAccess: "Akses petugas",
+  quotaStaffBody:
+    "Petugas memberi izin cetak di atas batas gratis langsung di kios. Izin ini tidak bisa diberikan dari ponsel.",
+  quotaHardTitle: "Ini melebihi kemampuan cetak mesin.",
+  quotaHardMaxLabel: "Maksimum Print-cess",
+  quotaHardJoke: "Langganan pun tidak menolong yang ini.",
+  quotaAtLimit: "Anda telah mencapai batas cetak gratis.",
+  quotaUnverified: "Dokumen Hangul dihitung di kios, jadi jumlah halaman akhir dipastikan di sana.",
 } satisfies Translation;
 
 const fil = {
@@ -1003,10 +1154,10 @@ const fil = {
   guideCollectBody: "Nasa tabi ng malaking screen ang printer. Kunin doon ang papel mo.",
 
   chooseFile: "Pumili ng isang file na ipi-print",
-  fileRules: "Larawan o PDF · larawan hanggang 20 MB · PDF hanggang 10 MB at 10 pahina",
+  fileRules: "Larawan o PDF · larawan hanggang 20 MB · PDF hanggang 10 MB at 50 pahina",
   guideChooseBodyHwpx: "Isang larawan, isang PDF, o isang HWPX file sa telepono mo.",
   fileRulesHwpx:
-    "Larawan, PDF, o HWPX · larawan hanggang 20 MB · dokumento hanggang 10 MB · PDF hanggang 10 pahina",
+    "Larawan, PDF, o HWPX · larawan hanggang 20 MB · dokumento hanggang 10 MB · 50 pahina lahat",
   documentNeedsPdf:
     "I-save ang dokumentong ito bilang PDF sa telepono mo, pagkatapos piliin itong muli. Hindi ipinapadala ang dokumento mo sa ibang kompanya para i-convert.",
   imageConversionUnsupported:
@@ -1049,7 +1200,7 @@ const fil = {
     "Pumili ng larawan o PDF. I-save muna bilang PDF ang HWP, Word, Excel, o PowerPoint file, pagkatapos piliin itong muli.",
   tooLarge:
     "Masyadong malaki ang file. Dapat mas maliit sa 20 MB ang larawan at mas maliit sa 10 MB ang PDF, o i-save lang ang mga pahinang kailangan.",
-  tooManyPages: "Mahigit 10 pahina ang PDF na ito. I-save lang ang mga pahinang kailangan mo.",
+  tooManyPages: "Mahigit 50 pahina ang dokumentong ito. I-save lang ang mga pahinang kailangan mo.",
   lockedPdf:
     "May password ang PDF na ito. Buksan ito sa telepono mo at i-screenshot ang mga pahinang kailangan.",
   damagedFile:
@@ -1220,6 +1371,45 @@ const fil = {
   fileKind_text: "Teksto",
   fileKind_hancom: "HWP",
   fileKind_file: "File",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Para sa gustong mag-print nang mas marami.",
+  quotaSelectedLabel: "Ang iyong mga dokumento",
+  quotaPagesValue: "{{pages}} pahina",
+  quotaFreeLabel: "Libreng plano",
+  quotaFreePagesValue: "Hanggang {{pages}} pahina",
+  quotaOverBody: "Lampas na ito sa libreng limitasyon.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ buwan",
+  quotaPerYear: "/ taon",
+  quotaBadgePopular: "PINAKASIKAT",
+  quotaBadgeValue: "PINAKASULIT",
+  quotaCompareTitle: "Ang makukuha mo",
+  quotaComparePrinter: "Printer",
+  quotaCompareQuality: "Kalidad ng print",
+  quotaComparePaper: "Papel",
+  quotaCompareSame: "Pareho lang",
+  quotaCta: "Mag-upgrade sa Print-cess+",
+  quotaCtaSearching: "Hinahanap ang bayad na screen…",
+  quotaNotFoundTitle: "Walang nakitang screen ng bayad.",
+  quotaNotFoundBody:
+    "Huwag mag-alala. Walang balak siningilin ka ng ₩999,000 kada buwan. Pumili ng {{pages}} pahina o mas kaunti.",
+  quotaReselect: "Pumili ulit ng file",
+  quotaCancel: "Kanselahin",
+  quotaDisclaimer:
+    "Hindi ito produktong ibinebenta. Paalala ito para hindi maubos ng isang print ang buong printer.",
+  quotaStaffAccess: "Access ng staff",
+  quotaStaffBody:
+    "Ang staff ang nagpapahintulot ng print na lampas sa libreng limitasyon, doon mismo sa kiosk. Hindi ito maibibigay mula sa telepono.",
+  quotaHardTitle: "Sobra na ito sa kayang i-print ng makina.",
+  quotaHardMaxLabel: "Maximum ng Print-cess",
+  quotaHardJoke: "Walang subscription na makakaayos nito.",
+  quotaAtLimit: "Naabot mo na ang libreng limitasyon sa pag-print.",
+  quotaUnverified:
+    "Binibilang sa kiosk ang mga dokumentong Hangul, kaya doon kumpirmado ang huling bilang ng pahina.",
 } satisfies Translation;
 
 const vi = {
@@ -1243,10 +1433,10 @@ const vi = {
   guideCollectBody: "Máy in ở ngay cạnh màn hình lớn. Lấy giấy ở đó.",
 
   chooseFile: "Chọn một tệp để in",
-  fileRules: "Ảnh hoặc PDF · ảnh tối đa 20 MB · PDF tối đa 10 MB và 10 trang",
+  fileRules: "Ảnh hoặc PDF · ảnh tối đa 20 MB · PDF tối đa 10 MB và 50 trang",
   guideChooseBodyHwpx: "Một ảnh, một tệp PDF, hoặc một tệp HWPX trong điện thoại.",
   fileRulesHwpx:
-    "Ảnh, PDF hoặc HWPX · ảnh tối đa 20 MB · tài liệu tối đa 10 MB · PDF tối đa 10 trang",
+    "Ảnh, PDF hoặc HWPX · ảnh tối đa 20 MB · tài liệu tối đa 10 MB · tổng tối đa 50 trang",
   documentNeedsPdf:
     "Hãy lưu tài liệu này thành PDF trên điện thoại rồi chọn lại. Tài liệu của bạn không được gửi cho công ty khác để chuyển đổi.",
   imageConversionUnsupported:
@@ -1287,7 +1477,7 @@ const vi = {
     "Hãy chọn ảnh hoặc PDF. Tệp HWP, Word, Excel, PowerPoint phải lưu thành PDF trước rồi chọn lại.",
   tooLarge:
     "Tệp này quá lớn. Ảnh phải dưới 20 MB và PDF dưới 10 MB, hoặc chỉ lưu những trang bạn cần.",
-  tooManyPages: "Tệp PDF này nhiều hơn 10 trang. Chỉ lưu những trang bạn cần.",
+  tooManyPages: "Tài liệu này nhiều hơn 50 trang. Chỉ lưu những trang bạn cần.",
   lockedPdf:
     "Tệp PDF này có mật khẩu. Hãy mở trên điện thoại và chụp ảnh màn hình những trang cần.",
   damagedFile: "Tệp này không mở được. Hãy lưu lại, hoặc chụp ảnh màn hình rõ nét.",
@@ -1443,6 +1633,44 @@ const vi = {
   fileKind_text: "Văn bản",
   fileKind_hancom: "HWP",
   fileKind_file: "Tệp",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Dành cho những ai muốn in nhiều hơn.",
+  quotaSelectedLabel: "Tài liệu của bạn",
+  quotaPagesValue: "{{pages}} trang",
+  quotaFreeLabel: "Gói miễn phí",
+  quotaFreePagesValue: "Tối đa {{pages}} trang",
+  quotaOverBody: "Lần in này vượt quá hạn mức miễn phí.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ tháng",
+  quotaPerYear: "/ năm",
+  quotaBadgePopular: "PHỔ BIẾN NHẤT",
+  quotaBadgeValue: "ĐÁNG GIÁ NHẤT",
+  quotaCompareTitle: "Bạn nhận được",
+  quotaComparePrinter: "Máy in",
+  quotaCompareQuality: "Chất lượng in",
+  quotaComparePaper: "Giấy",
+  quotaCompareSame: "Giống hệt nhau",
+  quotaCta: "Nâng cấp lên Print-cess+",
+  quotaCtaSearching: "Đang tìm màn hình thanh toán…",
+  quotaNotFoundTitle: "Không tìm thấy màn hình thanh toán.",
+  quotaNotFoundBody:
+    "Đừng lo. Không ai định thu của bạn 999.000 won mỗi tháng. Vui lòng chọn {{pages}} trang trở xuống.",
+  quotaReselect: "Chọn lại tệp",
+  quotaCancel: "Hủy",
+  quotaDisclaimer:
+    "Đây không phải sản phẩm đang bán. Đây là thông báo để một lần in không chiếm trọn máy in.",
+  quotaStaffAccess: "Quyền nhân viên",
+  quotaStaffBody:
+    "Nhân viên cho phép in vượt hạn mức ngay tại ki-ốt. Không thể cấp quyền này từ điện thoại.",
+  quotaHardTitle: "Vượt quá số trang máy có thể in.",
+  quotaHardMaxLabel: "Mức tối đa của Print-cess",
+  quotaHardJoke: "Gói đăng ký cũng không cứu được lần này.",
+  quotaAtLimit: "Bạn đã đạt hạn mức in miễn phí.",
+  quotaUnverified: "Tài liệu Hangul được đếm tại ki-ốt, nên số trang cuối cùng được xác nhận ở đó.",
 } satisfies Translation;
 
 const th = {
@@ -1466,9 +1694,9 @@ const th = {
   guideCollectBody: "เครื่องพิมพ์อยู่ข้างจอใหญ่ ไปรับกระดาษที่นั่น",
 
   chooseFile: "เลือกไฟล์ที่จะพิมพ์หนึ่งไฟล์",
-  fileRules: "รูปหรือ PDF · รูปไม่เกิน 20 MB · PDF ไม่เกิน 10 MB และ 10 หน้า",
+  fileRules: "รูปหรือ PDF · รูปไม่เกิน 20 MB · PDF ไม่เกิน 10 MB และ 50 หน้า",
   guideChooseBodyHwpx: "รูปหนึ่งรูป ไฟล์ PDF หนึ่งไฟล์ หรือไฟล์ HWPX หนึ่งไฟล์ในมือถือ",
-  fileRulesHwpx: "รูป PDF หรือ HWPX · รูปไม่เกิน 20 MB · เอกสารไม่เกิน 10 MB · PDF ไม่เกิน 10 หน้า",
+  fileRulesHwpx: "รูป PDF หรือ HWPX · รูปไม่เกิน 20 MB · เอกสารไม่เกิน 10 MB · รวมไม่เกิน 50 หน้า",
   documentNeedsPdf:
     "บันทึกเอกสารนี้เป็น PDF ในมือถือ แล้วเลือกใหม่ เราไม่ส่งเอกสารของคุณไปให้บริษัทอื่นแปลงไฟล์",
   imageConversionUnsupported:
@@ -1509,7 +1737,7 @@ const th = {
     "เลือกรูปหรือ PDF ไฟล์ HWP, Word, Excel, PowerPoint ต้องบันทึกเป็น PDF ก่อนแล้วเลือกใหม่",
   tooLarge:
     "ไฟล์นี้ใหญ่เกินไป รูปต้องไม่เกิน 20 MB และ PDF ไม่เกิน 10 MB หรือเก็บเฉพาะหน้าที่ต้องการ",
-  tooManyPages: "PDF นี้มากกว่า 10 หน้า เก็บเฉพาะหน้าที่คุณต้องการ",
+  tooManyPages: "เอกสารนี้มากกว่า 50 หน้า เก็บเฉพาะหน้าที่คุณต้องการ",
   lockedPdf: "PDF นี้มีรหัสผ่าน เปิดในมือถือแล้วถ่ายภาพหน้าจอหน้าที่ต้องการ",
   damagedFile: "ไฟล์นี้เปิดไม่ได้ บันทึกใหม่ หรือถ่ายภาพหน้าจอให้ชัด",
   fingerprintMismatch: "ตรวจสอบการเชื่อมต่อนี้ไม่ได้ สแกนคิวอาร์โค้ดบนจอใหญ่อีกครั้ง",
@@ -1663,6 +1891,44 @@ const th = {
   fileKind_text: "ข้อความ",
   fileKind_hancom: "HWP",
   fileKind_file: "ไฟล์",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "สำหรับคุณที่อยากพิมพ์ได้มากขึ้น",
+  quotaSelectedLabel: "เอกสารของคุณ",
+  quotaPagesValue: "{{pages}} หน้า",
+  quotaFreeLabel: "แพ็กเกจฟรี",
+  quotaFreePagesValue: "สูงสุด {{pages}} หน้า",
+  quotaOverBody: "งานพิมพ์นี้เกินโควตาฟรีแล้ว",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ เดือน",
+  quotaPerYear: "/ ปี",
+  quotaBadgePopular: "ยอดนิยมที่สุด",
+  quotaBadgeValue: "คุ้มที่สุด",
+  quotaCompareTitle: "สิ่งที่คุณจะได้รับ",
+  quotaComparePrinter: "เครื่องพิมพ์",
+  quotaCompareQuality: "คุณภาพงานพิมพ์",
+  quotaComparePaper: "กระดาษ",
+  quotaCompareSame: "เหมือนกันทุกประการ",
+  quotaCta: "อัปเกรดเป็น Print-cess+",
+  quotaCtaSearching: "กำลังค้นหาหน้าชำระเงิน…",
+  quotaNotFoundTitle: "ไม่พบหน้าชำระเงิน",
+  quotaNotFoundBody:
+    "ไม่ต้องกังวล ไม่มีใครตั้งใจเก็บเงินคุณเดือนละ 999,000 วอน กรุณาเลือกไม่เกิน {{pages}} หน้า",
+  quotaReselect: "เลือกไฟล์ใหม่",
+  quotaCancel: "ยกเลิก",
+  quotaDisclaimer:
+    "นี่ไม่ใช่สินค้าที่วางขาย แต่เป็นข้อความแจ้งเพื่อไม่ให้งานพิมพ์เดียวใช้เครื่องพิมพ์ทั้งหมด",
+  quotaStaffAccess: "สิทธิ์เจ้าหน้าที่",
+  quotaStaffBody:
+    "เจ้าหน้าที่จะอนุมัติการพิมพ์เกินโควตาฟรีที่ตัวเครื่องคีออสก์ ไม่สามารถอนุมัติจากโทรศัพท์ได้",
+  quotaHardTitle: "เกินจำนวนหน้าที่เครื่องพิมพ์ได้",
+  quotaHardMaxLabel: "ขีดสูงสุดของ Print-cess",
+  quotaHardJoke: "ครั้งนี้สมัครสมาชิกก็ช่วยไม่ได้",
+  quotaAtLimit: "คุณใช้โควตาพิมพ์ฟรีครบแล้ว",
+  quotaUnverified: "เอกสารฮันกึลจะนับจำนวนหน้าที่เครื่องคีออสก์ จำนวนหน้าสุดท้ายจึงยืนยันที่นั่น",
 } satisfies Translation;
 
 const ne = {
@@ -1686,9 +1952,9 @@ const ne = {
   guideCollectBody: "प्रिन्टर ठूलो पर्दाको छेउमा छ। कागज त्यहीँ लिनुहोस्।",
 
   chooseFile: "प्रिन्ट गर्न एउटा फाइल छान्नुहोस्",
-  fileRules: "फोटो वा PDF · फोटो 20 MB सम्म · PDF 10 MB र 10 पृष्ठसम्म",
+  fileRules: "फोटो वा PDF · फोटो 20 MB सम्म · PDF 10 MB र 50 पृष्ठसम्म",
   guideChooseBodyHwpx: "एउटा फोटो, एउटा PDF, वा एउटा HWPX फाइल।",
-  fileRulesHwpx: "फोटो, PDF वा HWPX · फोटो 20 MB सम्म · कागजात 10 MB सम्म · PDF 10 पृष्ठसम्म",
+  fileRulesHwpx: "फोटो, PDF वा HWPX · फोटो 20 MB सम्म · कागजात 10 MB सम्म · जम्मा 50 पृष्ठसम्म",
   documentNeedsPdf:
     "यो कागजातलाई फोनमा PDF मा सेभ गरेर फेरि छान्नुहोस्। तपाईंको कागजात रूपान्तरण गर्न अर्को कम्पनीमा पठाइँदैन।",
   imageConversionUnsupported:
@@ -1730,7 +1996,7 @@ const ne = {
     "फोटो वा PDF छान्नुहोस्। HWP, Word, Excel, PowerPoint फाइल पहिले PDF मा सेभ गरेर छान्नुहोस्।",
   tooLarge:
     "यो फाइल धेरै ठूलो छ। फोटो 20 MB र PDF 10 MB भन्दा कम हुनुपर्छ, वा चाहिने पृष्ठ मात्र राख्नुहोस्।",
-  tooManyPages: "यो PDF मा 10 भन्दा बढी पृष्ठ छन्। चाहिने पृष्ठ मात्र राख्नुहोस्।",
+  tooManyPages: "यो कागजातमा 50 भन्दा बढी पृष्ठ छन्। चाहिने पृष्ठ मात्र राख्नुहोस्।",
   lockedPdf: "यो PDF मा पासवर्ड छ। फोनमा खोलेर चाहिने पृष्ठको स्क्रिनसट लिनुहोस्।",
   damagedFile: "यो फाइल खुल्दैन। फेरि सेभ गर्नुहोस्, वा स्पष्ट स्क्रिनसट लिनुहोस्।",
   fingerprintMismatch: "यो जडान जाँच्न सकिएन। ठूलो पर्दाको QR कोड फेरि स्क्यान गर्नुहोस्।",
@@ -1888,6 +2154,45 @@ const ne = {
   fileKind_text: "पाठ",
   fileKind_hancom: "HWP",
   fileKind_file: "फाइल",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "धेरै प्रिन्ट गर्न चाहनुहुनेहरूका लागि।",
+  quotaSelectedLabel: "तपाईंका कागजातहरू",
+  quotaPagesValue: "{{pages}} पृष्ठ",
+  quotaFreeLabel: "नि:शुल्क योजना",
+  quotaFreePagesValue: "बढीमा {{pages}} पृष्ठ",
+  quotaOverBody: "यो प्रिन्ट नि:शुल्क सीमाभन्दा बढी भयो।",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ महिना",
+  quotaPerYear: "/ वर्ष",
+  quotaBadgePopular: "सबैभन्दा लोकप्रिय",
+  quotaBadgeValue: "सबैभन्दा किफायती",
+  quotaCompareTitle: "तपाईंले पाउने कुरा",
+  quotaComparePrinter: "प्रिन्टर",
+  quotaCompareQuality: "प्रिन्ट गुणस्तर",
+  quotaComparePaper: "कागज",
+  quotaCompareSame: "ठ्याक्कै उस्तै",
+  quotaCta: "Print-cess+ मा अपग्रेड गर्नुहोस्",
+  quotaCtaSearching: "भुक्तानी स्क्रिन खोज्दै…",
+  quotaNotFoundTitle: "भुक्तानी स्क्रिन भेटिएन।",
+  quotaNotFoundBody:
+    "चिन्ता नगर्नुहोस्। कसैले पनि मासिक ₩999,000 लिने सोच राखेको छैन। कृपया {{pages}} पृष्ठ वा कम छान्नुहोस्।",
+  quotaReselect: "फाइल फेरि छान्नुहोस्",
+  quotaCancel: "रद्द गर्नुहोस्",
+  quotaDisclaimer:
+    "यो बिक्रीमा रहेको उत्पादन होइन। एउटै प्रिन्टले पूरै प्रिन्टर नओगटोस् भन्नका लागि यो सूचना हो।",
+  quotaStaffAccess: "कर्मचारी पहुँच",
+  quotaStaffBody:
+    "नि:शुल्क सीमाभन्दा बढी प्रिन्ट गर्न कर्मचारीले किओस्कमै अनुमति दिन्छन्। यो फोनबाट दिन मिल्दैन।",
+  quotaHardTitle: "मेसिनले प्रिन्ट गर्न सक्नेभन्दा बढी भयो।",
+  quotaHardMaxLabel: "Print-cess को अधिकतम",
+  quotaHardJoke: "यसलाई सदस्यताले पनि मिलाउँदैन।",
+  quotaAtLimit: "तपाईंले नि:शुल्क प्रिन्ट सीमा पुर्‍याइसक्नुभयो।",
+  quotaUnverified:
+    "हान्गुल कागजातको पृष्ठ किओस्कमा गनिन्छ, त्यसैले अन्तिम पृष्ठ संख्या त्यहीँ पक्का हुन्छ।",
 } satisfies Translation;
 
 const km = {
@@ -1911,10 +2216,10 @@ const km = {
   guideCollectBody: "ម៉ាស៊ីនបោះពុម្ពនៅជាប់អេក្រង់ធំ។ យកក្រដាសនៅទីនោះ។",
 
   chooseFile: "ជ្រើសឯកសារមួយដើម្បីបោះពុម្ព",
-  fileRules: "រូបថត ឬ PDF · រូបថតរហូតដល់ 20 MB · PDF រហូតដល់ 10 MB និង 10 ទំព័រ",
+  fileRules: "រូបថត ឬ PDF · រូបថតរហូតដល់ 20 MB · PDF រហូតដល់ 10 MB និង 50 ទំព័រ",
   guideChooseBodyHwpx: "រូបថតមួយ ឯកសារ PDF មួយ ឬឯកសារ HWPX មួយ។",
   fileRulesHwpx:
-    "រូបថត PDF ឬ HWPX · រូបថតរហូតដល់ 20 MB · ឯកសាររហូតដល់ 10 MB · PDF រហូតដល់ 10 ទំព័រ",
+    "រូបថត PDF ឬ HWPX · រូបថតរហូតដល់ 20 MB · ឯកសាររហូតដល់ 10 MB · សរុបរហូតដល់ 50 ទំព័រ",
   documentNeedsPdf:
     "រក្សាទុកឯកសារនេះជា PDF ក្នុងទូរស័ព្ទ រួចជ្រើសម្តងទៀត។ ឯកសាររបស់អ្នកមិនត្រូវបានផ្ញើទៅក្រុមហ៊ុនផ្សេងដើម្បីបំប្លែងទេ។",
   imageConversionUnsupported:
@@ -1956,7 +2261,7 @@ const km = {
     "ជ្រើសរូបថត ឬ PDF។ ឯកសារ HWP, Word, Excel, PowerPoint ត្រូវរក្សាទុកជា PDF មុន រួចជ្រើសម្តងទៀត។",
   tooLarge:
     "ឯកសារនេះធំពេក។ រូបថតត្រូវតិចជាង 20 MB និង PDF តិចជាង 10 MB ឬរក្សាទុកតែទំព័រដែលត្រូវការ។",
-  tooManyPages: "PDF នេះលើស 10 ទំព័រ។ រក្សាទុកតែទំព័រដែលអ្នកត្រូវការ។",
+  tooManyPages: "ឯកសារនេះលើស 50 ទំព័រ។ រក្សាទុកតែទំព័រដែលអ្នកត្រូវការ។",
   lockedPdf: "PDF នេះមានពាក្យសម្ងាត់។ បើកក្នុងទូរស័ព្ទ ហើយថតអេក្រង់ទំព័រដែលត្រូវការ។",
   damagedFile: "ឯកសារនេះបើកមិនបាន។ រក្សាទុកម្តងទៀត ឬថតអេក្រង់ឱ្យច្បាស់។",
   fingerprintMismatch: "មិនអាចពិនិត្យការតភ្ជាប់នេះបានទេ។ ស្កេនកូដ QR លើអេក្រង់ធំម្តងទៀត។",
@@ -2110,6 +2415,45 @@ const km = {
   fileKind_text: "អត្ថបទ",
   fileKind_hancom: "HWP",
   fileKind_file: "ឯកសារ",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "សម្រាប់អ្នកដែលចង់បោះពុម្ពបានច្រើនជាងនេះ។",
+  quotaSelectedLabel: "ឯកសាររបស់អ្នក",
+  quotaPagesValue: "{{pages}} ទំព័រ",
+  quotaFreeLabel: "គម្រោងឥតគិតថ្លៃ",
+  quotaFreePagesValue: "អតិបរមា {{pages}} ទំព័រ",
+  quotaOverBody: "ការបោះពុម្ពនេះលើសកម្រិតឥតគិតថ្លៃ។",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ ខែ",
+  quotaPerYear: "/ ឆ្នាំ",
+  quotaBadgePopular: "ពេញនិយមបំផុត",
+  quotaBadgeValue: "សមរម្យបំផុត",
+  quotaCompareTitle: "អ្វីដែលអ្នកទទួលបាន",
+  quotaComparePrinter: "ម៉ាស៊ីនបោះពុម្ព",
+  quotaCompareQuality: "គុណភាពបោះពុម្ព",
+  quotaComparePaper: "ក្រដាស",
+  quotaCompareSame: "ដូចគ្នាបេះបិទ",
+  quotaCta: "ដំឡើងទៅ Print-cess+",
+  quotaCtaSearching: "កំពុងស្វែងរកអេក្រង់ទូទាត់…",
+  quotaNotFoundTitle: "រកមិនឃើញអេក្រង់ទូទាត់ទេ។",
+  quotaNotFoundBody:
+    "កុំបារម្ភ។ គ្មាននរណាម្នាក់មានបំណងគិតថ្លៃ ₩999,000 ក្នុងមួយខែទេ។ សូមជ្រើសរើស {{pages}} ទំព័រ ឬតិចជាង។",
+  quotaReselect: "ជ្រើសរើសឯកសារម្តងទៀត",
+  quotaCancel: "បោះបង់",
+  quotaDisclaimer:
+    "នេះមិនមែនជាផលិតផលលក់ទេ។ វាជាការជូនដំណឹង ដើម្បីកុំឲ្យការបោះពុម្ពតែមួយកាន់កាប់ម៉ាស៊ីនទាំងមូល។",
+  quotaStaffAccess: "សិទ្ធិបុគ្គលិក",
+  quotaStaffBody:
+    "បុគ្គលិកអនុញ្ញាតការបោះពុម្ពលើសកម្រិតឥតគិតថ្លៃនៅម៉ាស៊ីនកុំព្យូទ័រសេវាកម្មផ្ទាល់។ មិនអាចផ្តល់ពីទូរស័ព្ទបានទេ។",
+  quotaHardTitle: "លើសចំនួនទំព័រដែលម៉ាស៊ីនអាចបោះពុម្ពបាន។",
+  quotaHardMaxLabel: "កម្រិតអតិបរមារបស់ Print-cess",
+  quotaHardJoke: "លើកនេះការជាវក៏មិនជួយដែរ។",
+  quotaAtLimit: "អ្នកបានឈានដល់កម្រិតបោះពុម្ពឥតគិតថ្លៃហើយ។",
+  quotaUnverified:
+    "ឯកសារហាន់ហ្គុលត្រូវបានរាប់ទំព័រនៅម៉ាស៊ីនសេវាកម្ម ដូច្នេះចំនួនទំព័រចុងក្រោយត្រូវបញ្ជាក់នៅទីនោះ។",
 } satisfies Translation;
 
 const ar = {
@@ -2133,10 +2477,10 @@ const ar = {
   guideCollectBody: "الطابعة بجانب الشاشة الكبيرة. خذ ورقتك من هناك.",
 
   chooseFile: "اختر ملفًا واحدًا للطباعة",
-  fileRules: "صورة أو PDF · الصور حتى 20 MB · ملف PDF حتى 10 MB و10 صفحات",
+  fileRules: "صورة أو PDF · الصور حتى 20 MB · ملف PDF حتى 10 MB و50 صفحة",
   guideChooseBodyHwpx: "صورة واحدة، أو ملف PDF واحد، أو ملف HWPX واحد من هاتفك.",
   fileRulesHwpx:
-    "صورة أو PDF أو HWPX · الصور حتى 20 MB · المستندات حتى 10 MB · ملف PDF حتى 10 صفحات",
+    "صورة أو PDF أو HWPX · الصور حتى 20 MB · المستندات حتى 10 MB · المجموع حتى 50 صفحة",
   documentNeedsPdf:
     "احفظ هذا المستند بصيغة PDF على هاتفك، ثم اختره مرة أخرى. لا يُرسل مستندك إلى شركة أخرى لتحويله.",
   imageConversionUnsupported:
@@ -2177,7 +2521,7 @@ const ar = {
     "اختر صورة أو ملف PDF. احفظ ملفات HWP وWord وExcel وPowerPoint بصيغة PDF أولًا، ثم اخترها.",
   tooLarge:
     "هذا الملف كبير جدًا. يجب أن تكون الصور أقل من 20 MB وملفات PDF أقل من 10 MB، أو احفظ الصفحات التي تحتاجها فقط.",
-  tooManyPages: "ملف PDF هذا أكثر من 10 صفحات. احفظ الصفحات التي تحتاجها فقط.",
+  tooManyPages: "هذا المستند أكثر من 50 صفحة. احفظ الصفحات التي تحتاجها فقط.",
   lockedPdf: "ملف PDF هذا محمي بكلمة مرور. افتحه على هاتفك والتقط صورة شاشة للصفحات التي تحتاجها.",
   damagedFile: "هذا الملف لا يُفتح. احفظه مرة أخرى، أو التقط صورة شاشة واضحة.",
   fingerprintMismatch:
@@ -2332,6 +2676,44 @@ const ar = {
   fileKind_text: "نص",
   fileKind_hancom: "HWP",
   fileKind_file: "ملف",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "لكل من يريد طباعة المزيد.",
+  quotaSelectedLabel: "مستنداتك",
+  quotaPagesValue: "{{pages}} صفحة",
+  quotaFreeLabel: "الخطة المجانية",
+  quotaFreePagesValue: "حتى {{pages}} صفحة",
+  quotaOverBody: "هذه الطباعة تتجاوز الحد المجاني.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ شهريًا",
+  quotaPerYear: "/ سنويًا",
+  quotaBadgePopular: "الأكثر شيوعًا",
+  quotaBadgeValue: "الأفضل قيمة",
+  quotaCompareTitle: "ما الذي تحصل عليه",
+  quotaComparePrinter: "الطابعة",
+  quotaCompareQuality: "جودة الطباعة",
+  quotaComparePaper: "الورق",
+  quotaCompareSame: "مطابق تمامًا",
+  quotaCta: "الترقية إلى Print-cess+",
+  quotaCtaSearching: "جارٍ البحث عن شاشة الدفع…",
+  quotaNotFoundTitle: "لم نعثر على شاشة دفع.",
+  quotaNotFoundBody:
+    "لا تقلق. لا أحد ينوي أن يتقاضى منك 999,000 وون شهريًا. يرجى اختيار {{pages}} صفحة أو أقل.",
+  quotaReselect: "اختيار الملفات من جديد",
+  quotaCancel: "إلغاء",
+  quotaDisclaimer:
+    "هذا ليس منتجًا معروضًا للبيع. إنه تنبيه يمنع طلب طباعة واحدًا من احتكار الطابعة بأكملها.",
+  quotaStaffAccess: "صلاحية الموظفين",
+  quotaStaffBody:
+    "يمنح الموظفون إذن الطباعة فوق الحد المجاني عند الجهاز نفسه، ولا يمكن منحه من هذا الهاتف.",
+  quotaHardTitle: "هذا أكثر مما تستطيع الطابعة طباعته.",
+  quotaHardMaxLabel: "الحد الأقصى في Print-cess",
+  quotaHardJoke: "لا يوجد اشتراك يحل هذه المرة.",
+  quotaAtLimit: "لقد بلغت حد الطباعة المجانية.",
+  quotaUnverified: "تُحتسب صفحات مستندات هانغول عند الجهاز، لذا يتأكد العدد النهائي هناك.",
 } satisfies Translation;
 
 const ru = {
@@ -2355,9 +2737,9 @@ const ru = {
   guideCollectBody: "Принтер стоит рядом с большим экраном. Заберите лист там.",
 
   chooseFile: "Выберите один файл для печати",
-  fileRules: "Фото или PDF · фото до 20 МБ · PDF до 10 МБ и 10 страниц",
+  fileRules: "Фото или PDF · фото до 20 МБ · PDF до 10 МБ и 50 страниц",
   guideChooseBodyHwpx: "Одно фото, один PDF или один файл HWPX из телефона.",
-  fileRulesHwpx: "Фото, PDF или HWPX · фото до 20 МБ · документы до 10 МБ · PDF до 10 страниц",
+  fileRulesHwpx: "Фото, PDF или HWPX · фото до 20 МБ · документы до 10 МБ · всего до 50 страниц",
   documentNeedsPdf:
     "Сохраните этот документ на телефоне как PDF и выберите его снова. Ваш документ не отправляется в другую компанию для преобразования.",
   imageConversionUnsupported:
@@ -2399,7 +2781,7 @@ const ru = {
     "Выберите фото или PDF. Файл HWP, Word, Excel или PowerPoint сначала сохраните как PDF, затем выберите его.",
   tooLarge:
     "Этот файл слишком большой. Фото должно быть меньше 20 МБ, а PDF меньше 10 МБ, либо сохраните только нужные страницы.",
-  tooManyPages: "В этом PDF больше 10 страниц. Сохраните только нужные страницы.",
+  tooManyPages: "В этом документе больше 50 страниц. Сохраните только нужные страницы.",
   lockedPdf: "У этого PDF есть пароль. Откройте его на телефоне и снимите нужные страницы.",
   damagedFile: "Этот файл не открывается. Сохраните его снова или сделайте чёткий снимок экрана.",
   fingerprintMismatch:
@@ -2561,6 +2943,45 @@ const ru = {
   fileKind_text: "Текст",
   fileKind_hancom: "HWP",
   fileKind_file: "Файл",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Для всех, кто хочет печатать больше.",
+  quotaSelectedLabel: "Ваши документы",
+  quotaPagesValue: "{{pages}} стр.",
+  quotaFreeLabel: "Бесплатный тариф",
+  quotaFreePagesValue: "До {{pages}} стр.",
+  quotaOverBody: "Эта печать превышает бесплатный лимит.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ месяц",
+  quotaPerYear: "/ год",
+  quotaBadgePopular: "САМЫЙ ПОПУЛЯРНЫЙ",
+  quotaBadgeValue: "САМЫЙ ВЫГОДНЫЙ",
+  quotaCompareTitle: "Что вы получаете",
+  quotaComparePrinter: "Принтер",
+  quotaCompareQuality: "Качество печати",
+  quotaComparePaper: "Бумага",
+  quotaCompareSame: "Точно такие же",
+  quotaCta: "Перейти на Print-cess+",
+  quotaCtaSearching: "Ищем экран оплаты…",
+  quotaNotFoundTitle: "Экран оплаты не найден.",
+  quotaNotFoundBody:
+    "Не волнуйтесь. Никто не собирается брать с вас 999 000 вон в месяц. Выберите {{pages}} страниц или меньше.",
+  quotaReselect: "Выбрать файлы заново",
+  quotaCancel: "Отмена",
+  quotaDisclaimer:
+    "Это не продаваемый продукт. Это уведомление, чтобы одна печать не заняла весь принтер.",
+  quotaStaffAccess: "Доступ для сотрудников",
+  quotaStaffBody:
+    "Печать сверх бесплатного лимита разрешают сотрудники на самом киоске. С телефона это сделать нельзя.",
+  quotaHardTitle: "Это больше, чем принтер может напечатать.",
+  quotaHardMaxLabel: "Максимум Print-cess",
+  quotaHardJoke: "Здесь подписка уже не поможет.",
+  quotaAtLimit: "Вы достигли бесплатного лимита печати.",
+  quotaUnverified:
+    "Страницы документов Hangul считаются на киоске, поэтому итоговое число подтверждается там.",
 } satisfies Translation;
 
 const mn = {
@@ -2584,10 +3005,10 @@ const mn = {
   guideCollectBody: "Хэвлэгч том дэлгэцийн хажууд байна. Цаасаа тэндээс авна уу.",
 
   chooseFile: "Хэвлэх нэг файлаа сонгоно уу",
-  fileRules: "Зураг эсвэл PDF · зураг 20 MB хүртэл · PDF 10 MB, 10 хуудас хүртэл",
+  fileRules: "Зураг эсвэл PDF · зураг 20 MB хүртэл · PDF 10 MB, 50 хуудас хүртэл",
   guideChooseBodyHwpx: "Нэг зураг, нэг PDF, эсвэл нэг HWPX файл.",
   fileRulesHwpx:
-    "Зураг, PDF эсвэл HWPX · зураг 20 MB хүртэл · баримт 10 MB хүртэл · PDF 10 хуудас хүртэл",
+    "Зураг, PDF эсвэл HWPX · зураг 20 MB хүртэл · баримт 10 MB хүртэл · нийт 50 хуудас хүртэл",
   documentNeedsPdf:
     "Энэ баримтыг утсан дээрээ PDF болгож хадгалаад дахин сонгоно уу. Таны баримтыг хөрвүүлэхээр өөр компанид илгээдэггүй.",
   imageConversionUnsupported:
@@ -2629,7 +3050,7 @@ const mn = {
     "Зураг эсвэл PDF сонгоно уу. HWP, Word, Excel, PowerPoint файлыг эхлээд PDF болгож хадгалаад сонгоно уу.",
   tooLarge:
     "Энэ файл хэтэрхий том. Зураг 20 MB-аас, PDF 10 MB-аас бага байх ёстой. Эсвэл шаардлагатай хуудсаа хадгална уу.",
-  tooManyPages: "Энэ PDF 10 хуудсаас их. Зөвхөн шаардлагатай хуудсаа хадгална уу.",
+  tooManyPages: "Энэ баримт 50 хуудсаас их. Зөвхөн шаардлагатай хуудсаа хадгална уу.",
   lockedPdf:
     "Энэ PDF нууц үгтэй. Утсан дээрээ нээгээд шаардлагатай хуудсуудын дэлгэцийн зургийг авна уу.",
   damagedFile: "Энэ файл нээгдэхгүй байна. Дахин хадгалах эсвэл тод дэлгэцийн зураг авна уу.",
@@ -2792,6 +3213,44 @@ const mn = {
   fileKind_text: "Текст",
   fileKind_hancom: "HWP",
   fileKind_file: "Файл",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Илүү ихийг хэвлэхийг хүсэгч бүрд зориулав.",
+  quotaSelectedLabel: "Таны баримтууд",
+  quotaPagesValue: "{{pages}} хуудас",
+  quotaFreeLabel: "Үнэгүй багц",
+  quotaFreePagesValue: "Дээд тал нь {{pages}} хуудас",
+  quotaOverBody: "Энэ хэвлэлт үнэгүй хязгаараас хэтэрлээ.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ сар",
+  quotaPerYear: "/ жил",
+  quotaBadgePopular: "ХАМГИЙН ЭРЭЛТТЭЙ",
+  quotaBadgeValue: "ХАМГИЙН АШИГТАЙ",
+  quotaCompareTitle: "Таны авах зүйл",
+  quotaComparePrinter: "Хэвлэгч",
+  quotaCompareQuality: "Хэвлэлтийн чанар",
+  quotaComparePaper: "Цаас",
+  quotaCompareSame: "Яг адилхан",
+  quotaCta: "Print-cess+ рүү шинэчлэх",
+  quotaCtaSearching: "Төлбөрийн дэлгэцийг хайж байна…",
+  quotaNotFoundTitle: "Төлбөрийн дэлгэц олдсонгүй.",
+  quotaNotFoundBody:
+    "Санаа зовох хэрэггүй. Сард 999,000 вон авах бодол хэнд ч алга. {{pages}} хуудас буюу түүнээс цөөнийг сонгоно уу.",
+  quotaReselect: "Файлаа дахин сонгох",
+  quotaCancel: "Цуцлах",
+  quotaDisclaimer:
+    "Энэ бол зарагдаж буй бүтээгдэхүүн биш. Нэг хэвлэлт хэвлэгчийг бүхэлд нь эзлэхээс сэргийлсэн мэдэгдэл юм.",
+  quotaStaffAccess: "Ажилтны эрх",
+  quotaStaffBody:
+    "Үнэгүй хязгаараас хэтэрсэн хэвлэлтийг ажилтан киоск дээр өөрөө зөвшөөрнө. Утаснаас олгох боломжгүй.",
+  quotaHardTitle: "Энэ нь хэвлэгчийн хэвлэж чадахаас их байна.",
+  quotaHardMaxLabel: "Print-cess-ийн дээд хэмжээ",
+  quotaHardJoke: "Үүнийг захиалга ч зассангүй.",
+  quotaAtLimit: "Та үнэгүй хэвлэх хязгаартаа хүрлээ.",
+  quotaUnverified: "Хангул баримтын хуудсыг киоск дээр тоолдог тул эцсийн тоо тэнд баталгаажна.",
 } satisfies Translation;
 
 const uk = {
@@ -2815,9 +3274,9 @@ const uk = {
   guideCollectBody: "Принтер стоїть біля великого екрана. Заберіть аркуш там.",
 
   chooseFile: "Виберіть один файл для друку",
-  fileRules: "Фото або PDF · фото до 20 МБ · PDF до 10 МБ і 10 сторінок",
+  fileRules: "Фото або PDF · фото до 20 МБ · PDF до 10 МБ і 50 сторінок",
   guideChooseBodyHwpx: "Одне фото, один PDF або один файл HWPX із телефону.",
-  fileRulesHwpx: "Фото, PDF або HWPX · фото до 20 МБ · документи до 10 МБ · PDF до 10 сторінок",
+  fileRulesHwpx: "Фото, PDF або HWPX · фото до 20 МБ · документи до 10 МБ · загалом до 50 сторінок",
   documentNeedsPdf:
     "Збережіть цей документ на телефоні як PDF і виберіть його знову. Ваш документ не надсилається в іншу компанію для перетворення.",
   imageConversionUnsupported:
@@ -2859,7 +3318,7 @@ const uk = {
     "Виберіть фото або PDF. Файл HWP, Word, Excel чи PowerPoint спочатку збережіть як PDF, а потім виберіть його.",
   tooLarge:
     "Цей файл завеликий. Фото має бути менше 20 МБ, а PDF менше 10 МБ, або збережіть лише потрібні сторінки.",
-  tooManyPages: "У цьому PDF більше 10 сторінок. Збережіть лише потрібні сторінки.",
+  tooManyPages: "У цьому документі більше 50 сторінок. Збережіть лише потрібні сторінки.",
   lockedPdf: "Цей PDF має пароль. Відкрийте його на телефоні й зніміть потрібні сторінки.",
   damagedFile: "Цей файл не відкривається. Збережіть його ще раз або зробіть чіткий знімок.",
   fingerprintMismatch:
@@ -3021,6 +3480,44 @@ const uk = {
   fileKind_text: "Текст",
   fileKind_hancom: "HWP",
   fileKind_file: "Файл",
+
+  // Print quota and the deliberately absurd Print-cess+ paywall.
+  quotaPaywallTitle: "Print-cess+",
+  quotaPaywallLead: "Для всіх, хто хоче друкувати більше.",
+  quotaSelectedLabel: "Ваші документи",
+  quotaPagesValue: "{{pages}} стор.",
+  quotaFreeLabel: "Безкоштовний тариф",
+  quotaFreePagesValue: "До {{pages}} стор.",
+  quotaOverBody: "Цей друк перевищує безкоштовний ліміт.",
+  quotaPlanFree: "FREE",
+  quotaPlanPro: "PRO",
+  quotaPlanUltra: "ULTRA",
+  quotaPerMonth: "/ місяць",
+  quotaPerYear: "/ рік",
+  quotaBadgePopular: "НАЙПОПУЛЯРНІШИЙ",
+  quotaBadgeValue: "НАЙВИГІДНІШИЙ",
+  quotaCompareTitle: "Що ви отримуєте",
+  quotaComparePrinter: "Принтер",
+  quotaCompareQuality: "Якість друку",
+  quotaComparePaper: "Папір",
+  quotaCompareSame: "Точно такі самі",
+  quotaCta: "Перейти на Print-cess+",
+  quotaCtaSearching: "Шукаємо екран оплати…",
+  quotaNotFoundTitle: "Екран оплати не знайдено.",
+  quotaNotFoundBody:
+    "Не хвилюйтеся. Ніхто не збирається брати з вас 999 000 вон на місяць. Оберіть {{pages}} сторінок або менше.",
+  quotaReselect: "Обрати файли знову",
+  quotaCancel: "Скасувати",
+  quotaDisclaimer: "Це не товар на продаж. Це повідомлення, щоб один друк не зайняв увесь принтер.",
+  quotaStaffAccess: "Доступ для персоналу",
+  quotaStaffBody:
+    "Друк понад безкоштовний ліміт дозволяє персонал на самому кіоску. З телефона це зробити не можна.",
+  quotaHardTitle: "Це більше, ніж принтер може надрукувати.",
+  quotaHardMaxLabel: "Максимум Print-cess",
+  quotaHardJoke: "Тут передплата вже не допоможе.",
+  quotaAtLimit: "Ви досягли безкоштовного ліміту друку.",
+  quotaUnverified:
+    "Сторінки документів Hangul рахуються на кіоску, тому остаточне число підтверджується там.",
 } satisfies Translation;
 
 export const TRANSLATIONS: Record<SupportedLocale, Translation> = {
