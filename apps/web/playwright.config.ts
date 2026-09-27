@@ -25,10 +25,10 @@ export default defineConfig({
     { name: "android", grep: /@viewport/u, use: { ...devices["Pixel 7"] } },
   ],
   webServer: {
-    // The browser suite validates application behavior, not the bundler. Using
-    // webpack avoids Turbopack's large persistent development cache on small
-    // kiosk and CI disks while keeping the same Next.js runtime surface.
-    command: "pnpm dev --webpack",
+    // Keep the default Next.js dev server here. The E2E local adapter stores
+    // transfer state in-process, and forcing webpack can split the request
+    // lifecycle in a way that makes sender and receiver flows lose shared state.
+    command: "pnpm dev",
     env: {
       ...process.env,
       PRINT_CESS_ADAPTER_MODE: "local",
