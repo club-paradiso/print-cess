@@ -1,0 +1,13 @@
+{
+  "$comment": "Config for ~/dev/korean-language-quality (kolint). Print-cess screens are read by someone standing at a kiosk, so the genre is 'ux'. docs/DOCUMENT_JOURNEY.md is the design record for what the screens say and is checked as documentation when passed explicitly.",
+  "genre": "ux",
+  "intensity": "standard",
+  "exclude": [
+    "**/node_modules/**",
+    "**/.next/**",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "apps/windows-kiosk/**"
+  ],
+  "extraTerms": ["프린세스", "Print-cess", "Club Paradiso"]
+}
