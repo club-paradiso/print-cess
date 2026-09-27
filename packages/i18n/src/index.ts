@@ -92,6 +92,10 @@ const en = {
   homeScanHint: "Start by scanning the QR code shown on a Print-cess Kiosk.",
   homeNoAccount: "No account or public-computer login is required.",
 
+  notFoundTitle: "This page is not here",
+  notFoundBody:
+    "The address may be wrong or out of date. To print, scan the QR code on the big screen again.",
+  notFoundHome: "Go to the start",
   selectLanguage: "Choose your language",
   step: "Step {{current}} of {{total}}",
 
@@ -324,6 +328,10 @@ const ko = {
   homeScanHint: "키오스크 화면에 있는 QR 코드를 찍으면 시작해요.",
   homeNoAccount: "계정도 공용 컴퓨터 로그인도 필요 없어요.",
 
+  notFoundTitle: "이 페이지는 없어요",
+  notFoundBody:
+    "주소가 잘못됐거나 오래됐을 수 있어요. 인쇄하려면 큰 화면의 QR코드를 다시 스캔하세요.",
+  notFoundHome: "처음으로",
   selectLanguage: "언어를 선택하세요",
   step: "{{total}}단계 중 {{current}}단계",
 
@@ -545,6 +553,9 @@ const zhCN = {
   homeScanHint: "扫描 Print-cess 自助机上显示的二维码即可开始。",
   homeNoAccount: "无需账号，也无需在公用电脑上登录。",
 
+  notFoundTitle: "找不到这个页面",
+  notFoundBody: "网址可能有误或已过期。要打印，请重新扫大屏幕上的二维码。",
+  notFoundHome: "回到首页",
   selectLanguage: "选择语言",
   step: "第 {{current}} 步 / 共 {{total}} 步",
 
@@ -758,6 +769,10 @@ const id = {
   homeScanHint: "Mulai dengan memindai kode QR di layar Kios Print-cess.",
   homeNoAccount: "Tidak perlu akun atau login di komputer umum.",
 
+  notFoundTitle: "Halaman ini tidak ada",
+  notFoundBody:
+    "Alamatnya mungkin salah atau sudah lama. Untuk mencetak, pindai lagi kode QR di layar besar.",
+  notFoundHome: "Ke halaman awal",
   selectLanguage: "Pilih bahasa Anda",
   step: "Langkah {{current}} dari {{total}}",
 
@@ -989,6 +1004,10 @@ const fil = {
   homeScanHint: "Magsimula sa pag-scan ng QR code sa Print-cess Kiosk.",
   homeNoAccount: "Hindi kailangan ng account o pag-log in sa pampublikong computer.",
 
+  notFoundTitle: "Wala ang pahinang ito",
+  notFoundBody:
+    "Maaaring mali o luma na ang address. Para mag-print, i-scan muli ang QR code sa malaking screen.",
+  notFoundHome: "Bumalik sa simula",
   selectLanguage: "Piliin ang wika mo",
   step: "Hakbang {{current}} sa {{total}}",
 
@@ -1229,6 +1248,9 @@ const vi = {
   homeScanHint: "Bắt đầu bằng cách quét mã QR trên màn hình Print-cess Kiosk.",
   homeNoAccount: "Không cần tài khoản hay đăng nhập trên máy tính công cộng.",
 
+  notFoundTitle: "Không có trang này",
+  notFoundBody: "Địa chỉ có thể sai hoặc đã cũ. Để in, hãy quét lại mã QR trên màn hình lớn.",
+  notFoundHome: "Về trang đầu",
   selectLanguage: "Chọn ngôn ngữ của bạn",
   step: "Bước {{current}} / {{total}}",
 
@@ -1452,6 +1474,9 @@ const th = {
   homeScanHint: "เริ่มต้นด้วยการสแกนคิวอาร์โค้ดบนหน้าจอ Print-cess Kiosk",
   homeNoAccount: "ไม่ต้องมีบัญชีหรือเข้าสู่ระบบบนคอมพิวเตอร์สาธารณะ",
 
+  notFoundTitle: "ไม่พบหน้านี้",
+  notFoundBody: "ที่อยู่อาจผิดหรือเก่าแล้ว หากต้องการพิมพ์ ให้สแกนคิวอาร์โค้ดบนจอใหญ่อีกครั้ง",
+  notFoundHome: "กลับไปหน้าแรก",
   selectLanguage: "เลือกภาษาของคุณ",
   step: "ขั้นที่ {{current}} จาก {{total}}",
 
@@ -1672,6 +1697,10 @@ const ne = {
   homeScanHint: "Print-cess Kiosk को स्क्रिनमा देखिने QR कोड स्क्यान गरेर सुरु गर्नुहोस्।",
   homeNoAccount: "खाता वा सार्वजनिक कम्प्युटरमा लगइन गर्नु पर्दैन।",
 
+  notFoundTitle: "यो पृष्ठ यहाँ छैन",
+  notFoundBody:
+    "ठेगाना गलत वा पुरानो हुन सक्छ। प्रिन्ट गर्न ठूलो स्क्रिनको QR कोड फेरि स्क्यान गर्नुहोस्।",
+  notFoundHome: "सुरुमा जानुहोस्",
   selectLanguage: "आफ्नो भाषा छान्नुहोस्",
   step: "{{total}} मध्ये {{current}} चरण",
 
@@ -1897,6 +1926,9 @@ const km = {
   homeScanHint: "ចាប់ផ្តើមដោយស្កេនកូដ QR នៅលើអេក្រង់ Print-cess Kiosk។",
   homeNoAccount: "មិនចាំបាច់មានគណនី ឬចូលគណនីលើកុំព្យូទ័រសាធារណៈទេ។",
 
+  notFoundTitle: "រកមិនឃើញទំព័រនេះទេ",
+  notFoundBody: "អាសយដ្ឋានអាចខុស ឬចាស់ហើយ។ ដើម្បីបោះពុម្ព សូមស្កេនកូដ QR នៅលើអេក្រង់ធំម្ដងទៀត។",
+  notFoundHome: "ទៅទំព័រដើម",
   selectLanguage: "ជ្រើសរើសភាសារបស់អ្នក",
   step: "ជំហានទី {{current}} នៃ {{total}}",
 
@@ -2119,6 +2151,10 @@ const ar = {
   homeScanHint: "ابدأ بمسح رمز QR الظاهر على شاشة كشك Print-cess.",
   homeNoAccount: "لا حاجة إلى حساب أو تسجيل دخول على حاسوب عام.",
 
+  notFoundTitle: "هذه الصفحة غير موجودة",
+  notFoundBody:
+    "قد يكون العنوان خاطئًا أو قديمًا. للطباعة، امسح رمز QR على الشاشة الكبيرة مرة أخرى.",
+  notFoundHome: "العودة إلى البداية",
   selectLanguage: "اختر لغتك",
   step: "الخطوة {{current}} من {{total}}",
 
@@ -2341,6 +2377,10 @@ const ru = {
   homeScanHint: "Начните со сканирования QR-кода на экране киоска Print-cess.",
   homeNoAccount: "Не нужны ни аккаунт, ни вход на общем компьютере.",
 
+  notFoundTitle: "Такой страницы нет",
+  notFoundBody:
+    "Адрес может быть неверным или устаревшим. Чтобы распечатать, снова отсканируйте QR-код на большом экране.",
+  notFoundHome: "На главную",
   selectLanguage: "Выберите язык",
   step: "Шаг {{current}} из {{total}}",
 
@@ -2570,6 +2610,10 @@ const mn = {
   homeScanHint: "Print-cess Kiosk дэлгэц дэх QR кодыг уншуулж эхлүүлнэ үү.",
   homeNoAccount: "Бүртгэл ч, нийтийн компьютерт нэвтрэх ч шаардлагагүй.",
 
+  notFoundTitle: "Энэ хуудас алга",
+  notFoundBody:
+    "Хаяг буруу эсвэл хуучирсан байж магадгүй. Хэвлэхийн тулд том дэлгэц дээрх QR кодыг дахин уншуулна уу.",
+  notFoundHome: "Эхлэл рүү буцах",
   selectLanguage: "Хэлээ сонгоно уу",
   step: "{{total}}-аас {{current}}-р алхам",
 
@@ -2801,6 +2845,10 @@ const uk = {
   homeScanHint: "Почніть зі сканування QR-коду на екрані кіоска Print-cess.",
   homeNoAccount: "Не потрібні ні акаунт, ні вхід на спільному комп'ютері.",
 
+  notFoundTitle: "Такої сторінки немає",
+  notFoundBody:
+    "Адреса може бути неправильною або застарілою. Щоб надрукувати, знову відскануйте QR-код на великому екрані.",
+  notFoundHome: "На початок",
   selectLanguage: "Виберіть свою мову",
   step: "Крок {{current}} із {{total}}",
 

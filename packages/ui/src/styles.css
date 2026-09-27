@@ -1,19 +1,145 @@
+/*
+ * Print-cess design tokens.
+ *
+ * Two layers. The palette is the brand, taken from the Print-cess mark: Royal
+ * Indigo, Ink Navy, Paper White, Soft Lilac, and Mint Teal. Components never
+ * read the palette directly; they read the semantic layer below it, which says
+ * what a colour is for. Re-tuning a hue happens once, in the palette, and a
+ * change of meaning happens once, in the semantic layer.
+ *
+ * Every text pairing below is measured, not assumed (WCAG 2.2 AA):
+ *   text-primary   on background  15.3:1   brand          on surface     6.3:1
+ *   text-secondary on surface     10.8:1   text-brand     on brand-soft  6.4:1
+ *   text-muted     on background   6.2:1   success        on success-bg  5.0:1
+ *   on-brand       on brand        6.3:1   destructive    on danger-bg   6.0:1
+ *   border-strong  on surface      3.4:1   warning        on warning-bg  4.8:1
+ * Mint Teal itself (#14b8a6) is 2.5:1 on white, so it is a fill and an accent,
+ * never the colour of text; success text uses its deeper step.
+ *
+ * The product is deliberately light-only. The kiosk is a controlled public
+ * display, managed workstations run fixed themes, and the phone visit is a
+ * few minutes in a lit office. The semantic layer is where a dark theme would
+ * go if the phone flow ever earns one; nothing below reads a raw hue.
+ */
 :root {
-  --pc-ink: #071737;
-  --pc-text: #23314c;
-  --pc-muted: #5c6880;
-  --pc-teal: #008a8a;
-  --pc-teal-dark: #006f72;
-  --pc-teal-soft: #e3f5f4;
-  --pc-paper-warm: #fff8ea;
-  --pc-line: #d9e5ed;
-  --pc-surface: #ffffff;
-  --pc-subtle: #f4f8fa;
-  --pc-error: #a72c35;
-  --pc-success: #087a57;
-  --pc-focus: #f5b700;
-  --pc-radius: 18px;
-  --pc-shadow: 0 14px 40px rgb(7 23 55 / 8%);
+  /* Palette ---------------------------------------------------------------- */
+  --pc-indigo-50: #f5f3ff;
+  --pc-indigo-100: #e9e5ff; /* Soft Lilac */
+  --pc-indigo-200: #d6d0fe;
+  --pc-indigo-300: #b4abf5;
+  --pc-indigo-400: #7c73ec;
+  --pc-indigo-600: #4f46e5; /* Royal Indigo */
+  --pc-indigo-700: #4338ca;
+  --pc-indigo-800: #3730a3;
+  --pc-navy-950: #0d0b26;
+  --pc-navy-900: #1e1b4b; /* Ink Navy */
+  --pc-navy-700: #3b3a5c;
+  --pc-navy-500: #5d5b7a;
+  --pc-navy-400: #8a87ab;
+  --pc-navy-200: #dcdbea;
+  --pc-navy-100: #eceef6;
+  --pc-paper: #f8fafc; /* Paper White */
+  --pc-white: #ffffff;
+  --pc-mint-300: #5eead4;
+  --pc-mint-500: #14b8a6; /* Mint Teal */
+  --pc-mint-700: #0f766e;
+  --pc-mint-50: #e7f8f5;
+  --pc-amber-300: #fcd34d;
+  --pc-amber-700: #a15c07;
+  --pc-amber-50: #fff6e5;
+  --pc-red-700: #b42318;
+  --pc-red-800: #912018;
+  --pc-red-200: #f5b5b0;
+  --pc-red-50: #fef1f1;
+
+  /* Surfaces ------------------------------------------------------------- */
+  --pc-background: var(--pc-paper);
+  --pc-surface: var(--pc-white);
+  --pc-surface-raised: var(--pc-white);
+  --pc-surface-sunken: var(--pc-navy-100);
+  --pc-surface-brand: var(--pc-indigo-100);
+  --pc-surface-brand-subtle: var(--pc-indigo-50);
+  /* The camera viewfinder is the only dark surface in the product. */
+  --pc-surface-inverse: var(--pc-navy-900);
+  --pc-surface-inverse-deep: var(--pc-navy-950);
+
+  /* Text ----------------------------------------------------------------- */
+  --pc-text-primary: var(--pc-navy-900);
+  --pc-text-secondary: var(--pc-navy-700);
+  --pc-text-muted: var(--pc-navy-500);
+  --pc-text-brand: var(--pc-indigo-700);
+  --pc-text-on-brand: var(--pc-white);
+  --pc-text-on-inverse: var(--pc-white);
+  --pc-text-on-inverse-muted: #c9c7e3;
+
+  /* Lines ---------------------------------------------------------------- */
+  --pc-border: var(--pc-navy-200);
+  --pc-border-strong: var(--pc-navy-400);
+
+  /* Action --------------------------------------------------------------- */
+  --pc-brand: var(--pc-indigo-600);
+  --pc-brand-hover: var(--pc-indigo-700);
+  --pc-brand-active: var(--pc-indigo-800);
+  --pc-brand-muted: var(--pc-indigo-300);
+  --pc-brand-tint: var(--pc-indigo-400);
+  --pc-selected: var(--pc-surface-brand);
+  --pc-disabled-surface: var(--pc-navy-100);
+  --pc-disabled-text: var(--pc-navy-500);
+
+  /* State. The sentence carries the state; these are the second channel. -- */
+  --pc-success: var(--pc-mint-700);
+  --pc-success-accent: var(--pc-mint-500);
+  --pc-success-surface: var(--pc-mint-50);
+  --pc-warning: var(--pc-amber-700);
+  --pc-warning-surface: var(--pc-amber-50);
+  --pc-warning-on-inverse: var(--pc-amber-300);
+  --pc-destructive: var(--pc-red-700);
+  --pc-destructive-hover: var(--pc-red-800);
+  --pc-destructive-border: var(--pc-red-200);
+  --pc-destructive-surface: var(--pc-red-50);
+  /* The journey of one document. In flight is the brand's own "working" hue,
+     finished is the success hue; neither borrows the warning colour. */
+  --pc-upload-active: var(--pc-brand);
+  --pc-transfer-active: var(--pc-brand);
+  --pc-printing: var(--pc-brand);
+  --pc-completed: var(--pc-success-accent);
+  --pc-detect-on-inverse: var(--pc-mint-300);
+
+  /* Focus. Indigo on white is 6.3:1 and the 3px gap keeps it apart from an
+     indigo control, so the ring is visible on every light surface. -------- */
+  --pc-focus-ring: var(--pc-indigo-600);
+  --pc-focus-ring-on-inverse: var(--pc-indigo-200);
+
+  /* Type ----------------------------------------------------------------- */
+  --pc-font-sans:
+    Pretendard, Inter, system-ui, -apple-system, "Segoe UI", "Apple SD Gothic Neo", "Malgun Gothic",
+    "Noto Sans KR", "Noto Sans", sans-serif;
+  --pc-font-mono: "SF Mono", ui-monospace, "Cascadia Mono", "Roboto Mono", monospace;
+  --pc-text-display: clamp(36px, 8vw, 60px);
+  --pc-text-title: clamp(30px, 8.4vw, 42px);
+  --pc-text-section: 22px;
+  --pc-text-body: 18px;
+  --pc-text-helper: 15px;
+  --pc-tracking-tight: -0.035em;
+
+  /* Shape ---------------------------------------------------------------- */
+  --pc-radius-sm: 10px;
+  --pc-radius-md: 14px;
+  --pc-radius-lg: 20px;
+  --pc-radius-xl: 28px;
+  --pc-radius-pill: 999px;
+
+  /* Depth: one soft shadow for a raised card, one for a sheet. ----------- */
+  --pc-shadow-sm: 0 1px 2px rgb(30 27 75 / 6%), 0 2px 8px rgb(30 27 75 / 5%);
+  --pc-shadow-md: 0 1px 2px rgb(30 27 75 / 5%), 0 12px 32px rgb(30 27 75 / 8%);
+  --pc-shadow-lg: 0 -16px 48px rgb(30 27 75 / 20%);
+  --pc-scrim: rgb(30 27 75 / 55%);
+
+  /* Motion --------------------------------------------------------------- */
+  --pc-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --pc-duration-fast: 120ms;
+  --pc-duration-slow: 420ms;
+
   color-scheme: light;
 }
 
@@ -22,175 +148,256 @@
 }
 
 html {
-  background: var(--pc-surface);
-  color: var(--pc-text);
-  font-family: Inter, Pretendard, "Noto Sans", system-ui, sans-serif;
+  background: var(--pc-background);
+  color: var(--pc-text-secondary);
+  font-family: var(--pc-font-sans);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
   margin: 0;
   min-width: 320px;
-  background: var(--pc-surface);
+  background: var(--pc-background);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Korean breaks between words, not inside them, wherever a line wraps. */
+:lang(ko) {
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 button,
-input {
+input,
+select {
   font: inherit;
 }
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
-  outline: 4px solid var(--pc-focus);
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
   outline-offset: 3px;
 }
+
+/* --- Mark and wordmark ---------------------------------------------------- */
 
 .pc-wordmark {
   display: flex;
   direction: ltr;
   align-items: center;
-  gap: 12px;
-  color: var(--pc-ink);
+  gap: 10px;
+  color: var(--pc-text-primary);
 }
 .pc-wordmark .pc-mark {
   width: 40px;
   height: 40px;
   flex: none;
   overflow: visible;
-  color: var(--pc-ink);
 }
-.pc-mark__paper,
-.pc-mark__body,
-.pc-mark__sheet {
-  stroke: currentColor;
-  stroke-width: 2.6;
-  stroke-linejoin: round;
+.pc-mark__jewel,
+.pc-mark__crown {
+  fill: var(--pc-brand-tint);
 }
-.pc-mark__paper {
-  fill: var(--pc-paper-warm);
+.pc-mark__crown {
+  stroke: var(--pc-brand-tint);
 }
 .pc-mark__body {
-  fill: var(--pc-teal-soft);
+  fill: var(--pc-brand);
+}
+.pc-mark__slot {
+  fill: var(--pc-text-primary);
 }
 .pc-mark__sheet {
-  fill: white;
+  fill: var(--pc-surface);
+  stroke: var(--pc-brand);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
 }
-.pc-mark__detail {
-  stroke: var(--pc-teal-dark);
-  stroke-width: 2.6;
+.pc-mark__code {
+  fill: none;
+  stroke: var(--pc-brand);
+  stroke-width: 2.2;
   stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.pc-mark__dot {
+  fill: var(--pc-brand);
 }
 .pc-mark__status {
-  fill: var(--pc-teal);
+  fill: var(--pc-success-accent);
 }
 .pc-wordmark > span {
   display: inline-flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 9px;
 }
 .pc-wordmark strong {
+  /* The hyphen is part of the name, not a place to break it. */
+  white-space: nowrap;
   font-size: 30px;
-  letter-spacing: -0.04em;
+  font-weight: 820;
+  letter-spacing: -0.045em;
+  line-height: 1;
 }
-.pc-wordmark__hyphen {
-  color: var(--pc-teal);
+.pc-wordmark__accent {
+  color: var(--pc-brand);
 }
 .pc-wordmark small {
-  font-size: 18px;
-  font-weight: 500;
+  white-space: nowrap;
+  color: var(--pc-text-muted);
+  font-size: 16px;
+  font-weight: 550;
+  letter-spacing: -0.01em;
+}
+.pc-wordmark--compact {
+  gap: 8px;
 }
 .pc-wordmark--compact .pc-mark {
   width: 32px;
   height: 32px;
 }
 .pc-wordmark--compact strong {
-  font-size: 24px;
+  font-size: 23px;
+}
+/* On a phone the endorsement sits under the name, so the lockup stays narrow
+   enough to share the header row with the language and help controls. */
+.pc-wordmark--compact > span {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
 }
 .pc-wordmark--compact small {
-  font-size: 15px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
 }
 
+/* --- Buttons --------------------------------------------------------------
+   One primary per screen, solid indigo. Secondary is a white control with a
+   visible edge. Tertiary is a text action. Destructive is only ever red. */
+
 .pc-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  /* 64px is the documented floor for a primary action (docs/BRAND.md). */
   min-height: 64px;
   width: 100%;
-  border-radius: 14px;
+  border-radius: var(--pc-radius-md);
   border: 2px solid transparent;
-  padding: 16px 22px;
-  font-size: 19px;
-  font-weight: 750;
+  padding: 14px 22px;
+  font-size: 18px;
+  font-weight: 720;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-align: center;
   cursor: pointer;
   transition:
-    transform 120ms ease,
-    background-color 120ms ease;
+    transform var(--pc-duration-fast) ease,
+    background-color var(--pc-duration-fast) ease,
+    border-color var(--pc-duration-fast) ease,
+    color var(--pc-duration-fast) ease;
+}
+.pc-button svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
 }
 .pc-button:not(:disabled):active {
   transform: translateY(1px);
 }
 .pc-button:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
-}
-.pc-button--primary {
-  background: var(--pc-teal);
-  color: white;
-  box-shadow: 0 8px 24px rgb(0 138 138 / 22%);
-}
-.pc-button--primary:hover:not(:disabled) {
-  background: var(--pc-teal-dark);
-}
-.pc-button--secondary {
-  background: white;
-  border-color: var(--pc-line);
-  color: var(--pc-teal-dark);
+  border-color: transparent;
+  background: var(--pc-disabled-surface);
+  color: var(--pc-disabled-text);
   box-shadow: none;
 }
+.pc-button--primary {
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+  box-shadow: 0 1px 2px rgb(30 27 75 / 12%);
+}
+.pc-button--primary:hover:not(:disabled) {
+  background: var(--pc-brand-hover);
+}
+.pc-button--primary:active:not(:disabled) {
+  background: var(--pc-brand-active);
+}
+.pc-button--secondary {
+  background: var(--pc-surface);
+  border-color: var(--pc-border);
+  color: var(--pc-text-primary);
+}
+.pc-button--secondary svg {
+  color: var(--pc-brand);
+}
 .pc-button--secondary:hover:not(:disabled) {
-  background: var(--pc-subtle);
+  border-color: var(--pc-brand-muted);
+  background: var(--pc-surface-brand-subtle);
+}
+.pc-button--tertiary {
+  width: auto;
+  min-height: 48px;
+  padding: 10px 8px;
+  background: transparent;
+  color: var(--pc-text-brand);
+  font-size: 16px;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+.pc-button--destructive {
+  background: var(--pc-surface);
+  border-color: var(--pc-destructive-border);
+  color: var(--pc-destructive);
+}
+.pc-button--destructive:hover:not(:disabled) {
+  border-color: var(--pc-destructive);
+  background: var(--pc-destructive-surface);
+  color: var(--pc-destructive-hover);
 }
 
+/* --- Step indicator ------------------------------------------------------
+   A segmented bar: finished and current segments are indigo, the rest wait. */
+
 .pc-progress {
-  margin: 20px 0 11px;
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 14px;
 }
 .pc-progress__track {
   display: grid;
-  grid-template-columns: repeat(var(--pc-progress-total, 4), 1fr);
-  align-items: center;
-  position: relative;
-}
-.pc-progress__track::before {
-  content: "";
-  position: absolute;
-  inset: 50% 8px auto;
-  height: 3px;
-  background: var(--pc-line);
-  transform: translateY(-50%);
-  z-index: 0;
+  grid-template-columns: repeat(var(--pc-progress-total, 4), minmax(0, 1fr));
+  gap: 6px;
 }
 .pc-progress__dot {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  place-items: center;
-  width: 18px;
-  height: 18px;
-  justify-self: center;
-  border: 2px solid var(--pc-line);
-  border-radius: 50%;
-  background: white;
-  color: white;
+  display: block;
+  height: 6px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-border);
 }
 .pc-progress__dot.is-active {
-  border-color: var(--pc-teal);
-  background: var(--pc-teal);
+  background: var(--pc-brand);
+}
+.pc-progress__dot svg {
+  display: none;
 }
 .pc-progress__label {
   display: block;
-  margin-top: 10px;
-  text-align: center;
-  color: var(--pc-teal-dark);
-  font-size: 16px;
-  font-weight: 750;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
 }
+
+/* --- Screen shell -------------------------------------------------------- */
 
 .pc-screen-shell {
   min-height: 100dvh;
@@ -198,7 +405,8 @@ input:focus-visible {
   flex-direction: column;
   width: min(100%, 560px);
   margin: 0 auto;
-  padding: 16px clamp(22px, 8.5vw, 36px);
+  padding: max(14px, env(safe-area-inset-top)) clamp(20px, 6vw, 32px)
+    max(16px, env(safe-area-inset-bottom));
 }
 .pc-screen-shell__body {
   flex: 1;
@@ -210,30 +418,144 @@ input:focus-visible {
   position: sticky;
   bottom: 0;
   padding: 16px 0 calc(16px + env(safe-area-inset-bottom));
-  background: linear-gradient(to top, white 78%, transparent);
+  background: linear-gradient(to top, var(--pc-background) 78%, transparent);
 }
+
+/* --- Status icon --------------------------------------------------------- */
 
 .pc-status-icon {
   display: inline-grid;
   width: 64px;
   height: 64px;
   place-items: center;
-  border-radius: 50%;
+  border-radius: var(--pc-radius-lg);
 }
 .pc-status-icon--info {
-  color: var(--pc-teal-dark);
-  background: var(--pc-teal-soft);
+  color: var(--pc-text-brand);
+  background: var(--pc-surface-brand);
 }
 .pc-status-icon--success {
   color: var(--pc-success);
-  background: #e7f7f0;
+  background: var(--pc-success-surface);
+}
+.pc-status-icon--warning {
+  color: var(--pc-warning);
+  background: var(--pc-warning-surface);
 }
 .pc-status-icon--error {
-  color: var(--pc-error);
-  background: #fcebed;
+  color: var(--pc-destructive);
+  background: var(--pc-destructive-surface);
+}
+
+/* --- Scan frame ------------------------------------------------------------ */
+
+.pc-scan-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.pc-scan-frame path {
+  fill: none;
+  stroke: var(--pc-brand);
+  stroke-width: 5px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+/* --- Hand-off illustration ------------------------------------------------
+   A sheet travels into the printer's slot and comes out the other side. It is
+   the one piece of motion in the phone flow, it only runs while the service is
+   genuinely working, and the sentence beside it carries the same state. */
+
+.pc-handoff {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: none;
+}
+.pc-handoff svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.pc-handoff__body {
+  fill: var(--pc-surface-brand);
+}
+.pc-handoff__face {
+  fill: var(--pc-brand);
+}
+.pc-handoff__slot {
+  fill: var(--pc-text-primary);
+}
+.pc-handoff__sheet {
+  fill: var(--pc-surface);
+  stroke: var(--pc-brand);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.pc-handoff__lines {
+  stroke: var(--pc-brand-muted);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+.pc-handoff__led {
+  fill: var(--pc-success-accent);
+}
+.pc-handoff--sending .pc-handoff__travel {
+  animation: pc-handoff-in 1800ms var(--pc-ease-out) infinite;
+}
+.pc-handoff--printing .pc-handoff__travel {
+  animation: pc-handoff-out 2200ms var(--pc-ease-out) infinite;
+}
+.pc-handoff--printing .pc-handoff__led,
+.pc-handoff--sending .pc-handoff__led {
+  animation: pc-handoff-led 1100ms ease-in-out infinite alternate;
+}
+@keyframes pc-handoff-in {
+  0% {
+    transform: translateY(-18px);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    transform: translateY(34px);
+    opacity: 1;
+  }
+}
+@keyframes pc-handoff-out {
+  0% {
+    transform: translateY(-24px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateY(8px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+}
+@keyframes pc-handoff-led {
+  to {
+    opacity: 0.35;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /* A still frame that still says "on its way", not the last frame of a loop. */
+  .pc-handoff .pc-handoff__travel,
+  .pc-handoff .pc-handoff__led {
+    animation: none !important;
+  }
   *,
   *::before,
   *::after {
@@ -241,5 +563,20 @@ input:focus-visible {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* Windows High Contrast and other forced-colour modes draw their own palette;
+   make sure every control keeps an edge when fills disappear. */
+@media (forced-colors: active) {
+  .pc-button,
+  .pc-status-icon {
+    border: 2px solid ButtonText;
+  }
+  .pc-progress__dot {
+    background: GrayText;
+  }
+  .pc-progress__dot.is-active {
+    background: Highlight;
   }
 }

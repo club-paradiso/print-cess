@@ -2,7 +2,7 @@
   width: min(100% - 40px, 1180px);
   margin: 0 auto;
   padding: 34px 0 72px;
-  color: var(--pc-text);
+  color: var(--pc-text-secondary);
 }
 
 .workstation-header {
@@ -11,7 +11,7 @@
   justify-content: space-between;
   gap: 20px;
   padding-bottom: 28px;
-  border-bottom: 1px solid var(--pc-line);
+  border-bottom: 1px solid var(--pc-border);
 }
 
 .workstation-back,
@@ -21,16 +21,16 @@
   justify-content: center;
   gap: 9px;
   min-height: 48px;
-  border-radius: 999px;
+  border-radius: var(--pc-radius-pill);
   font-weight: 750;
   text-decoration: none;
 }
 
 .workstation-back {
   padding: 9px 16px;
-  border: 1px solid var(--pc-line);
-  color: var(--pc-ink);
-  background: white;
+  border: 1px solid var(--pc-border);
+  color: var(--pc-text-primary);
+  background: var(--pc-surface);
 }
 
 .workstation-back svg,
@@ -41,9 +41,9 @@
 
 .workstation-hero {
   display: grid;
-  gap: 18px;
+  gap: 16px;
   max-width: 900px;
-  padding: 72px 0 36px;
+  padding: 56px 0 28px;
 }
 
 .workstation-eyebrow {
@@ -51,12 +51,13 @@
   width: fit-content;
   align-items: center;
   gap: 9px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: var(--pc-teal-soft);
-  color: var(--pc-teal-dark);
-  font-size: 15px;
-  font-weight: 800;
+  padding: 6px 12px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  font-size: 14px;
+  font-weight: 700;
 }
 
 .workstation-eyebrow svg {
@@ -67,10 +68,11 @@
 .workstation-hero h1 {
   max-width: 880px;
   margin: 0;
-  color: var(--pc-ink);
-  font-size: clamp(42px, 6vw, 72px);
-  line-height: 1.01;
-  letter-spacing: -0.05em;
+  color: var(--pc-text-primary);
+  font-size: clamp(34px, 4.6vw, 56px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
 }
 
 .workstation-hero > p {
@@ -83,10 +85,10 @@
 .workstation-readiness {
   margin: 20px 0 40px;
   padding: 22px;
-  border: 1px solid var(--pc-line);
-  border-radius: 18px;
-  background: white;
-  box-shadow: var(--pc-shadow);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-sm);
 }
 
 .workstation-readiness--ready {
@@ -94,18 +96,18 @@
 }
 
 .workstation-readiness--limited {
-  border-inline-start: 5px solid #b67600;
+  border-inline-start: 5px solid var(--pc-warning);
 }
 
 .workstation-readiness--blocked {
-  border-inline-start: 5px solid var(--pc-error);
+  border-inline-start: 5px solid var(--pc-destructive);
 }
 
 .workstation-readiness__headline {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 19px;
 }
 
@@ -113,6 +115,19 @@
   flex: none;
   width: 24px;
   height: 24px;
+}
+
+/* The icon repeats the headline's verdict in colour; the words carry it first. */
+.workstation-readiness--ready .workstation-readiness__headline svg {
+  color: var(--pc-success);
+}
+
+.workstation-readiness--limited .workstation-readiness__headline svg {
+  color: var(--pc-warning);
+}
+
+.workstation-readiness--blocked .workstation-readiness__headline svg {
+  color: var(--pc-destructive);
 }
 
 .workstation-readiness__spinner {
@@ -133,28 +148,33 @@
   gap: 5px;
   min-width: 0;
   padding: 13px;
-  border-radius: 12px;
-  background: var(--pc-subtle);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-background);
+  border: 1px solid var(--pc-border);
 }
 
 .workstation-readiness li span {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 14px;
   line-height: 1.35;
 }
 
 .workstation-readiness li strong {
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 15px;
 }
 
+.workstation-readiness li.is-pass strong {
+  color: var(--pc-success);
+}
+
 .workstation-readiness li.is-fail strong {
-  color: var(--pc-error);
+  color: var(--pc-destructive);
 }
 
 .workstation-readiness > p {
   margin: 16px 0 0;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 15px;
   line-height: 1.5;
 }
@@ -171,10 +191,10 @@
   gap: 22px;
   min-width: 0;
   padding: clamp(24px, 4vw, 38px);
-  border: 1px solid var(--pc-line);
-  border-radius: 24px;
-  background: white;
-  box-shadow: var(--pc-shadow);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-raised);
+  box-shadow: var(--pc-shadow-sm);
 }
 
 .workstation-action-card__icon {
@@ -182,9 +202,9 @@
   width: 58px;
   height: 58px;
   place-items: center;
-  border-radius: 16px;
-  background: var(--pc-teal-soft);
-  color: var(--pc-teal-dark);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
 }
 
 .workstation-action-card__icon svg {
@@ -196,7 +216,7 @@
 .workstation-security h2,
 .workstation-policy h2 {
   margin: 0;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
 }
 
 .workstation-action-card h2 {
@@ -219,39 +239,33 @@
 .workstation-primary {
   width: 100%;
   padding: 12px 18px;
-  border: 2px solid var(--pc-teal);
-  background: var(--pc-teal);
-  color: white;
+  border: 2px solid var(--pc-brand);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
   font-size: 17px;
 }
 
-.workstation-primary:hover,
-.workstation-primary:focus-visible {
-  background: var(--pc-teal-dark);
-  border-color: var(--pc-teal-dark);
-}
-
-.workstation-back:focus-visible,
-.workstation-primary:focus-visible {
-  outline: 3px solid currentColor;
-  outline-offset: 3px;
+.workstation-primary:hover {
+  background: var(--pc-brand-hover);
+  border-color: var(--pc-brand-hover);
 }
 
 .workstation-security,
 .workstation-policy {
   margin-top: 20px;
   padding: 26px;
-  border-radius: 18px;
+  border-radius: var(--pc-radius-lg);
 }
 
 .workstation-security {
-  border: 1px solid var(--pc-line);
-  background: var(--pc-teal-soft);
+  border: 1px solid var(--pc-border);
+  background: var(--pc-surface-brand-subtle);
 }
 
 .workstation-policy {
-  border: 1px solid var(--pc-line);
-  background: var(--pc-subtle);
+  border: 1px solid var(--pc-border);
+  background: var(--pc-surface-sunken);
 }
 
 .workstation-security__heading,
@@ -267,7 +281,7 @@
   flex: none;
   width: 24px;
   height: 24px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 
 .workstation-security h2,

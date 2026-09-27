@@ -21,41 +21,100 @@ but it must remain readable first as a printer. Do not add castles, princess cha
 scripts, glitter effects, luxury motifs, or an excess of pink. Decoration never competes with the
 next action.
 
-Current code tokens are the canonical starting palette:
+### Palette
 
-| Role           | Token                          | Value                 |
-| -------------- | ------------------------------ | --------------------- |
-| Primary ink    | `--pc-ink`                     | `#071737`             |
-| Body text      | `--pc-text`                    | `#23314c`             |
-| Muted text     | `--pc-muted`                   | `#5c6880`             |
-| Action teal    | `--pc-teal`                    | `#008a8a`             |
-| Dark teal      | `--pc-teal-dark`               | `#006f72`             |
-| Soft teal      | `--pc-teal-soft`               | `#e3f5f4`             |
-| Warm paper     | `--pc-paper-warm`              | `#fff8ea`             |
-| Border         | `--pc-line`                    | `#d9e5ed`             |
-| Surface/subtle | `--pc-surface` / `--pc-subtle` | `#ffffff` / `#f4f8fa` |
-| Error/success  | `--pc-error` / `--pc-success`  | `#a72c35` / `#087a57` |
-| Focus          | `--pc-focus`                   | `#f5b700`             |
+The palette comes from the Print-cess mark. Five brand colours, each with one job:
 
-Use a system sans-serif stack with Inter, Pretendard, or Noto Sans where licensed and available.
-Body copy is at least 18 px, primary controls at least 64 px high, and focus indication is obvious.
-Color never carries meaning alone. Test contrast in every state.
+| Name         | Value     | Job                                                            |
+| ------------ | --------- | -------------------------------------------------------------- |
+| Royal Indigo | `#4f46e5` | The one primary action per screen, work in progress, the mark  |
+| Ink Navy     | `#1e1b4b` | Headings and strong text, QR modules, the camera viewfinder    |
+| Paper White  | `#f8fafc` | Page background everywhere                                     |
+| Soft Lilac   | `#e9e5ff` | Selected and informational surfaces, icon tiles                |
+| Mint Teal    | `#14b8a6` | Success and "safe" only: printed, saved, deleted, ready to use |
+
+Mint Teal is 2.5:1 on white, so it is a fill and an accent and never the colour of text; success
+text uses its deeper step `#0f766e` (5.5:1). Success is never the colour of a primary button.
+Amber is reserved for "look twice" (a lost connection, a limited browser) and red for errors and
+destructive actions. Nothing else gets a colour.
+
+### Tokens
+
+`packages/ui/src/styles.css` is the single source. It has two layers: the palette
+(`--pc-indigo-600`, `--pc-navy-900`, …) and a semantic layer that components read. Components and
+app styles use only the semantic layer, never a raw hue or hex:
+
+| Group   | Tokens                                                                                                                                                     |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Surface | `--pc-background`, `--pc-surface`, `--pc-surface-raised`, `--pc-surface-sunken`, `--pc-surface-brand`, `--pc-surface-brand-subtle`, `--pc-surface-inverse` |
+| Text    | `--pc-text-primary`, `--pc-text-secondary`, `--pc-text-muted`, `--pc-text-brand`, `--pc-text-on-brand`, `--pc-text-on-inverse`                             |
+| Line    | `--pc-border`, `--pc-border-strong`                                                                                                                        |
+| Action  | `--pc-brand`, `--pc-brand-hover`, `--pc-brand-active`, `--pc-selected`, `--pc-disabled-*`                                                                  |
+| State   | `--pc-success*`, `--pc-warning*`, `--pc-destructive*`, `--pc-upload-active`, `--pc-transfer-active`, `--pc-printing`, `--pc-completed`                     |
+| Focus   | `--pc-focus-ring` (indigo, 3px, 3px offset), `--pc-focus-ring-on-inverse`                                                                                  |
+| Shape   | `--pc-radius-sm` 10, `-md` 14, `-lg` 20, `-xl` 28, `-pill`                                                                                                 |
+| Depth   | `--pc-shadow-sm`, `--pc-shadow-md`, `--pc-shadow-lg`, `--pc-scrim`                                                                                         |
+| Type    | `--pc-font-sans`, `--pc-font-mono`, `--pc-text-display` … `--pc-text-helper`                                                                               |
+| Motion  | `--pc-ease-out`, `--pc-duration-fast` / `-base` / `-slow`                                                                                                  |
+
+Every text pairing in the semantic layer is measured against WCAG 2.2 AA; the table sits at the
+top of the token file. QR codes are drawn on a canvas and cannot read CSS, so their two colours
+live in `apps/web/src/lib/qr-style.ts` (Ink Navy on white; a tinted code scans worse).
+
+Gradients belong to the app icon only. Buttons, cards, navigation, forms, kiosk controls, and
+error messages are solid colour. Rounded corners are moderate and follow the radius scale; pills
+are for small chips and the language/help controls, not for panels.
+
+The product is light-only by decision, not omission: the kiosk is a controlled public display,
+managed workstations run fixed themes, and the phone visit is a few minutes in a lit office. The
+camera viewfinder is the one dark surface. A dark theme, if the phone flow ever earns one, is a
+redefinition of the semantic layer and nothing else.
+
+### Type
+
+A system sans-serif stack led by Pretendard and Inter where they are installed, then the
+platform's own Korean and Latin faces (`--pc-font-sans`). No web font is downloaded: the kiosk and
+managed workstations may block font hosts, and a first paint that swaps typeface is worse than a
+good system face. Headings are heavy and tightly tracked; body copy is 18 px at 1.55 line height;
+Korean text breaks between words (`word-break: keep-all`). Identifiers such as transfer codes use
+`--pc-font-mono`.
+
+Primary controls are at least 64 px high and focus indication is obvious. Color never carries
+meaning alone. Test contrast in every state.
+
+### Components
+
+`packages/ui` carries only what the screens use: `Wordmark` and `PrintcessMark`, `PrimaryButton`,
+`SecondaryButton`, `TertiaryButton`, `DestructiveButton`, `ProgressSteps` (a segmented bar),
+`StatusIcon` (info, success, warning, error), `ScanFrame` (the mark's four QR corners, drawn
+around any code the service shows), `HandoffIllustration` (a sheet entering or leaving the
+printer while the service is genuinely working), and `ScreenShell`. Icons are Lucide throughout;
+the mark is the only custom drawing, and emoji are not used.
 
 ## Wordmark and icon
 
-The primary mark combines a rounded printer with a raised sheet whose top edge forms three small
-points. This is the only princess reference: it should read as useful equipment before it reads as
-a tiara. The warm paper fill adds a restrained playful note without changing the civic-service
-palette.
+The mark is a printer. The sheet going in has a crown's three points and a small jewel above it;
+the sheet coming out carries a four-corner scan frame; a mint status light sits on the body. The
+crown is the name's only princess reference and must read as paper before it reads as a tiara.
+Do not add castles, characters, glitter, or more crowns elsewhere in the interface.
 
-The wordmark places the icon before “Print-cess” in strong weight and “by Paradiso” in a quieter
-weight. The hyphen may use action teal as a small visual wink. Give the complete group the
-accessible name “Print-cess by Paradiso”; decorative icon paths are hidden from assistive
-technology.
+The wordmark sets “Print-” in Ink Navy and “cess” in Royal Indigo, heavy and tightly tracked, with
+“by Club Paradiso” as a quieter endorsement. On a phone header the endorsement stacks under the
+name so the lockup stays narrow. The hyphen is part of the name and never a line break. The whole
+group has the accessible name “Print-cess by Club Paradiso”; the split colours and the icon are
+hidden from assistive technology. In running text the name is plain “Print-cess”, never
+recoloured mid-word. Technical identifiers (`print-cess`, `@print-cess/*`) are unchanged.
 
-Use `docs/assets/print-cess-mark.svg` for documentation and repository surfaces. The web app's
-file-based icon lives at `apps/web/src/app/icon.svg`; the shared React mark is implemented in
-`packages/ui/src/index.tsx`. Keep these variants visually synchronized.
+Assets:
+
+- `packages/ui/src/index.tsx` — the React mark, flat on the page (Royal Indigo body, lilac crown).
+- `apps/web/src/app/icon.svg` — the app icon and favicon: the mark reversed out of an indigo tile,
+  simplified so it survives 16 px (one central QR module instead of four).
+- `docs/assets/print-cess-mark.svg` — the same tile for documentation and repository surfaces.
+
+Keep the three geometrically synchronized. There is deliberately no web app manifest or
+home-screen icon: a visit is meant to end with the browser's site data cleared, and an installed
+app would work against that.
 
 Do not use the Ministry of Justice, Jeju Immigration Office, another public agency, airline, or
 travel-service logo without written permission.

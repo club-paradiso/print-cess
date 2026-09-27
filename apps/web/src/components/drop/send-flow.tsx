@@ -20,7 +20,14 @@ import QRCode from "qrcode";
 
 import type { SupportedLocale } from "@print-cess/i18n";
 import type { DropReceiverState } from "@print-cess/protocol";
-import { PrimaryButton, ProgressSteps, SecondaryButton, StatusIcon } from "@print-cess/ui";
+import {
+  DestructiveButton,
+  PrimaryButton,
+  ProgressSteps,
+  ScanFrame,
+  SecondaryButton,
+  StatusIcon,
+} from "@print-cess/ui";
 
 import { getDropCapabilities, getDropStatus, revokeDrop } from "@/lib/drop-client";
 import { buildDropLink } from "@/lib/drop-link";
@@ -41,6 +48,7 @@ import {
   type PreparedSelection,
   type SendResult,
 } from "@/lib/drop-transfer";
+import { QR_COLORS } from "@/lib/qr-style";
 
 import {
   DropShell,
@@ -147,7 +155,7 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
       errorCorrectionLevel: "M",
       margin: 2,
       scale: 9,
-      color: { dark: "#071737", light: "#ffffff" },
+      color: QR_COLORS,
     });
     setQrImage(image);
     setStage("ready");
@@ -387,8 +395,11 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
             <p>{text("dropReadyHint")}</p>
             {qrImage ? (
               <figure className="drop-qr">
-                {/* eslint-disable-next-line @next/next/no-img-element -- a data URL generated in the browser */}
-                <img src={qrImage} alt={text("dropScanToReceive")} />
+                <div className="drop-qr__code">
+                  <ScanFrame />
+                  {/* eslint-disable-next-line @next/next/no-img-element -- a data URL generated in the browser */}
+                  <img src={qrImage} alt={text("dropScanToReceive")} />
+                </div>
                 <figcaption>{text("dropScanToReceive")}</figcaption>
               </figure>
             ) : null}
@@ -419,9 +430,9 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
               {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}{" "}
               {copied ? text("dropCopied") : text("dropCopyLink")}
             </SecondaryButton>
-            <SecondaryButton onClick={() => void erase()}>
+            <DestructiveButton onClick={() => void erase()}>
               <Trash2 aria-hidden="true" /> {text("dropDeleteNow")}
-            </SecondaryButton>
+            </DestructiveButton>
             <a className="drop-link" href="/receive">
               {text("dropReceiveCta")}
             </a>

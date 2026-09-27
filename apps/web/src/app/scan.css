@@ -17,7 +17,7 @@
 
 .scan-heading h1 {
   margin: 0;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: clamp(34px, 9vw, 48px);
   line-height: 1.06;
   letter-spacing: -0.045em;
@@ -25,7 +25,7 @@
 
 .scan-heading p {
   margin: 0;
-  color: var(--pc-text);
+  color: var(--pc-text-secondary);
   font-size: 18px;
   line-height: 1.5;
 }
@@ -40,7 +40,7 @@
   border: 0;
   padding: 6px 0;
   background: transparent;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-weight: 750;
   cursor: pointer;
 }
@@ -58,28 +58,28 @@
   align-content: center;
   gap: 18px;
   padding: 28px;
-  border: 2px dashed #9eb7c1;
-  border-radius: var(--pc-radius);
+  border: 2px dashed var(--pc-border-strong);
+  border-radius: var(--pc-radius-lg);
   text-align: center;
-  background: var(--pc-subtle);
+  background: var(--pc-surface-sunken);
 }
 
 .scan-empty svg {
   width: 58px;
   height: 58px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 
 .scan-empty p {
   max-width: 360px;
   margin: 0;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 17px;
   line-height: 1.5;
 }
 
 .scan-page-count {
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-weight: 800;
 }
 
@@ -98,10 +98,10 @@
   grid-template-rows: minmax(150px, 1fr) auto;
   min-width: 0;
   overflow: hidden;
-  border: 1px solid var(--pc-line);
-  border-radius: 14px;
-  background: white;
-  box-shadow: 0 7px 18px rgb(7 23 55 / 7%);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-sm);
 }
 
 .scan-page-preview {
@@ -110,7 +110,7 @@
   min-height: 170px;
   place-items: center;
   overflow: hidden;
-  background: #edf2f4;
+  background: var(--pc-surface-sunken);
 }
 
 .scan-pages img {
@@ -118,7 +118,7 @@
   height: 170px;
   padding: 9px;
   object-fit: contain;
-  background: #edf2f4;
+  background: var(--pc-surface-sunken);
 }
 
 .scan-page-number {
@@ -130,8 +130,8 @@
   height: 30px;
   place-items: center;
   border-radius: 50%;
-  background: var(--pc-ink);
-  color: white;
+  background: var(--pc-text-primary);
+  color: var(--pc-text-on-inverse);
   font-size: 14px;
   font-weight: 800;
 }
@@ -142,25 +142,25 @@
   bottom: 8px;
   max-width: calc(100% - 16px);
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: var(--pc-radius-pill);
   padding: 5px 8px;
   text-overflow: ellipsis;
   white-space: nowrap;
-  background: rgb(4 72 81 / 88%);
-  color: white;
+  background: color-mix(in srgb, var(--pc-success) 92%, transparent);
+  color: var(--pc-text-on-inverse);
   font-size: 11px;
   font-weight: 800;
   backdrop-filter: blur(7px);
 }
 
 .scan-detection-badge.is-review {
-  background: rgb(121 73 0 / 90%);
+  background: color-mix(in srgb, var(--pc-warning) 94%, transparent);
 }
 
 .scan-page-actions {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  border-top: 1px solid var(--pc-line);
+  border-top: 1px solid var(--pc-border);
 }
 
 .scan-page-actions button {
@@ -169,19 +169,19 @@
   min-height: 46px;
   place-items: center;
   border: 0;
-  border-right: 1px solid var(--pc-line);
-  background: white;
-  color: var(--pc-teal-dark);
+  border-right: 1px solid var(--pc-border);
+  background: var(--pc-surface);
+  color: var(--pc-text-brand);
   cursor: pointer;
 }
 
 .scan-page-actions button:last-child {
   border-right: 0;
-  color: var(--pc-error);
+  color: var(--pc-destructive);
 }
 
 .scan-page-actions button:disabled {
-  color: #aab4bf;
+  color: var(--pc-border-strong);
   cursor: default;
 }
 
@@ -195,10 +195,10 @@
   align-items: center;
   gap: 12px;
   padding: 14px 16px;
-  border: 1px solid var(--pc-line);
-  border-radius: 12px;
-  background: var(--pc-teal-soft);
-  color: var(--pc-ink);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-primary);
   font-weight: 700;
 }
 
@@ -206,7 +206,7 @@
   width: 22px;
   height: 22px;
   flex: none;
-  accent-color: var(--pc-teal);
+  accent-color: var(--pc-brand);
 }
 
 .scan-primary-actions,
@@ -239,16 +239,17 @@
 .scan-notice {
   margin: 0;
   padding: 12px 14px;
-  border-inline-start: 4px solid var(--pc-error);
-  background: #fff1f1;
-  color: var(--pc-error);
+  border-inline-start: 4px solid var(--pc-destructive);
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-destructive-surface);
+  color: var(--pc-destructive);
   line-height: 1.45;
 }
 
 .scan-notice {
-  border-inline-start-color: var(--pc-teal);
-  background: var(--pc-teal-soft);
-  color: var(--pc-ink);
+  border-inline-start-color: var(--pc-brand);
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-primary);
 }
 
 .scan-crop-dialog {
@@ -258,7 +259,7 @@
   display: grid;
   place-items: end center;
   padding-top: max(16px, env(safe-area-inset-top));
-  background: rgb(2 12 24 / 72%);
+  background: color-mix(in srgb, var(--pc-surface-inverse-deep) 76%, transparent);
   backdrop-filter: blur(12px);
 }
 
@@ -268,10 +269,10 @@
   max-height: calc(100dvh - max(16px, env(safe-area-inset-top)));
   gap: 16px;
   overflow: auto;
-  border-radius: 24px 24px 0 0;
+  border-radius: var(--pc-radius-xl) var(--pc-radius-xl) 0 0;
   padding: 18px 16px calc(18px + env(safe-area-inset-bottom));
-  background: #f8fafb;
-  box-shadow: 0 -24px 70px rgb(0 0 0 / 24%);
+  background: var(--pc-background);
+  box-shadow: var(--pc-shadow-lg);
 }
 
 .scan-crop-header {
@@ -283,13 +284,13 @@
 
 .scan-crop-header strong {
   display: block;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 21px;
 }
 
 .scan-crop-header p {
   margin: 5px 0 0;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   line-height: 1.4;
 }
 
@@ -306,8 +307,8 @@
   max-height: 56dvh;
   place-items: center;
   overflow: hidden;
-  border-radius: 18px;
-  background: #111820;
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-inverse-deep);
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 8%);
 }
 
@@ -327,15 +328,15 @@
 }
 
 .scan-crop-overlay polygon {
-  fill: rgb(0 181 173 / 10%);
-  stroke: #18e0d3;
+  fill: color-mix(in srgb, var(--pc-detect-on-inverse) 12%, transparent);
+  stroke: var(--pc-detect-on-inverse);
   stroke-width: 7;
   vector-effect: non-scaling-stroke;
 }
 
 .scan-crop-overlay circle {
-  fill: #fff;
-  stroke: #008f89;
+  fill: var(--pc-surface);
+  stroke: var(--pc-brand);
   stroke-width: 9;
   vector-effect: non-scaling-stroke;
   cursor: grab;
@@ -344,7 +345,7 @@
 
 .scan-crop-overlay circle:focus {
   outline: none;
-  stroke: #ffda68;
+  stroke: var(--pc-warning-on-inverse);
   stroke-width: 14;
 }
 
@@ -359,7 +360,7 @@
 
 .scan-filter-picker legend {
   margin-bottom: 8px;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-weight: 800;
 }
 
@@ -367,19 +368,19 @@
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   overflow: hidden;
-  border: 1px solid var(--pc-line);
-  border-radius: 12px;
-  background: white;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
 }
 
 .scan-filter-picker button {
   min-width: 0;
   min-height: 46px;
   border: 0;
-  border-inline-end: 1px solid var(--pc-line);
+  border-inline-end: 1px solid var(--pc-border);
   padding: 7px 5px;
-  background: white;
-  color: var(--pc-text);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
   font-size: 12px;
   font-weight: 750;
   cursor: pointer;
@@ -390,8 +391,9 @@
 }
 
 .scan-filter-picker button.is-selected {
-  background: var(--pc-teal-dark);
-  color: white;
+  background: var(--pc-brand);
+  box-shadow: inset 0 -3px 0 var(--pc-brand-active);
+  color: var(--pc-text-on-brand);
 }
 
 .scan-crop-actions {
@@ -409,10 +411,10 @@
 
 .scan-pdf-card {
   overflow: hidden;
-  border: 1px solid var(--pc-line);
-  border-radius: 14px;
-  background: white;
-  box-shadow: var(--pc-shadow);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-sm);
 }
 
 .scan-pdf-card iframe {
@@ -420,7 +422,7 @@
   width: 100%;
   height: min(48vh, 440px);
   border: 0;
-  background: var(--pc-subtle);
+  background: var(--pc-surface-sunken);
 }
 
 .scan-pdf-card > div {
@@ -431,11 +433,11 @@
 
 .scan-pdf-card strong {
   overflow-wrap: anywhere;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
 }
 
 .scan-pdf-card span {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 14px;
 }
 
@@ -459,7 +461,7 @@
 
   .scan-crop-panel {
     max-height: calc(100dvh - 48px);
-    border-radius: 24px;
+    border-radius: var(--pc-radius-xl);
     padding: 22px;
   }
 }
@@ -478,7 +480,7 @@
   }
 
   .scan-filter-picker button:nth-child(-n + 2) {
-    border-bottom: 1px solid var(--pc-line);
+    border-bottom: 1px solid var(--pc-border);
   }
 }
 

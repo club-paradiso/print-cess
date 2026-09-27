@@ -17,6 +17,7 @@ import {
   ScanLine,
   Send,
   TriangleAlert,
+  WifiOff,
   X,
 } from "lucide-react";
 
@@ -37,14 +38,17 @@ import {
   type PrintableFileKind,
 } from "@print-cess/protocol";
 import {
+  HandoffIllustration,
   PrimaryButton,
   ProgressSteps,
   ScreenShell,
   SecondaryButton,
   StatusIcon,
+  TertiaryButton,
   Wordmark,
 } from "@print-cess/ui";
 
+import { FileRow } from "@/components/drop/drop-shell";
 import {
   authorizeUpload,
   cancelSession,
@@ -60,6 +64,7 @@ import {
   validateMobileDocument,
   type ValidatedMobileFile,
 } from "@/lib/mobile-document-validation";
+import { splitFirstSentence } from "@/lib/first-sentence";
 import { watchPrintStatus, type PrintWatchState } from "@/lib/print-status";
 import { parseSessionFragment } from "@/lib/session-fragment";
 import { clearBrowserSiteData } from "@/lib/session-teardown";
@@ -393,6 +398,14 @@ export function BatchMobileFlow({
         <Wordmark compact />
         {stage === "boot" || stage === "closed" ? null : (
           <div className="mobile-topbar__actions">
+            <button
+              type="button"
+              className="mobile-help-open"
+              onClick={() => setHelpOpen(true)}
+              aria-haspopup="dialog"
+            >
+              <CircleQuestionMark aria-hidden="true" /> {text("helpOpen")}
+            </button>
             <label className="drop-language">
               <Languages aria-hidden="true" />
               <span className="drop-visually-hidden">{text("selectLanguage")}</span>
@@ -407,14 +420,6 @@ export function BatchMobileFlow({
                 ))}
               </select>
             </label>
-            <button
-              type="button"
-              className="mobile-help-open"
-              onClick={() => setHelpOpen(true)}
-              aria-haspopup="dialog"
-            >
-              <CircleQuestionMark aria-hidden="true" /> {text("helpOpen")}
-            </button>
           </div>
         )}
       </div>
@@ -491,28 +496,37 @@ export function BatchMobileFlow({
           <h1>{single ? text("checkDocument") : copy.checkFiles}</h1>
           <p>{single ? text("previewHelp") : copy.previewHelp}</p>
           {single && documents[0] ? (
-            <DocumentPreview
-              file={documents[0].file}
-              validated={documents[0].validated}
-              labels={{
-                documentPreview: text("documentPreview"),
-                selectedDocumentPreview: text("selectedDocumentPreview"),
-                pdfPreview: text("pdfPreview"),
-                firstPagePreview: text("firstPagePreview"),
-                hwpxPreview: text("hwpxPreview").replaceAll("HWPX", hancomLabel),
-              }}
-            />
+            <>
+              <DocumentPreview
+                file={documents[0].file}
+                validated={documents[0].validated}
+                labels={{
+                  documentPreview: text("documentPreview"),
+                  selectedDocumentPreview: text("selectedDocumentPreview"),
+                  pdfPreview: text("pdfPreview"),
+                  firstPagePreview: text("firstPagePreview"),
+                  hwpxPreview: text("hwpxPreview").replaceAll("HWPX", hancomLabel),
+                }}
+              />
+              {/* The name, kind, and size in words, so a preview that looks
+                  right but belongs to the wrong file is still caught. This is
+                  the visitor's own phone; the shared screen never shows it. */}
+              <div className="mobile-selected">
+                <FileRow
+                  file={documents[0].file}
+                  text={text}
+                  detail={pagesDetail(documents[0].validated, copy)}
+                />
+              </div>
+            </>
           ) : (
-            <ul className="drop-file-list">
+            <ol className="mobile-selected drop-file-list">
               {documents.map(({ file, validated }, index) => (
                 <li key={`${file.name}-${file.size}-${file.lastModified}-${index}`}>
-                  <span className="drop-file-list__name">
-                    {index + 1}. {file.name}
-                  </span>
-                  <span className="drop-file-list__size">{documentSummary(validated)}</span>
+                  <FileRow file={file} text={text} detail={pagesDetail(validated, copy)} />
                 </li>
               ))}
-            </ul>
+            </ol>
           )}
           {single ? null : (
             <p className="mobile-file-notice" role="status">
@@ -531,22 +545,24 @@ export function BatchMobileFlow({
             <Printer aria-hidden="true" />
             {single ? text("printOneCopy") : formatBatchCopy(copy.printFiles, documents.length)}
           </PrimaryButton>
-          <SecondaryButton
+          <TertiaryButton
+            className="mobile-change-selection"
             onClick={() => {
               clearDocuments();
               setStage("file");
             }}
           >
             {single ? text("chooseAnother") : copy.changeSelection}
-          </SecondaryButton>
+          </TertiaryButton>
         </section>
       ) : null}
 
       {stage === "transfer" ? (
-        <ProgressState text={text(progressKey)} note={text("keepPageOpen")} />
+        <ProgressState phase="sending" text={text(progressKey)} note={text("keepPageOpen")} />
       ) : null}
       {stage === "progress" ? (
         <ProgressState
+          phase={watching.kind === "reconnecting" ? "reconnecting" : "printing"}
           text={text(watching.kind === "reconnecting" ? "reconnecting" : progressKey)}
           note={text(watching.kind === "reconnecting" ? "kioskMayStillBePrinting" : "keepPageOpen")}
         />
@@ -724,18 +740,35 @@ function printableKind(kind: ValidatedMobileFile["fileKind"]): PrintableFileKind
   return kind;
 }
 
-function documentSummary(validated: ValidatedMobileFile): string {
-  if (validated.fileKind === "pdf") return `PDF · ${validated.pageCount}p`;
-  if (validated.fileKind === "hwp") return "HWP";
-  if (validated.fileKind === "hwpx") return "HWPX";
-  if (validated.fileKind === "bundle") return "";
-  return "Photo · 1p";
+/** Page count, in the visitor's language, only where it tells them something. */
+function pagesDetail(validated: ValidatedMobileFile, copy: PrintBatchCopy): string | undefined {
+  if (validated.fileKind !== "pdf" || validated.pageCount < 2) return undefined;
+  return formatBatchCopy(copy.pages, validated.pageCount);
 }
 
-function ProgressState({ text, note }: { text: string; note: string }) {
+/**
+ * Waiting, drawn as what is actually happening: the sheet going into the
+ * printer while it is sent, coming out while it prints. A lost connection is
+ * not drawn as progress, because nobody knows whether anything is moving.
+ */
+function ProgressState({
+  phase,
+  text,
+  note,
+}: {
+  phase: "sending" | "printing" | "reconnecting";
+  text: string;
+  note: string;
+}) {
   return (
     <section className="mobile-step mobile-step--single" aria-live="polite">
-      <div className="mobile-spinner" />
+      {phase === "reconnecting" ? (
+        <StatusIcon tone="warning">
+          <WifiOff size={32} aria-hidden="true" />
+        </StatusIcon>
+      ) : (
+        <HandoffIllustration stage={phase} />
+      )}
       <h1>{text}</h1>
       {note ? <p>{note}</p> : null}
     </section>
@@ -757,13 +790,16 @@ function SingleAction({
 }) {
   const Icon =
     icon === "success" ? CheckCircle2 : icon === "error" ? TriangleAlert : CircleQuestionMark;
+  // A message that carries its own next step reads as a title and then an
+  // instruction, rather than one paragraph set at headline size.
+  const [heading, instruction] = body ? [title, body] : splitFirstSentence(title);
   return (
     <section className="mobile-step mobile-step--single">
       <StatusIcon tone={icon}>
         <Icon size={34} aria-hidden="true" />
       </StatusIcon>
-      <h1>{title}</h1>
-      {body ? <p>{body}</p> : null}
+      <h1>{heading}</h1>
+      {instruction ? <p>{instruction}</p> : null}
       {action && onAction ? (
         <PrimaryButton onClick={onAction}>
           <X aria-hidden="true" /> {action}

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { connection } from "next/server";
 import type { ReactNode } from "react";
 
@@ -20,6 +20,13 @@ export const metadata: Metadata = {
   title: "Print-cess by Club Paradiso",
   description: "Secure self-service document printing",
   robots: { index: false, follow: false },
+};
+
+// The browser's own chrome takes the page's Paper White, so the phone's status
+// bar and the page read as one surface. The product is light-only by design.
+export const viewport: Viewport = {
+  themeColor: "#f8fafc",
+  colorScheme: "light",
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
