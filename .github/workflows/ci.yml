@@ -98,12 +98,17 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
 
-      - name: Install Playwright system dependencies
-        timeout-minutes: 12
-        run: pnpm --filter @print-cess/web exec playwright install-deps chromium webkit
+      # Chromium is covered by the hosted image, but Playwright WebKit still
+      # needs Linux runtime libraries that are not guaranteed to be preinstalled
+      # (for example libevent-2.1.so.7). Install only WebKit's system deps, after
+      # applying the bounded apt retry/timeout policy above, so mobile viewport
+      # coverage works without returning to an unbounded all-browser apt step.
+      - name: Install Playwright WebKit system dependencies
+        timeout-minutes: 8
+        run: pnpm --filter @print-cess/web exec playwright install-deps webkit
 
       - name: Install Playwright browsers
-        timeout-minutes: 12
+        timeout-minutes: 8
         run: pnpm --filter @print-cess/web exec playwright install chromium webkit
 
       - name: End-to-end tests

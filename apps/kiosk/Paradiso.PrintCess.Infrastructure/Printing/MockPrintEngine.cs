@@ -25,13 +25,30 @@ public sealed class MockPrintEngine : IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null)
+        Func<CancellationToken, Task>? onReadyToSubmit = null,
+        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         settings.EnsureKioskPolicy();
         if (!_options.Enabled)
         {
             return PrintResult.Rejected("P-MOCK-DISABLED");
+        }
+
+        if (document.Properties.PageCount is { } pageCount)
+        {
+            var decision = PrintQuotaPolicy.Decide(pageCount);
+            if (decision == PrintQuotaDecision.HardLimitExceeded)
+            {
+                return PrintResult.Rejected("Q-02");
+            }
+
+            if (decision == PrintQuotaDecision.StaffOverrideRequired &&
+                (authorizeQuotaOverride is null ||
+                 !await authorizeQuotaOverride(pageCount, cancellationToken).ConfigureAwait(false)))
+            {
+                return PrintResult.Rejected("Q-01");
+            }
         }
 
         cancellationToken.ThrowIfCancellationRequested();

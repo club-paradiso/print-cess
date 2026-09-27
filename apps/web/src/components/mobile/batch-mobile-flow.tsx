@@ -32,8 +32,10 @@ import { LOCALE_NAMES, SUPPORTED_LOCALES, type SupportedLocale } from "@print-ce
 import {
   MAX_PRINT_BUNDLE_BYTES,
   MAX_PRINT_BUNDLE_FILES,
+  decidePrintQuota,
   encodePrintBundle,
   printBundleEncodedSize,
+  type PrintQuotaDecision,
   type PrintableFileKind,
 } from "@print-cess/protocol";
 import {
@@ -55,6 +57,9 @@ import {
   uploadCiphertext,
   ApiClientError,
 } from "@/lib/api-client";
+import { quotaDocument } from "@/lib/print-quota-document";
+
+import { PrintQuotaDialog } from "./print-quota-dialog";
 import {
   FileValidationError,
   validateMobileDocument,
@@ -162,6 +167,7 @@ export function BatchMobileFlow({
   const [fileErrorKey, setFileErrorKey] = useState<string>();
   const [batchError, setBatchError] = useState<string>();
   const [fileNoticeKey, setFileNoticeKey] = useState<string>();
+  const [quotaBlock, setQuotaBlock] = useState<PrintQuotaDecision>();
   const [progressKey, setProgressKey] = useState("encrypting");
   const [watching, setWatching] = useState<PrintWatchState>({ kind: "waiting" });
   const [supportsHwpx, setSupportsHwpx] = useState(false);
@@ -261,6 +267,7 @@ export function BatchMobileFlow({
       setFileErrorKey(undefined);
       setBatchError(undefined);
       setFileNoticeKey(undefined);
+      setQuotaBlock(undefined);
       if (files.length > MAX_PRINT_BUNDLE_FILES) {
         setBatchError(copy.tooManyFiles);
         return;
@@ -281,6 +288,14 @@ export function BatchMobileFlow({
             MAX_PRINT_BUNDLE_BYTES
         ) {
           throw new BatchSelectionError(copy.batchTooLarge);
+        }
+        // The whole selection is judged together. Ten files that each clear the
+        // limit on their own are still ten files' worth of paper.
+        const quota = decidePrintQuota(next.map(({ validated }) => quotaDocument(validated)));
+        if (quota.kind !== "allowed") {
+          for (const item of next) item.validated.bytes.fill(0);
+          setQuotaBlock(quota);
+          return;
         }
         clearDocuments();
         setDocuments(next);
@@ -588,6 +603,17 @@ export function BatchMobileFlow({
         hancomLabel={hancomLabel}
         onClose={() => setHelpOpen(false)}
       />
+      {quotaBlock ? (
+        <PrintQuotaDialog
+          decision={quotaBlock}
+          text={text}
+          onReselect={() => {
+            setQuotaBlock(undefined);
+            fileInput.current?.click();
+          }}
+          onCancel={() => setQuotaBlock(undefined)}
+        />
+      ) : null}
     </ScreenShell>
   );
 }

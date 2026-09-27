@@ -19,6 +19,7 @@ public sealed class IdempotentPrintEngine : IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null) =>
-        _coordinator.PrintOnceAsync(document, settings, cancellationToken, onReadyToSubmit);
+        Func<CancellationToken, Task>? onReadyToSubmit = null,
+        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null) =>
+        _coordinator.PrintOnceAsync(document, settings, cancellationToken, onReadyToSubmit, authorizeQuotaOverride);
 }

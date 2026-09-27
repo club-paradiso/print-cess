@@ -38,7 +38,9 @@ export async function validateMobileDocument(
   return {
     bytes,
     fileKind: "hwp",
+    // A floor, not a count. Hangul paginates HWP at render time on the kiosk.
     pageCount: 1,
+    pageCountIsExact: false,
     normalized: false,
   };
 }

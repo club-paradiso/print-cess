@@ -4,8 +4,15 @@ import sharp from "sharp";
 export const SYNTHETIC_NOTICE = "SAMPLE — NOT VALID";
 export const TEN_MIB = 10 * 1024 * 1024;
 
+/**
+ * The ceiling is one page past `SYSTEM_MAX_PAGE_LIMIT` so tests can build the
+ * document that must be refused outright, and no higher: these fixtures exist
+ * to exercise the limits, not to generate large files.
+ */
+export const MAX_SYNTHETIC_PDF_PAGES = 51;
+
 export async function createSyntheticPdf(pageCount = 1, password?: string): Promise<Uint8Array> {
-  if (!Number.isInteger(pageCount) || pageCount < 1 || pageCount > 20)
+  if (!Number.isInteger(pageCount) || pageCount < 1 || pageCount > MAX_SYNTHETIC_PDF_PAGES)
     throw new Error("Invalid page count");
   const document = new PDFDocument({
     autoFirstPage: false,

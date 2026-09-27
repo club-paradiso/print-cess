@@ -93,7 +93,7 @@ public sealed class DocumentValidationException : Exception
         DocumentValidationError.MimeMismatch => "The declared media type does not match the document.",
         DocumentValidationError.CorruptPdf => "The PDF structure is invalid.",
         DocumentValidationError.LockedPdf => "The PDF is encrypted or password protected.",
-        DocumentValidationError.TooManyPages => "The PDF contains more than 10 pages.",
+        DocumentValidationError.TooManyPages => "The document contains more than 50 pages.",
         DocumentValidationError.ActivePdfContent => "The PDF contains unsupported active or external content.",
         DocumentValidationError.CorruptImage => "The image structure is invalid.",
         DocumentValidationError.ImageDimensionsTooLarge => "The image dimensions exceed the safe limit.",
@@ -110,7 +110,7 @@ public sealed class DocumentValidationException : Exception
 
 public sealed class PortableDocumentValidator : IDocumentValidator
 {
-    public const int MaximumPdfPages = 10;
+    public const int MaximumPdfPages = Paradiso.PrintCess.Core.Printing.PrintQuotaPolicy.SystemPageLimit;
     public const int MaximumImageDimension = 20_000;
     public const long MaximumImagePixels = 40_000_000;
 

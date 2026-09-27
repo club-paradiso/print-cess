@@ -94,7 +94,7 @@ public sealed class DocumentValidationTests
         AssertError(DocumentValidationError.ActivePdfContent, () =>
             _validator.Validate(TestDocuments.OnePagePdf("/OpenAction 9 0 R"), DocumentKind.Pdf, null, TestDocuments.SessionId));
         AssertError(DocumentValidationError.TooManyPages, () =>
-            _validator.Validate(TestDocuments.PdfWithPages(11), DocumentKind.Pdf, null, TestDocuments.SessionId));
+            _validator.Validate(TestDocuments.PdfWithPages(51), DocumentKind.Pdf, null, TestDocuments.SessionId));
         AssertError(DocumentValidationError.CorruptPdf, () =>
             _validator.Validate("%PDF-1.4 no trailer"u8, DocumentKind.Pdf, null, TestDocuments.SessionId));
     }

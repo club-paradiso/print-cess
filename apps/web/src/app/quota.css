@@ -1,0 +1,394 @@
+/*
+ * Print quota screens: the Print-cess+ paywall and the technical-ceiling panel.
+ *
+ * The visual target is a real subscription page, because the joke only lands if
+ * the screen looks like it was built by a company that means it. Everything
+ * that carries information — the page counts, the disclaimer, the way out —
+ * is sized and contrasted as if this were a serious error state, which it is.
+ */
+
+.quota-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  background: rgb(7 23 55 / 55%);
+  backdrop-filter: blur(6px);
+}
+
+.quota-dialog {
+  width: 100%;
+  max-width: 480px;
+  margin: auto 0 0;
+  padding: 24px 20px 20px;
+  border-radius: var(--pc-radius) var(--pc-radius) 0 0;
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow);
+  animation: quota-rise 240ms ease-out;
+}
+.quota-dialog:focus {
+  outline: none;
+}
+.quota-dialog:focus-visible {
+  outline: 4px solid var(--pc-focus);
+  outline-offset: -4px;
+}
+
+@keyframes quota-rise {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (min-width: 560px) {
+  .quota-overlay {
+    align-items: center;
+  }
+  .quota-dialog {
+    margin: 0;
+    padding: 28px;
+    border-radius: var(--pc-radius);
+  }
+}
+
+/* ---------- shared summary ---------- */
+
+.quota-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 16px;
+  border: 1px solid var(--pc-line);
+  border-radius: 14px;
+  background: var(--pc-subtle);
+}
+.quota-summary div {
+  min-width: 0;
+}
+.quota-summary dt {
+  margin: 0 0 4px;
+  color: var(--pc-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+.quota-summary dd {
+  margin: 0;
+  color: var(--pc-ink);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.quota-summary__count {
+  color: var(--pc-teal-dark);
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+/* ---------- paywall ---------- */
+
+.quota-paywall__head {
+  text-align: center;
+}
+.quota-paywall__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: var(--pc-teal-soft);
+  color: var(--pc-teal-dark);
+}
+.quota-paywall__badge svg {
+  width: 22px;
+  height: 22px;
+}
+.quota-paywall h2 {
+  margin: 12px 0 6px;
+  color: var(--pc-ink);
+  font-size: 1.6rem;
+  letter-spacing: -0.02em;
+}
+.quota-paywall__lead {
+  margin: 0;
+  color: var(--pc-muted);
+  font-size: 0.9375rem;
+}
+.quota-paywall__over {
+  margin: 12px 0 0;
+  color: var(--pc-text);
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+/* ---------- pricing ---------- */
+
+.quota-plans {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 560px) {
+  .quota-plans {
+    grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+  }
+}
+
+.quota-plan {
+  position: relative;
+  padding: 14px;
+  border: 1px solid var(--pc-line);
+  border-radius: 14px;
+  background: var(--pc-surface);
+}
+.quota-plan--pro {
+  border-color: var(--pc-teal);
+  box-shadow: 0 0 0 1px var(--pc-teal);
+}
+.quota-plan__badge {
+  margin: 0 0 8px;
+  color: var(--pc-teal-dark);
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+}
+.quota-plan--ultra .quota-plan__badge {
+  color: var(--pc-muted);
+}
+.quota-plan__name {
+  margin: 0;
+  color: var(--pc-ink);
+  font-size: 0.8125rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.quota-plan__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  margin: 6px 0 0;
+}
+.quota-plan__price strong {
+  color: var(--pc-ink);
+  font-size: 1.25rem;
+  letter-spacing: -0.02em;
+  overflow-wrap: anywhere;
+}
+.quota-plan__price span {
+  color: var(--pc-muted);
+  font-size: 0.8125rem;
+}
+.quota-plan__pages {
+  margin: 8px 0 0;
+  color: var(--pc-text);
+  font-size: 0.875rem;
+}
+
+/* ---------- comparison ---------- */
+
+.quota-compare {
+  width: 100%;
+  margin: 18px 0 0;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+}
+.quota-compare caption {
+  margin-bottom: 8px;
+  color: var(--pc-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: start;
+  text-transform: uppercase;
+}
+.quota-compare th,
+.quota-compare td {
+  padding: 9px 0;
+  border-bottom: 1px solid var(--pc-line);
+  text-align: start;
+}
+.quota-compare th {
+  color: var(--pc-text);
+  font-weight: 600;
+}
+.quota-compare td {
+  color: var(--pc-muted);
+  text-align: end;
+}
+
+/* ---------- call to action ---------- */
+
+.quota-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  margin: 18px 0 0;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--pc-ink);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.quota-cta[disabled] {
+  cursor: progress;
+  opacity: 0.85;
+}
+.quota-cta__spinner {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border: 2px solid rgb(255 255 255 / 35%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: quota-spin 700ms linear infinite;
+}
+@keyframes quota-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.quota-cta-result {
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--pc-line);
+  border-radius: 14px;
+  background: var(--pc-paper-warm);
+}
+.quota-cta-result strong {
+  display: block;
+  color: var(--pc-ink);
+  font-size: 1rem;
+}
+.quota-cta-result p {
+  margin: 6px 0 0;
+  color: var(--pc-text);
+  font-size: 0.9375rem;
+}
+
+/* ---------- disclaimer and staff ---------- */
+
+.quota-disclaimer {
+  margin: 14px 0 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: var(--pc-subtle);
+  color: var(--pc-text);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.quota-staff {
+  margin: 12px 0 0;
+}
+.quota-staff__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 2px;
+  border: 0;
+  background: none;
+  color: var(--pc-muted);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.quota-staff__toggle svg {
+  width: 15px;
+  height: 15px;
+}
+.quota-staff__body {
+  margin: 6px 0 0;
+  color: var(--pc-text);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* ---------- hard limit ---------- */
+
+.quota-hard {
+  text-align: center;
+}
+.quota-hard__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fdecec;
+  color: var(--pc-error);
+}
+.quota-hard__icon svg {
+  width: 22px;
+  height: 22px;
+}
+.quota-hard h2 {
+  margin: 12px 0 0;
+  color: var(--pc-ink);
+  font-size: 1.25rem;
+}
+.quota-hard .quota-summary {
+  text-align: start;
+}
+.quota-hard__aside {
+  margin: 14px 0 0;
+  color: var(--pc-muted);
+  font-size: 0.8125rem;
+}
+
+/* ---------- actions ---------- */
+
+.quota-actions {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+}
+
+/* ---------- inline notices in the flow ---------- */
+
+.quota-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid var(--pc-line);
+  border-radius: 12px;
+  background: var(--pc-subtle);
+  color: var(--pc-text);
+  font-size: 0.875rem;
+}
+.quota-notice svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+  color: var(--pc-teal-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .quota-dialog {
+    animation: none;
+  }
+  .quota-cta__spinner {
+    animation-duration: 2s;
+  }
+}
