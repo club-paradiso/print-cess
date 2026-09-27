@@ -3,7 +3,18 @@ import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
 import { createSyntheticPdf, createSyntheticPng } from "@print-cess/test-fixtures";
 
+let kioskRateLimitBucket = 0;
+
 async function openMobile(kiosk: Page, context: BrowserContext): Promise<Page> {
+  // Keep each test in its own synthetic reverse-proxy bucket. The real kiosk
+  // creation limit is intentionally shared per client address, but an E2E suite
+  // that opens many independent kiosks in one minute must not make later tests
+  // depend on how many earlier tests happened to run.
+  kioskRateLimitBucket += 1;
+  await context.setExtraHTTPHeaders({
+    "x-forwarded-for": `203.0.113.${kioskRateLimitBucket}`,
+  });
+
   // Next development mode compiles route handlers on first use. Warm the
   // one-shot claim endpoint before creating a real session so a cold compiler
   // cannot consume the client's 15-second request timeout and spend the QR
