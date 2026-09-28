@@ -426,6 +426,15 @@ export function MobileFlow({
           <div className="mobile-topbar__actions">
             {/* The language was answered from the browser. This is here for the
                 times that answer is wrong, not as a question to be asked. */}
+            <button
+              type="button"
+              className="mobile-help-open"
+              onClick={() => setHelpOpen(true)}
+              aria-haspopup="dialog"
+            >
+              <CircleQuestionMark aria-hidden="true" />
+              {text("helpOpen")}
+            </button>
             <label className="drop-language">
               <Languages aria-hidden="true" />
               <span className="drop-visually-hidden">{text("selectLanguage")}</span>
@@ -440,15 +449,6 @@ export function MobileFlow({
                 ))}
               </select>
             </label>
-            <button
-              type="button"
-              className="mobile-help-open"
-              onClick={() => setHelpOpen(true)}
-              aria-haspopup="dialog"
-            >
-              <CircleQuestionMark aria-hidden="true" />
-              {text("helpOpen")}
-            </button>
           </div>
         )}
       </div>

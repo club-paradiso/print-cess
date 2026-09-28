@@ -53,7 +53,14 @@ test("mobile PNG flow encrypts, uploads, consumes once, and completes", async ({
     buffer: Buffer.from(await createSyntheticPng(800, 1100)),
   });
   await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible();
-  await expect(mobile.getByRole("img", { name: "Preview of the file you picked" })).toBeVisible();
+  const preview = mobile.getByRole("img", { name: "Preview of the file you picked" });
+  await expect(preview).toBeVisible();
+  // Visible is not enough: a revoked object URL still leaves a visible, broken
+  // image. The preview is how the visitor catches the wrong page, so it must
+  // actually decode.
+  await expect
+    .poll(() => preview.evaluate((image: HTMLImageElement) => image.naturalWidth))
+    .toBeGreaterThan(0);
   await mobile.getByRole("button", { name: "Print 1 copy" }).click();
   await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
     timeout: 60_000,
@@ -110,8 +117,14 @@ test("one kiosk scan prints multiple selected photo and document files in order"
   await expect(mobile.getByRole("heading", { name: "Check these files" })).toBeVisible({
     timeout: 30_000,
   });
-  await expect(mobile.getByText("1. 01-photo.png", { exact: true })).toBeVisible();
-  await expect(mobile.getByText("2. 02-document.pdf", { exact: true })).toBeVisible();
+  // The files are listed in print order, each with its kind, size, and, for a
+  // PDF of several pages, how many pages will come out.
+  const listed = mobile.locator("ol.mobile-selected > li");
+  await expect(listed).toHaveCount(2);
+  await expect(listed.nth(0)).toContainText("01-photo.png");
+  await expect(listed.nth(0)).toContainText("Photo");
+  await expect(listed.nth(1)).toContainText("02-document.pdf");
+  await expect(listed.nth(1)).toContainText("2 pages");
   await expect(mobile.getByText("2 files selected", { exact: true })).toBeVisible();
   await mobile.getByRole("button", { name: "Print 2 files" }).click();
 
@@ -249,7 +262,7 @@ test("the language picker and the guide are available without blocking anything"
   // The picker is in the header, so changing language costs nothing and
   // interrupts nothing.
   await mobile.getByLabel("Choose your language").selectOption("ko");
-  await expect(mobile.getByRole("heading", { name: "출력할 파일을 선택하세요" })).toBeVisible();
+  await expect(mobile.getByRole("heading", { name: "인쇄할 파일을 고르세요" })).toBeVisible();
   await expect(mobile.locator("html")).toHaveAttribute("lang", "ko");
 
   // The guide that used to be a screen of its own is one tap away from the

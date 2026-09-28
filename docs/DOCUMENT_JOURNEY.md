@@ -169,16 +169,22 @@ the only channel, and it never blocks anything.
 - **Arrival.** The document token on the kiosk fades and rises 14px into place
   over 420ms when a phone connects. It is the only "materialization" in the
   product, and it is short enough not to be a wait.
-- **Alive.** A receiver waiting on a sender sees a slow teal pulse. It says the
+- **Alive.** A receiver waiting on a sender sees a slow indigo pulse. It says the
   line is open; it does not pretend to be a percentage nobody can measure.
+- **Hand-off.** While the phone sends a document, a sheet slides into the
+  printer from the mark; while the kiosk prints, a sheet slides out of it. It
+  runs only in those two states, stands in for no percentage, and is hidden
+  from assistive technology because the heading beside it says the same thing.
+  A lost connection is never drawn as progress: it gets a warning icon instead.
 - **Progress.** Determinate bars appear only where bytes are actually counted.
   Percentages are never invented.
 - **The QR never moves.** Somebody is pointing a camera at it.
 
 `prefers-reduced-motion: reduce` is honoured globally in
-`packages/ui/src/styles.css`: every animation and transition collapses. Nothing
-in the product depends on motion to be understood, so a reduced-motion visitor
-loses decoration and no information.
+`packages/ui/src/styles.css`: every animation and transition collapses, and the
+hand-off drawing holds a still frame of the sheet at the slot rather than the
+last frame of its loop. Nothing in the product depends on motion to be
+understood, so a reduced-motion visitor loses decoration and no information.
 
 ---
 
@@ -187,14 +193,19 @@ loses decoration and no information.
 State is carried by the sentence first. Colour and iconography are a second and
 third channel.
 
-| State     | Hue                | The word                 |
-| --------- | ------------------ | ------------------------ |
-| Ready     | Teal               | Ready / Connected        |
-| Sending   | Warm amber         | Sending / Saving         |
-| Receiving | Warm amber         | Saving                   |
-| Checking  | Teal               | Checking                 |
-| Success   | Green              | Saved / Download started |
-| Error     | Existing error red | The reason               |
+| State        | Hue (token)                                  | The word                  |
+| ------------ | -------------------------------------------- | ------------------------- |
+| Ready        | Royal Indigo (`--pc-brand`)                  | Ready / Connected         |
+| Sending      | Royal Indigo (`--pc-transfer-active`)        | Sending / Saving          |
+| Receiving    | Royal Indigo (`--pc-transfer-active`)        | Saving                    |
+| Checking     | Royal Indigo (`--pc-printing`)               | Checking / Printing       |
+| Success      | Mint Teal (`--pc-success`, `--pc-completed`) | Saved / Printed / Deleted |
+| Needs a look | Amber (`--pc-warning`)                       | Reconnecting / Limited    |
+| Error        | Red (`--pc-destructive`)                     | The reason                |
+
+Work in flight used to be warm amber. It is the brand's indigo now, because
+amber is reserved for the one state that asks the visitor to look twice (a
+lost connection, a limited browser); an in-flight transfer is not a warning.
 
 Both ends of a transfer use the same hue for the same meaning, so the sending
 phone and the receiving phone read as one service. No state is distinguishable

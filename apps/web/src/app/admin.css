@@ -10,16 +10,16 @@
   width: 60px;
   height: 60px;
   margin-top: 30px;
-  color: var(--pc-teal);
+  color: var(--pc-brand);
 }
 .admin-login h1 {
   margin: 0;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 42px;
   letter-spacing: -0.04em;
 }
 .admin-login p {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 17px;
   line-height: 1.5;
 }
@@ -27,7 +27,7 @@
 .admin-controls label {
   display: grid;
   gap: 8px;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 16px;
   font-weight: 700;
 }
@@ -35,10 +35,10 @@
 .admin-controls select {
   min-height: 52px;
   padding: 10px 12px;
-  border: 2px solid var(--pc-line);
-  border-radius: 10px;
-  background: white;
-  color: var(--pc-ink);
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
   font-size: 17px;
 }
 
@@ -49,7 +49,7 @@
   gap: 32px;
   align-content: start;
   padding: 34px;
-  background: var(--pc-subtle);
+  background: var(--pc-surface-sunken);
 }
 .admin-shell header {
   grid-column: 1 / -1;
@@ -57,25 +57,25 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 24px;
-  border-bottom: 1px solid var(--pc-line);
+  border-bottom: 1px solid var(--pc-border);
 }
 .admin-shell header > div {
   display: flex;
   gap: 10px;
   align-items: center;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-weight: 750;
 }
 .admin-status,
 .admin-controls {
   padding: 28px;
-  border: 1px solid var(--pc-line);
-  border-radius: 16px;
-  background: white;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
 }
 .admin-status h1,
 .admin-controls h2 {
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-size: 28px;
 }
 .admin-status dl {
@@ -86,10 +86,10 @@
   justify-content: space-between;
   gap: 24px;
   padding: 15px 0;
-  border-top: 1px solid var(--pc-line);
+  border-top: 1px solid var(--pc-border);
 }
 .admin-status dt {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
 }
 .admin-status dd {
   margin: 0;
@@ -110,7 +110,7 @@
   font-size: 16px;
 }
 .admin-controls p {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   line-height: 1.5;
 }
 .admin-shell aside {
@@ -119,14 +119,14 @@
   gap: 12px;
   align-items: center;
   padding: 18px 22px;
-  border-left: 4px solid var(--pc-teal);
-  background: white;
-  color: var(--pc-text);
+  border-left: 4px solid var(--pc-brand);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
   line-height: 1.5;
 }
 .admin-shell aside svg {
   flex: none;
-  color: var(--pc-teal);
+  color: var(--pc-brand);
 }
 
 @media (max-width: 800px) {
