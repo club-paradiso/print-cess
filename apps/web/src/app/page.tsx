@@ -1,4 +1,13 @@
-import { Building2, Download, Monitor, ScanLine, Send, ShieldCheck } from "lucide-react";
+import {
+  Building2,
+  ChevronRight,
+  Download,
+  LockKeyhole,
+  Monitor,
+  QrCode,
+  ScanLine,
+  Send,
+} from "lucide-react";
 
 import { translate } from "@print-cess/i18n";
 import { Wordmark } from "@print-cess/ui";
@@ -51,34 +60,81 @@ export default async function HomePage() {
 
   return (
     <main className="status-page">
-      <Wordmark />
-      <section>
-        <ShieldCheck aria-hidden="true" />
+      <header className="home-header">
+        <Wordmark />
+      </header>
+      <section className="home-hero">
         <h1>{text("homeTitle")}</h1>
-        <p>{text("dropIntro")}</p>
-        <nav className="status-page__actions" aria-label={text("dropTitle")}>
-          <a href="/scan">
-            <ScanLine aria-hidden="true" /> {SCAN_HOME_CTA[locale]}
-          </a>
-          <a href="/send">
-            <Send aria-hidden="true" /> {text("dropSendCta")}
-          </a>
-          <a href="/receive">
-            <Download aria-hidden="true" /> {text("dropReceiveCta")}
-          </a>
-          <a href="/workstation">
-            <Building2 aria-hidden="true" /> {workstationCta[locale]}
-          </a>
-          {kioskAvailable ? (
-            <a href="/kiosk">
-              <Monitor aria-hidden="true" /> {kioskCta[locale]}
-            </a>
-          ) : null}
-        </nav>
-        <p className="status-page__privacy">
-          {text("homeScanHint")} {text("homeNoAccount")}
+        {/* Printing starts at the big screen, so this is a direction rather
+            than a button: a button here would lead nowhere. */}
+        <p className="home-print">
+          <span className="home-print__icon" aria-hidden="true">
+            <QrCode />
+          </span>
+          <span>{text("homeScanHint")}</span>
         </p>
       </section>
+      <nav className="home-section" aria-labelledby="home-drop-title">
+        <h2 id="home-drop-title">{text("dropTitle")}</h2>
+        <p>{text("dropIntro")}</p>
+        <ul className="home-actions">
+          <li>
+            <a className="home-action" href="/send">
+              <span className="home-action__icon" aria-hidden="true">
+                <Send />
+              </span>
+              <span>{text("dropSendCta")}</span>
+              <ChevronRight className="home-action__chevron" aria-hidden="true" />
+            </a>
+          </li>
+          <li>
+            <a className="home-action" href="/receive">
+              <span className="home-action__icon" aria-hidden="true">
+                <Download />
+              </span>
+              <span>{text("dropReceiveCta")}</span>
+              <ChevronRight className="home-action__chevron" aria-hidden="true" />
+            </a>
+          </li>
+          <li>
+            <a className="home-action" href="/scan">
+              <span className="home-action__icon" aria-hidden="true">
+                <ScanLine />
+              </span>
+              <span>{SCAN_HOME_CTA[locale]}</span>
+              <ChevronRight className="home-action__chevron" aria-hidden="true" />
+            </a>
+          </li>
+        </ul>
+        {/* Entrances for a managed office computer and for the kiosk display
+            itself. Most visitors never need them, so they read quieter. */}
+        <ul className="home-actions home-actions--quiet">
+          <li>
+            <a className="home-action" href="/workstation">
+              <span className="home-action__icon" aria-hidden="true">
+                <Building2 />
+              </span>
+              <span>{workstationCta[locale]}</span>
+              <ChevronRight className="home-action__chevron" aria-hidden="true" />
+            </a>
+          </li>
+          {kioskAvailable ? (
+            <li>
+              <a className="home-action" href="/kiosk">
+                <span className="home-action__icon" aria-hidden="true">
+                  <Monitor />
+                </span>
+                <span>{kioskCta[locale]}</span>
+                <ChevronRight className="home-action__chevron" aria-hidden="true" />
+              </a>
+            </li>
+          ) : null}
+        </ul>
+      </nav>
+      <p className="status-page__privacy">
+        <LockKeyhole aria-hidden="true" />
+        <span>{text("homeNoAccount")}</span>
+      </p>
     </main>
   );
 }

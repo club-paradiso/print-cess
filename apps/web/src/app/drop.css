@@ -17,18 +17,21 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  min-height: 48px;
-  padding: 6px 10px;
-  border: 2px solid var(--pc-line);
-  border-radius: 999px;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-pill);
   background: var(--pc-surface);
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
+}
+.drop-language:hover {
+  border-color: var(--pc-brand-muted);
 }
 .drop-language svg {
   width: 20px;
   height: 20px;
   flex: none;
-  color: var(--pc-teal-dark);
+  color: var(--pc-brand);
 }
 .drop-language select {
   max-width: 8.5rem;
@@ -43,13 +46,14 @@
   display: grid;
   gap: 10px;
   padding: 14px;
-  border: 2px solid var(--pc-line);
-  border-radius: var(--pc-radius);
-  background: var(--pc-subtle);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-sm);
 }
 .drop-selection__summary {
   margin: 0;
-  color: var(--pc-ink) !important;
+  color: var(--pc-text-primary) !important;
   font-size: 17px !important;
   font-weight: 750;
 }
@@ -70,11 +74,11 @@
   font-size: 16px;
 }
 .drop-file-list li + li {
-  border-block-start: 1px solid var(--pc-line);
+  border-block-start: 1px solid var(--pc-border);
 }
 .drop-file-list__name {
   min-width: 0;
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   font-weight: 650;
   /* A name arrives from another device and can be long or unbroken. Wrap it
      rather than letting one file push the whole screen sideways. */
@@ -82,7 +86,7 @@
 }
 .drop-file-list__size {
   flex: none;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 15px;
   font-variant-numeric: tabular-nums;
 }
@@ -91,7 +95,7 @@
   display: flex;
   align-items: flex-start;
   gap: 8px;
-  color: var(--pc-muted) !important;
+  color: var(--pc-text-muted) !important;
   font-size: 15px !important;
   line-height: 1.45 !important;
 }
@@ -100,14 +104,15 @@
   height: 20px;
   flex: none;
   margin-top: 1px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-success);
 }
 
 .drop-notice {
   padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--pc-paper-warm);
-  color: var(--pc-text) !important;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand-subtle);
+  box-shadow: inset 4px 0 0 var(--pc-brand);
+  color: var(--pc-text-primary) !important;
   font-size: 15px !important;
   line-height: 1.45 !important;
 }
@@ -118,21 +123,21 @@
   width: 100%;
 }
 .drop-progress__track {
-  height: 14px;
+  height: 12px;
   overflow: hidden;
-  border-radius: 999px;
-  background: var(--pc-line);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-brand);
 }
 .drop-progress__fill {
   display: block;
   block-size: 100%;
-  border-radius: 999px;
-  background: var(--pc-teal);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-transfer-active);
   transition: inline-size 200ms ease-out;
 }
 .drop-progress__label {
   margin: 0;
-  color: var(--pc-muted) !important;
+  color: var(--pc-text-muted) !important;
   font-size: 15px !important;
   font-variant-numeric: tabular-nums;
 }
@@ -146,19 +151,25 @@
   gap: 10px;
   justify-items: center;
   margin: 0;
-  padding: 16px;
-  border: 2px solid var(--pc-line);
-  border-radius: var(--pc-radius);
-  background: white;
-  box-shadow: var(--pc-shadow);
+  padding: 18px 16px 14px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-raised);
+  box-shadow: var(--pc-shadow-md);
+}
+.drop-qr__code {
+  position: relative;
+  width: min(100%, 264px);
+  padding: 10px;
 }
 .drop-qr img {
-  width: min(100%, 264px);
+  display: block;
+  width: 100%;
   height: auto;
   image-rendering: pixelated;
 }
 .drop-qr figcaption {
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 15px;
   text-align: center;
 }
@@ -170,12 +181,12 @@
   gap: 4px;
   justify-items: center;
   padding: 14px;
-  border: 2px dashed var(--pc-teal);
-  border-radius: var(--pc-radius);
-  background: var(--pc-teal-soft);
+  border: 2px dashed var(--pc-brand-muted);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-brand-subtle);
 }
 .drop-code__label {
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-size: 14px;
   font-weight: 750;
   letter-spacing: 0.04em;
@@ -183,8 +194,8 @@
 }
 .drop-code strong {
   direction: ltr;
-  color: var(--pc-ink);
-  font-family: "SF Mono", ui-monospace, "Roboto Mono", monospace;
+  color: var(--pc-text-primary);
+  font-family: var(--pc-font-mono);
   font-size: clamp(26px, 8vw, 34px);
   letter-spacing: 0.08em;
 }
@@ -193,19 +204,19 @@
   width: 100%;
   min-height: 68px;
   padding: 12px 16px;
-  border: 2px solid var(--pc-line);
-  border-radius: 14px;
-  background: white;
-  color: var(--pc-ink);
+  border: 2px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
   direction: ltr;
-  font-family: "SF Mono", ui-monospace, "Roboto Mono", monospace;
+  font-family: var(--pc-font-mono);
   font-size: clamp(22px, 7vw, 30px);
   letter-spacing: 0.08em;
   text-align: center;
   text-transform: uppercase;
 }
 .drop-code-field input::placeholder {
-  color: #a8b4c4;
+  color: var(--pc-text-muted);
   letter-spacing: 0.08em;
 }
 
@@ -214,14 +225,14 @@
   align-items: center;
   gap: 8px;
   margin: 0;
-  color: var(--pc-text) !important;
+  color: var(--pc-text-secondary) !important;
   font-size: 16px !important;
 }
 .drop-status svg {
   width: 20px;
   height: 20px;
   flex: none;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 
 .drop-link,
@@ -232,7 +243,7 @@
   gap: 8px;
   min-height: 48px;
   padding: 10px 4px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-size: 16px;
   font-weight: 750;
 }
@@ -252,9 +263,9 @@
   aspect-ratio: 1;
   max-height: 60vh;
   object-fit: cover;
-  border: 3px solid var(--pc-teal);
-  border-radius: var(--pc-radius);
-  background: #000;
+  border: 3px solid var(--pc-brand);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-inverse-deep);
 }
 
 /* --- Choosing files ------------------------------------------------------ */
@@ -266,16 +277,16 @@
   display: grid;
   gap: 12px;
   padding: 16px;
-  border: 2px dashed var(--pc-line);
-  border-radius: var(--pc-radius);
+  border: 2px dashed var(--pc-border);
+  border-radius: var(--pc-radius-lg);
   background: var(--pc-surface);
   transition:
     border-color 140ms ease,
     background-color 140ms ease;
 }
 .drop-target.is-dragging {
-  border-color: var(--pc-teal);
-  background: var(--pc-teal-soft);
+  border-color: var(--pc-upload-active);
+  background: var(--pc-selected);
 }
 .drop-target__hint {
   display: none;
@@ -283,13 +294,13 @@
   justify-content: center;
   gap: 8px;
   margin: 0;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   font-size: 15px;
 }
 .drop-target__hint svg {
   width: 20px;
   height: 20px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 /* Only shown where a drag is possible at all. */
 @media (hover: hover) and (pointer: fine) {
@@ -330,8 +341,8 @@
   width: 40px;
   height: 40px;
   border-radius: 12px;
-  background: var(--pc-teal-soft);
-  color: var(--pc-teal-dark);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
 }
 .drop-file__icon svg {
   width: 22px;
@@ -348,10 +359,10 @@
   place-items: center;
   width: 44px;
   height: 44px;
-  border: 2px solid var(--pc-line);
-  border-radius: 999px;
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-pill);
   background: var(--pc-surface);
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
   cursor: pointer;
 }
 .drop-file__remove svg {
@@ -361,7 +372,7 @@
 
 .drop-file__state {
   margin: 0;
-  color: var(--pc-muted) !important;
+  color: var(--pc-text-muted) !important;
   font-size: 15px !important;
   line-height: 1.4 !important;
 }
@@ -374,23 +385,23 @@
   font-weight: 700;
 }
 .drop-file--failed .drop-file__state {
-  color: var(--pc-error) !important;
+  color: var(--pc-destructive) !important;
   font-weight: 700;
 }
 .drop-file--saved .drop-file__icon,
 .drop-file--shared .drop-file__icon {
-  background: #e4f5ee;
+  background: var(--pc-success-surface);
   color: var(--pc-success);
 }
 .drop-file--failed .drop-file__icon {
-  background: #fcebed;
-  color: var(--pc-error);
+  background: var(--pc-destructive-surface);
+  color: var(--pc-destructive);
 }
 .drop-file--saving .drop-file__icon {
-  /* Warm amber while bytes are moving: the same "in flight" hue the sending
-     side uses, so both ends of a transfer speak one visual language. */
-  background: var(--pc-paper-warm);
-  color: #8a5a00;
+  /* The in-flight hue is the brand's own "working" indigo, the same one the
+     sending phone's progress bar uses, so both ends speak one language. */
+  background: var(--pc-transfer-active);
+  color: var(--pc-text-on-brand);
 }
 
 .drop-file__actions {
@@ -407,13 +418,13 @@
   justify-items: center;
   gap: 8px;
   padding: 16px;
-  border-radius: var(--pc-radius);
-  background: var(--pc-teal-soft);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-success-surface);
   text-align: center;
 }
 .drop-complete p {
   margin: 0;
-  color: var(--pc-ink) !important;
+  color: var(--pc-text-primary) !important;
   font-weight: 700;
 }
 
@@ -424,12 +435,12 @@
   gap: 8px;
   width: 100%;
   padding: 12px 14px;
-  border-radius: 14px;
-  background: var(--pc-paper-warm);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand-subtle);
 }
 .drop-still-sending p {
   margin: 0;
-  color: var(--pc-text) !important;
+  color: var(--pc-text-secondary) !important;
   font-size: 15px !important;
 }
 
@@ -446,17 +457,17 @@
   display: block;
   width: 22px;
   height: 22px;
-  border-radius: 999px;
-  background: var(--pc-teal);
-  box-shadow: 0 0 0 0 rgb(0 138 138 / 45%);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-brand);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--pc-brand) 45%, transparent);
   animation: drop-pulse 1800ms ease-out infinite;
 }
 @keyframes drop-pulse {
   70% {
-    box-shadow: 0 0 0 26px rgb(0 138 138 / 0%);
+    box-shadow: 0 0 0 26px color-mix(in srgb, var(--pc-brand) 0%, transparent);
   }
   100% {
-    box-shadow: 0 0 0 0 rgb(0 138 138 / 0%);
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--pc-brand) 0%, transparent);
   }
 }
 
@@ -467,26 +478,26 @@
   gap: 6px;
   justify-items: center;
   padding: 18px 14px;
-  border: 2px dashed var(--pc-teal);
-  border-radius: var(--pc-radius);
-  background: var(--pc-teal-soft);
+  border: 2px dashed var(--pc-brand-muted);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-brand-subtle);
 }
 .pairing-digits__label {
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   font-size: 14px;
   font-weight: 750;
 }
 .pairing-digits strong {
   direction: ltr;
-  color: var(--pc-ink);
-  font-family: "SF Mono", ui-monospace, "Roboto Mono", monospace;
+  color: var(--pc-text-primary);
+  font-family: var(--pc-font-mono);
   font-size: clamp(56px, 22vw, 92px);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.12em;
   line-height: 1;
 }
 .pairing-digits small {
-  color: var(--pc-slate);
+  color: var(--pc-text-muted);
   font-size: 14px;
   text-align: center;
 }
@@ -513,14 +524,14 @@
 .pairing-shown__figure {
   width: clamp(120px, 44vw, 176px);
   height: clamp(120px, 44vw, 176px);
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 .pairing-shown--selected .pairing-shown__figure {
   width: clamp(88px, 30vw, 128px);
   height: clamp(88px, 30vw, 128px);
 }
 .pairing-shown figcaption {
-  color: var(--pc-slate);
+  color: var(--pc-text-muted);
   font-size: 15px;
   text-align: center;
 }
@@ -536,17 +547,17 @@
   gap: 6px;
   justify-items: center;
   padding: 16px 10px;
-  border: 2px solid var(--pc-line);
-  border-radius: var(--pc-radius);
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
   background: var(--pc-surface);
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   cursor: pointer;
   font: inherit;
   /* One wrong receiver choice consumes the pairing, so targets are generous. */
   min-height: 116px;
 }
 .pairing-choices button:hover:not(:disabled) {
-  border-color: var(--pc-teal);
+  border-color: var(--pc-brand);
 }
 .pairing-choices button:disabled {
   cursor: progress;
@@ -559,7 +570,7 @@
 .pairing-choices button svg {
   width: 56px;
   height: 56px;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
 }
 
 /* A keypad rather than a text field: two digits typed with a thumb, on a phone
@@ -574,38 +585,38 @@
 }
 .pairing-keypad button {
   padding: 16px 0;
-  border: 2px solid var(--pc-line);
-  border-radius: var(--pc-radius);
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
   background: var(--pc-surface);
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
   cursor: pointer;
-  font-family: "SF Mono", ui-monospace, "Roboto Mono", monospace;
+  font-family: var(--pc-font-mono);
   font-size: 26px;
   font-weight: 700;
 }
 .pairing-keypad button:hover:not(:disabled) {
-  border-color: var(--pc-teal);
+  border-color: var(--pc-brand);
 }
 .pairing-keypad button:disabled {
   opacity: 0.5;
 }
 .pairing-entry {
   direction: ltr;
-  color: var(--pc-ink);
-  font-family: "SF Mono", ui-monospace, "Roboto Mono", monospace;
+  color: var(--pc-text-primary);
+  font-family: var(--pc-font-mono);
   font-size: clamp(44px, 18vw, 68px);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.16em;
   text-align: center;
 }
 .pairing-entry--empty {
-  color: var(--pc-line);
+  color: var(--pc-border-strong);
 }
 .pairing-back {
   min-height: 48px;
   border: 0;
   background: transparent;
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   cursor: pointer;
   font: inherit;
   font-weight: 750;
@@ -621,7 +632,7 @@
   width: 100%;
 }
 .drop-paste summary {
-  color: var(--pc-teal-dark);
+  color: var(--pc-text-brand);
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;

@@ -110,9 +110,12 @@ export function TransferBar({
 export function FileRow({
   file,
   text,
+  detail,
 }: {
   file: { name: string; size: number; type: string };
   text: Text;
+  /** Something the caller already knows without opening the file, like pages. */
+  detail?: string | undefined;
 }) {
   const kind = dropFileKind(file.name, file.type);
   const Icon = FILE_KIND_ICONS[kind];
@@ -125,6 +128,7 @@ export function FileRow({
         <span className="drop-file-list__name">{file.name}</span>
         <span className="drop-file-list__size">
           {text(dropFileKindLabelKey(kind))} · {formatBytes(file.size)}
+          {detail ? ` · ${detail}` : ""}
         </span>
       </span>
     </div>

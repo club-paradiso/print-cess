@@ -9,7 +9,7 @@ import {
   Languages,
   LockKeyhole,
   Printer,
-  ShieldCheck,
+  PrinterX,
   Smartphone,
 } from "lucide-react";
 import QRCode from "qrcode";
@@ -34,7 +34,7 @@ import {
   translate,
   type SupportedLocale,
 } from "@print-cess/i18n";
-import { Wordmark } from "@print-cess/ui";
+import { ScanFrame, Wordmark } from "@print-cess/ui";
 
 import {
   detectFileKind,
@@ -49,6 +49,7 @@ import {
   revokePrintArtifact,
   type PrintArtifact,
 } from "@/lib/kiosk-print";
+import { QR_COLORS } from "@/lib/qr-style";
 
 type KioskStatus =
   | "preparing"
@@ -112,7 +113,7 @@ async function prepareSession(): Promise<PreparedSession> {
       errorCorrectionLevel: "M",
       margin: 2,
       scale: 11,
-      color: { dark: "#071737", light: "#ffffff" },
+      color: QR_COLORS,
     });
     return {
       ok: true,
@@ -365,12 +366,15 @@ export function BatchKioskSimulator({
               <small>Point your camera at the QR code</small>
             </div>
           </div>
-          {session ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={session.qrImage} alt="휴대전화로 스캔할 Print-cess 보안 QR코드" />
-          ) : (
-            <div className="kiosk-qr__loading" aria-busy="true" />
-          )}
+          <div className="kiosk-qr__frame">
+            <ScanFrame />
+            {session ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.qrImage} alt="휴대전화로 스캔할 Print-cess 보안 QR코드" />
+            ) : (
+              <div className="kiosk-qr__loading" aria-busy="true" />
+            )}
+          </div>
           <div className="kiosk-qr__action">
             <span className="kiosk-step-number" aria-hidden="true">
               3
@@ -502,7 +506,33 @@ async function kioskTransition(
   if (!response.ok) throw new Error(`transition ${status} failed`);
 }
 
+/**
+ * The stations the files pass through, as the kiosk sees them. Each one maps
+ * to a state the protocol actually has, so a step lights up only because the
+ * session reached it: what the room sees and what the service knows cannot
+ * drift apart.
+ */
+const JOURNEY: { status: KioskStatus; korean: string; english: string }[] = [
+  { status: "uploading", korean: "도착하는 중", english: "Arriving" },
+  { status: "validating", korean: "확인하는 중", english: "Checking" },
+  { status: "printing", korean: "인쇄하는 중", english: "Printing" },
+];
+
+const JOURNEY_ORDER: KioskStatus[] = [
+  "claimed",
+  "uploading",
+  "uploaded",
+  "validating",
+  "printing",
+  "completed",
+];
+
+/**
+ * What the shared screen shows while the work is happening on somebody's
+ * phone: a category and a stage, never a file name, a count, or a thumbnail.
+ */
 function ConnectedScreen({ status, remaining }: { status: KioskStatus; remaining: number }) {
+  const reached = JOURNEY_ORDER.indexOf(status);
   return (
     <main className="kiosk-shell kiosk-shell--connected" lang="ko" data-kiosk-state="connected">
       <Wordmark />
@@ -524,9 +554,23 @@ function ConnectedScreen({ status, remaining }: { status: KioskStatus; remaining
         >
           <Files />
         </div>
+        <ol className="kiosk-journey">
+          {JOURNEY.map((step) => {
+            const at = JOURNEY_ORDER.indexOf(step.status);
+            const state = reached > at ? "is-done" : reached === at ? "is-active" : undefined;
+            return (
+              <li key={step.status} className={state}>
+                {/* The word carries the stage as well as the colour, so it
+                    survives a monochrome screen and reduced motion alike. */}
+                <strong>{step.korean}</strong>
+                <small lang="en">{step.english}</small>
+              </li>
+            );
+          })}
+        </ol>
         <div className="kiosk-status-row" aria-live="polite">
           <span className="kiosk-status-dot">
-            <CheckCircle2 aria-hidden="true" />
+            <Printer aria-hidden="true" />
           </span>
           <strong>{statusLabel(status)}</strong>
           <span className="kiosk-countdown">
@@ -601,7 +645,8 @@ function UnavailableScreen({ onReset }: { onReset: () => void }) {
   return (
     <main className="kiosk-result kiosk-result--error" lang="ko">
       <Wordmark />
-      <ShieldCheck aria-hidden="true" />
+      {/* A failure never wears a security badge: the icon says what broke. */}
+      <PrinterX aria-hidden="true" />
       <h1>지금은 인쇄할 수 없어요</h1>
       <p>잠시 뒤에 다시 시도해 주세요.</p>
       <p className="kiosk-result__english" lang="en">

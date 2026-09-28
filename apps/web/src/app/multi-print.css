@@ -9,9 +9,9 @@
   gap: 0.65rem;
   min-width: 0;
   padding: 0.85rem;
-  border: 1px solid var(--pc-line);
-  border-radius: 1rem;
-  background: var(--pc-subtle);
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-sunken);
 }
 
 .mobile-preview-item__label {
@@ -19,11 +19,11 @@
   overflow-wrap: anywhere;
   font-size: 0.86rem;
   line-height: 1.4;
-  color: var(--pc-muted);
+  color: var(--pc-text-muted);
 }
 
 .mobile-preview-item__label strong {
-  color: var(--pc-ink);
+  color: var(--pc-text-primary);
 }
 
 @media (min-width: 760px) {

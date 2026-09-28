@@ -8,7 +8,7 @@ import {
   Languages,
   LockKeyhole,
   Printer,
-  ShieldCheck,
+  PrinterX,
   Smartphone,
 } from "lucide-react";
 import QRCode from "qrcode";
@@ -28,7 +28,7 @@ import {
   translate,
   type SupportedLocale,
 } from "@print-cess/i18n";
-import { Wordmark } from "@print-cess/ui";
+import { ScanFrame, Wordmark } from "@print-cess/ui";
 
 import {
   detectFileKind,
@@ -43,6 +43,7 @@ import {
   revokePrintArtifact,
   type PrintArtifact,
 } from "@/lib/kiosk-print";
+import { QR_COLORS } from "@/lib/qr-style";
 
 type KioskStatus =
   | "preparing"
@@ -115,7 +116,7 @@ async function prepareSession(): Promise<PreparedSession> {
       errorCorrectionLevel: "M",
       margin: 2,
       scale: 11,
-      color: { dark: "#071737", light: "#ffffff" },
+      color: QR_COLORS,
     });
     return {
       ok: true,
@@ -381,12 +382,15 @@ export function KioskSimulator({
               <small>Point your camera at the QR code</small>
             </div>
           </div>
-          {session ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={session.qrImage} alt="휴대전화로 스캔할 Print-cess 보안 QR코드" />
-          ) : (
-            <div className="kiosk-qr__loading" aria-busy="true" />
-          )}
+          <div className="kiosk-qr__frame">
+            <ScanFrame />
+            {session ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={session.qrImage} alt="휴대전화로 스캔할 Print-cess 보안 QR코드" />
+            ) : (
+              <div className="kiosk-qr__loading" aria-busy="true" />
+            )}
+          </div>
           <div className="kiosk-qr__action">
             <span className="kiosk-step-number" aria-hidden="true">
               3
@@ -554,7 +558,7 @@ function ConnectedScreen({ status, remaining }: { status: KioskStatus; remaining
           <FileCheck2 />
         </div>
 
-        <ol className="kiosk-journey" aria-live="polite">
+        <ol className="kiosk-journey">
           {JOURNEY.map((step) => {
             const at = JOURNEY_ORDER.indexOf(step.status);
             const state = reached > at ? "is-done" : reached === at ? "is-active" : "";
@@ -572,7 +576,7 @@ function ConnectedScreen({ status, remaining }: { status: KioskStatus; remaining
 
         <div className="kiosk-status-row" aria-live="polite">
           <span className="kiosk-status-dot">
-            <CheckCircle2 aria-hidden="true" />
+            <Printer aria-hidden="true" />
           </span>
           <strong>{statusLabel(status)}</strong>
           <span className="kiosk-countdown">
@@ -676,7 +680,8 @@ function UnavailableScreen({ onReset }: { onReset: () => void }) {
   return (
     <main className="kiosk-result kiosk-result--error" lang="ko">
       <Wordmark />
-      <ShieldCheck aria-hidden="true" />
+      {/* A failure never wears a security badge: the icon says what broke. */}
+      <PrinterX aria-hidden="true" />
       <h1>지금은 인쇄할 수 없어요</h1>
       <p>잠시 뒤에 다시 시도해 주세요.</p>
       <p className="kiosk-result__english" lang="en">

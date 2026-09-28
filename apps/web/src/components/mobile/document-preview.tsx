@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { FileText } from "lucide-react";
 
 import type { ValidatedMobileFile } from "@/lib/file-validation";
@@ -21,26 +21,37 @@ export function DocumentPreview({
     hwpxPreview: string;
   };
 }) {
-  const source = useMemo(() => {
+  const previewBlob = useMemo(() => {
     if (
       validated.fileKind === "pdf" ||
       validated.fileKind === "hwp" ||
       validated.fileKind === "hwpx"
     )
       return undefined;
-    const previewBlob = validated.normalized
+    return validated.normalized
       ? new Blob([validated.bytes.slice().buffer], {
           type: validated.fileKind === "png" ? "image/png" : "image/jpeg",
         })
       : file;
-    return URL.createObjectURL(previewBlob);
   }, [file, validated.bytes, validated.fileKind, validated.normalized]);
 
-  useEffect(() => {
-    return () => {
-      if (source) URL.revokeObjectURL(source);
-    };
-  }, [source]);
+  // Each attachment of the image gets its own object URL and revokes exactly
+  // that one when it detaches. A URL made once and revoked by an effect's
+  // cleanup can be revoked while the image is still loading it (React runs
+  // effects twice in development), which left the preview broken: the one
+  // screen whose job is to show the visitor what will be printed.
+  const attachPreview = useCallback(
+    (image: HTMLImageElement | null) => {
+      if (!image || !previewBlob) return;
+      const url = URL.createObjectURL(previewBlob);
+      image.src = url;
+      return () => {
+        image.removeAttribute("src");
+        URL.revokeObjectURL(url);
+      };
+    },
+    [previewBlob],
+  );
 
   return (
     <div className="mobile-preview" aria-label={labels.documentPreview}>
@@ -56,9 +67,9 @@ export function DocumentPreview({
           <strong>{file.name}</strong>
           <span>{labels.hwpxPreview}</span>
         </div>
-      ) : source ? (
+      ) : previewBlob ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={source} alt={labels.selectedDocumentPreview} />
+        <img ref={attachPreview} alt={labels.selectedDocumentPreview} />
       ) : null}
     </div>
   );

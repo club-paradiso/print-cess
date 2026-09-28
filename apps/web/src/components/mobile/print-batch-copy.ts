@@ -16,6 +16,8 @@ export type PrintBatchCopy = {
   guideChooseBodyHancom: string;
   helpFile: string;
   helpPreview: string;
+  /** Shown only for a PDF of more than one page, so no singular is needed. */
+  pages: string;
 };
 
 const COPY: Record<SupportedLocale, PrintBatchCopy> = {
@@ -38,27 +40,26 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
       "Pick one or several photos or documents. You can select up to 10 files in one print job.",
     helpPreview:
       "Check the list. The files print once each in this order, then tap the print button.",
+    pages: "{{count}} pages",
   },
   ko: {
-    chooseFiles: "출력할 파일을 선택하세요",
-    rules: "사진·PDF 최대 10개 · 전체 32MB 이하 · 전체 최대 50쪽",
-    rulesHancom: "사진·PDF·HWP/HWPX 최대 10개 · 전체 32MB 이하 · 전체 최대 50쪽",
-    checkFiles: "선택한 파일을 확인하세요",
-    previewHelp: "아래 순서대로 각 파일을 1부씩 출력합니다.",
-    printFiles: "파일 {{count}}개 출력하기",
-    changeSelection: "파일 다시 선택하기",
-    selected: "파일 {{count}}개 선택됨",
-    tooManyFiles: "한 번에 최대 10개까지 출력할 수 있습니다. 파일 수를 줄여 주세요.",
-    batchTooLarge:
-      "선택한 파일의 전체 용량이 너무 큽니다. 한 번의 출력은 32MB 이하로 선택해 주세요.",
-    guideChooseTitle: "2. 파일을 선택하세요",
-    guideChooseBody: "휴대전화에서 사진이나 PDF를 최대 10개까지 선택할 수 있습니다.",
+    chooseFiles: "인쇄할 파일을 고르세요",
+    rules: "사진·PDF 최대 10개 · 모두 합쳐 32MB, 50페이지 이하",
+    rulesHancom: "사진·PDF·HWP/HWPX 최대 10개 · 모두 합쳐 32MB, 50페이지 이하",
+    checkFiles: "이 파일들이 맞나요?",
+    previewHelp: "아래 순서대로 한 부씩 인쇄돼요.",
+    printFiles: "파일 {{count}}개 인쇄",
+    changeSelection: "다른 파일 고르기",
+    selected: "파일 {{count}}개를 골랐어요",
+    tooManyFiles: "한 번에 10개까지 인쇄할 수 있어요. 파일 수를 줄여 주세요.",
+    batchTooLarge: "고른 파일이 모두 합쳐 너무 커요. 한 번에 32MB 이하로 골라 주세요.",
+    guideChooseTitle: "2. 파일 고르기",
+    guideChooseBody: "휴대전화에서 사진이나 PDF를 10개까지 고를 수 있어요.",
     guideChooseBodyHancom:
-      "휴대전화에서 사진, PDF 또는 지원되는 HWP/HWPX 파일을 최대 10개까지 선택할 수 있습니다.",
-    helpFile:
-      "사진이나 문서를 하나 또는 여러 개 선택하세요. 한 번에 최대 10개까지 출력할 수 있습니다.",
-    helpPreview:
-      "목록과 순서를 확인하세요. 각 파일을 1부씩 출력합니다. 맞으면 출력 버튼을 누르세요.",
+      "휴대전화에서 사진, PDF, 지원되는 HWP/HWPX 파일을 10개까지 고를 수 있어요.",
+    helpFile: "사진이나 문서를 하나 또는 여러 개 고르세요. 한 번에 10개까지 인쇄할 수 있어요.",
+    helpPreview: "목록과 순서를 확인하세요. 한 부씩 인쇄돼요. 맞으면 인쇄 버튼을 누르세요.",
+    pages: "{{count}}페이지",
   },
   "zh-CN": {
     chooseFiles: "选择要打印的文件",
@@ -76,6 +77,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     guideChooseBodyHancom: "可从手机中选择最多10个照片、PDF或受支持的HWP/HWPX文件。",
     helpFile: "请选择一个或多个照片或文档。一次最多可打印10个文件。",
     helpPreview: "请确认列表和顺序。每个文件打印1份，然后点击打印按钮。",
+    pages: "{{count}}页",
   },
   id: {
     chooseFiles: "Pilih file yang akan dicetak",
@@ -95,6 +97,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "Pilih satu atau beberapa foto atau dokumen. Maksimal 10 file per pekerjaan cetak.",
     helpPreview:
       "Periksa daftar dan urutannya. Setiap file dicetak sekali, lalu ketuk tombol cetak.",
+    pages: "{{count}} halaman",
   },
   fil: {
     chooseFiles: "Piliin ang mga file na ipi-print",
@@ -115,6 +118,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "Pumili ng isa o maraming larawan o dokumento. Hanggang 10 file bawat print job.",
     helpPreview:
       "Suriin ang listahan at ayos. Tig-iisang kopya ang ipi-print, saka pindutin ang print.",
+    pages: "{{count}} pahina",
   },
   vi: {
     chooseFiles: "Chọn các tệp cần in",
@@ -132,6 +136,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     guideChooseBodyHancom: "Chọn tối đa 10 ảnh, PDF hoặc tệp HWP/HWPX được hỗ trợ từ điện thoại.",
     helpFile: "Chọn một hoặc nhiều ảnh hay tài liệu. Mỗi lần in tối đa 10 tệp.",
     helpPreview: "Kiểm tra danh sách và thứ tự. Mỗi tệp in 1 bản, sau đó nhấn nút in.",
+    pages: "{{count}} trang",
   },
   th: {
     chooseFiles: "เลือกไฟล์ที่จะพิมพ์",
@@ -149,6 +154,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     guideChooseBodyHancom: "เลือกภาพ, PDF หรือ HWP/HWPX ที่รองรับจากโทรศัพท์ได้สูงสุด 10 ไฟล์",
     helpFile: "เลือกภาพหรือเอกสารหนึ่งไฟล์หรือหลายไฟล์ได้ สูงสุด 10 ไฟล์ต่อการพิมพ์หนึ่งครั้ง",
     helpPreview: "ตรวจสอบรายการและลำดับ แต่ละไฟล์พิมพ์ 1 ชุด แล้วกดปุ่มพิมพ์",
+    pages: "{{count}} หน้า",
   },
   ne: {
     chooseFiles: "प्रिन्ट गर्ने फाइलहरू छान्नुहोस्",
@@ -167,6 +173,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "एक वा धेरै फोटो वा कागजात छान्नुहोस्। एउटै प्रिन्ट काममा बढीमा १० फाइल।",
     helpPreview:
       "सूची र क्रम जाँच्नुहोस्। प्रत्येक फाइल १ पटक प्रिन्ट हुन्छ, त्यसपछि प्रिन्ट बटन थिच्नुहोस्।",
+    pages: "{{count}} पृष्ठ",
   },
   km: {
     chooseFiles: "ជ្រើសឯកសារដែលត្រូវបោះពុម្ព",
@@ -184,6 +191,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     guideChooseBodyHancom: "ជ្រើសរូប, PDF ឬ HWP/HWPX ដែលគាំទ្រពីទូរស័ព្ទបានអតិបរមា 10 ឯកសារ។",
     helpFile: "ជ្រើសរូប ឬឯកសារមួយ ឬច្រើន។ ការបោះពុម្ពមួយដងអតិបរមា 10 ឯកសារ។",
     helpPreview: "ពិនិត្យបញ្ជី និងលំដាប់។ ឯកសារនីមួយៗបោះពុម្ព 1 ច្បាប់ រួចចុចប៊ូតុងបោះពុម្ព។",
+    pages: "{{count}} ទំព័រ",
   },
   ar: {
     chooseFiles: "اختر الملفات للطباعة",
@@ -201,6 +209,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     guideChooseBodyHancom: "اختر حتى 10 صور أو PDF أو ملفات HWP/HWPX المدعومة من هاتفك.",
     helpFile: "اختر صورة أو مستندًا واحدًا أو عدة ملفات. الحد الأقصى 10 ملفات لكل مهمة طباعة.",
     helpPreview: "تحقق من القائمة والترتيب. تُطبع نسخة واحدة من كل ملف، ثم اضغط زر الطباعة.",
+    pages: "عدد الصفحات: {{count}}",
   },
   ru: {
     chooseFiles: "Выберите файлы для печати",
@@ -220,6 +229,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "Выберите один или несколько снимков или документов. До 10 файлов за одну печать.",
     helpPreview:
       "Проверьте список и порядок. Каждый файл печатается один раз, затем нажмите кнопку печати.",
+    pages: "Страниц: {{count}}",
   },
   mn: {
     chooseFiles: "Хэвлэх файлуудаа сонгоно уу",
@@ -239,6 +249,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "Нэг эсвэл хэд хэдэн зураг, баримт сонгоно уу. Нэг хэвлэлтэд 10 хүртэл файл.",
     helpPreview:
       "Жагсаалт ба дарааллыг шалгана уу. Файл бүр 1 удаа хэвлэгдэнэ, дараа нь хэвлэх товчийг дарна уу.",
+    pages: "{{count}} хуудас",
   },
   uk: {
     chooseFiles: "Виберіть файли для друку",
@@ -259,6 +270,7 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
       "Виберіть одну або кілька фотографій чи документів. До 10 файлів за одне завдання друку.",
     helpPreview:
       "Перевірте список і порядок. Кожен файл друкується один раз, потім натисніть кнопку друку.",
+    pages: "Сторінок: {{count}}",
   },
 };
 
