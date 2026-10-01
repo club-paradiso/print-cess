@@ -104,7 +104,7 @@ p {
     grid-column: 1 / -1;
   }
 }
-@media (min-width: 1040px) {
+@media (min-width: 960px) {
   .home-capabilities {
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
@@ -244,7 +244,7 @@ p {
   font-size: 14px;
   font-weight: 800;
 }
-@media (min-width: 720px) and (max-width: 1039px) {
+@media (min-width: 720px) and (max-width: 959px) {
   .home-steps {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
