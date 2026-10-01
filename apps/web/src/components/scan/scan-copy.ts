@@ -20,7 +20,7 @@ const en = {
   private: "The photos and PDF stay on this device unless you choose to share them.",
   share: "Send to another device",
   download: "Download PDF",
-  print: "Print now",
+  print: "Print from this device",
   scanAgain: "Scan again",
   shareFallback: "File sharing is not available here. The PDF was downloaded instead.",
   downloaded: "PDF download started.",
@@ -31,6 +31,8 @@ const en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Use this PDF",
   closeScanner: "Cancel scanning",
+  systemShare: "Share to another app",
+  backToScan: "Back to the scan",
 };
 
 const ko: typeof en = {
@@ -51,9 +53,9 @@ const ko: typeof en = {
   back: "뒤로",
   done: "스캔한 문서가 준비됐어요",
   private: "공유를 선택하기 전까지 사진과 PDF는 이 기기 안에만 있어요.",
-  share: "다른 기기로 전송",
+  share: "다른 기기로 보내기",
   download: "PDF 다운로드",
-  print: "즉시 출력",
+  print: "이 기기에서 인쇄",
   scanAgain: "다시 스캔",
   shareFallback: "이 브라우저에서는 파일 공유를 열 수 없어 PDF를 다운로드했어요.",
   downloaded: "PDF 다운로드를 시작했어요.",
@@ -64,6 +66,8 @@ const ko: typeof en = {
   scannedFile: "Print-cess-스캔.pdf",
   useForPrint: "이 PDF로 인쇄",
   closeScanner: "스캔 취소",
+  systemShare: "다른 앱으로 공유",
+  backToScan: "스캔 결과로 돌아가기",
 };
 
 const zhCN: typeof en = {
@@ -86,7 +90,7 @@ const zhCN: typeof en = {
   private: "除非您主动分享，否则照片和 PDF 只保存在此设备上。",
   share: "发送到其他设备",
   download: "下载 PDF",
-  print: "立即打印",
+  print: "从此设备打印",
   scanAgain: "重新扫描",
   shareFallback: "此处无法使用文件共享，已改为下载 PDF。",
   downloaded: "PDF 已开始下载。",
@@ -97,6 +101,8 @@ const zhCN: typeof en = {
   scannedFile: "Print-cess-扫描.pdf",
   useForPrint: "使用此 PDF",
   closeScanner: "取消扫描",
+  systemShare: "分享到其他应用",
+  backToScan: "返回扫描结果",
 };
 
 const id: typeof en = {
@@ -119,7 +125,7 @@ const id: typeof en = {
   private: "Foto dan PDF tetap di perangkat ini kecuali Anda memilih untuk membagikannya.",
   share: "Kirim ke perangkat lain",
   download: "Unduh PDF",
-  print: "Cetak sekarang",
+  print: "Cetak dari perangkat ini",
   scanAgain: "Pindai lagi",
   shareFallback: "Berbagi file tidak tersedia di sini. PDF diunduh sebagai gantinya.",
   downloaded: "Pengunduhan PDF dimulai.",
@@ -130,6 +136,8 @@ const id: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Gunakan PDF ini",
   closeScanner: "Batalkan pemindaian",
+  systemShare: "Bagikan ke aplikasi lain",
+  backToScan: "Kembali ke hasil pindaian",
 };
 
 const fil: typeof en = {
@@ -153,7 +161,7 @@ const fil: typeof en = {
     "Mananatili sa device na ito ang mga larawan at PDF maliban kung ibabahagi mo ang mga ito.",
   share: "Ipadala sa ibang device",
   download: "I-download ang PDF",
-  print: "I-print ngayon",
+  print: "I-print mula sa device na ito",
   scanAgain: "Mag-scan ulit",
   shareFallback: "Hindi available dito ang pagbabahagi ng file. Na-download na lang ang PDF.",
   downloaded: "Nagsimula na ang pag-download ng PDF.",
@@ -164,6 +172,8 @@ const fil: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Gamitin ang PDF na ito",
   closeScanner: "Kanselahin ang pag-scan",
+  systemShare: "I-share sa ibang app",
+  backToScan: "Bumalik sa scan",
 };
 
 const vi: typeof en = {
@@ -186,7 +196,7 @@ const vi: typeof en = {
   private: "Ảnh và PDF chỉ ở trên thiết bị này trừ khi bạn chọn chia sẻ.",
   share: "Gửi sang thiết bị khác",
   download: "Tải PDF",
-  print: "In ngay",
+  print: "In từ thiết bị này",
   scanAgain: "Quét lại",
   shareFallback: "Không thể chia sẻ tệp tại đây. PDF đã được tải xuống thay thế.",
   downloaded: "Đã bắt đầu tải PDF.",
@@ -197,6 +207,8 @@ const vi: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Dùng PDF này",
   closeScanner: "Hủy quét",
+  systemShare: "Chia sẻ sang ứng dụng khác",
+  backToScan: "Quay lại bản quét",
 };
 
 const th: typeof en = {
@@ -219,7 +231,7 @@ const th: typeof en = {
   private: "รูปภาพและ PDF จะอยู่บนอุปกรณ์นี้ เว้นแต่คุณเลือกแชร์",
   share: "ส่งไปยังอุปกรณ์อื่น",
   download: "ดาวน์โหลด PDF",
-  print: "พิมพ์ตอนนี้",
+  print: "พิมพ์จากอุปกรณ์นี้",
   scanAgain: "สแกนอีกครั้ง",
   shareFallback: "ไม่สามารถแชร์ไฟล์ได้ที่นี่ จึงดาวน์โหลด PDF แทน",
   downloaded: "เริ่มดาวน์โหลด PDF แล้ว",
@@ -230,6 +242,8 @@ const th: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "ใช้ PDF นี้",
   closeScanner: "ยกเลิกการสแกน",
+  systemShare: "แชร์ไปยังแอปอื่น",
+  backToScan: "กลับไปที่ผลสแกน",
 };
 
 const ne: typeof en = {
@@ -252,7 +266,7 @@ const ne: typeof en = {
   private: "तपाईंले साझा नगरेसम्म फोटो र PDF यही उपकरणमा रहन्छन्।",
   share: "अर्को उपकरणमा पठाउनुहोस्",
   download: "PDF डाउनलोड गर्नुहोस्",
-  print: "अहिले प्रिन्ट गर्नुहोस्",
+  print: "यही उपकरणबाट प्रिन्ट गर्नुहोस्",
   scanAgain: "फेरि स्क्यान गर्नुहोस्",
   shareFallback: "यहाँ फाइल साझा गर्न मिलेन। यसको सट्टा PDF डाउनलोड गरियो।",
   downloaded: "PDF डाउनलोड सुरु भयो।",
@@ -263,6 +277,8 @@ const ne: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "यो PDF प्रयोग गर्नुहोस्",
   closeScanner: "स्क्यान रद्द गर्नुहोस्",
+  systemShare: "अर्को एपमा सेयर गर्नुहोस्",
+  backToScan: "स्क्यानमा फर्कनुहोस्",
 };
 
 const km: typeof en = {
@@ -285,7 +301,7 @@ const km: typeof en = {
   private: "រូបថត និង PDF នឹងស្ថិតនៅលើឧបករណ៍នេះ លុះត្រាតែអ្នកជ្រើសរើសចែករំលែក។",
   share: "ផ្ញើទៅឧបករណ៍ផ្សេង",
   download: "ទាញយក PDF",
-  print: "បោះពុម្ពឥឡូវនេះ",
+  print: "បោះពុម្ពពីឧបករណ៍នេះ",
   scanAgain: "ស្កេនម្តងទៀត",
   shareFallback: "មិនអាចចែករំលែកឯកសារនៅទីនេះបានទេ។ PDF ត្រូវបានទាញយកជំនួស។",
   downloaded: "បានចាប់ផ្តើមទាញយក PDF។",
@@ -296,6 +312,8 @@ const km: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "ប្រើ PDF នេះ",
   closeScanner: "បោះបង់ការស្កេន",
+  systemShare: "ចែករំលែកទៅកម្មវិធីផ្សេង",
+  backToScan: "ត្រឡប់ទៅលទ្ធផលស្កេន",
 };
 
 const ar: typeof en = {
@@ -318,7 +336,7 @@ const ar: typeof en = {
   private: "تبقى الصور وملف PDF على هذا الجهاز ما لم تختر مشاركتها.",
   share: "إرسال إلى جهاز آخر",
   download: "تنزيل PDF",
-  print: "طباعة الآن",
+  print: "اطبع من هذا الجهاز",
   scanAgain: "المسح مرة أخرى",
   shareFallback: "مشاركة الملفات غير متاحة هنا. تم تنزيل ملف PDF بدلاً من ذلك.",
   downloaded: "بدأ تنزيل ملف PDF.",
@@ -329,6 +347,8 @@ const ar: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "استخدام ملف PDF هذا",
   closeScanner: "إلغاء المسح",
+  systemShare: "شارك إلى تطبيق آخر",
+  backToScan: "العودة إلى المسح",
 };
 
 const ru: typeof en = {
@@ -351,7 +371,7 @@ const ru: typeof en = {
   private: "Фотографии и PDF остаются на этом устройстве, пока вы не решите ими поделиться.",
   share: "Отправить на другое устройство",
   download: "Скачать PDF",
-  print: "Печать сейчас",
+  print: "Печать с этого устройства",
   scanAgain: "Сканировать снова",
   shareFallback: "Обмен файлами здесь недоступен. Вместо этого PDF был скачан.",
   downloaded: "Загрузка PDF началась.",
@@ -362,6 +382,8 @@ const ru: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Использовать этот PDF",
   closeScanner: "Отменить сканирование",
+  systemShare: "Поделиться в другое приложение",
+  backToScan: "Вернуться к скану",
 };
 
 const mn: typeof en = {
@@ -384,7 +406,7 @@ const mn: typeof en = {
   private: "Та хуваалцахаар сонгох хүртэл зураг болон PDF энэ төхөөрөмж дээр үлдэнэ.",
   share: "Өөр төхөөрөмж рүү илгээх",
   download: "PDF татах",
-  print: "Одоо хэвлэх",
+  print: "Энэ төхөөрөмжөөс хэвлэх",
   scanAgain: "Дахин скан хийх",
   shareFallback: "Энд файл хуваалцах боломжгүй тул PDF-г татлаа.",
   downloaded: "PDF таталт эхэллээ.",
@@ -395,6 +417,8 @@ const mn: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Энэ PDF-г ашиглах",
   closeScanner: "Сканыг цуцлах",
+  systemShare: "Өөр апп руу хуваалцах",
+  backToScan: "Скан руу буцах",
 };
 
 const uk: typeof en = {
@@ -417,7 +441,7 @@ const uk: typeof en = {
   private: "Фото та PDF залишаються на цьому пристрої, доки ви не вирішите ними поділитися.",
   share: "Надіслати на інший пристрій",
   download: "Завантажити PDF",
-  print: "Друкувати зараз",
+  print: "Друкувати з цього пристрою",
   scanAgain: "Сканувати знову",
   shareFallback: "Обмін файлами тут недоступний. Натомість PDF було завантажено.",
   downloaded: "Завантаження PDF розпочато.",
@@ -428,6 +452,8 @@ const uk: typeof en = {
   scannedFile: "Print-cess-scan.pdf",
   useForPrint: "Використати цей PDF",
   closeScanner: "Скасувати сканування",
+  systemShare: "Поділитися в інший застосунок",
+  backToScan: "Повернутися до скану",
 };
 
 export type ScanCopy = typeof en;
@@ -456,18 +482,3 @@ export function formatScanCopy(value: string, values: Record<string, string | nu
   return value.replace(/\{\{(\w+)\}\}/gu, (_, key: string) => String(values[key] ?? ""));
 }
 
-export const SCAN_HOME_CTA: Record<SupportedLocale, string> = {
-  en: "Scan a document",
-  ko: "문서 스캔",
-  "zh-CN": "扫描文档",
-  id: "Pindai dokumen",
-  fil: "Mag-scan ng dokumento",
-  vi: "Quét tài liệu",
-  th: "สแกนเอกสาร",
-  ne: "कागजात स्क्यान गर्नुहोस्",
-  km: "ស្កេនឯកសារ",
-  ar: "مسح مستند",
-  ru: "Сканировать документ",
-  mn: "Баримт скан хийх",
-  uk: "Сканувати документ",
-};
