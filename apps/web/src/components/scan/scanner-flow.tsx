@@ -1,16 +1,23 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Download, Printer, RotateCcw, ScanLine, Send, Share, ShieldCheck } from "lucide-react";
 
 import type { SupportedLocale } from "@print-cess/i18n";
 import { PrimaryButton, ScreenShell, StatusIcon } from "@print-cess/ui";
 
-import { SendFlow } from "@/components/drop/send-flow";
 import { AppTopbar } from "@/components/shared/app-topbar";
 import { useVisitorLocale } from "@/lib/use-visitor-locale";
 import { ScanComposer } from "./scan-composer";
 import { scanCopy } from "./scan-copy";
+
+// The Share flow (QR generation, chunked encryption, transfer client) is fetched
+// only when a visitor actually sends a scan on. Most scans end in a download or
+// a share sheet, and none of them should pay for the transfer code up front.
+const SendFlow = dynamic(() => import("@/components/drop/send-flow").then((m) => m.SendFlow), {
+  ssr: false,
+});
 
 /**
  * Paper in, a PDF out, and then wherever the visitor wants it to go. The PDF is
