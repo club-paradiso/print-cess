@@ -466,6 +466,47 @@ summary:focus-visible,
   vector-effect: non-scaling-stroke;
 }
 
+/* --- Route glyph ----------------------------------------------------------
+   Two objects and the path between them. The source is quiet, the destination
+   is the brand: the file is going somewhere, and that somewhere is the point. */
+
+.pc-route {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.pc-route__end {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--pc-radius-md);
+}
+.pc-route__end svg {
+  width: 22px;
+  height: 22px;
+}
+.pc-route__end--from {
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary);
+}
+.pc-route__end--to {
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.pc-route__path {
+  width: 40px;
+  height: 12px;
+  fill: none;
+  stroke: var(--pc-brand-muted);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+[dir="rtl"] .pc-route__path {
+  transform: scaleX(-1);
+}
+
 /* --- Hand-off illustration ------------------------------------------------
    A sheet travels into the printer's slot and comes out the other side. It is
    the one piece of motion in the phone flow, it only runs while the service is

@@ -11,12 +11,14 @@ import {
   FileText,
   FileType,
   FileVideo,
-  Languages,
   Presentation,
+  Share2,
 } from "lucide-react";
 
-import { LOCALE_NAMES, SUPPORTED_LOCALES, type SupportedLocale } from "@print-cess/i18n";
-import { ScreenShell, Wordmark } from "@print-cess/ui";
+import type { SupportedLocale } from "@print-cess/i18n";
+import { ScreenShell } from "@print-cess/ui";
+
+import { AppTopbar } from "@/components/shared/app-topbar";
 
 import { dropFileKind, dropFileKindLabelKey, type DropFileKind } from "@/lib/drop-file-kind";
 import { useVisitorLocale, type Text } from "@/lib/use-visitor-locale";
@@ -41,25 +43,16 @@ export function DropShell({
   text: Text;
   children: ReactNode;
 }) {
+  // Sending and receiving are two sides of one capability, so both carry the
+  // same name above their own heading.
   return (
     <ScreenShell>
-      <div className="mobile-topbar">
-        <Wordmark compact />
-        <label className="drop-language">
-          <Languages aria-hidden="true" />
-          <span className="drop-visually-hidden">{text("selectLanguage")}</span>
-          <select
-            value={locale}
-            onChange={(event) => onLocaleChange(event.target.value as SupportedLocale)}
-          >
-            {SUPPORTED_LOCALES.map((candidate) => (
-              <option key={candidate} value={candidate}>
-                {LOCALE_NAMES[candidate]}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <AppTopbar
+        locale={locale}
+        onLocaleChange={onLocaleChange}
+        languageLabel={text("selectLanguage")}
+        section={{ icon: <Share2 aria-hidden="true" />, label: text("shareTitle") }}
+      />
       {children}
     </ScreenShell>
   );

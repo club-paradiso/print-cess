@@ -39,152 +39,285 @@ p {
   align-items: center;
   padding-block: 4px;
 }
-.home-hero {
-  display: grid;
-  gap: 20px;
-}
-.home-hero h1 {
-  max-width: 14em;
-  margin: 0;
-  color: var(--pc-text-primary);
-  font-size: var(--pc-text-display);
-  font-weight: 800;
-  line-height: 1.08;
-  letter-spacing: -0.045em;
-}
-.home-print {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  align-items: center;
-  gap: 16px;
-  max-width: 640px;
-  margin: 0;
-  padding: 18px 20px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-surface-raised);
-  box-shadow: var(--pc-shadow-sm);
-  color: var(--pc-text-primary);
-  font-size: var(--pc-text-body);
-  font-weight: 650;
-  line-height: 1.45;
-}
-.home-print__icon {
-  display: grid;
-  place-items: center;
-  width: 52px;
-  height: 52px;
-  border-radius: var(--pc-radius-md);
-  background: var(--pc-brand);
-  color: var(--pc-text-on-brand);
-}
-.home-print__icon svg {
-  width: 28px;
-  height: 28px;
+/* The full lockup is wider than the smallest phones. There the endorsement
+   stacks under the name, exactly as the compact header lockup does. */
+@media (max-width: 400px) {
+  .home-header .pc-wordmark > span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .home-header .pc-wordmark small {
+    font-size: 13px;
+  }
 }
 
-.home-section {
+/* --- Home -----------------------------------------------------------------
+   One proposition, then the three things a file can do here: go to paper, go
+   to another device, or come off paper. Each capability is a sheet with a
+   turned-down corner, because what moves through this service is a document,
+   not a setting. Institutional entrances sit below a hairline in plain text. */
+
+.home {
   display: grid;
-  gap: 16px;
+  align-content: start;
+  gap: clamp(28px, 6vw, 48px);
+  width: min(100% - 32px, 1120px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom));
 }
-.home-section h2 {
-  margin: 0;
-  color: var(--pc-text-primary);
-  font-size: var(--pc-text-section);
-  font-weight: 780;
-  letter-spacing: var(--pc-tracking-tight);
-}
-.home-section > p {
-  max-width: 640px;
-  margin: -8px 0 0;
-  color: var(--pc-text-secondary);
-  font-size: 17px;
-  line-height: 1.55;
-}
-.home-actions {
+.home-hero {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.home-action {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
   gap: 14px;
-  min-height: 76px;
-  padding: 14px 16px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-surface-raised);
+  max-width: 760px;
+}
+.home-hero h1 {
+  margin: 0;
   color: var(--pc-text-primary);
-  font-size: 18px;
-  font-weight: 720;
-  line-height: 1.3;
-  text-decoration: none;
-  transition:
-    border-color var(--pc-duration-fast) ease,
-    background-color var(--pc-duration-fast) ease;
+  font-size: clamp(34px, 8.6vw, 64px);
+  font-weight: 820;
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  text-wrap: balance;
 }
-.home-action:hover {
-  border-color: var(--pc-brand-muted);
-  background: var(--pc-surface-brand-subtle);
-}
-.home-action__icon {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 46px;
-  border-radius: var(--pc-radius-md);
-  background: var(--pc-surface-brand);
-  color: var(--pc-text-brand);
-}
-.home-action__icon svg {
-  width: 24px;
-  height: 24px;
-}
-.home-action__chevron {
-  width: 22px;
-  height: 22px;
-  color: var(--pc-text-muted);
-}
-[dir="rtl"] .home-action__chevron {
-  transform: scaleX(-1);
-}
-.home-actions--quiet .home-action {
-  min-height: 60px;
-  border-style: dashed;
-  background: transparent;
-  font-size: 16px;
-  font-weight: 650;
-}
-.home-actions--quiet .home-action__icon {
-  width: 36px;
-  height: 36px;
-  background: var(--pc-surface-sunken);
+.home-hero p {
+  margin: 0;
+  max-width: 34em;
   color: var(--pc-text-secondary);
+  font-size: clamp(17px, 2.2vw, 20px);
+  line-height: 1.5;
+  text-wrap: pretty;
 }
-.home-actions--quiet .home-action__icon svg {
-  width: 20px;
-  height: 20px;
+
+.home-capabilities {
+  display: grid;
+  gap: 14px;
 }
-.status-page__privacy {
+@media (min-width: 720px) {
+  .home-capabilities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  /* Printing is the reason the service exists, so on a tablet it spans the
+     row above the two things a phone can do alone. */
+  .home-sheet--print {
+    grid-column: 1 / -1;
+  }
+}
+@media (min-width: 960px) {
+  .home-capabilities {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+  .home-sheet--print {
+    grid-column: auto;
+  }
+}
+
+.home-sheet {
+  --home-fold: 22px;
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-  max-width: 640px;
+  min-width: 0;
+  padding: 22px 22px 22px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  border-start-end-radius: 0;
+  background: var(--pc-surface);
+}
+/* The turned-down corner: the page's own background cut out of the sheet, and
+   the fold itself in lilac. Two flat triangles, no gradient. */
+.home-sheet::before,
+.home-sheet::after {
+  content: "";
+  position: absolute;
+  inset-block-start: -1px;
+  inset-inline-end: -1px;
+  width: var(--home-fold);
+  height: var(--home-fold);
+  pointer-events: none;
+}
+.home-sheet::before {
+  background: var(--pc-background);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+.home-sheet::after {
+  background: var(--pc-surface-brand);
+  border-end-start-radius: 6px;
+  clip-path: polygon(0 0, 100% 100%, 0 100%);
+  box-shadow: inset 1px -1px 0 var(--pc-border);
+}
+[dir="rtl"] .home-sheet::before {
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+[dir="rtl"] .home-sheet::after {
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  box-shadow: inset -1px -1px 0 var(--pc-border);
+}
+.home-sheet .pc-route {
+  margin-block-end: 6px;
+}
+.home-sheet h2 {
+  margin: 0;
+  color: var(--pc-text-primary);
+  font-size: clamp(26px, 6.4vw, 32px);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: var(--pc-tracking-tight);
+}
+.home-sheet > p {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 17px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.home-sheet__actions {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+/* A link that looks like the button it is. */
+.home-cta {
+  text-decoration: none;
+}
+.home-cta__arrow {
+  margin-inline-start: auto;
+}
+[dir="rtl"] .home-cta__arrow {
+  transform: scaleX(-1);
+}
+.home-sheet--share .home-cta {
+  justify-content: space-between;
+}
+.home-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 8px 6px;
+  color: var(--pc-text-brand);
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+/* Printing's three steps, numbered rather than tappable: they describe what
+   happens at the kiosk, and none of them can start from this page. */
+.home-steps {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  margin: auto 0 0;
+  padding: 14px 0 0;
+  list-style: none;
+  counter-reset: home-step;
+}
+.home-steps li {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  color: var(--pc-text-primary);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+  counter-increment: home-step;
+}
+.home-steps li::before {
+  content: counter(home-step);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary);
+  font-size: 14px;
+  font-weight: 800;
+}
+@media (min-width: 720px) and (max-width: 959px) {
+  .home-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.home-workplace {
+  display: grid;
+  gap: 14px;
+  padding-top: 22px;
+  border-top: 1px solid var(--pc-border);
+}
+.home-workplace h2 {
+  margin: 0 0 4px;
+  color: var(--pc-text-primary);
+  font-size: 17px;
+  font-weight: 780;
+}
+.home-workplace p {
   margin: 0;
   color: var(--pc-text-muted);
   font-size: var(--pc-text-helper);
   line-height: 1.5;
 }
-.status-page__privacy svg {
+.home-workplace ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.home-workplace a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  color: var(--pc-text-primary);
+  font-size: 15px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.home-workplace a:hover {
+  border-color: var(--pc-brand-muted);
+  background: var(--pc-surface-brand-subtle);
+}
+.home-workplace a svg {
+  width: 18px;
+  height: 18px;
+  color: var(--pc-text-muted);
+}
+@media (min-width: 720px) {
+  .home-workplace {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+}
+.home-footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  color: var(--pc-text-muted);
+  font-size: var(--pc-text-helper);
+  line-height: 1.5;
+}
+.home-footnote svg {
   flex: none;
-  width: 20px;
-  height: 20px;
-  margin-top: 1px;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
   color: var(--pc-success);
 }
 
@@ -296,11 +429,6 @@ p {
 
 /* --- Choosing a document ------------------------------------------------- */
 
-.mobile-source-actions {
-  display: grid;
-  gap: 10px;
-  margin-top: 6px;
-}
 .mobile-file-error,
 .mobile-file-notice {
   display: block;

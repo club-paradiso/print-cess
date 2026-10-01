@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   CircleQuestionMark,
   FileCheck2,
-  FileImage,
   Files,
   Image as ImageIcon,
   Languages,
@@ -44,13 +43,13 @@ import {
   PrimaryButton,
   ProgressSteps,
   ScreenShell,
-  SecondaryButton,
   StatusIcon,
   TertiaryButton,
   Wordmark,
 } from "@print-cess/ui";
 
 import { FileRow } from "@/components/drop/drop-shell";
+import { SourcePicker } from "@/components/shared/source-picker";
 import {
   authorizeUpload,
   cancelSession,
@@ -453,9 +452,6 @@ export function BatchMobileFlow({
 
       {stage === "file" ? (
         <section className="mobile-step">
-          <StatusIcon>
-            <FileImage size={32} aria-hidden="true" />
-          </StatusIcon>
           <h1>{copy.chooseFiles}</h1>
           <p>{rules}</p>
           <input
@@ -492,14 +488,22 @@ export function BatchMobileFlow({
               {text(fileNoticeKey)}
             </p>
           ) : null}
-          <div className="mobile-source-actions">
-            <PrimaryButton onClick={() => photoInput.current?.click()}>
-              <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
-            </PrimaryButton>
-            <SecondaryButton onClick={() => fileInput.current?.click()}>
-              <Files aria-hidden="true" /> {text("locationFiles")}
-            </SecondaryButton>
-          </div>
+          <SourcePicker
+            sources={[
+              {
+                id: "photos",
+                icon: <ImageIcon />,
+                label: text("locationPhotos"),
+                onPick: () => photoInput.current?.click(),
+              },
+              {
+                id: "files",
+                icon: <Files />,
+                label: text("locationFiles"),
+                onPick: () => fileInput.current?.click(),
+              },
+            ]}
+          />
           <button type="button" className="mobile-guide-link" onClick={() => setHelpOpen(true)}>
             {text("guideOpen")}
           </button>

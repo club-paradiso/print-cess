@@ -213,6 +213,25 @@ export function HandoffIllustration({ stage }: { stage: "sending" | "printing" }
 }
 
 /**
+ * Where a file is going, drawn as two objects and the path between them:
+ * phone to printer, phone to laptop, paper to PDF. It names the capability's
+ * shape at a glance and carries no state, so it never moves and is hidden from
+ * assistive technology; the heading beside it says the same thing in words.
+ */
+export function RouteGlyph({ from, to }: { from: ReactNode; to: ReactNode }) {
+  return (
+    <span className="pc-route" aria-hidden="true">
+      <span className="pc-route__end pc-route__end--from">{from}</span>
+      <svg className="pc-route__path" viewBox="0 0 40 12" focusable="false">
+        <path d="M1 6h30" strokeDasharray="3 4" />
+        <path d="m31 1.5 6 4.5-6 4.5" />
+      </svg>
+      <span className="pc-route__end pc-route__end--to">{to}</span>
+    </span>
+  );
+}
+
+/**
  * The scan frame from the mark: four rounded corners drawn around whatever QR
  * code the parent holds. Purely decorative; the parent keeps the code's own
  * quiet zone, so the corners never touch a module a camera has to read.

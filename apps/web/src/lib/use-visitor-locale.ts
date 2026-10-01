@@ -22,9 +22,11 @@ export type Text = (key: string, values?: Record<string, string | number>) => st
  */
 export function useVisitorLocale(
   initialLocale: SupportedLocale = "en",
+  /** A language the visitor already chose on the screen that led here. */
+  carriedLocale?: SupportedLocale,
 ): [SupportedLocale, (locale: SupportedLocale) => void, Text] {
   const detected = useSyncExternalStore(subscribeNever, readBrowserLocale, () => initialLocale);
-  const [chosen, setChosen] = useState<SupportedLocale>();
+  const [chosen, setChosen] = useState<SupportedLocale | undefined>(carriedLocale);
   const locale = chosen ?? detected;
   const setLocale = useCallback((next: SupportedLocale) => setChosen(next), []);
 

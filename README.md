@@ -16,8 +16,9 @@ start from `/workstation`, which adds browser readiness checks and a policy-awar
 without installing software or attempting to bypass endpoint controls. See `docs/FILE_TRANSFER.md`
 for how it moves bytes, `docs/FILE_COMPATIBILITY.md` for what it will carry, what it does to a file
 name, and where a received file actually ends up, and `docs/GOVERNMENT_WORKSTATION.md` for the
-managed workstation security boundary. `docs/DOCUMENT_JOURNEY.md` is the design record for what
-the screens say. Development uses encrypted local adapters; production integrations require
+managed workstation security boundary. `docs/PRODUCT_V2.md` describes the product model the public
+screens follow (Print, Share, Scan, with workplace entrances secondary) and the future native
+share-sheet path. `docs/DOCUMENT_JOURNEY.md` is the design record for what the screens say. Development uses encrypted local adapters; production integrations require
 separately approved Vercel and Upstash resources.
 
 The complete setup, security boundaries, test commands, macOS browser-kiosk procedure, Windows

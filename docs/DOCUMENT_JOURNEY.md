@@ -9,6 +9,31 @@ The engineering is complicated. The experience must not be.
 
 ---
 
+## The product, in one glance
+
+```text
+FILE   →  DESTINATION  →  TRANSFER
+PAPER  →  DIGITAL FILE →  DESTINATION
+```
+
+Print-cess has three capabilities: **Print** (a file becomes paper), **Share** (a file reaches
+another device or person), and **Scan** (paper becomes a PDF). The home page names them in that
+order, as three sheets, and says nothing else first. `PRODUCT_V2.md` records the reasoning and
+the future native path.
+
+- **Print** is described on the home page and never offered as a button there. It starts at
+  the kiosk's QR code, and only the kiosk can open a print session.
+- **Share** is one capability with two sides. The home offers "Choose files to send" and,
+  quieter, "Receive files with a code". `/send` and `/receive` carry the same "Share" label and
+  link to each other. A visitor who arrives from a transfer QR code or link skips every choice
+  and lands in receiving.
+- **Scan** ends in a destination: on through Share, downloaded, handed to another app where the
+  browser can share that exact PDF, or printed through this device's own print window.
+- **Workplaces** (the managed-workstation entry and the kiosk display) sit below a hairline as
+  plain links. They are real, and they are not what most visitors came for.
+
+---
+
 ## Print: the fast path
 
 ```text
@@ -42,6 +67,11 @@ watches the page load in English and then change under them.
 | Page open → file-source buttons visible | 0    |
 | Choosing a source (Photos or Files)     | 1    |
 | Confirming the print                    | 1    |
+
+The file step offers **Photos** and **Files** as two equal tiles. What the visitor holds decides
+which one they need (a screenshot of a booking is in Photos, an emailed PDF in Files), so
+neither is styled as the expected answer. Scanning is not offered here: a claimed session lives
+three minutes by default, and a multi-page scan can outlast it. Scan first, then print the PDF.
 
 `Print one copy` stays. It is the one irreversible, outward-facing action in the
 flow — paper comes out of a machine in a room — and it deserves a deliberate
@@ -120,6 +150,16 @@ prepared**. Not an error, not a file list, not a progress bar belonging to
 somebody else's phone, and never a hint of who is sending. Somebody guessing a
 code still gets the same "not found" they always did.
 
+### The ready screen, top to bottom
+
+1. What the other side has done (the status below), because it is what the sender keeps
+   glancing back at.
+2. The QR code, the private default.
+3. Share the link or copy it.
+4. "or", then the optional two-digit hand-off. Its trade-off (the service holds the key for
+   three minutes) is stated here, where the choice is made, and not on the pick screen.
+5. Erase it now: final, quiet, and never the next step.
+
 ### What the sender is told
 
 Four states, and the service knows all four honestly:
@@ -158,6 +198,22 @@ given. Translations preserve the distinction in all thirteen languages.
 
 Each file has its own state and its own actions, so one failure never discards
 what already arrived.
+
+---
+
+## Scan: paper, then a destination
+
+```text
+PHOTOGRAPH PAGES  →  CHECK EDGES  →  MAKE PDF  →  SEND / SAVE / SHARE / PRINT HERE
+```
+
+The PDF is made on the phone. With no page yet, the camera is the one primary action. Once a
+page exists, **Make PDF** is, and adding a page drops to a secondary control. The finished
+screen has one primary action, **Send to another device**, which opens Share already holding the
+PDF, with a way back to the scan. Nothing uploads until the visitor presses send there. The
+quieter alternatives are one list: download (which says "download started", never "saved"),
+share to another app (shown only when the browser can share that exact file), and **Print from
+this device**, named so nobody mistakes the device's print window for a Print-cess printer.
 
 ---
 
@@ -247,6 +303,9 @@ are out.
 
 ## What was deliberately not built
 
+- **A print button on the home page.** It would have nowhere honest to go.
+- **A separate "send or receive?" question.** Sharing starts with choosing files. Receiving is
+  one link away, and arriving by QR code or link skips the question entirely.
 - **A mode picker.** "Simple or advanced?" is another question in front of the
   task. The fast path is the default and Help is always one tap away.
 - **A separate animation protocol.** Every visual state maps to a state the

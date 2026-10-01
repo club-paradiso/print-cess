@@ -1,9 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type DragEvent,
+} from "react";
+import {
+  ArrowLeft,
   CheckCircle2,
   Copy,
+  Download,
   Files,
   FilePlus2,
   Image as ImageIcon,
@@ -23,11 +33,13 @@ import type { DropReceiverState } from "@print-cess/protocol";
 import {
   DestructiveButton,
   PrimaryButton,
-  ProgressSteps,
   ScanFrame,
   SecondaryButton,
   StatusIcon,
+  TertiaryButton,
 } from "@print-cess/ui";
+
+import { SourcePicker } from "@/components/shared/source-picker";
 
 import { getDropCapabilities, getDropStatus, revokeDrop } from "@/lib/drop-client";
 import { buildDropLink } from "@/lib/drop-link";
@@ -66,10 +78,26 @@ type Stage = "pick" | "sending" | "ready" | "error";
 
 const PICKUP_POLL_MS = 5000;
 
-export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale }) {
-  const [locale, setLocale, text] = useDropLocale(initialLocale);
+export function SendFlow({
+  initialLocale,
+  carriedLocale,
+  initialFiles,
+  back,
+}: {
+  initialLocale?: SupportedLocale;
+  /** The language picked on the screen that handed over to this one. */
+  carriedLocale?: SupportedLocale;
+  /**
+   * Files that are already in hand, such as a PDF the scanner just made on
+   * this phone. They are offered exactly as if the visitor had picked them.
+   */
+  initialFiles?: readonly File[];
+  /** A way back to whatever handed those files over. */
+  back?: { label: string; onBack: () => void };
+}) {
+  const [locale, setLocale, text] = useDropLocale(initialLocale, carriedLocale);
   const [stage, setStage] = useState<Stage>("pick");
-  const [chosen, setChosen] = useState<File[]>([]);
+  const [chosen, setChosen] = useState<File[]>(() => [...(initialFiles ?? [])]);
   const [limits, setLimits] = useState<DropLimits>(PROTOCOL_DROP_LIMITS);
   const [progress, setProgress] = useState<DropProgress>();
   const [result, setResult] = useState<SendResult>();
@@ -279,16 +307,26 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
     setStage("pick");
   }, [clearSelection]);
 
-  const step = stage === "pick" ? 1 : stage === "sending" ? 2 : 3;
+  const dragHandlers = {
+    onDragOver: (event: DragEvent) => {
+      event.preventDefault();
+      setDragging(true);
+    },
+    onDragLeave: () => setDragging(false),
+    onDrop: (event: DragEvent) => {
+      event.preventDefault();
+      setDragging(false);
+      addFiles(event.dataTransfer?.files ?? null);
+    },
+  };
 
   return (
     <DropShell locale={locale} onLocaleChange={setLocale} text={text}>
-      {stage === "error" ? null : (
-        <ProgressSteps current={step} total={3} label={text("step", { current: step, total: 3 })} />
-      )}
-
       {stage === "pick" ? (
-        <section className="mobile-step">
+        <section
+          className={dragging ? "mobile-step drop-pick is-dragging" : "mobile-step drop-pick"}
+          {...dragHandlers}
+        >
           <h1>{text("dropPickFiles")}</h1>
           <p>{text("dropPickHint")}</p>
           <input
@@ -313,35 +351,34 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
               {text(selectionErrorKey)}
             </p>
           ) : null}
-          {/* A pointer environment can drop files straight onto the page. The
-              buttons stay exactly where they were, because a phone has no
-              drag and this must never become the only way in. */}
-          <div
-            className={dragging ? "drop-target is-dragging" : "drop-target"}
-            onDragOver={(event) => {
-              event.preventDefault();
-              setDragging(true);
-            }}
-            onDragLeave={() => setDragging(false)}
-            onDrop={(event) => {
-              event.preventDefault();
-              setDragging(false);
-              addFiles(event.dataTransfer?.files ?? null);
-            }}
-          >
-            <p className="drop-target__hint">
-              <Upload aria-hidden="true" /> {text("dropDragHere")}
-            </p>
-            <div className="mobile-source-actions">
-              <SecondaryButton onClick={() => photoInput.current?.click()}>
-                <ImageIcon aria-hidden="true" /> {text("locationPhotos")}
-              </SecondaryButton>
-              <SecondaryButton onClick={() => fileInput.current?.click()}>
-                <Files aria-hidden="true" /> {text("locationFiles")}
-              </SecondaryButton>
-            </div>
-          </div>
-          {chosen.length > 0 ? (
+          {chosen.length === 0 ? (
+            <>
+              <SourcePicker
+                sources={[
+                  {
+                    id: "photos",
+                    icon: <ImageIcon />,
+                    label: text("locationPhotos"),
+                    hint: text("dropSourcePhotosHint"),
+                    onPick: () => photoInput.current?.click(),
+                  },
+                  {
+                    id: "files",
+                    icon: <Files />,
+                    label: text("locationFiles"),
+                    hint: text("dropSourceFilesHint"),
+                    onPick: () => fileInput.current?.click(),
+                  },
+                ]}
+              />
+              {/* A pointer environment can drop files anywhere on this step.
+                  The tiles stay, because a phone has no drag and this must
+                  never become the only way in. */}
+              <p className="drop-target__hint">
+                <Upload aria-hidden="true" /> {text("dropDragHere")}
+              </p>
+            </>
+          ) : (
             <SelectedFiles
               files={chosen}
               selection={selection}
@@ -350,15 +387,24 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
               onClear={clearSelection}
               onAddMore={() => fileInput.current?.click()}
             />
-          ) : null}
-          <p className="drop-privacy">
-            <LockKeyhole aria-hidden="true" /> {text("dropPrivacyNote")}
-          </p>
+          )}
           {selection ? (
             <PrimaryButton onClick={() => void start()}>
               <Send aria-hidden="true" /> {text("dropStartSending")}
             </PrimaryButton>
           ) : null}
+          <p className="drop-privacy">
+            <LockKeyhole aria-hidden="true" /> {text("dropPrivacyNote")}
+          </p>
+          {back ? (
+            <TertiaryButton className="drop-back" onClick={back.onBack}>
+              <ArrowLeft aria-hidden="true" /> {back.label}
+            </TertiaryButton>
+          ) : (
+            <a className="drop-link drop-switch" href="/receive">
+              <Download aria-hidden="true" /> {text("homeReceiveCta")}
+            </a>
+          )}
         </section>
       ) : null}
 
@@ -392,7 +438,25 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
             data-transfer-code={process.env.NODE_ENV === "production" ? undefined : result.code}
           >
             <h1>{text(sealed ? "dropReady" : "dropReadyEarly")}</h1>
-            <p>{text("dropReadyHint")}</p>
+            {/* What the other side has done, first: it is the one thing the
+                sender keeps glancing back at. */}
+            <p
+              className={receiver === "delivered" ? "drop-status is-delivered" : "drop-status"}
+              role="status"
+            >
+              <ReceiverStatus
+                receiver={receiver}
+                sealed={sealed}
+                expiresAt={result.expiresAt}
+                text={text}
+              />
+            </p>
+            {!sealed && progress ? (
+              <div className="drop-still-sending">
+                <TransferBar progress={progress} text={text} minutesRemaining={minutesRemaining} />
+                <p>{text("dropStillSending")}</p>
+              </div>
+            ) : null}
             {qrImage ? (
               <figure className="drop-qr">
                 <div className="drop-qr__code">
@@ -403,39 +467,29 @@ export function SendFlow({ initialLocale }: { initialLocale?: SupportedLocale })
                 <figcaption>{text("dropScanToReceive")}</figcaption>
               </figure>
             ) : null}
+            <div className="drop-link-actions">
+              {canShare ? (
+                <SecondaryButton onClick={() => void share()}>
+                  <Share2 aria-hidden="true" /> {text("dropShareLink")}
+                </SecondaryButton>
+              ) : null}
+              <SecondaryButton onClick={() => void copyLink()}>
+                {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}{" "}
+                {copied ? text("dropCopied") : text("dropCopyLink")}
+              </SecondaryButton>
+            </div>
             {/* QR and shared-link hand-offs keep the transfer code in the URL
                 fragment. The optional nearby-phone flow below escrows it for
                 three minutes so the sender can leave after upload. */}
+            {sealed ? (
+              <p className="drop-or" aria-hidden="true">
+                <span>{text("orDivider")}</span>
+              </p>
+            ) : null}
             <PairingHandover transferCode={result.code} sealed={sealed} text={text} />
-            {!sealed && progress ? (
-              <div className="drop-still-sending">
-                <TransferBar progress={progress} text={text} minutesRemaining={minutesRemaining} />
-                <p>{text("dropStillSending")}</p>
-              </div>
-            ) : null}
-            <div className="drop-status" role="status">
-              <ReceiverStatus
-                receiver={receiver}
-                sealed={sealed}
-                expiresAt={result.expiresAt}
-                text={text}
-              />
-            </div>
-            {canShare ? (
-              <SecondaryButton onClick={() => void share()}>
-                <Share2 aria-hidden="true" /> {text("dropShareLink")}
-              </SecondaryButton>
-            ) : null}
-            <SecondaryButton onClick={() => void copyLink()}>
-              {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}{" "}
-              {copied ? text("dropCopied") : text("dropCopyLink")}
-            </SecondaryButton>
-            <DestructiveButton onClick={() => void erase()}>
+            <DestructiveButton className="drop-erase" onClick={() => void erase()}>
               <Trash2 aria-hidden="true" /> {text("dropDeleteNow")}
             </DestructiveButton>
-            <a className="drop-link" href="/receive">
-              {text("dropReceiveCta")}
-            </a>
           </section>
         )
       ) : null}

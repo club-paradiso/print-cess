@@ -95,6 +95,10 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   // Read during render, not in an effect, so a phone arriving from a scanned QR
   // code never flashes the keypad before the transfer opens.
   const scannedOnArrival = useSyncExternalStore(subscribeNever, readHasFragment, () => false);
+  // Once the arrival code has been tried and the visitor starts over, the
+  // fragment no longer describes this screen. Without this, "Try again" after
+  // a bad link went back to the spinner and stayed there.
+  const [arrivalHandled, setArrivalHandled] = useState(false);
   const [stage, setStage] = useState<Stage>("code");
   const [entry, setEntry] = useState("");
   const [drop, setDrop] = useState<ReceivedDrop>();
@@ -427,6 +431,8 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   const restart = useCallback(() => {
     pending.current?.abort();
     abort.current?.abort();
+    setArrivalHandled(true);
+    if (window.location.hash) history.replaceState(null, "", window.location.pathname);
     setDrop(undefined);
     setFileStates([]);
     setEntry("");
@@ -446,7 +452,8 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   );
 
   const typedCode = readDropCodeEntry(entry).code;
-  const checking = stage === "checking" || (stage === "code" && scannedOnArrival);
+  const checking =
+    stage === "checking" || (stage === "code" && scannedOnArrival && !arrivalHandled);
   const totalBytes = drop?.totalBytes ?? 0;
   const showMemoryNotice = stage === "files" && totalBytes > MEMORY_WARNING_BYTES && !canStream;
   const outstanding = useMemo(
@@ -476,7 +483,7 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
           {/* Two digits and a shape, rather than twelve characters read off
               somebody else's screen. Scanning stays for whoever prefers it. */}
           <PairingEntry text={text} onTransferCode={startOpen} />
-          <section className="mobile-step mobile-step--single">
+          <section className="drop-receive-alt">
             {canScan ? (
               <SecondaryButton onClick={() => void scan()}>
                 <Camera aria-hidden="true" /> {text("dropScanCta")}
@@ -732,7 +739,7 @@ function ErrorState({
         <TriangleAlert size={34} aria-hidden="true" />
       </StatusIcon>
       <h1>{text(errorKey)}</h1>
-      <PrimaryButton onClick={onRetry}>{text("dropEnterCode")}</PrimaryButton>
+      <PrimaryButton onClick={onRetry}>{text("dropTryAgain")}</PrimaryButton>
     </section>
   );
 }
