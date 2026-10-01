@@ -86,7 +86,8 @@ meaning alone. Test contrast in every state.
 
 `packages/ui` carries only what the screens use: `Wordmark` and `PrintcessMark`, `PrimaryButton`,
 `SecondaryButton`, `TertiaryButton`, `DestructiveButton`, `ProgressSteps` (a segmented bar),
-`StatusIcon` (info, success, warning, error), `ScanFrame` (the mark's four QR corners, drawn
+`StatusIcon` (info, success, warning, error), `RouteGlyph` (where a file goes: two objects and the
+path between them, decorative and still), `ScanFrame` (the mark's four QR corners, drawn
 around any code the service shows), `HandoffIllustration` (a sheet entering or leaving the
 printer while the service is genuinely working), and `ScreenShell`. Icons are Lucide throughout;
 the mark is the only custom drawing, and emoji are not used.
