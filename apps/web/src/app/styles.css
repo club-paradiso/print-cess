@@ -429,11 +429,6 @@ p {
 
 /* --- Choosing a document ------------------------------------------------- */
 
-.mobile-source-actions {
-  display: grid;
-  gap: 10px;
-  margin-top: 6px;
-}
 .mobile-file-error,
 .mobile-file-notice {
   display: block;
