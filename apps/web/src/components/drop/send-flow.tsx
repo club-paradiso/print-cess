@@ -322,7 +322,6 @@ export function SendFlow({
 
   return (
     <DropShell locale={locale} onLocaleChange={setLocale} text={text}>
-
       {stage === "pick" ? (
         <section
           className={dragging ? "mobile-step drop-pick is-dragging" : "mobile-step drop-pick"}

@@ -481,4 +481,3 @@ export function scanCopy(locale: SupportedLocale): ScanCopy {
 export function formatScanCopy(value: string, values: Record<string, string | number>): string {
   return value.replace(/\{\{(\w+)\}\}/gu, (_, key: string) => String(values[key] ?? ""));
 }
-

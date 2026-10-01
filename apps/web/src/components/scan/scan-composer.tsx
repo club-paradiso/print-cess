@@ -486,7 +486,9 @@ export function ScanComposer({
       ) : null}
       <div
         className={
-          pages.length > 0 ? "scan-primary-actions scan-primary-actions--more" : "scan-primary-actions"
+          pages.length > 0
+            ? "scan-primary-actions scan-primary-actions--more"
+            : "scan-primary-actions"
         }
       >
         {pages.length === 0 ? (
