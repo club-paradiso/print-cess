@@ -476,7 +476,7 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
           {/* Two digits and a shape, rather than twelve characters read off
               somebody else's screen. Scanning stays for whoever prefers it. */}
           <PairingEntry text={text} onTransferCode={startOpen} />
-          <section className="mobile-step mobile-step--single">
+          <section className="drop-receive-alt">
             {canScan ? (
               <SecondaryButton onClick={() => void scan()}>
                 <Camera aria-hidden="true" /> {text("dropScanCta")}
@@ -732,7 +732,7 @@ function ErrorState({
         <TriangleAlert size={34} aria-hidden="true" />
       </StatusIcon>
       <h1>{text(errorKey)}</h1>
-      <PrimaryButton onClick={onRetry}>{text("dropEnterCode")}</PrimaryButton>
+      <PrimaryButton onClick={onRetry}>{text("dropTryAgain")}</PrimaryButton>
     </section>
   );
 }

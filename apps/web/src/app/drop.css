@@ -273,21 +273,6 @@
 /* A pointer environment can drop files straight onto the page. The buttons stay
    inside the target, so the drag affordance is an addition rather than the only
    way in — a phone has no drag at all. */
-.drop-target {
-  display: grid;
-  gap: 12px;
-  padding: 16px;
-  border: 2px dashed var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-surface);
-  transition:
-    border-color 140ms ease,
-    background-color 140ms ease;
-}
-.drop-target.is-dragging {
-  border-color: var(--pc-upload-active);
-  background: var(--pc-selected);
-}
 .drop-target__hint {
   display: none;
   align-items: center;
@@ -641,4 +626,228 @@
 }
 .drop-paste > * + * {
   margin-block-start: 10px;
+}
+
+/* --- Shared consumer header -------------------------------------------------
+   The name leads home; the capability label underneath ties the two halves of
+   a hand-off (and the scanner) into one product. */
+
+.app-topbar__home {
+  display: inline-flex;
+  min-width: 0;
+  min-height: 44px;
+  align-items: center;
+  border-radius: var(--pc-radius-sm);
+  color: inherit;
+  text-decoration: none;
+}
+.app-section {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 22px 0 -4px;
+  color: var(--pc-text-brand);
+  font-size: 15px;
+  font-weight: 780;
+  letter-spacing: 0.01em;
+}
+.app-section svg {
+  width: 18px;
+  height: 18px;
+}
+.app-section + .mobile-step {
+  padding-top: 10px;
+}
+
+/* --- Where a file comes from ----------------------------------------------
+   Two equal tiles. Large enough to hit with a thumb without looking, and
+   labelled with what lives there rather than with a technical source name. */
+
+.source-picker {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 136px), 1fr));
+  gap: 10px;
+}
+.source-tile {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: 4px;
+  min-height: 128px;
+  padding: 16px;
+  border: 1.5px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color var(--pc-duration-fast) ease,
+    background-color var(--pc-duration-fast) ease,
+    transform var(--pc-duration-fast) ease;
+}
+.source-tile:hover {
+  border-color: var(--pc-brand-muted);
+  background: var(--pc-surface-brand-subtle);
+}
+.source-tile:active {
+  transform: translateY(1px);
+}
+.source-tile__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 10px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.source-tile__icon svg {
+  width: 24px;
+  height: 24px;
+}
+.source-tile__label {
+  font-size: 18px;
+  font-weight: 760;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+.source-tile__hint {
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+/* The whole pick step accepts a dropped file; this is the only visible sign
+   of it, and it shows only where dragging is possible at all. */
+.drop-pick {
+  border-radius: var(--pc-radius-lg);
+  outline: 2px dashed transparent;
+  outline-offset: 8px;
+  transition: outline-color var(--pc-duration-fast) ease;
+}
+.drop-pick.is-dragging {
+  outline-color: var(--pc-upload-active);
+}
+.drop-switch,
+.drop-back {
+  justify-self: center;
+}
+.drop-back svg {
+  width: 20px;
+  height: 20px;
+}
+[dir="rtl"] .drop-back svg {
+  transform: scaleX(-1);
+}
+
+/* --- Ready to hand over -----------------------------------------------------
+   Status first, then the code, then the other ways to pass it on. Erasing is
+   last and quiet: it is final, and it is never the next step. */
+
+.drop-ready .drop-status {
+  justify-self: start;
+  padding: 8px 14px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  font-weight: 650;
+  line-height: 1.35;
+}
+.drop-ready .drop-status.is-delivered {
+  background: var(--pc-success-surface);
+  color: var(--pc-success) !important;
+}
+.drop-ready .drop-status.is-delivered svg {
+  color: var(--pc-success);
+}
+.drop-link-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: 10px;
+}
+.drop-link-actions .pc-button {
+  min-height: 56px;
+  font-size: 16px;
+}
+.drop-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 -4px;
+  color: var(--pc-text-muted) !important;
+  font-size: 14px !important;
+  font-weight: 700;
+}
+.drop-or::before,
+.drop-or::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--pc-border);
+}
+.drop-erase {
+  min-height: 52px;
+  margin-top: 8px;
+  font-size: 16px;
+}
+
+/* The sender only chooses a shape to show; nothing is consumed by a wrong tap
+   here, so the four choices sit in a compact row rather than taking the
+   generous receiver-side targets that guard a single attempt. */
+.pairing-pick .pairing-choices button {
+  grid-auto-flow: column;
+  justify-content: start;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 10px 14px;
+}
+.pairing-pick .pairing-choices button svg {
+  width: 30px;
+  height: 30px;
+}
+.pairing-pick .pairing-choices button span {
+  font-size: 16px;
+}
+.pairing-pick h2 {
+  font-size: 20px !important;
+}
+
+/* Changing the selection is secondary to sending it. */
+.drop-selection__actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 176px), 1fr));
+}
+.drop-selection__actions .pc-button {
+  min-height: 48px;
+  padding: 10px 14px;
+  font-size: 16px;
+}
+
+/* Received files: each one's save action is the same size, at the start of the
+   row, so a list of five reads as a list and not as a wall of buttons. */
+.drop-file-list--actions .drop-file__actions > * {
+  flex: 0 1 auto;
+  width: auto;
+  min-width: 132px;
+  min-height: 48px;
+  padding: 10px 18px;
+  font-size: 16px;
+}
+
+/* The ways into a transfer other than the keypad: scanning, pasting a link,
+   or switching to sending. They follow the keypad directly. */
+.drop-receive-alt {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 24px;
+}
+.drop-receive-alt .drop-link {
+  justify-self: center;
+}
+
+/* The language control sizes to the language it shows rather than the longest
+   of thirteen, so it shares the header row with the name on a phone. */
+.drop-language select {
+  field-sizing: content;
+  padding-inline-end: 2px;
 }
