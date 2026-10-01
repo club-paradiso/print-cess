@@ -481,9 +481,11 @@ export function SendFlow({
             {/* QR and shared-link hand-offs keep the transfer code in the URL
                 fragment. The optional nearby-phone flow below escrows it for
                 three minutes so the sender can leave after upload. */}
-            <p className="drop-or" aria-hidden="true">
-              <span>{text("orDivider")}</span>
-            </p>
+            {sealed ? (
+              <p className="drop-or" aria-hidden="true">
+                <span>{text("orDivider")}</span>
+              </p>
+            ) : null}
             <PairingHandover transferCode={result.code} sealed={sealed} text={text} />
             <DestructiveButton className="drop-erase" onClick={() => void erase()}>
               <Trash2 aria-hidden="true" /> {text("dropDeleteNow")}

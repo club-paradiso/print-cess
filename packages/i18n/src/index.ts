@@ -191,7 +191,6 @@ const en = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Send and receive files",
   dropSendCta: "Send files",
-  dropReceiveCta: "Receive files",
   dropBack: "Back",
   dropPickFiles: "Pick the files to send",
   dropPickHint: "Up to 20 files at once, photos and documents together.",
@@ -203,7 +202,6 @@ const en = {
   dropSendingHint: "Keep this page open until it finishes.",
   dropPercent: "{{percent}}% sent",
   dropReady: "Ready to hand over",
-  dropReadyHint: "Use the QR for a private hand-off, or choose a shape below for a nearby phone.",
   dropCodeLabel: "Transfer code",
   pairShortCode: "Show these two numbers",
   dropPasteLink: "Have a link instead? Paste it here",
@@ -483,7 +481,6 @@ const ko = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "파일 주고받기",
   dropSendCta: "파일 보내기",
-  dropReceiveCta: "파일 받기",
   dropBack: "뒤로",
   dropPickFiles: "보낼 파일을 골라요",
   dropPickHint: "사진과 문서를 함께, 한 번에 20개까지 보낼 수 있어요.",
@@ -495,7 +492,6 @@ const ko = {
   dropSendingHint: "끝날 때까지 이 화면을 열어둬요.",
   dropPercent: "{{percent}}% 보냈어요",
   dropReady: "건네줄 준비가 됐어요",
-  dropReadyHint: "비공개로 보내려면 QR을 쓰고, 가까운 휴대전화에는 아래에서 도형을 고르세요.",
   dropCodeLabel: "받기 코드",
   pairShortCode: "이 두 자리 숫자를 보여주세요",
   dropPasteLink: "링크를 받았나요? 여기에 붙여넣으세요",
@@ -760,7 +756,6 @@ const zhCN = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "互传文件",
   dropSendCta: "发送文件",
-  dropReceiveCta: "接收文件",
   dropBack: "返回",
   dropPickFiles: "选择要发送的文件",
   dropPickHint: "照片和文档可以一起选，一次最多 20 个。",
@@ -772,7 +767,6 @@ const zhCN = {
   dropSendingHint: "发送完成前请保持这个页面打开。",
   dropPercent: "已发送 {{percent}}%",
   dropReady: "可以交给对方了",
-  dropReadyHint: "私密传输请使用二维码；给身边的手机传输，请在下方选择一个图形。",
   dropCodeLabel: "接收码",
   pairShortCode: "把这两位数字给对方看",
   dropPasteLink: "拿到的是链接？粘贴到这里",
@@ -1045,7 +1039,6 @@ const id = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Kirim dan terima file",
   dropSendCta: "Kirim file",
-  dropReceiveCta: "Terima file",
   dropBack: "Kembali",
   dropPickFiles: "Pilih file yang mau dikirim",
   dropPickHint: "Sampai 20 file sekaligus, foto dan dokumen boleh dicampur.",
@@ -1057,8 +1050,6 @@ const id = {
   dropSendingHint: "Biarkan halaman ini terbuka sampai selesai.",
   dropPercent: "{{percent}}% terkirim",
   dropReady: "Siap diserahkan",
-  dropReadyHint:
-    "Gunakan QR untuk transfer privat, atau pilih bentuk di bawah untuk ponsel di dekat Anda.",
   dropCodeLabel: "Kode transfer",
   pairShortCode: "Tunjukkan dua angka ini",
   dropPasteLink: "Dapat tautan? Tempel di sini",
@@ -1344,7 +1335,6 @@ const fil = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Magpadala at tumanggap ng file",
   dropSendCta: "Magpadala ng file",
-  dropReceiveCta: "Tumanggap ng file",
   dropBack: "Bumalik",
   dropPickFiles: "Piliin ang mga ipapadala",
   dropPickHint: "Hanggang 20 file nang sabay, litrato at dokumento pwedeng magkahalo.",
@@ -1356,8 +1346,6 @@ const fil = {
   dropSendingHint: "Huwag isara ang page hangga't hindi tapos.",
   dropPercent: "{{percent}}% naipadala",
   dropReady: "Handa nang ibigay",
-  dropReadyHint:
-    "Gamitin ang QR para sa pribadong pagpapasa, o pumili ng hugis sa ibaba para sa kalapit na telepono.",
   dropCodeLabel: "Transfer code",
   pairShortCode: "Ipakita ang dalawang numerong ito",
   dropPasteLink: "May link ka ba? I-paste dito",
@@ -1639,7 +1627,6 @@ const vi = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Gửi và nhận tệp",
   dropSendCta: "Gửi tệp",
-  dropReceiveCta: "Nhận tệp",
   dropBack: "Quay lại",
   dropPickFiles: "Chọn tệp muốn gửi",
   dropPickHint: "Tối đa 20 tệp một lần, ảnh và tài liệu đều được.",
@@ -1651,7 +1638,6 @@ const vi = {
   dropSendingHint: "Giữ trang này mở cho đến khi xong.",
   dropPercent: "Đã gửi {{percent}}%",
   dropReady: "Sẵn sàng trao đi",
-  dropReadyHint: "Dùng mã QR để chuyển riêng tư, hoặc chọn một hình bên dưới cho điện thoại ở gần.",
   dropCodeLabel: "Mã nhận",
   pairShortCode: "Cho họ xem hai chữ số này",
   dropPasteLink: "Bạn có đường liên kết? Dán vào đây",
@@ -1922,7 +1908,6 @@ const th = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "ส่งและรับไฟล์",
   dropSendCta: "ส่งไฟล์",
-  dropReceiveCta: "รับไฟล์",
   dropBack: "ย้อนกลับ",
   dropPickFiles: "เลือกไฟล์ที่จะส่ง",
   dropPickHint: "ครั้งละไม่เกิน 20 ไฟล์ รูปกับเอกสารรวมกันได้",
@@ -1934,8 +1919,6 @@ const th = {
   dropSendingHint: "เปิดหน้านี้ไว้จนกว่าจะเสร็จ",
   dropPercent: "ส่งแล้ว {{percent}}%",
   dropReady: "พร้อมส่งต่อแล้ว",
-  dropReadyHint:
-    "ใช้คิวอาร์เพื่อส่งแบบเป็นส่วนตัว หรือเลือกรูปด้านล่างสำหรับโทรศัพท์ที่อยู่ใกล้กัน",
   dropCodeLabel: "รหัสรับไฟล์",
   pairShortCode: "ให้อีกฝ่ายดูตัวเลขสองหลักนี้",
   dropPasteLink: "ได้ลิงก์มาใช่ไหม วางไว้ตรงนี้",
@@ -2209,7 +2192,6 @@ const ne = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "फाइल पठाउने र लिने",
   dropSendCta: "फाइल पठाउनुहोस्",
-  dropReceiveCta: "फाइल लिनुहोस्",
   dropBack: "पछाडि",
   dropPickFiles: "पठाउने फाइल छान्नुहोस्",
   dropPickHint: "एकैपटक 20 वटासम्म, फोटो र कागजात सँगै।",
@@ -2221,7 +2203,6 @@ const ne = {
   dropSendingHint: "सकिने बेलासम्म यो पृष्ठ खुला राख्नुहोस्।",
   dropPercent: "{{percent}}% पठाइयो",
   dropReady: "दिन तयार भयो",
-  dropReadyHint: "निजी रूपमा पठाउन QR प्रयोग गर्नुहोस्, वा नजिकको फोनका लागि तलको आकार छान्नुहोस्।",
   dropCodeLabel: "लिने कोड",
   pairShortCode: "यी दुई अंक देखाउनुहोस्",
   dropPasteLink: "लिंक पाउनुभयो? यहाँ टाँस्नुहोस्",
@@ -2496,7 +2477,6 @@ const km = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "ផ្ញើ និងទទួលឯកសារ",
   dropSendCta: "ផ្ញើឯកសារ",
-  dropReceiveCta: "ទទួលឯកសារ",
   dropBack: "ត្រឡប់ក្រោយ",
   dropPickFiles: "ជ្រើសឯកសារដែលចង់ផ្ញើ",
   dropPickHint: "រហូតដល់ 20 ឯកសារក្នុងមួយលើក រូបភាព និងឯកសារជាមួយគ្នា។",
@@ -2508,7 +2488,6 @@ const km = {
   dropSendingHint: "ទុកទំព័រនេះបើករហូតដល់ចប់។",
   dropPercent: "ផ្ញើបាន {{percent}}%",
   dropReady: "រួចរាល់ដើម្បីប្រគល់",
-  dropReadyHint: "ប្រើ QR សម្រាប់ការផ្ទេរឯកជន ឬជ្រើសរូបខាងក្រោមសម្រាប់ទូរស័ព្ទនៅក្បែរ។",
   dropCodeLabel: "កូដទទួល",
   pairShortCode: "បង្ហាញលេខពីរខ្ទង់នេះ",
   dropPasteLink: "ទទួលបានតំណឬ? បិទភ្ជាប់នៅទីនេះ",
@@ -2782,7 +2761,6 @@ const ar = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "إرسال الملفات واستلامها",
   dropSendCta: "إرسال ملفات",
-  dropReceiveCta: "استلام ملفات",
   dropBack: "رجوع",
   dropPickFiles: "اختر الملفات التي تريد إرسالها",
   dropPickHint: "حتى 20 ملفًا في المرة، صور ومستندات معًا.",
@@ -2794,7 +2772,6 @@ const ar = {
   dropSendingHint: "أبقِ هذه الصفحة مفتوحة حتى ينتهي الإرسال.",
   dropPercent: "تم إرسال {{percent}}%",
   dropReady: "جاهز للتسليم",
-  dropReadyHint: "استخدم رمز QR للتسليم الخاص، أو اختر شكلاً أدناه لهاتف قريب.",
   dropCodeLabel: "رمز الاستلام",
   pairShortCode: "أَرِ الطرف الآخر هذين الرقمين",
   dropPasteLink: "معك رابط بدلًا من ذلك؟ الصقه هنا",
@@ -3070,7 +3047,6 @@ const ru = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Отправить и получить файлы",
   dropSendCta: "Отправить файлы",
-  dropReceiveCta: "Получить файлы",
   dropBack: "Назад",
   dropPickFiles: "Выберите файлы для отправки",
   dropPickHint: "До 20 файлов за раз, фото и документы вместе.",
@@ -3082,8 +3058,6 @@ const ru = {
   dropSendingHint: "Держите страницу открытой до конца отправки.",
   dropPercent: "Отправлено {{percent}}%",
   dropReady: "Готово к передаче",
-  dropReadyHint:
-    "Для приватной передачи используйте QR, а для телефона рядом выберите фигуру ниже.",
   dropCodeLabel: "Код получения",
   pairShortCode: "Покажите эти две цифры",
   dropPasteLink: "Прислали ссылку? Вставьте её сюда",
@@ -3367,7 +3341,6 @@ const mn = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Файл илгээх, хүлээн авах",
   dropSendCta: "Файл илгээх",
-  dropReceiveCta: "Файл авах",
   dropBack: "Буцах",
   dropPickFiles: "Илгээх файлаа сонгоно уу",
   dropPickHint: "Нэг удаад 20 хүртэл файл, зураг болон бичиг баримт хамт.",
@@ -3379,7 +3352,6 @@ const mn = {
   dropSendingHint: "Дуустал энэ хуудсыг нээлттэй байлга.",
   dropPercent: "{{percent}}% илгээгдлээ",
   dropReady: "Дамжуулахад бэлэн",
-  dropReadyHint: "Нууц дамжуулалтад QR ашиглах эсвэл ойр байгаа утсанд доорх дүрсээс сонгоно уу.",
   dropCodeLabel: "Хүлээн авах код",
   pairShortCode: "Энэ хоёр оронтой тоог үзүүлээрэй",
   dropPasteLink: "Холбоос ирсэн үү? Энд буулгана уу",
@@ -3659,7 +3631,6 @@ const uk = {
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Надіслати й отримати файли",
   dropSendCta: "Надіслати файли",
-  dropReceiveCta: "Отримати файли",
   dropBack: "Назад",
   dropPickFiles: "Виберіть файли для надсилання",
   dropPickHint: "До 20 файлів за раз, фото й документи разом.",
@@ -3671,8 +3642,6 @@ const uk = {
   dropSendingHint: "Тримайте цю сторінку відкритою до кінця.",
   dropPercent: "Надіслано {{percent}}%",
   dropReady: "Готово до передавання",
-  dropReadyHint:
-    "Для приватної передачі скористайтеся QR, а для телефона поруч виберіть фігуру нижче.",
   dropCodeLabel: "Код отримання",
   pairShortCode: "Покажіть ці дві цифри",
   dropPasteLink: "Надіслали посилання? Вставте його сюди",
