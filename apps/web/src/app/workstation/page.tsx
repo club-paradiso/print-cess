@@ -24,11 +24,11 @@ const copy = {
       "휴대전화의 문서를 업무용 PC로 받거나, 업무용 PC의 파일을 다른 기기로 보낼 수 있습니다. 별도 프로그램, 브라우저 확장, 로그인은 필요하지 않습니다.",
     receiveTitle: "휴대전화 → 업무용 PC",
     receiveBody:
-      "휴대전화에서 파일 보내기를 시작한 뒤 표시되는 전송 코드를 이 PC에서 입력합니다. QR 카메라 권한이 막힌 기관 PC에서도 코드 입력으로 받을 수 있습니다.",
+      "휴대전화에서 파일을 보낸 뒤 휴대전화에 표시되는 두 자리 숫자와 도형을 이 PC에서 입력합니다. 카메라 사용이 막힌 기관 PC에서도 받을 수 있습니다.",
     receiveCta: "이 PC에서 파일 받기",
     sendTitle: "업무용 PC → 휴대전화",
     sendBody:
-      "업무용 PC에서 파일을 선택해 암호화 전송을 만들고, 휴대전화에서 QR 또는 전송 코드로 받습니다.",
+      "업무용 PC에서 파일을 선택해 암호화 전송을 만들고, 휴대전화에서 QR 코드나 두 자리 숫자로 받습니다.",
     sendCta: "이 PC에서 파일 보내기",
     securityTitle: "기관 보안정책을 우회하지 않습니다",
     securityBody:
@@ -63,11 +63,11 @@ const copy = {
       "Receive documents from a phone on a work computer, or send files from the work computer to another device. No desktop app, browser extension, or account is required.",
     receiveTitle: "Phone → work computer",
     receiveBody:
-      "Start Send files on the phone and enter the transfer code on this computer. Code entry still works when a managed computer blocks camera access.",
+      "Send the files from the phone, then enter the two numbers and the shape the phone shows on this computer. This works even when a managed computer blocks the camera.",
     receiveCta: "Receive files on this computer",
     sendTitle: "Work computer → phone",
     sendBody:
-      "Choose files on the work computer, create an encrypted transfer, then receive them on the phone with the QR code or transfer code.",
+      "Choose files on the work computer, create an encrypted transfer, then receive them on the phone with the QR code or the two numbers.",
     sendCta: "Send files from this computer",
     securityTitle: "Print-cess does not bypass agency security controls",
     securityBody:

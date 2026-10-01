@@ -18,6 +18,17 @@ function textOf(node: unknown): string {
   return "";
 }
 
+function headingsOf(node: unknown, level: string): string[] {
+  if (Array.isArray(node)) return node.flatMap((child) => headingsOf(child, level));
+  if (node && typeof node === "object" && "props" in node) {
+    const element = node as { type?: unknown; props: { children?: unknown } };
+    return element.type === level
+      ? [textOf(element.props.children)]
+      : headingsOf(element.props.children, level);
+  }
+  return [];
+}
+
 function hrefsOf(node: unknown): string[] {
   if (Array.isArray(node)) return node.flatMap(hrefsOf);
   if (node && typeof node === "object" && "props" in node) {
@@ -40,7 +51,7 @@ describe("home page", () => {
 
     const page = await HomePage();
 
-    expect(page.props.className).toBe("status-page");
+    expect(page.props.className).toBe("home");
     expect(hrefsOf(page)).toEqual(
       expect.arrayContaining(["/scan", "/send", "/receive", "/workstation", "/kiosk"]),
     );
@@ -66,7 +77,7 @@ describe("home page", () => {
 
     const page = await HomePage();
 
-    expect(page.props.className).toBe("status-page");
+    expect(page.props.className).toBe("home");
     expect(hrefsOf(page)).toEqual(
       expect.arrayContaining(["/scan", "/send", "/receive", "/workstation", "/kiosk"]),
     );
@@ -77,23 +88,54 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("안전하게 인쇄하고 주고받아요");
-    expect(copy).toContain("문서 스캔");
-    expect(copy).toContain("파일 보내기");
-    expect(copy).toContain("파일 받기");
+    expect(copy).toContain("파일을 다른 기기로, 또는 바로 종이로");
+    expect(copy).toContain("인쇄");
+    expect(copy).toContain("공유");
+    expect(copy).toContain("스캔");
+    expect(copy).toContain("보낼 파일 고르기");
+    expect(copy).toContain("코드로 파일 받기");
+    expect(copy).toContain("문서 스캔하기");
     expect(copy).toContain("업무용 PC");
     expect(copy).toContain("키오스크 열기");
-    expect(copy).not.toContain("Secure print and transfer service");
+    expect(copy).not.toContain("Send a file to another device");
   });
 
   it("falls back to English when no language is asked for", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("Secure print and transfer service");
+    expect(copy).toContain("Send a file to another device, or straight to paper.");
+    expect(copy).toContain("Choose files to send");
+    expect(copy).toContain("Receive files with a code");
     expect(copy).toContain("Scan a document");
-    expect(copy).toContain("Send files");
-    expect(copy).toContain("Receive files");
     expect(copy).toContain("Work computer");
     expect(copy).toContain("Open kiosk");
+  });
+
+  /**
+   * The three capabilities are the page. Institutional entrances share it, but
+   * below them and never as one of them: a visitor who came to print or share
+   * should not have to read past a managed-workstation link to find out how.
+   */
+  it("leads with Print, Share and Scan and keeps workplaces secondary", async () => {
+    const page = await HomePage();
+    const order = hrefsOf(page);
+
+    expect(headingsOf(page, "h2")).toEqual([
+      "Print",
+      "Share",
+      "Scan",
+      "At work or on a public computer",
+    ]);
+    expect(order.indexOf("/send")).toBeLessThan(order.indexOf("/workstation"));
+    expect(order.indexOf("/scan")).toBeLessThan(order.indexOf("/workstation"));
+  });
+
+  it("never offers a print button that has nowhere honest to go", async () => {
+    const hrefs = hrefsOf(await HomePage());
+
+    // Printing starts at a kiosk's QR code. The home page describes that; it
+    // does not link to a print route it cannot open.
+    expect(hrefs.some((href) => href.startsWith("/s/"))).toBe(false);
+    expect(hrefs).not.toContain("/print");
   });
 });

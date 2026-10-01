@@ -88,8 +88,7 @@ export function matchAcceptLanguage(header: string | null | undefined): Supporte
 const en = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Secure print and transfer service",
-  homeScanHint: "Start by scanning the QR code shown on a Print-cess Kiosk.",
+  homeTitle: "Send a file to another device, or straight to paper.",
   homeNoAccount: "No account or public-computer login is required.",
 
   notFoundTitle: "This page is not here",
@@ -191,9 +190,7 @@ const en = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Send and receive files",
-  dropIntro: "Move photos and files between two phones. No app, no account.",
   dropSendCta: "Send files",
-  dropReceiveCta: "Receive files",
   dropBack: "Back",
   dropPickFiles: "Pick the files to send",
   dropPickHint: "Up to 20 files at once, photos and documents together.",
@@ -205,14 +202,14 @@ const en = {
   dropSendingHint: "Keep this page open until it finishes.",
   dropPercent: "{{percent}}% sent",
   dropReady: "Ready to hand over",
-  dropReadyHint: "Use the QR for a private hand-off, or choose a shape below for a nearby phone.",
   dropCodeLabel: "Transfer code",
   pairShortCode: "Show these two numbers",
   dropPasteLink: "Have a link instead? Paste it here",
   pairShortCodeHint: "The other phone enters these numbers and the shape you chose.",
   pairWaitingReceiver: "Keep this page open until the upload finishes.",
   pairPickShape: "Choose a shape for the other phone",
-  pairPickShapeHint: "They must enter these numbers and choose the same shape.",
+  pairPickShapeHint:
+    "The other phone types the two numbers and picks the same shape. With this option the service holds the key for three minutes.",
   pairWrongShape:
     "That is not the shape on their screen. Look again, or start over with new numbers.",
   pairHandedOver: "Ready. You can leave this page; the other phone has three minutes.",
@@ -248,7 +245,7 @@ const en = {
   dropMemoryNotice:
     "This browser holds a whole file in memory while it saves. For very large files, an up-to-date Chrome or Safari works better.",
   dropPrivacyNote:
-    "Files are locked on this phone and erased when the transfer expires. A QR code or link keeps the key between the two phones; the two-digit code leaves it with the service until the other phone collects it.",
+    "Files are locked on this phone before they leave, and erased when the transfer expires.",
   dropNoFiles: "Pick at least one file first.",
   dropTooManyFiles: "Send up to 20 files at a time. Pick fewer, then send the rest after.",
   dropTooLarge: "This is larger than one transfer holds. Split it into two sends.",
@@ -355,6 +352,29 @@ const en = {
   quotaAtLimit: "You have reached the free printing limit.",
   quotaUnverified:
     "Hangul documents are counted at the kiosk, so the final page count is confirmed there.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Print, share and scan from your browser, with nothing to install.",
+  homePrintTitle: "Print",
+  homePrintBody: "Printing starts at the screen next to a Print-cess printer.",
+  homePrintStepScan: "Scan its QR code",
+  homePrintStepPick: "Pick your file",
+  homePrintStepCollect: "Take your paper",
+  homeShareTitle: "Share",
+  homeShareBody: "Move photos and files to another phone, tablet or computer.",
+  homeShareCta: "Choose files to send",
+  homeReceiveCta: "Receive files with a code",
+  homeScanTitle: "Scan",
+  homeScanBody: "Turn paper into a PDF on this phone, then save it or send it on.",
+  homeScanCta: "Scan a document",
+  homeWorkplaceTitle: "At work or on a public computer",
+  homeWorkplaceBody: "Runs in the browser, inside your organisation's security policy.",
+  homeWorkstationCta: "Work computer",
+  homeKioskCta: "Open kiosk",
+  shareTitle: "Share",
+  dropSourcePhotosHint: "Photos and videos",
+  dropSourceFilesHint: "Documents and other files",
+  orDivider: "or",
 };
 
 export type TranslationKey = keyof typeof en;
@@ -363,8 +383,7 @@ type Translation = Record<TranslationKey, string>;
 const ko = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "안전하게 인쇄하고 주고받아요",
-  homeScanHint: "키오스크 화면에 있는 QR 코드를 찍으면 시작해요.",
+  homeTitle: "파일을 다른 기기로, 또는 바로 종이로",
   homeNoAccount: "계정도 공용 컴퓨터 로그인도 필요 없어요.",
 
   notFoundTitle: "이 페이지는 없어요",
@@ -461,9 +480,7 @@ const ko = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "파일 주고받기",
-  dropIntro: "휴대전화끼리 사진과 파일을 바로 주고받아요. 앱도 로그인도 필요 없어요.",
   dropSendCta: "파일 보내기",
-  dropReceiveCta: "파일 받기",
   dropBack: "뒤로",
   dropPickFiles: "보낼 파일을 골라요",
   dropPickHint: "사진과 문서를 함께, 한 번에 20개까지 보낼 수 있어요.",
@@ -475,14 +492,14 @@ const ko = {
   dropSendingHint: "끝날 때까지 이 화면을 열어둬요.",
   dropPercent: "{{percent}}% 보냈어요",
   dropReady: "건네줄 준비가 됐어요",
-  dropReadyHint: "비공개로 보내려면 QR을 쓰고, 가까운 휴대전화에는 아래에서 도형을 고르세요.",
   dropCodeLabel: "받기 코드",
   pairShortCode: "이 두 자리 숫자를 보여주세요",
   dropPasteLink: "링크를 받았나요? 여기에 붙여넣으세요",
   pairShortCodeHint: "받는 사람이 이 숫자와 고른 도형을 입력해요.",
   pairWaitingReceiver: "업로드가 끝날 때까지 이 화면을 열어 두세요.",
   pairPickShape: "받는 휴대전화에 알려줄 도형을 고르세요",
-  pairPickShapeHint: "받는 사람은 이 숫자와 같은 도형을 모두 골라야 해요.",
+  pairPickShapeHint:
+    "받는 사람이 두 숫자를 입력하고 같은 도형을 고르면 돼요. 이 방법은 서비스가 3분 동안 열쇠를 맡아 둬요.",
   pairWrongShape: "상대방 화면의 도형과 달라요. 다시 확인하거나 새 숫자로 시작하세요.",
   pairHandedOver: "준비됐어요. 이 화면을 닫아도 돼요. 상대방에게 3분이 있어요.",
   pairEnterShortCode: "두 자리 숫자를 입력하세요",
@@ -515,8 +532,7 @@ const ko = {
   dropReceiveAnother: "다른 파일 받기",
   dropMemoryNotice:
     "이 브라우저는 저장하는 동안 파일 전체를 메모리에 올려요. 아주 큰 파일은 최신 크롬이나 사파리에서 받으면 더 안정적이에요.",
-  dropPrivacyNote:
-    "파일은 이 휴대전화에서 잠기고, 시간이 지나면 모두 지워져요. QR코드나 링크로 건네면 열쇠는 두 휴대전화 사이에만 있고, 두 자리 숫자로 건네면 상대방이 받아 갈 때까지 서비스가 잠시 맡아요.",
+  dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 전송 시간이 끝나면 지워져요.",
   dropNoFiles: "파일을 하나 이상 골라요.",
   dropTooManyFiles: "한 번에 20개까지 보낼 수 있어요. 나눠서 보내면 다 보낼 수 있어요.",
   dropTooLarge: "한 번에 보내기엔 너무 커요. 두 번에 나눠 보내요.",
@@ -621,13 +637,35 @@ const ko = {
   quotaHardJoke: "이건 구독으로도 안 돼요.",
   quotaAtLimit: "무료 출력 한도에 딱 맞췄어요.",
   quotaUnverified: "한글 문서는 키오스크에서 페이지 수를 세요. 최종 장수는 키오스크에서 확정돼요.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "인쇄·공유·스캔을 설치 없이 브라우저에서 바로 해요.",
+  homePrintTitle: "인쇄",
+  homePrintBody: "인쇄는 Print-cess 프린터 옆 화면에서 시작해요.",
+  homePrintStepScan: "화면의 QR 찍기",
+  homePrintStepPick: "파일 고르기",
+  homePrintStepCollect: "인쇄물 받기",
+  homeShareTitle: "공유",
+  homeShareBody: "사진과 파일을 다른 휴대전화, 태블릿, 컴퓨터로 옮겨요.",
+  homeShareCta: "보낼 파일 고르기",
+  homeReceiveCta: "코드로 파일 받기",
+  homeScanTitle: "스캔",
+  homeScanBody: "종이 문서를 이 휴대전화에서 PDF로 만들고, 저장하거나 보내요.",
+  homeScanCta: "문서 스캔하기",
+  homeWorkplaceTitle: "기관·공용 PC에서 쓰기",
+  homeWorkplaceBody: "설치 없이 브라우저에서, 기관 보안정책을 지키며 써요.",
+  homeWorkstationCta: "업무용 PC",
+  homeKioskCta: "키오스크 열기",
+  shareTitle: "공유",
+  dropSourcePhotosHint: "사진·동영상",
+  dropSourceFilesHint: "문서·기타 파일",
+  orDivider: "또는",
 } satisfies Translation;
 
 const zhCN = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "安全打印与传输服务",
-  homeScanHint: "扫描 Print-cess 自助机上显示的二维码即可开始。",
+  homeTitle: "把文件发到另一台设备，或直接打印成纸。",
   homeNoAccount: "无需账号，也无需在公用电脑上登录。",
 
   notFoundTitle: "找不到这个页面",
@@ -717,9 +755,7 @@ const zhCN = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "互传文件",
-  dropIntro: "两台手机之间直接传照片和文件。不用装应用，也不用登录。",
   dropSendCta: "发送文件",
-  dropReceiveCta: "接收文件",
   dropBack: "返回",
   dropPickFiles: "选择要发送的文件",
   dropPickHint: "照片和文档可以一起选，一次最多 20 个。",
@@ -731,14 +767,14 @@ const zhCN = {
   dropSendingHint: "发送完成前请保持这个页面打开。",
   dropPercent: "已发送 {{percent}}%",
   dropReady: "可以交给对方了",
-  dropReadyHint: "私密传输请使用二维码；给身边的手机传输，请在下方选择一个图形。",
   dropCodeLabel: "接收码",
   pairShortCode: "把这两位数字给对方看",
   dropPasteLink: "拿到的是链接？粘贴到这里",
   pairShortCodeHint: "对方要输入这两位数字并选择你选的图形。",
   pairWaitingReceiver: "上传完成前请保持此页面打开。",
   pairPickShape: "为对方手机选择一个图形",
-  pairPickShapeHint: "对方必须输入这些数字并选择相同的图形。",
+  pairPickShapeHint:
+    "对方输入这两个数字并选择相同的图形即可。使用此方式时，服务会代为保管密钥三分钟。",
   pairWrongShape: "和对方屏幕上的图形不一样。请再看一次，或用新数字重新开始。",
   pairHandedOver: "已就绪。你可以离开此页面；对方有三分钟时间。",
   pairEnterShortCode: "请输入两位数字",
@@ -771,8 +807,7 @@ const zhCN = {
   dropReceiveAnother: "接收其他文件",
   dropMemoryNotice:
     "这个浏览器在保存时会把整个文件放进内存。文件很大时，用最新版 Chrome 或 Safari 更稳定。",
-  dropPrivacyNote:
-    "文件在这台手机上加锁，到期后全部删除。用二维码或链接时，钥匙只在两台手机之间；用两位数字时，钥匙会暂存在服务端，直到对方取走。",
+  dropPrivacyNote: "文件在这部手机上锁住后才发出，传送到期后就删掉。",
   dropNoFiles: "请先选择至少一个文件。",
   dropTooManyFiles: "一次最多 20 个文件。先选少一些，剩下的分批发送。",
   dropTooLarge: "超过了单次传输的大小。分成两次发送吧。",
@@ -873,13 +908,35 @@ const zhCN = {
   quotaHardJoke: "这个订阅也解决不了。",
   quotaAtLimit: "已达到免费打印额度。",
   quotaUnverified: "韩文文档的页数在自助机上计算，最终页数以自助机为准。",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "在浏览器中直接打印、分享和扫描，无需安装任何东西。",
+  homePrintTitle: "打印",
+  homePrintBody: "打印从 Print-cess 打印机旁的屏幕开始。",
+  homePrintStepScan: "扫描屏幕上的二维码",
+  homePrintStepPick: "选择文件",
+  homePrintStepCollect: "取走打印件",
+  homeShareTitle: "分享",
+  homeShareBody: "把照片和文件传到另一部手机、平板或电脑。",
+  homeShareCta: "选择要发送的文件",
+  homeReceiveCta: "用代码接收文件",
+  homeScanTitle: "扫描",
+  homeScanBody: "在这部手机上把纸质文件变成 PDF，然后保存或发送。",
+  homeScanCta: "扫描文档",
+  homeWorkplaceTitle: "在单位或公用电脑上使用",
+  homeWorkplaceBody: "在浏览器中运行，遵守所在机构的安全策略。",
+  homeWorkstationCta: "办公电脑",
+  homeKioskCta: "打开自助终端",
+  shareTitle: "分享",
+  dropSourcePhotosHint: "照片和视频",
+  dropSourceFilesHint: "文档和其他文件",
+  orDivider: "或",
 } satisfies Translation;
 
 const id = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Layanan cetak dan kirim yang aman",
-  homeScanHint: "Mulai dengan memindai kode QR di layar Kios Print-cess.",
+  homeTitle: "Kirim file ke perangkat lain, atau langsung ke kertas.",
   homeNoAccount: "Tidak perlu akun atau login di komputer umum.",
 
   notFoundTitle: "Halaman ini tidak ada",
@@ -981,9 +1038,7 @@ const id = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Kirim dan terima file",
-  dropIntro: "Pindahkan foto dan file antar dua ponsel. Tanpa aplikasi, tanpa akun.",
   dropSendCta: "Kirim file",
-  dropReceiveCta: "Terima file",
   dropBack: "Kembali",
   dropPickFiles: "Pilih file yang mau dikirim",
   dropPickHint: "Sampai 20 file sekaligus, foto dan dokumen boleh dicampur.",
@@ -995,15 +1050,14 @@ const id = {
   dropSendingHint: "Biarkan halaman ini terbuka sampai selesai.",
   dropPercent: "{{percent}}% terkirim",
   dropReady: "Siap diserahkan",
-  dropReadyHint:
-    "Gunakan QR untuk transfer privat, atau pilih bentuk di bawah untuk ponsel di dekat Anda.",
   dropCodeLabel: "Kode transfer",
   pairShortCode: "Tunjukkan dua angka ini",
   dropPasteLink: "Dapat tautan? Tempel di sini",
   pairShortCodeHint: "Ponsel lain memasukkan angka ini dan bentuk yang Anda pilih.",
   pairWaitingReceiver: "Biarkan halaman ini terbuka sampai unggahan selesai.",
   pairPickShape: "Pilih bentuk untuk ponsel lain",
-  pairPickShapeHint: "Mereka harus memasukkan angka ini dan memilih bentuk yang sama.",
+  pairPickShapeHint:
+    "Ponsel lain mengetik dua angka itu dan memilih bentuk yang sama. Dengan cara ini layanan menyimpan kuncinya selama tiga menit.",
   pairWrongShape:
     "Bentuknya berbeda dari layar mereka. Periksa lagi, atau mulai lagi dengan angka baru.",
   pairHandedOver: "Siap. Anda boleh meninggalkan halaman ini; ponsel lain punya waktu tiga menit.",
@@ -1038,7 +1092,7 @@ const id = {
   dropMemoryNotice:
     "Peramban ini menahan seluruh file di memori saat menyimpan. Untuk file sangat besar, Chrome atau Safari terbaru lebih stabil.",
   dropPrivacyNote:
-    "Berkas dikunci di ponsel ini dan dihapus saat transfer kedaluwarsa. Kode QR atau tautan menjaga kuncinya tetap di antara kedua ponsel; kode dua angka menitipkannya ke layanan sampai ponsel lain mengambilnya.",
+    "File dikunci di ponsel ini sebelum dikirim, dan dihapus saat transfer berakhir.",
   dropNoFiles: "Pilih dulu minimal satu file.",
   dropTooManyFiles: "Maksimal 20 file sekali kirim. Kirim sisanya setelah ini.",
   dropTooLarge: "Ini lebih besar dari satu transfer. Bagi jadi dua pengiriman.",
@@ -1146,13 +1200,35 @@ const id = {
   quotaHardJoke: "Langganan pun tidak menolong yang ini.",
   quotaAtLimit: "Anda telah mencapai batas cetak gratis.",
   quotaUnverified: "Dokumen Hangul dihitung di kios, jadi jumlah halaman akhir dipastikan di sana.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Cetak, bagikan, dan pindai langsung dari browser, tanpa memasang apa pun.",
+  homePrintTitle: "Cetak",
+  homePrintBody: "Pencetakan dimulai di layar di samping printer Print-cess.",
+  homePrintStepScan: "Pindai kode QR-nya",
+  homePrintStepPick: "Pilih file",
+  homePrintStepCollect: "Ambil kertas Anda",
+  homeShareTitle: "Bagikan",
+  homeShareBody: "Pindahkan foto dan file ke ponsel, tablet, atau komputer lain.",
+  homeShareCta: "Pilih file untuk dikirim",
+  homeReceiveCta: "Terima file dengan kode",
+  homeScanTitle: "Pindai",
+  homeScanBody: "Ubah kertas menjadi PDF di ponsel ini, lalu simpan atau kirimkan.",
+  homeScanCta: "Pindai dokumen",
+  homeWorkplaceTitle: "Di kantor atau komputer umum",
+  homeWorkplaceBody: "Berjalan di browser, sesuai kebijakan keamanan instansi Anda.",
+  homeWorkstationCta: "Komputer kerja",
+  homeKioskCta: "Buka kios",
+  shareTitle: "Bagikan",
+  dropSourcePhotosHint: "Foto dan video",
+  dropSourceFilesHint: "Dokumen dan file lain",
+  orDivider: "atau",
 } satisfies Translation;
 
 const fil = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Ligtas na serbisyo sa pag-print at pagpapadala",
-  homeScanHint: "Magsimula sa pag-scan ng QR code sa Print-cess Kiosk.",
+  homeTitle: "Ipadala ang file sa ibang device, o diretso sa papel.",
   homeNoAccount: "Hindi kailangan ng account o pag-log in sa pampublikong computer.",
 
   notFoundTitle: "Wala ang pahinang ito",
@@ -1258,10 +1334,7 @@ const fil = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Magpadala at tumanggap ng file",
-  dropIntro:
-    "Maglipat ng litrato at file sa pagitan ng dalawang telepono. Walang app, walang account.",
   dropSendCta: "Magpadala ng file",
-  dropReceiveCta: "Tumanggap ng file",
   dropBack: "Bumalik",
   dropPickFiles: "Piliin ang mga ipapadala",
   dropPickHint: "Hanggang 20 file nang sabay, litrato at dokumento pwedeng magkahalo.",
@@ -1273,15 +1346,14 @@ const fil = {
   dropSendingHint: "Huwag isara ang page hangga't hindi tapos.",
   dropPercent: "{{percent}}% naipadala",
   dropReady: "Handa nang ibigay",
-  dropReadyHint:
-    "Gamitin ang QR para sa pribadong pagpapasa, o pumili ng hugis sa ibaba para sa kalapit na telepono.",
   dropCodeLabel: "Transfer code",
   pairShortCode: "Ipakita ang dalawang numerong ito",
   dropPasteLink: "May link ka ba? I-paste dito",
   pairShortCodeHint: "Ilalagay ng kabilang telepono ang mga numero at hugis na pinili mo.",
   pairWaitingReceiver: "Panatilihing bukas ang pahinang ito hanggang matapos ang pag-upload.",
   pairPickShape: "Pumili ng hugis para sa kabilang telepono",
-  pairPickShapeHint: "Dapat nilang ilagay ang mga numero at piliin ang parehong hugis.",
+  pairPickShapeHint:
+    "Ita-type ng kabilang phone ang dalawang numero at pipiliin ang parehong hugis. Sa paraang ito, hawak ng serbisyo ang susi nang tatlong minuto.",
   pairWrongShape:
     "Hindi iyon ang hugis sa screen nila. Tingnan ulit, o magsimula muli gamit ang bagong numero.",
   pairHandedOver:
@@ -1319,7 +1391,7 @@ const fil = {
   dropMemoryNotice:
     "Hawak ng browser na ito ang buong file sa memory habang nagse-save. Sa napakalaking file, mas matatag ang bagong Chrome o Safari.",
   dropPrivacyNote:
-    "Naka-lock ang mga file sa teleponong ito at buburahin pag nag-expire. Sa QR code o link, nasa pagitan lang ng dalawang telepono ang susi; sa dalawang numero, iniiwan ito sa serbisyo hanggang makuha ng kabila.",
+    "Naka-lock ang mga file sa phone na ito bago ipadala, at nabubura kapag nag-expire ang transfer.",
   dropNoFiles: "Pumili muna ng kahit isang file.",
   dropTooManyFiles: "Hanggang 20 file bawat padala. Ipadala ang natitira pagkatapos.",
   dropTooLarge: "Mas malaki ito kaysa sa kayang isang transfer. Hatiin sa dalawang padala.",
@@ -1429,13 +1501,35 @@ const fil = {
   quotaAtLimit: "Naabot mo na ang libreng limitasyon sa pag-print.",
   quotaUnverified:
     "Binibilang sa kiosk ang mga dokumentong Hangul, kaya doon kumpirmado ang huling bilang ng pahina.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Mag-print, mag-share, at mag-scan sa browser, nang walang ini-install.",
+  homePrintTitle: "Print",
+  homePrintBody: "Nagsisimula ang pag-print sa screen sa tabi ng Print-cess printer.",
+  homePrintStepScan: "I-scan ang QR code nito",
+  homePrintStepPick: "Pumili ng file",
+  homePrintStepCollect: "Kunin ang papel",
+  homeShareTitle: "Share",
+  homeShareBody: "Ilipat ang mga larawan at file sa ibang phone, tablet, o computer.",
+  homeShareCta: "Pumili ng ipapadala",
+  homeReceiveCta: "Tumanggap gamit ang code",
+  homeScanTitle: "Scan",
+  homeScanBody: "Gawing PDF ang papel sa phone na ito, saka i-save o ipadala.",
+  homeScanCta: "Mag-scan ng dokumento",
+  homeWorkplaceTitle: "Sa trabaho o pampublikong computer",
+  homeWorkplaceBody: "Gumagana sa browser, sa loob ng security policy ng inyong opisina.",
+  homeWorkstationCta: "Computer sa trabaho",
+  homeKioskCta: "Buksan ang kiosk",
+  shareTitle: "Share",
+  dropSourcePhotosHint: "Mga larawan at video",
+  dropSourceFilesHint: "Mga dokumento at iba pang file",
+  orDivider: "o",
 } satisfies Translation;
 
 const vi = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Dịch vụ in và gửi tệp an toàn",
-  homeScanHint: "Bắt đầu bằng cách quét mã QR trên màn hình Print-cess Kiosk.",
+  homeTitle: "Gửi tệp sang thiết bị khác, hoặc in thẳng ra giấy.",
   homeNoAccount: "Không cần tài khoản hay đăng nhập trên máy tính công cộng.",
 
   notFoundTitle: "Không có trang này",
@@ -1532,9 +1626,7 @@ const vi = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Gửi và nhận tệp",
-  dropIntro: "Chuyển ảnh và tệp giữa hai điện thoại. Không cần ứng dụng, không cần tài khoản.",
   dropSendCta: "Gửi tệp",
-  dropReceiveCta: "Nhận tệp",
   dropBack: "Quay lại",
   dropPickFiles: "Chọn tệp muốn gửi",
   dropPickHint: "Tối đa 20 tệp một lần, ảnh và tài liệu đều được.",
@@ -1546,14 +1638,14 @@ const vi = {
   dropSendingHint: "Giữ trang này mở cho đến khi xong.",
   dropPercent: "Đã gửi {{percent}}%",
   dropReady: "Sẵn sàng trao đi",
-  dropReadyHint: "Dùng mã QR để chuyển riêng tư, hoặc chọn một hình bên dưới cho điện thoại ở gần.",
   dropCodeLabel: "Mã nhận",
   pairShortCode: "Cho họ xem hai chữ số này",
   dropPasteLink: "Bạn có đường liên kết? Dán vào đây",
   pairShortCodeHint: "Điện thoại kia nhập các số này và hình bạn đã chọn.",
   pairWaitingReceiver: "Giữ trang này mở cho đến khi tải lên xong.",
   pairPickShape: "Chọn một hình cho điện thoại kia",
-  pairPickShapeHint: "Họ phải nhập các số này và chọn đúng hình giống bạn.",
+  pairPickShapeHint:
+    "Điện thoại kia nhập hai số và chọn cùng hình. Với cách này, dịch vụ giữ khóa trong ba phút.",
   pairWrongShape:
     "Hình này khác với hình trên màn hình của họ. Hãy xem lại, hoặc bắt đầu lại với số mới.",
   pairHandedOver: "Đã sẵn sàng. Bạn có thể rời trang; điện thoại kia có ba phút.",
@@ -1588,7 +1680,7 @@ const vi = {
   dropMemoryNotice:
     "Trình duyệt này giữ cả tệp trong bộ nhớ khi lưu. Với tệp rất lớn, Chrome hoặc Safari mới sẽ ổn định hơn.",
   dropPrivacyNote:
-    "Tệp được khoá trên điện thoại này và bị xoá khi hết hạn. Dùng mã QR hoặc đường liên kết thì khoá chỉ nằm giữa hai điện thoại; dùng hai chữ số thì khoá được dịch vụ giữ hộ đến khi máy kia lấy đi.",
+    "Tệp được khóa trên điện thoại này trước khi gửi và bị xóa khi lượt chuyển hết hạn.",
   dropNoFiles: "Hãy chọn ít nhất một tệp.",
   dropTooManyFiles: "Mỗi lần gửi tối đa 20 tệp. Gửi phần còn lại sau nhé.",
   dropTooLarge: "Lớn hơn mức một lượt gửi cho phép. Hãy chia thành hai lượt.",
@@ -1693,13 +1785,35 @@ const vi = {
   quotaHardJoke: "Gói đăng ký cũng không cứu được lần này.",
   quotaAtLimit: "Bạn đã đạt hạn mức in miễn phí.",
   quotaUnverified: "Tài liệu Hangul được đếm tại ki-ốt, nên số trang cuối cùng được xác nhận ở đó.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "In, chia sẻ và quét ngay trên trình duyệt, không cần cài đặt gì.",
+  homePrintTitle: "In",
+  homePrintBody: "Việc in bắt đầu ở màn hình cạnh máy in Print-cess.",
+  homePrintStepScan: "Quét mã QR trên đó",
+  homePrintStepPick: "Chọn tệp",
+  homePrintStepCollect: "Lấy giấy in",
+  homeShareTitle: "Chia sẻ",
+  homeShareBody: "Chuyển ảnh và tệp sang điện thoại, máy tính bảng hoặc máy tính khác.",
+  homeShareCta: "Chọn tệp để gửi",
+  homeReceiveCta: "Nhận tệp bằng mã",
+  homeScanTitle: "Quét",
+  homeScanBody: "Biến giấy thành PDF ngay trên điện thoại này, rồi lưu hoặc gửi đi.",
+  homeScanCta: "Quét tài liệu",
+  homeWorkplaceTitle: "Ở cơ quan hoặc máy tính công cộng",
+  homeWorkplaceBody: "Chạy trong trình duyệt, theo chính sách bảo mật của cơ quan bạn.",
+  homeWorkstationCta: "Máy tính cơ quan",
+  homeKioskCta: "Mở kiosk",
+  shareTitle: "Chia sẻ",
+  dropSourcePhotosHint: "Ảnh và video",
+  dropSourceFilesHint: "Tài liệu và tệp khác",
+  orDivider: "hoặc",
 } satisfies Translation;
 
 const th = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "บริการพิมพ์และส่งไฟล์อย่างปลอดภัย",
-  homeScanHint: "เริ่มต้นด้วยการสแกนคิวอาร์โค้ดบนหน้าจอ Print-cess Kiosk",
+  homeTitle: "ส่งไฟล์ไปอีกเครื่อง หรือพิมพ์ออกมาเป็นกระดาษเลย",
   homeNoAccount: "ไม่ต้องมีบัญชีหรือเข้าสู่ระบบบนคอมพิวเตอร์สาธารณะ",
 
   notFoundTitle: "ไม่พบหน้านี้",
@@ -1793,9 +1907,7 @@ const th = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "ส่งและรับไฟล์",
-  dropIntro: "ย้ายรูปและไฟล์ระหว่างสองเครื่อง ไม่ต้องลงแอป ไม่ต้องล็อกอิน",
   dropSendCta: "ส่งไฟล์",
-  dropReceiveCta: "รับไฟล์",
   dropBack: "ย้อนกลับ",
   dropPickFiles: "เลือกไฟล์ที่จะส่ง",
   dropPickHint: "ครั้งละไม่เกิน 20 ไฟล์ รูปกับเอกสารรวมกันได้",
@@ -1807,15 +1919,14 @@ const th = {
   dropSendingHint: "เปิดหน้านี้ไว้จนกว่าจะเสร็จ",
   dropPercent: "ส่งแล้ว {{percent}}%",
   dropReady: "พร้อมส่งต่อแล้ว",
-  dropReadyHint:
-    "ใช้คิวอาร์เพื่อส่งแบบเป็นส่วนตัว หรือเลือกรูปด้านล่างสำหรับโทรศัพท์ที่อยู่ใกล้กัน",
   dropCodeLabel: "รหัสรับไฟล์",
   pairShortCode: "ให้อีกฝ่ายดูตัวเลขสองหลักนี้",
   dropPasteLink: "ได้ลิงก์มาใช่ไหม วางไว้ตรงนี้",
   pairShortCodeHint: "อีกเครื่องต้องใส่ตัวเลขนี้และเลือกรูปที่คุณเลือก",
   pairWaitingReceiver: "เปิดหน้านี้ไว้จนกว่าจะอัปโหลดเสร็จ",
   pairPickShape: "เลือกรูปสำหรับโทรศัพท์อีกเครื่อง",
-  pairPickShapeHint: "อีกฝ่ายต้องใส่ตัวเลขนี้และเลือกรูปเดียวกัน",
+  pairPickShapeHint:
+    "อีกเครื่องพิมพ์ตัวเลขสองตัวแล้วเลือกรูปเดียวกัน วิธีนี้บริการจะเก็บกุญแจไว้สามนาที",
   pairWrongShape: "ไม่ตรงกับรูปบนหน้าจอของอีกฝ่าย ลองดูอีกครั้ง หรือเริ่มใหม่ด้วยตัวเลขชุดใหม่",
   pairHandedOver: "พร้อมแล้ว คุณออกจากหน้านี้ได้ อีกเครื่องมีเวลาสามนาที",
   pairEnterShortCode: "พิมพ์ตัวเลขสองหลัก",
@@ -1848,8 +1959,7 @@ const th = {
   dropReceiveAnother: "รับไฟล์อื่น",
   dropMemoryNotice:
     "เบราว์เซอร์นี้เก็บทั้งไฟล์ไว้ในหน่วยความจำตอนบันทึก ถ้าไฟล์ใหญ่มาก ใช้ Chrome หรือ Safari รุ่นใหม่จะนิ่งกว่า",
-  dropPrivacyNote:
-    "ไฟล์ถูกล็อกไว้บนเครื่องนี้และจะถูกลบเมื่อหมดเวลา ถ้าใช้คิวอาร์โค้ดหรือลิงก์ กุญแจจะอยู่ระหว่างสองเครื่องเท่านั้น ถ้าใช้ตัวเลขสองหลัก บริการจะเก็บกุญแจไว้จนกว่าอีกเครื่องจะรับไป",
+  dropPrivacyNote: "ไฟล์จะถูกล็อกบนโทรศัพท์เครื่องนี้ก่อนส่ง และถูกลบเมื่อการส่งหมดเวลา",
   dropNoFiles: "เลือกไฟล์อย่างน้อยหนึ่งไฟล์ก่อน",
   dropTooManyFiles: "ส่งได้ครั้งละไม่เกิน 20 ไฟล์ ที่เหลือส่งรอบถัดไปได้",
   dropTooLarge: "ใหญ่เกินที่ส่งได้ในครั้งเดียว แบ่งส่งเป็นสองรอบ",
@@ -1954,13 +2064,35 @@ const th = {
   quotaHardJoke: "ครั้งนี้สมัครสมาชิกก็ช่วยไม่ได้",
   quotaAtLimit: "คุณใช้โควตาพิมพ์ฟรีครบแล้ว",
   quotaUnverified: "เอกสารฮันกึลจะนับจำนวนหน้าที่เครื่องคีออสก์ จำนวนหน้าสุดท้ายจึงยืนยันที่นั่น",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "พิมพ์ แชร์ และสแกนได้ในเบราว์เซอร์ โดยไม่ต้องติดตั้งอะไร",
+  homePrintTitle: "พิมพ์",
+  homePrintBody: "การพิมพ์เริ่มที่หน้าจอข้างเครื่องพิมพ์ Print-cess",
+  homePrintStepScan: "สแกน QR บนจอ",
+  homePrintStepPick: "เลือกไฟล์",
+  homePrintStepCollect: "รับกระดาษ",
+  homeShareTitle: "แชร์",
+  homeShareBody: "ย้ายรูปภาพและไฟล์ไปยังโทรศัพท์ แท็บเล็ต หรือคอมพิวเตอร์อีกเครื่อง",
+  homeShareCta: "เลือกไฟล์ที่จะส่ง",
+  homeReceiveCta: "รับไฟล์ด้วยรหัส",
+  homeScanTitle: "สแกน",
+  homeScanBody: "เปลี่ยนเอกสารกระดาษเป็น PDF บนโทรศัพท์เครื่องนี้ แล้วบันทึกหรือส่งต่อ",
+  homeScanCta: "สแกนเอกสาร",
+  homeWorkplaceTitle: "ที่ทำงานหรือคอมพิวเตอร์สาธารณะ",
+  homeWorkplaceBody: "ทำงานในเบราว์เซอร์ ภายใต้นโยบายความปลอดภัยขององค์กร",
+  homeWorkstationCta: "คอมพิวเตอร์ที่ทำงาน",
+  homeKioskCta: "เปิดคีออสก์",
+  shareTitle: "แชร์",
+  dropSourcePhotosHint: "รูปภาพและวิดีโอ",
+  dropSourceFilesHint: "เอกสารและไฟล์อื่น",
+  orDivider: "หรือ",
 } satisfies Translation;
 
 const ne = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "सुरक्षित प्रिन्ट र फाइल आदानप्रदान सेवा",
-  homeScanHint: "Print-cess Kiosk को स्क्रिनमा देखिने QR कोड स्क्यान गरेर सुरु गर्नुहोस्।",
+  homeTitle: "फाइल अर्को उपकरणमा पठाउनुहोस्, वा सिधै कागजमा।",
   homeNoAccount: "खाता वा सार्वजनिक कम्प्युटरमा लगइन गर्नु पर्दैन।",
 
   notFoundTitle: "यो पृष्ठ यहाँ छैन",
@@ -2059,9 +2191,7 @@ const ne = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "फाइल पठाउने र लिने",
-  dropIntro: "दुई मोबाइलबीच फोटो र फाइल सारौं। एप पनि चाहिँदैन, खाता पनि चाहिँदैन।",
   dropSendCta: "फाइल पठाउनुहोस्",
-  dropReceiveCta: "फाइल लिनुहोस्",
   dropBack: "पछाडि",
   dropPickFiles: "पठाउने फाइल छान्नुहोस्",
   dropPickHint: "एकैपटक 20 वटासम्म, फोटो र कागजात सँगै।",
@@ -2073,14 +2203,14 @@ const ne = {
   dropSendingHint: "सकिने बेलासम्म यो पृष्ठ खुला राख्नुहोस्।",
   dropPercent: "{{percent}}% पठाइयो",
   dropReady: "दिन तयार भयो",
-  dropReadyHint: "निजी रूपमा पठाउन QR प्रयोग गर्नुहोस्, वा नजिकको फोनका लागि तलको आकार छान्नुहोस्।",
   dropCodeLabel: "लिने कोड",
   pairShortCode: "यी दुई अंक देखाउनुहोस्",
   dropPasteLink: "लिंक पाउनुभयो? यहाँ टाँस्नुहोस्",
   pairShortCodeHint: "अर्को फोनले यी अंक र तपाईंले छानेको आकार हाल्छ।",
   pairWaitingReceiver: "अपलोड सकिएसम्म यो पृष्ठ खुला राख्नुहोस्।",
   pairPickShape: "अर्को फोनका लागि आकार छान्नुहोस्",
-  pairPickShapeHint: "उनीहरूले यी अंक हालेर उही आकार छान्नुपर्छ।",
+  pairPickShapeHint:
+    "अर्को फोनले दुई अंक टाइप गरेर उही आकार छान्छ। यो तरिकामा सेवाले तीन मिनेटसम्म साँचो राख्छ।",
   pairWrongShape: "यो उनको स्क्रिनको आकार होइन। फेरि हेर्नुहोस्, वा नयाँ अंकबाट सुरु गर्नुहोस्।",
   pairHandedOver: "तयार भयो। तपाईं यो पृष्ठ छोड्न सक्नुहुन्छ; अर्को फोनसँग तीन मिनेट छ।",
   pairEnterShortCode: "दुई अंक टाइप गर्नुहोस्",
@@ -2113,8 +2243,7 @@ const ne = {
   dropReceiveAnother: "अर्को फाइल लिनुहोस्",
   dropMemoryNotice:
     "यो ब्राउजरले सुरक्षित गर्दा पूरै फाइल मेमोरीमा राख्छ। धेरै ठूलो फाइलका लागि नयाँ Chrome वा Safari बढी भरपर्दो हुन्छ।",
-  dropPrivacyNote:
-    "फाइलहरू यही फोनमा लक हुन्छन् र समय सकिएपछि मेटिन्छन्। QR कोड वा लिंकमा साँचो दुई फोनबीच मात्र रहन्छ; दुई अंक प्रयोग गर्दा अर्को फोनले नलिएसम्म सेवाले साँचो राख्छ।",
+  dropPrivacyNote: "फाइलहरू पठाउनुअघि यही फोनमा लक हुन्छन्, र ट्रान्सफरको समय सकिएपछि मेटिन्छन्।",
   dropNoFiles: "पहिले कम्तीमा एउटा फाइल छान्नुहोस्।",
   dropTooManyFiles: "एकपटकमा 20 वटासम्म। बाँकी पछि पठाउन सकिन्छ।",
   dropTooLarge: "एक पटकमा पठाउन मिल्नेभन्दा ठूलो छ। दुई पटक गरी पठाउनुहोस्।",
@@ -2222,13 +2351,35 @@ const ne = {
   quotaAtLimit: "तपाईंले नि:शुल्क प्रिन्ट सीमा पुर्‍याइसक्नुभयो।",
   quotaUnverified:
     "हान्गुल कागजातको पृष्ठ किओस्कमा गनिन्छ, त्यसैले अन्तिम पृष्ठ संख्या त्यहीँ पक्का हुन्छ।",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "केही इन्स्टल नगरी ब्राउजरबाटै प्रिन्ट, सेयर र स्क्यान गर्नुहोस्।",
+  homePrintTitle: "प्रिन्ट",
+  homePrintBody: "प्रिन्ट Print-cess प्रिन्टर छेउको स्क्रिनबाट सुरु हुन्छ।",
+  homePrintStepScan: "त्यसको QR स्क्यान गर्नुहोस्",
+  homePrintStepPick: "फाइल छान्नुहोस्",
+  homePrintStepCollect: "कागज लिनुहोस्",
+  homeShareTitle: "सेयर",
+  homeShareBody: "फोटो र फाइल अर्को फोन, ट्याब्लेट वा कम्प्युटरमा सार्नुहोस्।",
+  homeShareCta: "पठाउने फाइल छान्नुहोस्",
+  homeReceiveCta: "कोडले फाइल लिनुहोस्",
+  homeScanTitle: "स्क्यान",
+  homeScanBody: "यही फोनमा कागजलाई PDF बनाउनुहोस्, अनि सेभ गर्नुहोस् वा पठाउनुहोस्।",
+  homeScanCta: "कागजात स्क्यान गर्नुहोस्",
+  homeWorkplaceTitle: "कार्यालय वा सार्वजनिक कम्प्युटरमा",
+  homeWorkplaceBody: "ब्राउजरमै चल्छ, तपाईंको संस्थाको सुरक्षा नीतिभित्र।",
+  homeWorkstationCta: "कार्य कम्प्युटर",
+  homeKioskCta: "किओस्क खोल्नुहोस्",
+  shareTitle: "सेयर",
+  dropSourcePhotosHint: "फोटो र भिडियो",
+  dropSourceFilesHint: "कागजात र अन्य फाइल",
+  orDivider: "वा",
 } satisfies Translation;
 
 const km = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "សេវាបោះពុម្ព និងផ្ញើឯកសារដោយសុវត្ថិភាព",
-  homeScanHint: "ចាប់ផ្តើមដោយស្កេនកូដ QR នៅលើអេក្រង់ Print-cess Kiosk។",
+  homeTitle: "ផ្ញើឯកសារទៅឧបករណ៍ផ្សេង ឬបោះពុម្ពលើក្រដាសភ្លាមៗ។",
   homeNoAccount: "មិនចាំបាច់មានគណនី ឬចូលគណនីលើកុំព្យូទ័រសាធារណៈទេ។",
 
   notFoundTitle: "រកមិនឃើញទំព័រនេះទេ",
@@ -2325,9 +2476,7 @@ const km = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "ផ្ញើ និងទទួលឯកសារ",
-  dropIntro: "ផ្ទេររូបភាព និងឯកសាររវាងទូរស័ព្ទពីរ។ មិនត្រូវការកម្មវិធី ឬគណនីទេ។",
   dropSendCta: "ផ្ញើឯកសារ",
-  dropReceiveCta: "ទទួលឯកសារ",
   dropBack: "ត្រឡប់ក្រោយ",
   dropPickFiles: "ជ្រើសឯកសារដែលចង់ផ្ញើ",
   dropPickHint: "រហូតដល់ 20 ឯកសារក្នុងមួយលើក រូបភាព និងឯកសារជាមួយគ្នា។",
@@ -2339,14 +2488,14 @@ const km = {
   dropSendingHint: "ទុកទំព័រនេះបើករហូតដល់ចប់។",
   dropPercent: "ផ្ញើបាន {{percent}}%",
   dropReady: "រួចរាល់ដើម្បីប្រគល់",
-  dropReadyHint: "ប្រើ QR សម្រាប់ការផ្ទេរឯកជន ឬជ្រើសរូបខាងក្រោមសម្រាប់ទូរស័ព្ទនៅក្បែរ។",
   dropCodeLabel: "កូដទទួល",
   pairShortCode: "បង្ហាញលេខពីរខ្ទង់នេះ",
   dropPasteLink: "ទទួលបានតំណឬ? បិទភ្ជាប់នៅទីនេះ",
   pairShortCodeHint: "ទូរស័ព្ទម្ខាងទៀតបញ្ចូលលេខនេះ និងរូបដែលអ្នកបានជ្រើស។",
   pairWaitingReceiver: "ទុកទំព័រនេះបើករហូតដល់ការបង្ហោះចប់។",
   pairPickShape: "ជ្រើសរូបសម្រាប់ទូរស័ព្ទម្ខាងទៀត",
-  pairPickShapeHint: "គេត្រូវបញ្ចូលលេខនេះ ហើយជ្រើសរូបដូចគ្នា។",
+  pairPickShapeHint:
+    "ទូរសព្ទម្ខាងទៀតវាយលេខពីរ ហើយជ្រើសរូបដូចគ្នា។ តាមវិធីនេះ សេវាកម្មរក្សាសោទុករយៈពេលបីនាទី។",
   pairWrongShape: "មិនមែនជារូបរាងនៅលើអេក្រង់របស់គេទេ។ សូមមើលម្ដងទៀត ឬចាប់ផ្ដើមឡើងវិញដោយលេខថ្មី។",
   pairHandedOver: "រួចរាល់។ អ្នកអាចចាកចេញពីទំព័រនេះបាន; ទូរស័ព្ទម្ខាងទៀតមានពេលបីនាទី។",
   pairEnterShortCode: "វាយលេខពីរខ្ទង់",
@@ -2379,8 +2528,7 @@ const km = {
   dropReceiveAnother: "ទទួលឯកសារផ្សេង",
   dropMemoryNotice:
     "កម្មវិធីរុករកនេះទុកឯកសារទាំងមូលក្នុងអង្គចងចាំពេលរក្សាទុក។ សម្រាប់ឯកសារធំ Chrome ឬ Safari ថ្មីមានស្ថេរភាពជាង។",
-  dropPrivacyNote:
-    "ឯកសារត្រូវបានចាក់សោនៅលើទូរស័ព្ទនេះ ហើយលុបនៅពេលផុតកំណត់។ បើប្រើកូដ QR ឬតំណ សោនៅតែរវាងទូរស័ព្ទពីរប៉ុណ្ណោះ។ បើប្រើលេខពីរខ្ទង់ សេវាកម្មរក្សាសោរហូតដល់ទូរស័ព្ទម្ខាងទៀតយកវា។",
+  dropPrivacyNote: "ឯកសារត្រូវបានចាក់សោលើទូរសព្ទនេះមុនផ្ញើ ហើយត្រូវលុបពេលការផ្ទេរផុតកំណត់។",
   dropNoFiles: "ជ្រើសយ៉ាងតិចមួយឯកសារជាមុនសិន។",
   dropTooManyFiles: "ផ្ញើបានរហូតដល់ 20 ឯកសារក្នុងមួយលើក។ ផ្ញើផ្នែកនៅសល់នៅលើកក្រោយ។",
   dropTooLarge: "ធំជាងអ្វីដែលមួយលើកអាចផ្ញើបាន។ បែងចែកជាពីរលើក។",
@@ -2486,13 +2634,35 @@ const km = {
   quotaAtLimit: "អ្នកបានឈានដល់កម្រិតបោះពុម្ពឥតគិតថ្លៃហើយ។",
   quotaUnverified:
     "ឯកសារហាន់ហ្គុលត្រូវបានរាប់ទំព័រនៅម៉ាស៊ីនសេវាកម្ម ដូច្នេះចំនួនទំព័រចុងក្រោយត្រូវបញ្ជាក់នៅទីនោះ។",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "បោះពុម្ព ចែករំលែក និងស្កេនក្នុងកម្មវិធីរុករក ដោយមិនចាំបាច់ដំឡើងអ្វីទេ។",
+  homePrintTitle: "បោះពុម្ព",
+  homePrintBody: "ការបោះពុម្ពចាប់ផ្តើមនៅអេក្រង់ក្បែរម៉ាស៊ីនបោះពុម្ព Print-cess។",
+  homePrintStepScan: "ស្កេន QR របស់វា",
+  homePrintStepPick: "ជ្រើសឯកសារ",
+  homePrintStepCollect: "យកក្រដាស",
+  homeShareTitle: "ចែករំលែក",
+  homeShareBody: "ផ្ទេររូបថត និងឯកសារទៅទូរសព្ទ ថេប្លេត ឬកុំព្យូទ័រផ្សេង។",
+  homeShareCta: "ជ្រើសឯកសារត្រូវផ្ញើ",
+  homeReceiveCta: "ទទួលឯកសារដោយកូដ",
+  homeScanTitle: "ស្កេន",
+  homeScanBody: "បម្លែងក្រដាសទៅជា PDF លើទូរសព្ទនេះ រួចរក្សាទុក ឬផ្ញើបន្ត។",
+  homeScanCta: "ស្កេនឯកសារ",
+  homeWorkplaceTitle: "នៅកន្លែងធ្វើការ ឬកុំព្យូទ័រសាធារណៈ",
+  homeWorkplaceBody: "ដំណើរការក្នុងកម្មវិធីរុករក ក្រោមគោលការណ៍សុវត្ថិភាពរបស់ស្ថាប័ន។",
+  homeWorkstationCta: "កុំព្យូទ័រការងារ",
+  homeKioskCta: "បើកគីអូស",
+  shareTitle: "ចែករំលែក",
+  dropSourcePhotosHint: "រូបថត និងវីដេអូ",
+  dropSourceFilesHint: "ឯកសារ និងឯកសារផ្សេងៗ",
+  orDivider: "ឬ",
 } satisfies Translation;
 
 const ar = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "خدمة طباعة ونقل آمنة",
-  homeScanHint: "ابدأ بمسح رمز QR الظاهر على شاشة كشك Print-cess.",
+  homeTitle: "أرسل ملفًا إلى جهاز آخر، أو اطبعه على الورق مباشرة.",
   homeNoAccount: "لا حاجة إلى حساب أو تسجيل دخول على حاسوب عام.",
 
   notFoundTitle: "هذه الصفحة غير موجودة",
@@ -2590,9 +2760,7 @@ const ar = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "إرسال الملفات واستلامها",
-  dropIntro: "انقل الصور والملفات بين هاتفين. بدون تطبيق وبدون حساب.",
   dropSendCta: "إرسال ملفات",
-  dropReceiveCta: "استلام ملفات",
   dropBack: "رجوع",
   dropPickFiles: "اختر الملفات التي تريد إرسالها",
   dropPickHint: "حتى 20 ملفًا في المرة، صور ومستندات معًا.",
@@ -2604,14 +2772,14 @@ const ar = {
   dropSendingHint: "أبقِ هذه الصفحة مفتوحة حتى ينتهي الإرسال.",
   dropPercent: "تم إرسال {{percent}}%",
   dropReady: "جاهز للتسليم",
-  dropReadyHint: "استخدم رمز QR للتسليم الخاص، أو اختر شكلاً أدناه لهاتف قريب.",
   dropCodeLabel: "رمز الاستلام",
   pairShortCode: "أَرِ الطرف الآخر هذين الرقمين",
   dropPasteLink: "معك رابط بدلًا من ذلك؟ الصقه هنا",
   pairShortCodeHint: "يُدخل الهاتف الآخر هذين الرقمين والشكل الذي اخترته.",
   pairWaitingReceiver: "أبقِ هذه الصفحة مفتوحة حتى يكتمل الرفع.",
   pairPickShape: "اختر شكلاً للهاتف الآخر",
-  pairPickShapeHint: "يجب أن يُدخل الطرف الآخر الرقمين ويختار الشكل نفسه.",
+  pairPickShapeHint:
+    "يكتب الهاتف الآخر الرقمين ويختار الشكل نفسه. بهذه الطريقة تحتفظ الخدمة بالمفتاح ثلاث دقائق.",
   pairWrongShape: "هذا ليس الشكل الظاهر على شاشتهم. انظر مرة أخرى، أو ابدأ من جديد برقمين جديدين.",
   pairHandedOver: "جاهز. يمكنك مغادرة الصفحة؛ لدى الهاتف الآخر ثلاث دقائق.",
   pairEnterShortCode: "أدخل الرقمين",
@@ -2644,8 +2812,7 @@ const ar = {
   dropReceiveAnother: "استلم ملفات أخرى",
   dropMemoryNotice:
     "يحتفظ هذا المتصفح بالملف كاملًا في الذاكرة أثناء الحفظ. للملفات الكبيرة جدًا، Chrome أو Safari الحديث أفضل.",
-  dropPrivacyNote:
-    "تُقفل الملفات على هذا الهاتف وتُمحى عند انتهاء المدة. مع رمز QR أو الرابط يبقى المفتاح بين الهاتفين فقط، ومع الرقمين يبقى لدى الخدمة إلى أن يستلمه الهاتف الآخر.",
+  dropPrivacyNote: "تُقفَل الملفات على هذا الهاتف قبل إرسالها، وتُمحى عند انتهاء مدة النقل.",
   dropNoFiles: "اختر ملفًا واحدًا على الأقل أولًا.",
   dropTooManyFiles: "أرسل حتى 20 ملفًا في المرة. أرسل الباقي بعد ذلك.",
   dropTooLarge: "هذا أكبر مما تحمله عملية إرسال واحدة. قسّمه إلى إرسالين.",
@@ -2750,13 +2917,35 @@ const ar = {
   quotaHardJoke: "لا يوجد اشتراك يحل هذه المرة.",
   quotaAtLimit: "لقد بلغت حد الطباعة المجانية.",
   quotaUnverified: "تُحتسب صفحات مستندات هانغول عند الجهاز، لذا يتأكد العدد النهائي هناك.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "اطبع وشارك وامسح ضوئيًا من المتصفح، دون تثبيت أي شيء.",
+  homePrintTitle: "طباعة",
+  homePrintBody: "تبدأ الطباعة من الشاشة المجاورة لطابعة Print-cess.",
+  homePrintStepScan: "امسح رمز QR الظاهر عليها",
+  homePrintStepPick: "اختر ملفك",
+  homePrintStepCollect: "خذ أوراقك",
+  homeShareTitle: "مشاركة",
+  homeShareBody: "انقل الصور والملفات إلى هاتف أو جهاز لوحي أو حاسوب آخر.",
+  homeShareCta: "اختر الملفات لإرسالها",
+  homeReceiveCta: "استلم الملفات برمز",
+  homeScanTitle: "مسح ضوئي",
+  homeScanBody: "حوّل الورق إلى PDF على هذا الهاتف، ثم احفظه أو أرسله.",
+  homeScanCta: "امسح مستندًا",
+  homeWorkplaceTitle: "في العمل أو على حاسوب عام",
+  homeWorkplaceBody: "يعمل داخل المتصفح، ضمن سياسة الأمان في جهة عملك.",
+  homeWorkstationCta: "كمبيوتر العمل",
+  homeKioskCta: "فتح الكشك",
+  shareTitle: "مشاركة",
+  dropSourcePhotosHint: "الصور والفيديو",
+  dropSourceFilesHint: "المستندات والملفات الأخرى",
+  orDivider: "أو",
 } satisfies Translation;
 
 const ru = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Безопасная печать и передача файлов",
-  homeScanHint: "Начните со сканирования QR-кода на экране киоска Print-cess.",
+  homeTitle: "Отправьте файл на другое устройство или сразу на бумагу.",
   homeNoAccount: "Не нужны ни аккаунт, ни вход на общем компьютере.",
 
   notFoundTitle: "Такой страницы нет",
@@ -2857,9 +3046,7 @@ const ru = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Отправить и получить файлы",
-  dropIntro: "Передавайте фото и файлы между двумя телефонами. Без приложения и без аккаунта.",
   dropSendCta: "Отправить файлы",
-  dropReceiveCta: "Получить файлы",
   dropBack: "Назад",
   dropPickFiles: "Выберите файлы для отправки",
   dropPickHint: "До 20 файлов за раз, фото и документы вместе.",
@@ -2871,15 +3058,14 @@ const ru = {
   dropSendingHint: "Держите страницу открытой до конца отправки.",
   dropPercent: "Отправлено {{percent}}%",
   dropReady: "Готово к передаче",
-  dropReadyHint:
-    "Для приватной передачи используйте QR, а для телефона рядом выберите фигуру ниже.",
   dropCodeLabel: "Код получения",
   pairShortCode: "Покажите эти две цифры",
   dropPasteLink: "Прислали ссылку? Вставьте её сюда",
   pairShortCodeHint: "Другой телефон введёт эти цифры и выбранную вами фигуру.",
   pairWaitingReceiver: "Не закрывайте страницу, пока загрузка не завершится.",
   pairPickShape: "Выберите фигуру для другого телефона",
-  pairPickShapeHint: "Там нужно ввести эти цифры и выбрать такую же фигуру.",
+  pairPickShapeHint:
+    "На другом телефоне вводят две цифры и выбирают ту же фигуру. В этом случае сервис хранит ключ три минуты.",
   pairWrongShape:
     "Это не та фигура, что на их экране. Посмотрите ещё раз или начните заново с новыми цифрами.",
   pairHandedOver: "Готово. Страницу можно закрыть; у другого телефона есть три минуты.",
@@ -2914,7 +3100,7 @@ const ru = {
   dropMemoryNotice:
     "Этот браузер держит файл целиком в памяти при сохранении. Для очень больших файлов надёжнее свежий Chrome или Safari.",
   dropPrivacyNote:
-    "Файлы запираются на этом телефоне и стираются по истечении срока. С QR-кодом или ссылкой ключ остаётся только между двумя телефонами; с двумя цифрами его хранит сервис, пока другой телефон его не заберёт.",
+    "Файлы запираются на этом телефоне перед отправкой и стираются, когда срок передачи истекает.",
   dropNoFiles: "Сначала выберите хотя бы один файл.",
   dropTooManyFiles: "За раз можно отправить до 20 файлов. Остальные отправьте следующей передачей.",
   dropTooLarge: "Это больше, чем помещается в одну передачу. Разделите на две.",
@@ -3022,13 +3208,35 @@ const ru = {
   quotaAtLimit: "Вы достигли бесплатного лимита печати.",
   quotaUnverified:
     "Страницы документов Hangul считаются на киоске, поэтому итоговое число подтверждается там.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Печать, обмен и сканирование прямо в браузере, ничего не нужно устанавливать.",
+  homePrintTitle: "Печать",
+  homePrintBody: "Печать начинается на экране рядом с принтером Print-cess.",
+  homePrintStepScan: "Отсканируйте его QR-код",
+  homePrintStepPick: "Выберите файл",
+  homePrintStepCollect: "Заберите бумагу",
+  homeShareTitle: "Обмен",
+  homeShareBody: "Перенесите фото и файлы на другой телефон, планшет или компьютер.",
+  homeShareCta: "Выбрать файлы для отправки",
+  homeReceiveCta: "Получить файлы по коду",
+  homeScanTitle: "Скан",
+  homeScanBody: "Превратите бумагу в PDF на этом телефоне, затем сохраните или отправьте.",
+  homeScanCta: "Сканировать документ",
+  homeWorkplaceTitle: "На работе или на общем компьютере",
+  homeWorkplaceBody: "Работает в браузере и в рамках политики безопасности вашей организации.",
+  homeWorkstationCta: "Рабочий компьютер",
+  homeKioskCta: "Открыть киоск",
+  shareTitle: "Обмен",
+  dropSourcePhotosHint: "Фото и видео",
+  dropSourceFilesHint: "Документы и другие файлы",
+  orDivider: "или",
 } satisfies Translation;
 
 const mn = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Аюулгүй хэвлэх, файл дамжуулах үйлчилгээ",
-  homeScanHint: "Print-cess Kiosk дэлгэц дэх QR кодыг уншуулж эхлүүлнэ үү.",
+  homeTitle: "Файлаа өөр төхөөрөмж рүү, эсвэл шууд цаасан дээр.",
   homeNoAccount: "Бүртгэл ч, нийтийн компьютерт нэвтрэх ч шаардлагагүй.",
 
   notFoundTitle: "Энэ хуудас алга",
@@ -3132,9 +3340,7 @@ const mn = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Файл илгээх, хүлээн авах",
-  dropIntro: "Хоёр утасны хооронд зураг, файл дамжуулаарай. Апп ч, бүртгэл ч хэрэггүй.",
   dropSendCta: "Файл илгээх",
-  dropReceiveCta: "Файл авах",
   dropBack: "Буцах",
   dropPickFiles: "Илгээх файлаа сонгоно уу",
   dropPickHint: "Нэг удаад 20 хүртэл файл, зураг болон бичиг баримт хамт.",
@@ -3146,14 +3352,14 @@ const mn = {
   dropSendingHint: "Дуустал энэ хуудсыг нээлттэй байлга.",
   dropPercent: "{{percent}}% илгээгдлээ",
   dropReady: "Дамжуулахад бэлэн",
-  dropReadyHint: "Нууц дамжуулалтад QR ашиглах эсвэл ойр байгаа утсанд доорх дүрсээс сонгоно уу.",
   dropCodeLabel: "Хүлээн авах код",
   pairShortCode: "Энэ хоёр оронтой тоог үзүүлээрэй",
   dropPasteLink: "Холбоос ирсэн үү? Энд буулгана уу",
   pairShortCodeHint: "Нөгөө утас энэ тоо болон таны сонгосон дүрсийг оруулна.",
   pairWaitingReceiver: "Байршуулалт дуустал энэ хуудсыг нээлттэй байлгана уу.",
   pairPickShape: "Нөгөө утсанд зориулж дүрс сонгоно уу",
-  pairPickShapeHint: "Тэд энэ тоог оруулаад ижил дүрсийг сонгох ёстой.",
+  pairPickShapeHint:
+    "Нөгөө утас хоёр тоог бичээд ижил дүрсийг сонгоно. Энэ аргаар үйлчилгээ түлхүүрийг гурван минут хадгална.",
   pairWrongShape:
     "Энэ бол тэдний дэлгэц дээрх дүрс биш байна. Дахин шалгах эсвэл шинэ тоогоор эхлүүлээрэй.",
   pairHandedOver: "Бэлэн боллоо. Та хуудсыг хааж болно; нөгөө утсанд гурван минут байна.",
@@ -3188,7 +3394,7 @@ const mn = {
   dropMemoryNotice:
     "Энэ хөтөч хадгалах үедээ файлыг бүтнээр нь санах ойд барьдаг. Маш том файлыг шинэ Chrome эсвэл Safari дээр авбал тогтвортой.",
   dropPrivacyNote:
-    "Файлууд энэ утсан дээр түгжигдэж, хугацаа дуусахад устана. QR код эсвэл холбоосоор бол түлхүүр зөвхөн хоёр утасны хооронд байна; хоёр оронтой тоогоор бол нөгөө утас авах хүртэл үйлчилгээ түр хадгална.",
+    "Файлууд илгээгдэхээсээ өмнө энэ утсан дээр түгжигдэж, шилжүүлгийн хугацаа дуусахад устна.",
   dropNoFiles: "Эхлээд дор хаяж нэг файл сонгоно уу.",
   dropTooManyFiles: "Нэг удаад 20 хүртэл файл. Үлдсэнийг нь дараа илгээ.",
   dropTooLarge: "Нэг удаагийн дамжуулалтад багтахгүй хэмжээтэй байна. Хоёр хуваан илгээ.",
@@ -3295,13 +3501,35 @@ const mn = {
   quotaHardJoke: "Үүнийг захиалга ч зассангүй.",
   quotaAtLimit: "Та үнэгүй хэвлэх хязгаартаа хүрлээ.",
   quotaUnverified: "Хангул баримтын хуудсыг киоск дээр тоолдог тул эцсийн тоо тэнд баталгаажна.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Юу ч суулгалгүйгээр хөтөч дээрээ хэвлэж, хуваалцаж, скан хийнэ.",
+  homePrintTitle: "Хэвлэх",
+  homePrintBody: "Хэвлэх нь Print-cess принтерийн хажуугийн дэлгэцээс эхэлнэ.",
+  homePrintStepScan: "Түүний QR-г уншуулах",
+  homePrintStepPick: "Файл сонгох",
+  homePrintStepCollect: "Цаасаа авах",
+  homeShareTitle: "Хуваалцах",
+  homeShareBody: "Зураг, файлаа өөр утас, таблет, компьютер руу шилжүүлээрэй.",
+  homeShareCta: "Илгээх файл сонгох",
+  homeReceiveCta: "Кодоор файл хүлээн авах",
+  homeScanTitle: "Скан",
+  homeScanBody: "Цаасан баримтыг энэ утсан дээр PDF болгоод хадгалах эсвэл илгээх.",
+  homeScanCta: "Баримт скан хийх",
+  homeWorkplaceTitle: "Ажил дээр эсвэл нийтийн компьютерт",
+  homeWorkplaceBody: "Хөтөч дотор, байгууллагынхаа аюулгүй байдлын бодлогын хүрээнд ажиллана.",
+  homeWorkstationCta: "Ажлын компьютер",
+  homeKioskCta: "Киоск нээх",
+  shareTitle: "Хуваалцах",
+  dropSourcePhotosHint: "Зураг ба видео",
+  dropSourceFilesHint: "Баримт ба бусад файл",
+  orDivider: "эсвэл",
 } satisfies Translation;
 
 const uk = {
   brand: "Print-cess by Club Paradiso",
 
-  homeTitle: "Безпечний друк і передавання файлів",
-  homeScanHint: "Почніть зі сканування QR-коду на екрані кіоска Print-cess.",
+  homeTitle: "Надішліть файл на інший пристрій або одразу на папір.",
   homeNoAccount: "Не потрібні ні акаунт, ні вхід на спільному комп'ютері.",
 
   notFoundTitle: "Такої сторінки немає",
@@ -3402,9 +3630,7 @@ const uk = {
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
   dropTitle: "Надіслати й отримати файли",
-  dropIntro: "Передавайте фото та файли між двома телефонами. Без застосунку й без акаунта.",
   dropSendCta: "Надіслати файли",
-  dropReceiveCta: "Отримати файли",
   dropBack: "Назад",
   dropPickFiles: "Виберіть файли для надсилання",
   dropPickHint: "До 20 файлів за раз, фото й документи разом.",
@@ -3416,15 +3642,14 @@ const uk = {
   dropSendingHint: "Тримайте цю сторінку відкритою до кінця.",
   dropPercent: "Надіслано {{percent}}%",
   dropReady: "Готово до передавання",
-  dropReadyHint:
-    "Для приватної передачі скористайтеся QR, а для телефона поруч виберіть фігуру нижче.",
   dropCodeLabel: "Код отримання",
   pairShortCode: "Покажіть ці дві цифри",
   dropPasteLink: "Надіслали посилання? Вставте його сюди",
   pairShortCodeHint: "Інший телефон введе ці цифри та вибрану вами фігуру.",
   pairWaitingReceiver: "Не закривайте сторінку, доки завантаження не завершиться.",
   pairPickShape: "Виберіть фігуру для іншого телефона",
-  pairPickShapeHint: "Там потрібно ввести ці цифри й вибрати таку саму фігуру.",
+  pairPickShapeHint:
+    "На іншому телефоні вводять дві цифри й вибирають ту саму фігуру. У цьому разі сервіс зберігає ключ три хвилини.",
   pairWrongShape:
     "Це не та фігура, що на їхньому екрані. Подивіться ще раз або почніть заново з новими цифрами.",
   pairHandedOver: "Готово. Сторінку можна закрити; інший телефон має три хвилини.",
@@ -3459,7 +3684,7 @@ const uk = {
   dropMemoryNotice:
     "Цей браузер тримає файл цілком у пам’яті під час збереження. Для дуже великих файлів надійніший свіжий Chrome або Safari.",
   dropPrivacyNote:
-    "Файли замикаються на цьому телефоні й стираються після закінчення терміну. З QR-кодом або посиланням ключ лишається лише між двома телефонами; з двома цифрами його зберігає сервіс, доки інший телефон його не забере.",
+    "Файли замикаються на цьому телефоні перед надсиланням і стираються, коли строк передачі спливає.",
   dropNoFiles: "Спершу виберіть хоча б один файл.",
   dropTooManyFiles: "За раз можна надіслати до 20 файлів. Решту надішліть наступним передаванням.",
   dropTooLarge: "Це більше, ніж уміщає одне передавання. Розділіть на два.",
@@ -3566,6 +3791,29 @@ const uk = {
   quotaAtLimit: "Ви досягли безкоштовного ліміту друку.",
   quotaUnverified:
     "Сторінки документів Hangul рахуються на кіоску, тому остаточне число підтверджується там.",
+
+  // V2 product structure: Print, Share, Scan.
+  homeLead: "Друк, обмін і сканування просто в браузері, нічого не треба встановлювати.",
+  homePrintTitle: "Друк",
+  homePrintBody: "Друк починається на екрані поруч із принтером Print-cess.",
+  homePrintStepScan: "Відскануйте його QR-код",
+  homePrintStepPick: "Виберіть файл",
+  homePrintStepCollect: "Заберіть папір",
+  homeShareTitle: "Обмін",
+  homeShareBody: "Перенесіть фото й файли на інший телефон, планшет чи комп’ютер.",
+  homeShareCta: "Вибрати файли для надсилання",
+  homeReceiveCta: "Отримати файли за кодом",
+  homeScanTitle: "Скан",
+  homeScanBody: "Перетворіть папір на PDF на цьому телефоні, а потім збережіть або надішліть.",
+  homeScanCta: "Сканувати документ",
+  homeWorkplaceTitle: "На роботі або на спільному комп’ютері",
+  homeWorkplaceBody: "Працює в браузері в межах політики безпеки вашої організації.",
+  homeWorkstationCta: "Робочий комп’ютер",
+  homeKioskCta: "Відкрити кіоск",
+  shareTitle: "Обмін",
+  dropSourcePhotosHint: "Фото й відео",
+  dropSourceFilesHint: "Документи та інші файли",
+  orDivider: "або",
 } satisfies Translation;
 
 export const TRANSLATIONS: Record<SupportedLocale, Translation> = {

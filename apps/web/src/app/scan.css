@@ -1,5 +1,7 @@
-.scan-topbar {
-  margin-bottom: 28px;
+/* The scanner sits under the shared header's "Scan" label, like Share. */
+.app-section + .scan-composer,
+.app-section + .scan-result {
+  margin-top: 18px;
 }
 
 .scan-composer,
@@ -213,6 +215,52 @@
 .scan-result-actions {
   display: grid;
   gap: 10px;
+}
+/* Sending on is the expected next step. Keeping the PDF, handing it to another
+   app, and printing from this device are quieter alternatives: one list of
+   rows, like a share sheet, rather than a stack of competing buttons. */
+.scan-more-actions {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+}
+.scan-more-actions button {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 56px;
+  padding: 12px 18px;
+  border: 0;
+  background: transparent;
+  color: var(--pc-text-primary);
+  font-size: 17px;
+  font-weight: 680;
+  text-align: start;
+  cursor: pointer;
+}
+.scan-more-actions button + button {
+  border-block-start: 1px solid var(--pc-border);
+}
+.scan-more-actions button:hover {
+  background: var(--pc-surface-brand-subtle);
+}
+.scan-more-actions button:focus-visible {
+  outline-offset: -3px;
+}
+.scan-more-actions svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--pc-text-brand);
+}
+.scan-primary-actions--more {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+.scan-primary-actions--more .pc-button {
+  min-height: 56px;
+  font-size: 16px;
 }
 
 .scan-primary-actions .pc-button,
@@ -488,4 +536,8 @@
   .scan-print-frame {
     display: none;
   }
+}
+.scan-primary-actions--more .pc-button {
+  gap: 8px;
+  padding-inline: 12px;
 }

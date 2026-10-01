@@ -57,7 +57,7 @@ const en: ProScanCopy = {
 const ko: ProScanCopy = {
   liveCamera: "스마트 카메라",
   cameraStarting: "카메라를 준비하는 중…",
-  cameraDenied: "카메라에 접근할 수 없습니다.",
+  cameraDenied: "카메라를 쓸 수 없어요.",
   cameraFallback: "기기 카메라로 촬영",
   closeCamera: "카메라 닫기",
   manualCapture: "지금 촬영",
@@ -72,13 +72,13 @@ const ko: ProScanCopy = {
   ready: "촬영 준비 완료",
   quality: "촬영 품질",
   searchablePdf: "검색 가능한 PDF (OCR)",
-  searchableHelp: "이 기기에서 글자를 인식해 PDF에 보이지 않는 검색용 텍스트를 넣습니다.",
+  searchableHelp: "이 기기에서 글자를 읽어, PDF 안의 글자를 검색할 수 있게 해요.",
   ocrPreparing: "기기 내 OCR을 준비하는 중…",
   ocrRecognizing: "글자를 인식하는 중…",
-  ocrFailed: "글자 인식에 실패했습니다. 스캔 이미지는 이 기기에 그대로 안전하게 남아 있습니다.",
-  ocrNetwork: "OCR 엔진과 언어 모델은 처음 사용할 때 다운로드됩니다.",
+  ocrFailed: "글자를 읽지 못했어요. 스캔한 이미지는 이 기기에 그대로 있어요.",
+  ocrNetwork: "글자 인식 엔진과 언어 데이터는 처음 쓸 때 내려받아요.",
   imageOnlyPdf: "이미지 PDF로 만들기",
-  privacyOcr: "OCR을 위해 문서 이미지를 서버로 업로드하지 않습니다.",
+  privacyOcr: "글자를 읽으려고 문서 이미지를 서버로 보내지 않아요.",
 };
 
 const zhCN: ProScanCopy = {

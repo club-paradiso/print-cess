@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import type { SupportedLocale } from "@print-cess/i18n";
-import { PrimaryButton, SecondaryButton, StatusIcon } from "@print-cess/ui";
+import { PrimaryButton, SecondaryButton } from "@print-cess/ui";
 
 import {
   detectDocument,
@@ -332,9 +332,6 @@ export function ScanComposer({
           <ArrowLeft aria-hidden="true" /> {copy.closeScanner}
         </button>
       ) : null}
-      <StatusIcon>
-        <ScanLine size={32} aria-hidden="true" />
-      </StatusIcon>
       <div className="scan-heading">
         <h1>{copy.title}</h1>
         <p>{copy.intro}</p>
@@ -479,15 +476,40 @@ export function ScanComposer({
         </SecondaryButton>
       ) : null}
 
-      <div className="scan-primary-actions">
-        <PrimaryButton
-          data-testid="scan-smart-camera"
-          onClick={() => setCameraOpen(true)}
-          disabled={busy || pages.length >= MAX_PAGES}
-        >
-          {pages.length === 0 ? <Camera aria-hidden="true" /> : <Plus aria-hidden="true" />}
-          {pro.liveCamera}
+      {/* Once there is a page, making the PDF is the step forward and adding
+          another page is the quieter alternative; before that, the camera is
+          the only way in. One primary action at a time. */}
+      {pages.length > 0 ? (
+        <PrimaryButton className="scan-make-pdf" onClick={() => void makePdf()} disabled={busy}>
+          <ScanLine aria-hidden="true" /> {busy ? copy.making : copy.makePdf}
         </PrimaryButton>
+      ) : null}
+      <div
+        className={
+          pages.length > 0
+            ? "scan-primary-actions scan-primary-actions--more"
+            : "scan-primary-actions"
+        }
+      >
+        {pages.length === 0 ? (
+          <PrimaryButton
+            data-testid="scan-smart-camera"
+            onClick={() => setCameraOpen(true)}
+            disabled={busy}
+          >
+            <Camera aria-hidden="true" />
+            {pro.liveCamera}
+          </PrimaryButton>
+        ) : (
+          <SecondaryButton
+            data-testid="scan-smart-camera"
+            onClick={() => setCameraOpen(true)}
+            disabled={busy || pages.length >= MAX_PAGES}
+          >
+            <Plus aria-hidden="true" />
+            {pro.liveCamera}
+          </SecondaryButton>
+        )}
         <SecondaryButton
           onClick={() => galleryInput.current?.click()}
           disabled={busy || pages.length >= MAX_PAGES}
@@ -495,12 +517,6 @@ export function ScanComposer({
           <Images aria-hidden="true" /> {copy.gallery}
         </SecondaryButton>
       </div>
-      {pages.length > 0 ? (
-        <PrimaryButton className="scan-make-pdf" onClick={() => void makePdf()} disabled={busy}>
-          <ScanLine aria-hidden="true" /> {busy ? copy.making : copy.makePdf}
-        </PrimaryButton>
-      ) : null}
-
       {editingPage ? (
         <DocumentCropEditor
           locale={locale}

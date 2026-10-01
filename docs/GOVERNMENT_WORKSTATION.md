@@ -8,8 +8,10 @@ The public entry point is `/workstation`.
 
 Two directions are supported:
 
-1. Phone to work computer: create a transfer on `/send` from the phone, then enter its transfer code on `/receive` from the managed computer.
-2. Work computer to phone: create a transfer on `/send` from the managed computer, then open it on the phone by QR code or transfer code.
+1. Phone to work computer: create a transfer on `/send` from the phone, then enter the two digits and shape it shows on `/receive` from the managed computer, or paste the transfer link there. Neither needs a camera.
+2. Work computer to phone: create a transfer on `/send` from the managed computer, then open it on the phone by QR code, the two digits and shape, or the transfer link.
+
+On the public home page these entrances sit in a secondary "At work or on a public computer" section, below the consumer Print, Share, and Scan capabilities.
 
 The workstation page performs a small local readiness check before the user starts. The required capabilities are:
 
