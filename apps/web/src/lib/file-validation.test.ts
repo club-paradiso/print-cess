@@ -6,6 +6,7 @@ import {
   decodedDimensionsMatch,
   detectFileKind,
   parsePngDimensions,
+  readSelectedFileBytes,
   validateFileForMobile,
   validatePdf,
 } from "./file-validation";
@@ -64,6 +65,27 @@ describe("file validation", () => {
       fileKind: "hwpx",
       normalized: false,
     });
+  });
+
+  it("recovers when an iCloud-backed file is temporarily unreadable", async () => {
+    const originalFileReader = globalThis.FileReader;
+    vi.stubGlobal("FileReader", undefined);
+
+    try {
+      const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
+      const file = new File([payload], "icloud.pdf", { type: "application/pdf" });
+      const nativeRead = file.arrayBuffer.bind(file);
+      const arrayBuffer = vi
+        .fn<() => Promise<ArrayBuffer>>()
+        .mockRejectedValueOnce(new DOMException("not ready", "NotReadableError"))
+        .mockImplementation(nativeRead);
+      Object.defineProperty(file, "arrayBuffer", { configurable: true, value: arrayBuffer });
+
+      await expect(readSelectedFileBytes(file)).resolves.toEqual(payload);
+      expect(arrayBuffer).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.stubGlobal("FileReader", originalFileReader);
+    }
   });
 
   it("parses PNG dimensions from IHDR", () => {
