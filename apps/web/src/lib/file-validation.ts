@@ -235,7 +235,7 @@ function readWithFileReader(file: Blob): Promise<ArrayBuffer> {
 }
 
 function waitForFileProvider(delayMs: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, delayMs));
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
 }
 
 export async function validatePdf(
