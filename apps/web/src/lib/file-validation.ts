@@ -229,7 +229,11 @@ function readWithFileReader(file: Blob): Promise<ArrayBuffer> {
       () => reject(reader.error ?? new Error("FileReader failed")),
       { once: true },
     );
-    reader.addEventListener("abort", () => reject(new Error("FileReader aborted")), { once: true });
+    reader.addEventListener(
+      "abort",
+      () => reject(new Error("FileReader aborted")),
+      { once: true },
+    );
     reader.readAsArrayBuffer(file);
   });
 }
