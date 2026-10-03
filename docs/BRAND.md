@@ -113,6 +113,15 @@ Assets:
   simplified so it survives 16 px (one central QR module instead of four).
 - `docs/assets/print-cess-mark.svg` — the same tile for documentation and repository surfaces.
 
+### The Beacon
+
+The Beacon is the wayfinding tile: the mark on a white sheet inside a solid Royal Indigo rounded
+square, wrapped in white scan-frame corners (`Beacon` in `packages/ui`). It appears on the home
+page's Print section and in the header of the shared display, so a visitor can match one to the
+other. Keep it flat (no gradient, shadow or motion), keep it clear of the QR code and its quiet
+zone, and never let it carry meaning alone: the words beside it say the same thing and it is
+hidden from assistive technology. See `PRINT_FIRST_ENTRY.md`.
+
 Keep the three geometrically synchronized. There is deliberately no web app manifest or
 home-screen icon: a visit is meant to end with the browser's site data cleared, and an installed
 app would work against that.
@@ -145,7 +154,7 @@ technically establish.
 
 Write for a visitor who has never used a kiosk, may read slowly, and is standing in a queue. One
 idea per sentence, one action per line, everyday words instead of product vocabulary. Say “the big
-screen” rather than “the kiosk”, “locked” rather than “encrypted”, and name the button the visitor
+screen” rather than “the kiosk” (in Korean, 큰 화면 or Print-cess 화면, not 키오스크, except in installer and administrator surfaces), “locked” rather than “encrypted”, and name the button the visitor
 must press using the exact words printed on it.
 
 Preferred:

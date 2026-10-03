@@ -466,6 +466,52 @@ summary:focus-visible,
   vector-effect: non-scaling-stroke;
 }
 
+/* --- Beacon ----------------------------------------------------------------
+   Solid Royal Indigo with a white sheet holding the mark, drawn in the same
+   scan-frame corners as the QR code. No gradient, no shadow, no motion: it is
+   recognised by shape and colour from across a room. The same tile is shown on
+   the phone and on the shared display, so keep both on this one rule. */
+
+.pc-beacon {
+  --pc-beacon-size: 96px;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--pc-beacon-size);
+  height: var(--pc-beacon-size);
+  border-radius: calc(var(--pc-beacon-size) * 0.22);
+  background: var(--pc-brand);
+}
+.pc-beacon--sm {
+  --pc-beacon-size: 64px;
+}
+.pc-beacon--lg {
+  --pc-beacon-size: 132px;
+}
+.pc-beacon .pc-scan-frame {
+  inset: 9%;
+  width: 82%;
+  height: 82%;
+}
+.pc-beacon .pc-scan-frame path {
+  stroke: var(--pc-white);
+  stroke-width: 3px;
+}
+.pc-beacon__sheet {
+  display: grid;
+  place-items: center;
+  width: 56%;
+  height: 56%;
+  border-radius: calc(var(--pc-beacon-size) * 0.1);
+  background: var(--pc-white);
+}
+.pc-beacon__sheet .pc-mark {
+  width: 76%;
+  height: 76%;
+  overflow: visible;
+}
+
 /* --- Route glyph ----------------------------------------------------------
    Two objects and the path between them. The source is quiet, the destination
    is the brand: the file is going somewhere, and that somewhere is the point. */

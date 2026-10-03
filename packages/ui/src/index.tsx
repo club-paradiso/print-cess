@@ -232,6 +232,27 @@ export function RouteGlyph({ from, to }: { from: ReactNode; to: ReactNode }) {
 }
 
 /**
+ * The Print-cess Beacon: the one marker that says "this is where printing
+ * starts". The phone shows it on the home page and the shared display shows
+ * the same tile beside its QR code, so a visitor finds the display by matching
+ * what they see, not by working out what "the screen" means.
+ *
+ * It is the mark on a white sheet inside Royal Indigo, wrapped in the mark's
+ * own scan-frame corners. Decorative on purpose: the words beside it carry the
+ * meaning, and it is hidden from assistive technology.
+ */
+export function Beacon({ size = "md" }: { size?: "sm" | "md" | "lg" }) {
+  return (
+    <span className={`pc-beacon pc-beacon--${size}`} aria-hidden="true" data-beacon="print-cess">
+      <ScanFrame />
+      <span className="pc-beacon__sheet">
+        <PrintcessMark />
+      </span>
+    </span>
+  );
+}
+
+/**
  * The scan frame from the mark: four rounded corners drawn around whatever QR
  * code the parent holds. Purely decorative; the parent keeps the code's own
  * quiet zone, so the corners never touch a module a camera has to read.

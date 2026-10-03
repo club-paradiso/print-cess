@@ -11,7 +11,7 @@ PAPER  →  DIGITAL FILE →  DESTINATION
 
 This document records what V2 changed in the product, what it deliberately left alone, and how a
 future native app could build on it. `DOCUMENT_JOURNEY.md` remains the record for what each
-screen says.
+screen says, and `PRINT_FIRST_ENTRY.md` for the print-first home page.
 
 ---
 
@@ -23,13 +23,16 @@ screen says.
 | **Share**  | A file moves to another device or person | This page: choose files, or open with a code    | `/send`, `/receive`  |
 | **Scan**   | Paper becomes a PDF on this phone        | This page: camera or photos, then a destination | `/scan` (→ Share)    |
 
-The home page (`/`) states one proposition and shows the three capabilities as three sheets. Each
-sheet opens with a route glyph (`RouteGlyph` in `packages/ui`) that draws where the file goes:
-phone to printer, phone to laptop, camera to PDF.
+The home page (`/`) leads with Print and shows Share and Scan beneath it as two smaller sheets.
+`PRINT_FIRST_ENTRY.md` records why. Each secondary sheet opens with a route glyph (`RouteGlyph` in
+`packages/ui`) that draws where the file goes: phone to laptop, camera to PDF. The Print section
+shows the Print-cess Beacon, the same marker the shared display shows, so a visitor can find the
+display by matching it.
 
-- **Print has no button on the home page.** Printing needs a kiosk session, and only the kiosk
-  can create one. The sheet names the three steps that happen at the kiosk instead. A button
-  would have to go somewhere, and every possible target would be a dead end.
+- **Print leads, and still links nowhere.** Printing needs a kiosk session, and only the kiosk
+  can create one. The section shows the Beacon and four steps, and offers two buttons that open
+  sheets on the same page: scan the screen's QR code from here, or see how to find the screen.
+  Neither goes to a print route, which would be a dead end.
 - **Share has one primary action**, choosing files to send, and receiving as a secondary link.
   A visitor who arrives from a scanned transfer QR or a shared link goes straight into receiving
   and never sees a choice between modes.
@@ -39,7 +42,7 @@ phone to printer, phone to laptop, camera to PDF.
 
 ### Consumer and institutional entrances
 
-Institutional entrances share the page but rank below it. The managed-workstation entry
+Institutional entrances share the page but rank below Print, Share and Scan. The managed-workstation entry
 (`/workstation`) and, where the browser kiosk is enabled, the kiosk display (`/kiosk`) sit below
 a hairline under "At work or on a public computer" as plain links. They are not a fourth
 capability, and none of their diagnostics or policy wording appears in the consumer flows. The
