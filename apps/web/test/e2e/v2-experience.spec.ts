@@ -31,26 +31,34 @@ async function expectAccessible(page: Page): Promise<void> {
   expect(results.violations).toEqual([]);
 }
 
-test("@viewport the home leads with Print, Share and Scan and keeps workplaces secondary", async ({
+test("@viewport the home leads with Print and keeps Share, Scan and workplaces below it", async ({
   page,
 }) => {
   await page.goto("/");
 
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Send a file to another device, or straight to paper.",
-  );
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
   await expect(page.getByRole("heading", { level: 2 })).toHaveText([
-    "Print",
     "Share",
     "Scan",
     "At work or on a public computer",
   ]);
-  // Printing begins at a kiosk's QR code, so the home describes it and offers
-  // no button that would have nowhere honest to go.
-  const print = page.getByRole("region", { name: "Print" });
+  // Printing begins at the Print-cess screen's QR code, so the print section
+  // links nowhere. Its two buttons only open sheets on this page.
+  const print = page.getByRole("region", { name: "Here to print?" });
   await expect(print.getByRole("link")).toHaveCount(0);
-  await expect(print.getByRole("button")).toHaveCount(0);
-  await expect(print.getByRole("listitem")).toHaveCount(3);
+  await expect(print.getByRole("button")).toHaveText(["Scan QR code", "I can't find the screen"]);
+  await expect(
+    print.getByRole("list", { name: "How printing works" }).getByRole("listitem"),
+  ).toHaveCount(4);
+  await expect(print.locator("[data-beacon]").first()).toBeVisible();
+
+  // Print must visibly outweigh the two tools beneath it.
+  const printBox = await print.boundingBox();
+  const shareBox = await page.getByRole("region", { name: "Share" }).boundingBox();
+  expect(printBox).not.toBeNull();
+  expect(shareBox).not.toBeNull();
+  expect(printBox!.height).toBeGreaterThan(shareBox!.height);
+  expect(printBox!.y).toBeLessThan(shareBox!.y);
 
   await expect(page.getByRole("link", { name: "Choose files to send" })).toHaveAttribute(
     "href",
@@ -74,6 +82,124 @@ test("@viewport the home leads with Print, Share and Scan and keeps workplaces s
   await expectAccessible(page);
 });
 
+test("@viewport the rescue sheet shows the three things to find and keeps the scan button", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "I can't find the screen" }).click();
+
+  const sheet = page.getByRole("dialog", { name: "Finding the screen" });
+  await expect(sheet).toBeVisible();
+  await expect(sheet.getByRole("listitem")).toHaveText([
+    "Find the printer",
+    /Find the big screen beside it/u,
+    "Scan the QR code on that screen",
+  ]);
+  await expect(sheet.getByRole("button", { name: "Scan QR code" })).toBeVisible();
+  await expectNoSidewaysScroll(page);
+  await expectAccessible(page);
+
+  await page.keyboard.press("Escape");
+  await expect(sheet).toBeHidden();
+});
+
+const SESSION_ID = `${"A".repeat(21)}A`;
+const TOKEN = "A".repeat(43);
+
+/**
+ * Chromium on Linux has no BarcodeDetector and CI has no camera, so the scanner
+ * is exercised with a stand-in detector that reports whatever `window.__qr`
+ * holds, over a synthetic video stream. What is under test is the page's
+ * handling of what a camera could read, not a camera.
+ */
+async function installFakeScanner(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    const scope = window as unknown as { __qr?: string; BarcodeDetector: unknown };
+    scope.BarcodeDetector = class {
+      async detect() {
+        return scope.__qr ? [{ rawValue: scope.__qr }] : [];
+      }
+    };
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    const context = canvas.getContext("2d");
+    setInterval(() => {
+      if (!context) return;
+      context.fillStyle = "#334";
+      context.fillRect(0, 0, 320, 240);
+    }, 50);
+    navigator.mediaDevices.getUserMedia = async () => canvas.captureStream(15);
+  });
+}
+
+test("scanning from the home page opens a real Print-cess session code", async ({ page }) => {
+  await installFakeScanner(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Scan QR code" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
+  ).toBeVisible();
+
+  await page.evaluate(
+    ([id, token]) => {
+      (window as unknown as { __qr: string }).__qr =
+        `${location.origin}/s/${id}#t=${token}&fp=${token}`;
+    },
+    [SESSION_ID, TOKEN],
+  );
+  await expect(page).toHaveURL(new RegExp(`/s/${SESSION_ID}#t=`, "u"));
+});
+
+test("scanning a QR code that is not a Print-cess session goes nowhere", async ({ page }) => {
+  await installFakeScanner(page);
+  await page.goto("/");
+  await page.getByRole("button", { name: "Scan QR code" }).click();
+
+  for (const foreign of [
+    `https://evil.example/s/${SESSION_ID}#t=${TOKEN}&fp=${TOKEN}`,
+    "https://example.com/menu",
+    "WIFI:S:cafe;T:WPA;P:secret;;",
+  ]) {
+    await page.evaluate((value) => {
+      (window as unknown as { __qr: string }).__qr = value;
+    }, foreign);
+    await expect(page.getByText("That QR code isn't for printing here.")).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+  }
+});
+
+test("a browser that cannot scan says so and points to the phone's camera app", async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    delete (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector;
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Scan QR code" }).click();
+
+  await expect(page.getByText(/can't scan QR codes here/u)).toBeVisible();
+  await expect(page.getByText(/camera app/u)).toBeVisible();
+  // The way back to the rescue sheet stays one tap away.
+  await expect(page.getByRole("button", { name: "I can't find the screen" }).last()).toBeVisible();
+});
+
+test("a refused camera permission is explained instead of left blank", async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { BarcodeDetector: unknown }).BarcodeDetector = class {
+      async detect() {
+        return [];
+      }
+    };
+    navigator.mediaDevices.getUserMedia = () =>
+      Promise.reject(new DOMException("denied", "NotAllowedError"));
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Scan QR code" }).click();
+
+  await expect(page.getByText(/The camera is blocked/u)).toBeVisible();
+});
+
 test("@viewport the home reads right to left in Arabic without overflowing", async ({
   browser,
 }) => {
@@ -86,7 +212,7 @@ test("@viewport the home reads right to left in Arabic without overflowing", asy
   await page.goto("/");
 
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
-  await expect(page.getByRole("heading", { level: 2 }).first()).toHaveText("طباعة");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("جئت للطباعة؟");
   await expectNoSidewaysScroll(page);
   await context.close();
 });
