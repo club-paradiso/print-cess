@@ -2,6 +2,7 @@ import { MAX_PLAINTEXT_BYTES } from "@print-cess/protocol";
 
 import {
   FileValidationError,
+  readSelectedFileBytes,
   validateFileForMobile,
   type ValidatedMobileFile,
 } from "./file-validation";
@@ -23,11 +24,11 @@ export async function validateMobileDocument(
     });
   }
 
-  if (file.size < 1) throw new FileValidationError("damagedFile");
   if (file.size > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
   if (!options.allowHwp) throw new FileValidationError("hwpxUnavailable");
 
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  const bytes = await readSelectedFileBytes(file);
+  if (bytes.byteLength > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
   try {
     validateHwpHeader(bytes);
   } catch {

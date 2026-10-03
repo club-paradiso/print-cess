@@ -157,7 +157,8 @@ const en = {
   tooManyPages: "This document has more than 50 pages. Save only the pages you need.",
   lockedPdf:
     "This PDF has a password. Open it on your phone and take a screenshot of the pages you need.",
-  damagedFile: "This file will not open. Save it again, or take a clear screenshot.",
+  damagedFile:
+    "This file could not be read. If it is in iCloud, wait for the download to finish and choose it again. Otherwise, save it again or take a clear screenshot.",
   fingerprintMismatch:
     "This connection could not be checked. Scan the QR code on the big screen again.",
   networkError: "The connection stopped. Check your mobile data, then scan the QR code again.",
@@ -448,7 +449,8 @@ const ko = {
   tooLarge: "파일이 너무 커요. 사진은 20MB, PDF는 10MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
   tooManyPages: "문서가 50페이지보다 많아요. 필요한 페이지만 저장하세요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
-  damagedFile: "파일이 열리지 않아요. 다시 저장하거나 화면을 선명하게 캡처하세요.",
+  damagedFile:
+    "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 선택하세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
   fingerprintMismatch: "안전한 연결을 확인하지 못했어요. 큰 화면의 QR코드를 다시 스캔하세요.",
   networkError: "연결이 끊겼어요. 모바일 데이터를 확인한 뒤 QR코드를 다시 스캔하세요.",
 

@@ -118,13 +118,12 @@ export async function validateFileForMobile(
   file: File,
   options: { allowHwpx?: boolean; trustedGeneratedPdf?: boolean } = {},
 ): Promise<ValidatedMobileFile> {
-  if (file.size < 1) throw new FileValidationError("damagedFile");
-
   const classification = classifySelectedFile(file);
   const sourceLimit = classification === "image" ? MAX_SOURCE_IMAGE_BYTES : MAX_PLAINTEXT_BYTES;
   if (file.size > sourceLimit) throw new FileValidationError("tooLarge");
 
-  const bytes = new Uint8Array(await file.arrayBuffer());
+  const bytes = await readSelectedFileBytes(file);
+  if (bytes.byteLength > sourceLimit) throw new FileValidationError("tooLarge");
   if (classification === "hwpx") {
     if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
     try {
@@ -179,6 +178,62 @@ export async function validateFileForMobile(
     ...dimensions,
     normalized: false,
   };
+}
+
+const FILE_READ_RETRY_DELAYS_MS = [0, 120, 360] as const;
+
+/**
+ * iOS Safari can hand a File backed by iCloud Drive to the page before the
+ * provider is ready to serve its bytes. A single arrayBuffer() failure is not
+ * proof that the document is corrupt. Retry briefly and fall back to
+ * FileReader, which uses a different WebKit read path on older/iOS builds.
+ */
+export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
+  for (const delayMs of FILE_READ_RETRY_DELAYS_MS) {
+    if (delayMs > 0) await waitForFileProvider(delayMs);
+
+    try {
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      if (bytes.byteLength > 0) return bytes;
+    } catch {
+      // Try FileReader below, then give the provider a moment before retrying.
+    }
+
+    if (typeof FileReader !== "undefined") {
+      try {
+        const bytes = new Uint8Array(await readWithFileReader(file));
+        if (bytes.byteLength > 0) return bytes;
+      } catch {
+        // Continue to the next attempt. Do not label a transient provider read
+        // failure as a corrupt file until every local read path has failed.
+      }
+    }
+  }
+
+  throw new FileValidationError("damagedFile");
+}
+
+function readWithFileReader(file: Blob): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener(
+      "load",
+      () => {
+        if (reader.result instanceof ArrayBuffer) resolve(reader.result);
+        else reject(new Error("FileReader returned a non-binary result"));
+      },
+      { once: true },
+    );
+    reader.addEventListener("error", () => reject(reader.error ?? new Error("FileReader failed")), {
+      once: true,
+    });
+    reader.addEventListener("abort", () => reject(new Error("FileReader aborted")), { once: true });
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+function waitForFileProvider(delayMs: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
 }
 
 export async function validatePdf(
