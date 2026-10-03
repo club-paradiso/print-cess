@@ -99,6 +99,52 @@ describe("translations", () => {
     }
   });
 
+  it("gives the print entry, the rescue sheet and the QR scanner words in every locale", () => {
+    const keys = [
+      "homePrintHeading",
+      "homePrintLead",
+      "homePrintLead2",
+      "homeBeaconCaption",
+      "homeScanQrCta",
+      "homeLostCta",
+      "homePrintStepFind",
+      "homeStepsLabel",
+      "homeLostTitle",
+      "homeLostStep1",
+      "homeLostStep2",
+      "homeLostStep3",
+      "homeLostHint",
+      "homeDialogClose",
+      "qrScanTitle",
+      "qrScanHint",
+      "qrScanStarting",
+      "qrScanDenied",
+      "qrScanUnsupported",
+      "qrScanInvalid",
+      "kioskStartHere",
+    ];
+    for (const locale of SUPPORTED_LOCALES) {
+      for (const key of keys) expectTranslated(locale, key);
+    }
+  });
+
+  it("never translates the product name on the print entry", () => {
+    for (const locale of SUPPORTED_LOCALES) {
+      for (const key of ["homePrintLead", "qrScanInvalid"]) {
+        expect(translate(locale, key), `${locale}.${key}`).toContain("Print-cess");
+      }
+    }
+  });
+
+  it("keeps the category word 'kiosk' out of Korean copy a first-time visitor reads", () => {
+    const visitorKeys = Object.keys(TRANSLATIONS.ko).filter(
+      (key) => key.startsWith("home") || key.startsWith("qrScan"),
+    );
+    for (const key of visitorKeys) {
+      expect(translate("ko", key), `ko.${key}`).not.toContain("키오스크");
+    }
+  });
+
   it("keeps the published entry point and the source table in sync", () => {
     // Korean wording used to live in a locale-specific override layer. Every
     // locale is reviewed in one place now, so both modules must agree.

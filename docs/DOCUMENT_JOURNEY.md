@@ -17,12 +17,16 @@ PAPER  →  DIGITAL FILE →  DESTINATION
 ```
 
 Print-cess has three capabilities: **Print** (a file becomes paper), **Share** (a file reaches
-another device or person), and **Scan** (paper becomes a PDF). The home page names them in that
-order, as three sheets, and says nothing else first. `PRODUCT_V2.md` records the reasoning and
-the future native path.
+another device or person), and **Scan** (paper becomes a PDF). The home page leads with Print
+and puts Share and Scan below it as smaller sheets. `PRODUCT_V2.md` records the reasoning and
+the future native path; `PRINT_FIRST_ENTRY.md` records the print-first home page.
 
-- **Print** is described on the home page and never offered as a button there. It starts at
-  the kiosk's QR code, and only the kiosk can open a print session.
+- **Print** leads the home page with the question "Here to print?" ("인쇄하러 오셨나요?"), the
+  Beacon, and the instruction to find the Print-cess screen next to the printer. It starts at
+  that screen's QR code, and only the screen can open a print session, so nothing on the home
+  page links to a print route. Its two buttons open sheets: "Scan QR code" reads the screen's
+  QR code from the home page after checking it is a Print-cess session on this site, and "I
+  can't find the screen" shows three steps for finding it.
 - **Share** is one capability with two sides. The home offers "Choose files to send" and,
   quieter, "Receive files with a code". `/send` and `/receive` carry the same "Share" label and
   link to each other. A visitor who arrives from a transfer QR code or link skips every choice
@@ -303,7 +307,8 @@ are out.
 
 ## What was deliberately not built
 
-- **A print button on the home page.** It would have nowhere honest to go.
+- **A print link on the home page.** It would have nowhere honest to go. The two print buttons
+  open sheets on the same page; neither navigates until a valid Print-cess QR code is read.
 - **A separate "send or receive?" question.** Sharing starts with choosing files. Receiving is
   one link away, and arriving by QR code or link skips the question entirely.
 - **A mode picker.** "Simple or advanced?" is another question in front of the

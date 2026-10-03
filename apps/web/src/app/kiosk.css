@@ -10,19 +10,59 @@
   background: var(--pc-background);
   color: var(--pc-text-primary);
 }
-.kiosk-shell > .pc-wordmark {
+.kiosk-shell > .pc-wordmark,
+.kiosk-header {
   margin-bottom: clamp(20px, 3.4vh, 44px);
 }
+.kiosk-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+.kiosk-header > .pc-wordmark {
+  margin: 0;
+}
+.kiosk-beacon {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.6vw, 24px);
+}
+.kiosk-beacon .pc-beacon {
+  --pc-beacon-size: clamp(72px, 10vh, 112px);
+}
+.kiosk-beacon p {
+  margin: 0;
+}
+.kiosk-beacon strong {
+  display: block;
+  color: var(--pc-text-primary);
+  font-size: clamp(26px, 4vh, 44px);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+.kiosk-beacon small {
+  display: block;
+  margin-top: 2px;
+  color: var(--pc-text-secondary);
+  font-size: clamp(16px, 2.2vh, 24px);
+  line-height: 1.3;
+}
 .kiosk-shell > .pc-wordmark svg,
+.kiosk-header > .pc-wordmark svg,
 .kiosk-result > .pc-wordmark svg {
   width: clamp(44px, 5vh, 56px);
   height: clamp(44px, 5vh, 56px);
 }
 .kiosk-shell > .pc-wordmark strong,
+.kiosk-header > .pc-wordmark strong,
 .kiosk-result > .pc-wordmark strong {
   font-size: clamp(34px, 4.6vh, 52px);
 }
 .kiosk-shell > .pc-wordmark small,
+.kiosk-header > .pc-wordmark small,
 .kiosk-result > .pc-wordmark small {
   font-size: clamp(17px, 2.2vh, 24px);
 }
@@ -174,7 +214,7 @@
    instructions around it, so the whole column is always on screen at once:
    1080p gives a 600px code, a 768-line display still ~400px. */
 .kiosk-qr {
-  --kiosk-qr-size: min(100%, calc(100vh - 360px), 600px);
+  --kiosk-qr-size: min(100%, calc(100vh - 380px), 600px);
   display: grid;
   justify-items: center;
   gap: clamp(10px, 1.6vh, 16px);
@@ -586,7 +626,8 @@
   .kiosk-shell {
     padding: 24px;
   }
-  .kiosk-shell > .pc-wordmark {
+  .kiosk-shell > .pc-wordmark,
+  .kiosk-header {
     margin-bottom: 32px;
   }
   .kiosk-instructions {

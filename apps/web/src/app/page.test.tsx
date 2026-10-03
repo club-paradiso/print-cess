@@ -29,6 +29,17 @@ function headingsOf(node: unknown, level: string): string[] {
   return [];
 }
 
+/** The client component takes its words as props, so read them from there. */
+function entryLabelsOf(node: unknown): Record<string, unknown> | undefined {
+  if (Array.isArray(node)) return node.map(entryLabelsOf).find((labels) => labels !== undefined);
+  if (node && typeof node === "object" && "props" in node) {
+    const element = node as { props: { labels?: Record<string, unknown>; children?: unknown } };
+    if (element.props.labels && "scanCta" in element.props.labels) return element.props.labels;
+    return entryLabelsOf(element.props.children);
+  }
+  return undefined;
+}
+
 function hrefsOf(node: unknown): string[] {
   if (Array.isArray(node)) return node.flatMap(hrefsOf);
   if (node && typeof node === "object" && "props" in node) {
@@ -88,46 +99,83 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("파일을 다른 기기로, 또는 바로 종이로");
-    expect(copy).toContain("인쇄");
+    expect(copy).toContain("인쇄하러 오셨나요?");
+    expect(copy).toContain("프린터 옆에 있는 Print-cess 화면을 찾아주세요.");
+    expect(copy).toContain("화면의 QR 코드를 찍으면 바로 시작돼요.");
+    expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
     expect(copy).toContain("코드로 파일 받기");
     expect(copy).toContain("문서 스캔하기");
     expect(copy).toContain("업무용 PC");
-    expect(copy).toContain("키오스크 열기");
-    expect(copy).not.toContain("Send a file to another device");
+    expect(copy).toContain("이 기기를 Print-cess 화면으로 쓰기");
+    expect(copy).not.toContain("Here to print?");
+    // The category word is for installers; a first-time visitor is never asked
+    // to know it.
+    expect(copy).not.toContain("키오스크");
+    expect(entryLabelsOf(await HomePage())).toMatchObject({
+      scanCta: "QR 코드 스캔하기",
+      lostCta: "화면을 못 찾겠어요",
+    });
   });
 
   it("falls back to English when no language is asked for", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("Send a file to another device, or straight to paper.");
+    expect(copy).toContain("Here to print?");
+    expect(copy).toContain("Find the Print-cess screen next to the printer.");
     expect(copy).toContain("Choose files to send");
     expect(copy).toContain("Receive files with a code");
     expect(copy).toContain("Scan a document");
     expect(copy).toContain("Work computer");
-    expect(copy).toContain("Open kiosk");
+    expect(copy).toContain("Use this device as the print screen");
+    expect(copy).not.toContain("kiosk");
   });
 
   /**
-   * The three capabilities are the page. Institutional entrances share it, but
-   * below them and never as one of them: a visitor who came to print or share
-   * should not have to read past a managed-workstation link to find out how.
+   * Print is the page. Share and Scan are real but secondary, and institutional
+   * entrances come last and never as a capability: a visitor who came to print
+   * should not have to read past either to find out how.
    */
-  it("leads with Print, Share and Scan and keeps workplaces secondary", async () => {
+  it("leads with Print and keeps Share, Scan and workplaces below it", async () => {
     const page = await HomePage();
     const order = hrefsOf(page);
 
-    expect(headingsOf(page, "h2")).toEqual([
-      "Print",
-      "Share",
-      "Scan",
-      "At work or on a public computer",
-    ]);
+    expect(headingsOf(page, "h1")).toEqual(["Here to print?"]);
+    expect(headingsOf(page, "h2")).toEqual(["Share", "Scan", "At work or on a public computer"]);
     expect(order.indexOf("/send")).toBeLessThan(order.indexOf("/workstation"));
     expect(order.indexOf("/scan")).toBeLessThan(order.indexOf("/workstation"));
+  });
+
+  it("shows the Beacon and the four printing steps in the first section", async () => {
+    const copy = textOf(await HomePage());
+
+    expect(copy).toContain("Look for the screen with this mark.");
+    for (const step of [
+      "Find the screen",
+      "Scan its QR code",
+      "Pick your file",
+      "Take your paper",
+    ]) {
+      expect(copy.indexOf(step)).toBeGreaterThan(-1);
+      expect(copy.indexOf(step)).toBeLessThan(copy.indexOf("Choose files to send"));
+    }
+  });
+
+  it("gives the rescue sheet and the scanner every word they show", async () => {
+    const labels = entryLabelsOf(await HomePage()) as Record<string, unknown>;
+
+    expect(labels.scanCta).toBe("Scan QR code");
+    expect(labels.lostCta).toBe("I can't find the screen");
+    expect(labels.lostSteps).toEqual([
+      "Find the printer",
+      "Find the big screen beside it",
+      "Scan the QR code on that screen",
+    ]);
+    for (const [name, value] of Object.entries(labels)) {
+      expect(value, name).toBeTruthy();
+    }
   });
 
   it("never offers a print button that has nowhere honest to go", async () => {

@@ -38,18 +38,31 @@ export class DropScannerError extends Error {
   }
 }
 
-export type DropScanner = {
+export type CodeScanner<T> = {
   /** Live camera feed for the preview element. */
   stream: MediaStream;
-  /** Resolves with the first transfer code seen, or null once stopped. */
-  codes: Promise<string | null>;
+  /** Resolves with the first accepted code seen, or null once stopped. */
+  codes: Promise<T | null>;
   stop(): void;
 };
+
+export type DropScanner = CodeScanner<string>;
 
 /** How often a frame is inspected. Fast enough to feel instant, cheap enough not to heat a phone. */
 const SCAN_INTERVAL_MS = 220;
 
-export async function startDropScanner(video: HTMLVideoElement): Promise<DropScanner> {
+export function startDropScanner(video: HTMLVideoElement): Promise<DropScanner> {
+  return startCodeScanner(video, parseDropCode);
+}
+
+/**
+ * Looks for a QR code that `parse` accepts. Anything `parse` rejects is
+ * ignored, so a stray code in view never ends the scan or leaves the page.
+ */
+export async function startCodeScanner<T>(
+  video: HTMLVideoElement,
+  parse: (rawValue: string) => T | null,
+): Promise<CodeScanner<T>> {
   const Detector = detectorConstructor();
   if (!Detector) throw new DropScannerError("scannerUnavailable");
 
@@ -68,14 +81,14 @@ export async function startDropScanner(video: HTMLVideoElement): Promise<DropSca
   const detector = new Detector({ formats: ["qr_code"] });
   let stopped = false;
   let timer = 0;
-  let settle: (code: string | null) => void = () => {};
-  const codes = new Promise<string | null>((resolve) => {
+  let settle: (code: T | null) => void = () => {};
+  const codes = new Promise<T | null>((resolve) => {
     settle = resolve;
   });
 
   // One settle for both outcomes. Resolving on the way out of `stop` would race
   // the found code to the promise and always win, so the code is passed in.
-  const finish = (code: string | null) => {
+  const finish = (code: T | null) => {
     if (stopped) return;
     stopped = true;
     window.clearTimeout(timer);
@@ -95,8 +108,8 @@ export async function startDropScanner(video: HTMLVideoElement): Promise<DropSca
     try {
       if (video.readyState >= 2) {
         for (const detection of await detector.detect(video)) {
-          const code = parseDropCode(detection.rawValue);
-          if (code) {
+          const code = parse(detection.rawValue);
+          if (code !== null) {
             finish(code);
             return;
           }

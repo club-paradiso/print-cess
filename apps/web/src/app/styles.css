@@ -67,62 +67,204 @@ p {
   margin: 0 auto;
   padding: max(20px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom));
 }
-.home-hero {
+.print-entry {
+  --home-fold: 36px;
+  position: relative;
   display: grid;
-  gap: 14px;
-  max-width: 760px;
+  gap: 20px;
+  min-width: 0;
+  padding: clamp(20px, 5vw, 40px);
+  border: 1.5px solid var(--pc-indigo-200);
+  border-radius: var(--pc-radius-lg);
+  border-start-end-radius: 0;
+  background: var(--pc-surface-brand-subtle);
 }
-.home-hero h1 {
+.print-entry__copy {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+}
+.print-entry h1 {
   margin: 0;
   color: var(--pc-text-primary);
-  font-size: clamp(34px, 8.6vw, 64px);
+  font-size: clamp(32px, 8vw, 56px);
   font-weight: 820;
-  line-height: 1.08;
-  letter-spacing: -0.045em;
+  line-height: 1.12;
+  letter-spacing: -0.04em;
   text-wrap: balance;
 }
-.home-hero p {
+.print-entry__lead {
+  display: grid;
+  gap: 4px;
   margin: 0;
-  max-width: 34em;
-  color: var(--pc-text-secondary);
-  font-size: clamp(17px, 2.2vw, 20px);
-  line-height: 1.5;
+  max-width: 30em;
+  font-size: clamp(18px, 2.4vw, 22px);
+  line-height: 1.45;
   text-wrap: pretty;
+}
+.print-entry__lead span:first-child {
+  color: var(--pc-text-primary);
+  font-weight: 700;
+}
+.print-entry__lead span:last-child {
+  color: var(--pc-text-secondary);
+}
+
+/* The Beacon, with its instruction. Matching this tile to the shared display is
+   the whole job of this block, so it gets a sheet of its own. */
+.print-entry__beacon {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  padding: 16px;
+  border: 1px solid var(--pc-indigo-200);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+}
+.print-entry__beacon p {
+  margin: 0;
+  color: var(--pc-text-primary);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-wrap: balance;
+}
+
+.home-nowrap {
+  white-space: nowrap;
+}
+.print-entry__actions {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+}
+.print-entry__actions .pc-button {
+  min-width: 0;
+}
+
+.print-entry__steps {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px 14px;
+  margin: 0;
+  padding: 18px 0 0;
+  border-top: 1px solid var(--pc-indigo-200);
+  list-style: none;
+  counter-reset: entry-step;
+}
+@media (min-width: 480px) {
+  .print-entry__steps {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.print-entry__steps li {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  color: var(--pc-text-primary);
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.35;
+  counter-increment: entry-step;
+}
+.print-entry__steps li::before {
+  content: counter(entry-step);
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+@media (max-width: 380px) {
+  .print-entry {
+    padding: 18px;
+  }
+  .print-entry__beacon {
+    gap: 12px;
+    padding: 12px;
+  }
+  .print-entry__beacon .pc-beacon--lg {
+    --pc-beacon-size: 96px;
+  }
+  .print-entry__beacon p {
+    font-size: 17px;
+  }
+}
+@media (min-width: 560px) {
+  .print-entry__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 900px) {
+  .print-entry {
+    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    grid-template-areas:
+      "copy beacon"
+      "actions beacon"
+      "steps steps";
+    column-gap: clamp(32px, 5vw, 64px);
+    row-gap: 28px;
+  }
+  .print-entry__copy {
+    grid-area: copy;
+    align-self: end;
+  }
+  .print-entry__actions {
+    grid-area: actions;
+    align-self: start;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+  }
+  .print-entry__actions .pc-button {
+    width: auto;
+    padding-inline: 28px;
+  }
+  .print-entry__beacon {
+    grid-area: beacon;
+    flex-direction: column;
+    justify-content: center;
+    gap: 22px;
+    padding: 28px;
+    text-align: center;
+  }
+  .print-entry__beacon .pc-beacon--lg {
+    --pc-beacon-size: 176px;
+  }
+  .print-entry__beacon p {
+    font-size: 20px;
+  }
+  .print-entry__steps {
+    grid-area: steps;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 .home-capabilities {
   display: grid;
   gap: 14px;
 }
-@media (min-width: 720px) {
+@media (min-width: 640px) {
   .home-capabilities {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  /* Printing is the reason the service exists, so on a tablet it spans the
-     row above the two things a phone can do alone. */
-  .home-sheet--print {
-    grid-column: 1 / -1;
-  }
-}
-@media (min-width: 960px) {
-  .home-capabilities {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 18px;
-  }
-  .home-sheet--print {
-    grid-column: auto;
   }
 }
 
 .home-sheet {
-  --home-fold: 22px;
+  --home-fold: 18px;
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
   min-width: 0;
-  padding: 22px 22px 22px;
+  padding: 18px 18px 18px;
   border: 1px solid var(--pc-border);
   border-radius: var(--pc-radius-lg);
   border-start-end-radius: 0;
@@ -131,7 +273,9 @@ p {
 /* The turned-down corner: the page's own background cut out of the sheet, and
    the fold itself in lilac. Two flat triangles, no gradient. */
 .home-sheet::before,
-.home-sheet::after {
+.home-sheet::after,
+.print-entry::before,
+.print-entry::after {
   content: "";
   position: absolute;
   inset-block-start: -1px;
@@ -140,20 +284,24 @@ p {
   height: var(--home-fold);
   pointer-events: none;
 }
-.home-sheet::before {
+.home-sheet::before,
+.print-entry::before {
   background: var(--pc-background);
   clip-path: polygon(0 0, 100% 0, 100% 100%);
 }
-.home-sheet::after {
+.home-sheet::after,
+.print-entry::after {
   background: var(--pc-surface-brand);
   border-end-start-radius: 6px;
   clip-path: polygon(0 0, 100% 100%, 0 100%);
   box-shadow: inset 1px -1px 0 var(--pc-border);
 }
-[dir="rtl"] .home-sheet::before {
+[dir="rtl"] .home-sheet::before,
+[dir="rtl"] .print-entry::before {
   clip-path: polygon(0 0, 100% 0, 0 100%);
 }
-[dir="rtl"] .home-sheet::after {
+[dir="rtl"] .home-sheet::after,
+[dir="rtl"] .print-entry::after {
   clip-path: polygon(100% 0, 100% 100%, 0 100%);
   box-shadow: inset -1px -1px 0 var(--pc-border);
 }
@@ -163,15 +311,15 @@ p {
 .home-sheet h2 {
   margin: 0;
   color: var(--pc-text-primary);
-  font-size: clamp(26px, 6.4vw, 32px);
+  font-size: clamp(22px, 5.4vw, 26px);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.15;
   letter-spacing: var(--pc-tracking-tight);
 }
 .home-sheet > p {
   margin: 0;
   color: var(--pc-text-secondary);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.5;
   text-wrap: pretty;
 }
@@ -208,46 +356,6 @@ p {
   text-decoration: underline;
   text-decoration-thickness: 1.5px;
   text-underline-offset: 4px;
-}
-
-/* Printing's three steps, numbered rather than tappable: they describe what
-   happens at the kiosk, and none of them can start from this page. */
-.home-steps {
-  display: grid;
-  gap: 8px;
-  width: 100%;
-  margin: auto 0 0;
-  padding: 14px 0 0;
-  list-style: none;
-  counter-reset: home-step;
-}
-.home-steps li {
-  display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  align-items: center;
-  gap: 12px;
-  color: var(--pc-text-primary);
-  font-size: 16px;
-  font-weight: 650;
-  line-height: 1.35;
-  counter-increment: home-step;
-}
-.home-steps li::before {
-  content: counter(home-step);
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--pc-radius-pill);
-  background: var(--pc-surface-sunken);
-  color: var(--pc-text-secondary);
-  font-size: 14px;
-  font-weight: 800;
-}
-@media (min-width: 720px) and (max-width: 959px) {
-  .home-steps {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
 }
 
 .home-workplace {
@@ -787,8 +895,183 @@ ol.mobile-selected li::before {
   }
 }
 
-@media (min-width: 720px) {
-  .home-hero {
-    padding-top: 24px;
+/* --- Print entry sheets ----------------------------------------------------
+   "Scan the QR code" and "I can't find the screen" open as sheets over the
+   home page: anchored to the bottom edge on a phone, where a thumb reaches, and
+   centred on anything wider. Native <dialog>, so focus is trapped, Escape
+   closes, and the page behind cannot be tabbed into. */
+
+.print-sheet {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92dvh;
+  margin: auto auto 0;
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  border-radius: var(--pc-radius-lg) var(--pc-radius-lg) 0 0;
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+}
+.print-sheet::backdrop {
+  background: color-mix(in srgb, var(--pc-navy-950) 60%, transparent);
+}
+@media (min-width: 640px) {
+  .print-sheet {
+    margin: auto;
+    border-radius: var(--pc-radius-lg);
   }
+}
+.print-sheet__body {
+  display: grid;
+  gap: 18px;
+  padding: 20px 20px max(24px, env(safe-area-inset-bottom));
+}
+.print-sheet__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.print-sheet__header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: var(--pc-tracking-tight);
+  text-wrap: balance;
+}
+.print-sheet__close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  margin: -6px -8px 0 0;
+  border: 0;
+  border-radius: var(--pc-radius-pill);
+  background: transparent;
+  color: var(--pc-text-secondary);
+  cursor: pointer;
+}
+[dir="rtl"] .print-sheet__close {
+  margin: -6px 0 0 -8px;
+}
+.print-sheet__close:hover {
+  background: var(--pc-surface-sunken);
+}
+.print-sheet__close svg {
+  width: 24px;
+  height: 24px;
+}
+.print-sheet__hint {
+  margin: 0;
+  color: var(--pc-text-muted);
+  font-size: var(--pc-text-helper);
+  line-height: 1.5;
+  text-align: center;
+}
+.print-sheet__notice {
+  min-height: 3em;
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 17px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.print-sheet__notice.is-invalid {
+  color: var(--pc-destructive);
+  font-weight: 700;
+}
+
+/* The three things to do, drawn in the order they happen. */
+.print-find {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: find-step;
+}
+.print-find li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  padding: 10px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+  counter-increment: find-step;
+}
+.print-find li > span:last-child {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.print-find li small {
+  color: var(--pc-text-muted);
+  font-size: var(--pc-text-helper);
+  font-weight: 600;
+  line-height: 1.4;
+}
+.print-find__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.print-find__icon > svg {
+  width: 30px;
+  height: 30px;
+}
+.print-find__icon--beacon {
+  background: transparent;
+}
+.print-find__icon::after {
+  content: counter(find-step);
+  position: absolute;
+  inset-block-start: -6px;
+  inset-inline-start: -6px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-text-primary);
+  color: var(--pc-text-on-inverse);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.print-viewfinder {
+  position: relative;
+  aspect-ratio: 1;
+  max-height: 46dvh;
+  margin-inline: auto;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-navy-950);
+}
+.print-viewfinder[hidden] {
+  display: none;
+}
+.print-viewfinder video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.print-viewfinder__frame {
+  position: absolute;
+  inset: 16%;
+  border: 3px solid var(--pc-white);
+  border-radius: 20px;
+  pointer-events: none;
 }

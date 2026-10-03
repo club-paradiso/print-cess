@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   ArrowRight,
   Building2,
@@ -6,26 +7,61 @@ import {
   LaptopMinimal,
   LockKeyhole,
   Monitor,
-  Printer,
   ScanLine,
   Smartphone,
 } from "lucide-react";
 
 import { translate } from "@print-cess/i18n";
-import { RouteGlyph, Wordmark } from "@print-cess/ui";
+import { Beacon, RouteGlyph, Wordmark } from "@print-cess/ui";
 
+import { PrintEntryActions, type PrintEntryLabels } from "@/components/home/print-entry-actions";
 import { requestLocale } from "@/lib/request-locale";
 import { isBrowserKioskEnabled } from "@/server/demo";
+
+/**
+ * The product name is one word. Without this, a narrow screen breaks it at its
+ * hyphen and leaves "Print-" at the end of one line and "cess" at the start of
+ * the next.
+ */
+function keepNameTogether(sentence: string): ReactNode {
+  const parts = sentence.split("Print-cess");
+  return parts.flatMap((part, index) =>
+    index === 0
+      ? [part]
+      : [
+          <span className="home-nowrap" key={index}>
+            Print-cess
+          </span>,
+          part,
+        ],
+  );
+}
 
 export default async function HomePage() {
   // The public root is the service entry point, not a dedicated kiosk URL.
   // Browser-kiosk stations open /kiosk directly; this page is where somebody
-  // who did not scan anything learns what Print-cess does, in one glance.
+  // who did not scan anything lands, and it is built for finding the screen.
   const locale = await requestLocale();
   const text = (key: string) => translate(locale, key);
   // In Production the browser-kiosk route deliberately fails closed unless it
   // is enabled. Do not advertise a shortcut to a route that will return 404.
   const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
+
+  const labels: PrintEntryLabels = {
+    scanCta: text("homeScanQrCta"),
+    lostCta: text("homeLostCta"),
+    lostTitle: text("homeLostTitle"),
+    lostSteps: [text("homeLostStep1"), text("homeLostStep2"), text("homeLostStep3")],
+    lostHint: text("homeLostHint"),
+    beaconCaption: text("homeBeaconCaption"),
+    close: text("homeDialogClose"),
+    scanTitle: text("qrScanTitle"),
+    scanHint: text("qrScanHint"),
+    scanStarting: text("qrScanStarting"),
+    scanDenied: text("qrScanDenied"),
+    scanUnsupported: text("qrScanUnsupported"),
+    scanInvalid: text("qrScanInvalid"),
+  };
 
   return (
     <main className="home">
@@ -33,27 +69,38 @@ export default async function HomePage() {
         <Wordmark />
       </header>
 
-      <section className="home-hero" aria-labelledby="home-title">
-        <h1 id="home-title">{text("homeTitle")}</h1>
-        <p>{text("homeLead")}</p>
+      {/* Print comes first and takes most of the page. A visitor who arrives
+          here has almost always come to print, and the one thing they need is
+          to find the Print-cess screen, so the page shows them what to look for
+          (the Beacon) before it explains anything. Printing still has no link
+          to a print route: a session only begins at that screen's QR code. */}
+      <section className="print-entry" aria-labelledby="home-title">
+        <div className="print-entry__copy">
+          <h1 id="home-title">{text("homePrintHeading")}</h1>
+          <p className="print-entry__lead">
+            <span>{keepNameTogether(text("homePrintLead"))}</span>
+            <span>{text("homePrintLead2")}</span>
+          </p>
+        </div>
+
+        <div className="print-entry__beacon">
+          <Beacon size="lg" />
+          <p>{text("homeBeaconCaption")}</p>
+        </div>
+
+        <PrintEntryActions labels={labels} />
+
+        <ol className="print-entry__steps" aria-label={text("homeStepsLabel")}>
+          <li>{text("homePrintStepFind")}</li>
+          <li>{text("homePrintStepScan")}</li>
+          <li>{text("homePrintStepPick")}</li>
+          <li>{text("homePrintStepCollect")}</li>
+        </ol>
       </section>
 
-      {/* Three capabilities, three sheets of paper. Each says where a file goes
-          before it says anything else, because that is the whole product. */}
+      {/* Share and Scan are real, first-class tools, but they are not why most
+          visitors came, so they sit below Print as two smaller sheets. */}
       <div className="home-capabilities">
-        <section className="home-sheet home-sheet--print" aria-labelledby="home-print">
-          <RouteGlyph from={<Smartphone />} to={<Printer />} />
-          <h2 id="home-print">{text("homePrintTitle")}</h2>
-          <p>{text("homePrintBody")}</p>
-          {/* Printing begins at the kiosk's QR code, so this is a direction and
-              not a button: a button here would have nowhere honest to go. */}
-          <ol className="home-steps">
-            <li>{text("homePrintStepScan")}</li>
-            <li>{text("homePrintStepPick")}</li>
-            <li>{text("homePrintStepCollect")}</li>
-          </ol>
-        </section>
-
         <section className="home-sheet home-sheet--share" aria-labelledby="home-share">
           <RouteGlyph from={<Smartphone />} to={<LaptopMinimal />} />
           <h2 id="home-share">{text("homeShareTitle")}</h2>

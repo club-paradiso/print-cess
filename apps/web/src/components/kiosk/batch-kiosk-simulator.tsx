@@ -34,7 +34,7 @@ import {
   translate,
   type SupportedLocale,
 } from "@print-cess/i18n";
-import { ScanFrame, Wordmark } from "@print-cess/ui";
+import { Beacon, ScanFrame, Wordmark } from "@print-cess/ui";
 
 import {
   detectFileKind,
@@ -288,7 +288,19 @@ export function BatchKioskSimulator({
 
   return (
     <main className="kiosk-shell" lang="ko">
-      <Wordmark />
+      <header className="kiosk-header">
+        <Wordmark />
+        {/* The same Beacon the phone's home page shows. A visitor matches the
+            tile on their phone to this one, so it stays large and plain, and
+            well clear of the QR code and its quiet zone. */}
+        <div className="kiosk-beacon">
+          <Beacon size="md" />
+          <p>
+            <strong>{translate("ko", "kioskStartHere")}</strong>
+            <small lang="en">{translate("en", "kioskStartHere")}</small>
+          </p>
+        </div>
+      </header>
       <div className="kiosk-layout">
         <section className="kiosk-instructions">
           <h1 className="kiosk-step-heading">

@@ -28,7 +28,7 @@ import {
   translate,
   type SupportedLocale,
 } from "@print-cess/i18n";
-import { ScanFrame, Wordmark } from "@print-cess/ui";
+import { Beacon, ScanFrame, Wordmark } from "@print-cess/ui";
 
 import {
   detectFileKind,
@@ -305,7 +305,16 @@ export function KioskSimulator({
 
   return (
     <main className="kiosk-shell" lang="ko">
-      <Wordmark />
+      <header className="kiosk-header">
+        <Wordmark />
+        <div className="kiosk-beacon">
+          <Beacon size="md" />
+          <p>
+            <strong>{translate("ko", "kioskStartHere")}</strong>
+            <small lang="en">{translate("en", "kioskStartHere")}</small>
+          </p>
+        </div>
+      </header>
       <div className="kiosk-layout">
         <section className="kiosk-instructions">
           <h1
