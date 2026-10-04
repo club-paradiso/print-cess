@@ -36,20 +36,26 @@ recognisable in a few seconds.
 Print-cess identity
 USE THIS DEVICE AS THE PRINT SCREEN   (prominent setup CTA, above the fold)
 PRINT  (first visitor section, most of the first screen)
-  heading, one instruction, the Beacon, two buttons, four steps
+  heading, two short instructions, the Beacon, two buttons
 SHARE  SCAN   (two smaller sheets)
 Managed workstation   (secondary link under a hairline)
 ```
 
 - **The display setup action is visible before the visitor flow.** "Use this device as the print
-  screen" is a full-width, high-contrast setup CTA directly below the Print-cess identity. It is
-  intentionally the first home-page link so an installer never has to hunt through visitor tools.
+  screen" is a full-width, high-contrast setup CTA directly below the Print-cess identity. Its
+  smaller context line ("At work or on a public computer" / "기관·공용 PC에서 쓰기") separates
+  machine setup from the visitor's printing task without hiding the entry again. It remains the
+  first home-page link so an installer never has to hunt through visitor tools.
 - **Print remains the page's `h1` and primary visitor task.** "Here to print?" is the question
   most visitors arrive with. The `h2`s are Share, Scan and the workplace group.
 - **Share and Scan keep their buttons and routes.** They are smaller, not hidden. A visitor who
   wants them finds them below Print without scrolling past anything else.
 - **Print still links nowhere.** A print session can only begin at the screen's QR code, so no
   control on the page points at a print route. Its two buttons open sheets on the same page.
+- **The four-step explainer is no longer repeated on the home page.** The heading, two short
+  instructions, Beacon and two actions already tell the visitor what to do next. Detailed recovery
+  stays in the "I can't find the screen" sheet, where it is useful instead of competing for first
+  attention.
 - **No device-specific page.** Phone and computer visitors see one page. The layout changes with
   width (a side-by-side Print section from 900 px up), but no copy or action differs by device.
   A computer visitor with a file on that computer is not given a different promise: the
