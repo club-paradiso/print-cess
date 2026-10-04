@@ -101,7 +101,6 @@ export default async function HomePage() {
         </div>
 
         <PrintEntryActions labels={labels} />
-
       </section>
 
       {/* Share and Scan are real, first-class tools, but they are not why most
