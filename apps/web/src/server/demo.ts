@@ -1,10 +1,17 @@
 const DEDICATED_KIOSK_PREVIEW_BRANCH = "preview";
 
 export function isBrowserKioskEnabled(environment: NodeJS.ProcessEnv = process.env): boolean {
+  // An explicit flag always wins. This keeps an emergency kill switch while
+  // avoiding a production outage when the variable is simply missing.
   if (environment.ENABLE_BROWSER_KIOSK === "true") return true;
+  if (environment.ENABLE_BROWSER_KIOSK === "false") return false;
+
+  // The public browser kiosk is a real Production surface, separate from demo
+  // and administrator routes. Vercel Production should expose it by default.
+  if (environment.VERCEL_ENV === "production") return true;
 
   // Keep the existing explicitly enabled demo and the dedicated Preview branch
-  // working while allowing Production to expose only the browser kiosk.
+  // working outside Production.
   return isDemoRouteEnabled(environment);
 }
 
