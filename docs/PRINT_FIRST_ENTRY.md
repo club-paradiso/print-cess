@@ -34,14 +34,18 @@ recognisable in a few seconds.
 
 ```text
 Print-cess identity
-PRINT  (first section, most of the first screen)
+USE THIS DEVICE AS THE PRINT SCREEN   (prominent setup CTA, above the fold)
+PRINT  (first visitor section, most of the first screen)
   heading, one instruction, the Beacon, two buttons, four steps
 SHARE  SCAN   (two smaller sheets)
-Workplace entrances   (links under a hairline)
+Managed workstation   (secondary link under a hairline)
 ```
 
-- **Print is the page's `h1`.** "Here to print?" is the question most visitors arrive with. The
-  `h2`s are Share, Scan and the workplace group.
+- **The display setup action is visible before the visitor flow.** "Use this device as the print
+  screen" is a full-width, high-contrast setup CTA directly below the Print-cess identity. It is
+  intentionally the first home-page link so an installer never has to hunt through visitor tools.
+- **Print remains the page's `h1` and primary visitor task.** "Here to print?" is the question
+  most visitors arrive with. The `h2`s are Share, Scan and the workplace group.
 - **Share and Scan keep their buttons and routes.** They are smaller, not hidden. A visitor who
   wants them finds them below Print without scrolling past anything else.
 - **Print still links nowhere.** A print session can only begin at the screen's QR code, so no
@@ -79,7 +83,8 @@ This follows `BRAND.md` (Voice), which already asked for "the big screen" over "
 "Kiosk" stays in administrator, installation and developer surfaces, and in code identifiers, where
 the category genuinely matters. The one home-page link that opens the display on the current device
 now reads "이 기기를 Print-cess 화면으로 쓰기" / "Use this device as the print screen", because
-that is what it does and it sits in the workplace group, not in the visitor's path.
+that is what it does. The action is deliberately promoted directly below the product identity,
+before the Print visitor section, rather than being buried in the workplace group.
 
 Other languages' strings were updated for meaning, not re-edited for style. See "Review
 needed" below.
