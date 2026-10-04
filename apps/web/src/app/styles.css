@@ -98,7 +98,7 @@ p {
   letter-spacing: -0.02em;
 }
 .home-kiosk-entry__copy > span {
-  color: rgb(255 255 255 / 0.78);
+  color: var(--pc-text-on-brand);
   font-size: 13px;
   font-weight: 650;
   line-height: 1.35;
