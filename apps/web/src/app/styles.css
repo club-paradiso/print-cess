@@ -245,6 +245,83 @@ p {
   }
 }
 
+
+/* The landing page is an action surface, not a poster. Detailed wayfinding
+   lives in the recovery sheet, so the default print entry stays comfortably
+   above the fold on a phone and remains compact on desktop. */
+@media (max-width: 639px) {
+  .home {
+    gap: 18px;
+    width: min(100% - 24px, 1120px);
+    padding-top: max(12px, env(safe-area-inset-top));
+  }
+  .home-header {
+    padding-block: 0;
+  }
+  .home-header .pc-wordmark svg {
+    width: 42px;
+    height: 42px;
+  }
+  .home-header .pc-wordmark strong {
+    font-size: 28px;
+  }
+  .home-header .pc-wordmark small {
+    font-size: 12px;
+  }
+  .print-entry {
+    --home-fold: 24px;
+    gap: 14px;
+    padding: 18px;
+    border-radius: var(--pc-radius-md);
+  }
+  .print-entry__copy {
+    gap: 8px;
+  }
+  .print-entry h1 {
+    font-size: clamp(28px, 8vw, 34px);
+    line-height: 1.08;
+  }
+  .print-entry__lead {
+    gap: 2px;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  .print-entry__actions {
+    gap: 4px;
+  }
+  .print-entry__actions .pc-button {
+    min-height: 52px;
+  }
+  .print-entry__lost {
+    min-height: 44px !important;
+    border-color: transparent !important;
+    background: transparent !important;
+    color: var(--pc-text-brand) !important;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+  }
+}
+
+@media (min-width: 900px) {
+  .print-entry {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "copy actions";
+    align-items: end;
+    column-gap: clamp(32px, 5vw, 64px);
+    row-gap: 0;
+    padding-block: 30px;
+  }
+  .print-entry__copy {
+    grid-area: copy;
+  }
+  .print-entry__actions {
+    grid-area: actions;
+    align-self: end;
+    grid-template-columns: repeat(2, minmax(0, max-content));
+  }
+}
+
 .home-capabilities {
   display: grid;
   gap: 14px;
