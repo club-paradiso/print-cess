@@ -151,19 +151,22 @@ describe("home page", () => {
     expect(order.indexOf("/scan")).toBeLessThan(order.indexOf("/workstation"));
   });
 
-  it("shows the Beacon and the four printing steps in the first section", async () => {
+  it("keeps the first print section focused on the Beacon instead of repeating a four-step guide", async () => {
     const copy = textOf(await HomePage());
 
     expect(copy).toContain("Look for the screen with this mark.");
-    for (const step of [
+    expect(copy).toContain("Here to print?");
+    for (const duplicateStep of [
       "Find the screen",
       "Scan its QR code",
       "Pick your file",
       "Take your paper",
     ]) {
-      expect(copy.indexOf(step)).toBeGreaterThan(-1);
-      expect(copy.indexOf(step)).toBeLessThan(copy.indexOf("Choose files to send"));
+      expect(copy).not.toContain(duplicateStep);
     }
+    expect(copy.indexOf("Look for the screen with this mark.")).toBeLessThan(
+      copy.indexOf("Choose files to send"),
+    );
   });
 
   it("gives the rescue sheet and the scanner every word they show", async () => {
