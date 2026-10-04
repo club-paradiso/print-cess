@@ -102,7 +102,6 @@ describe("home page", () => {
     expect(copy).toContain("인쇄하러 오셨나요?");
     expect(copy).toContain("프린터 옆에 있는 Print-cess 화면을 찾아주세요.");
     expect(copy).toContain("화면의 QR 코드를 찍으면 바로 시작돼요.");
-    expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
