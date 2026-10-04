@@ -21,15 +21,16 @@ type JsQrDecoder = (
   data: Uint8ClampedArray,
   width: number,
   height: number,
-  options?: { inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst" },
+  options?: {
+    inversionAttempts?: "dontInvert" | "onlyInvert" | "attemptBoth" | "invertFirst";
+  },
 ) => JsQrResult | null;
 
 const JSQR_SRC = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
 let jsQrLoader: Promise<JsQrDecoder> | null = null;
 
 function detectorConstructor(): BarcodeDetectorConstructor | null {
-  const candidate = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor })
-    .BarcodeDetector;
+  const candidate = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;
   return typeof candidate === "function" ? candidate : null;
 }
 
@@ -175,7 +176,13 @@ export async function startCodeScanner<T>(
   const stop = () => finish(null);
 
   const decodeWithFallback = (): string | null => {
-    if (!fallback || !canvas || !context || video.videoWidth === 0 || video.videoHeight === 0) {
+    if (
+      !fallback ||
+      !canvas ||
+      !context ||
+      video.videoWidth === 0 ||
+      video.videoHeight === 0
+    ) {
       return null;
     }
 
@@ -191,7 +198,9 @@ export async function startCodeScanner<T>(
 
     context.drawImage(video, 0, 0, width, height);
     const frame = context.getImageData(0, 0, width, height);
-    return fallback(frame.data, width, height, { inversionAttempts: "dontInvert" })?.data ?? null;
+    return (
+      fallback(frame.data, width, height, { inversionAttempts: "dontInvert" })?.data ?? null
+    );
   };
 
   const tick = async () => {
