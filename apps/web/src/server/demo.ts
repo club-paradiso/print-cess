@@ -1,10 +1,28 @@
 const DEDICATED_KIOSK_PREVIEW_BRANCH = "preview";
 
 export function isBrowserKioskEnabled(environment: NodeJS.ProcessEnv = process.env): boolean {
+  // A positive flag always enables the public browser kiosk.
   if (environment.ENABLE_BROWSER_KIOSK === "true") return true;
 
-  // Keep the existing explicitly enabled demo and the dedicated Preview branch
-  // working while allowing Production to expose only the browser kiosk.
+  // Keep the dedicated kiosk Preview branch available even when the legacy
+  // flag is explicitly false. That branch is the controlled browser-kiosk
+  // acceptance surface.
+  if (
+    environment.VERCEL_ENV === "preview" &&
+    environment.VERCEL_GIT_COMMIT_REF === DEDICATED_KIOSK_PREVIEW_BRANCH
+  ) {
+    return true;
+  }
+
+  // In Vercel Production the public browser kiosk is a real product surface,
+  // not a demo. Missing configuration must not make QR generation disappear.
+  // An explicit false remains the emergency kill switch.
+  if (environment.VERCEL_ENV === "production") {
+    return environment.ENABLE_BROWSER_KIOSK !== "false";
+  }
+
+  if (environment.ENABLE_BROWSER_KIOSK === "false") return false;
+
   return isDemoRouteEnabled(environment);
 }
 
