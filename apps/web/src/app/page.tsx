@@ -73,8 +73,8 @@ export default async function HomePage() {
               <Monitor />
             </span>
             <span className="home-kiosk-entry__copy">
+              <span className="home-kiosk-entry__eyebrow">{text("homeWorkplaceTitle")}</span>
               <strong>{text("homeKioskCta")}</strong>
-              <span>{text("homeWorkplaceTitle")}</span>
             </span>
             <ArrowRight className="home-kiosk-entry__arrow" aria-hidden="true" />
           </a>
@@ -102,12 +102,6 @@ export default async function HomePage() {
 
         <PrintEntryActions labels={labels} />
 
-        <ol className="print-entry__steps" aria-label={text("homeStepsLabel")}>
-          <li>{text("homePrintStepFind")}</li>
-          <li>{text("homePrintStepScan")}</li>
-          <li>{text("homePrintStepPick")}</li>
-          <li>{text("homePrintStepCollect")}</li>
-        </ol>
       </section>
 
       {/* Share and Scan are real, first-class tools, but they are not why most
