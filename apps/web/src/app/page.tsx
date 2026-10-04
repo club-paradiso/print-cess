@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { translate } from "@print-cess/i18n";
-import { Beacon, RouteGlyph, Wordmark } from "@print-cess/ui";
+import { RouteGlyph, Wordmark } from "@print-cess/ui";
 
 import { PrintEntryActions, type PrintEntryLabels } from "@/components/home/print-entry-actions";
 import { requestLocale } from "@/lib/request-locale";
@@ -69,11 +69,10 @@ export default async function HomePage() {
         <Wordmark />
       </header>
 
-      {/* Print comes first and takes most of the page. A visitor who arrives
-          here has almost always come to print, and the one thing they need is
-          to find the Print-cess screen, so the page shows them what to look for
-          (the Beacon) before it explains anything. Printing still has no link
-          to a print route: a session only begins at that screen's QR code. */}
+      {/* Printing is the first task, but the landing page must not become an
+          instruction manual. Keep the first screen action-first: explain where
+          the session starts, then let the visitor scan. Detailed wayfinding and
+          the Beacon belong in the recovery sheet opened only when needed. */}
       <section className="print-entry" aria-labelledby="home-title">
         <div className="print-entry__copy">
           <h1 id="home-title">{text("homePrintHeading")}</h1>
@@ -83,19 +82,7 @@ export default async function HomePage() {
           </p>
         </div>
 
-        <div className="print-entry__beacon">
-          <Beacon size="lg" />
-          <p>{text("homeBeaconCaption")}</p>
-        </div>
-
         <PrintEntryActions labels={labels} />
-
-        <ol className="print-entry__steps" aria-label={text("homeStepsLabel")}>
-          <li>{text("homePrintStepFind")}</li>
-          <li>{text("homePrintStepScan")}</li>
-          <li>{text("homePrintStepPick")}</li>
-          <li>{text("homePrintStepCollect")}</li>
-        </ol>
       </section>
 
       {/* Share and Scan are real, first-class tools, but they are not why most
