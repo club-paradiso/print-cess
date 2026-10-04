@@ -289,7 +289,7 @@ p {
     gap: 4px;
   }
   .print-entry__actions .pc-button {
-    min-height: 52px;
+    min-height: 64px;
   }
   .print-entry__lost {
     min-height: 44px !important;
