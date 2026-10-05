@@ -177,7 +177,7 @@ describe("home page", () => {
     expect(labels.lostSteps).toEqual([
       "Find the printer",
       "Find the big screen beside it",
-      "Here to print? on that screen",
+      "Scan the QR code on that screen",
     ]);
     for (const [name, value] of Object.entries(labels)) {
       expect(value, name).toBeTruthy();
