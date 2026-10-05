@@ -6519,13 +6519,6 @@ snapshots:
 
   word-wrap@1.2.5: {}
 
-  why-is-node-running@3.2.1:
-    dependencies:
-      siginfo: 2.0.0
-      stackback: 0.0.2
-
-  word-wrap@1.2.5: {}
-
   wrap-ansi@6.2.0:
     dependencies:
       ansi-styles: 4.3.0
