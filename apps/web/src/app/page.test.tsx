@@ -99,10 +99,10 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("인쇄하러 오셨나요?");
-    expect(copy).toContain("프린터 옆에 있는 Print-cess 화면을 찾아주세요.");
-    expect(copy).toContain("화면의 QR 코드를 찍으면 바로 시작돼요.");
-    expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
+    expect(copy).toContain("QR 코드를 스캔하세요");
+    expect(copy).toContain("프린터 옆 Print-cess 화면에 QR 코드가 있어요.");
+    expect(copy).toContain("스캔하면 인쇄할 파일을 고르는 화면이 열려요.");
+    expect(copy).toContain("이 표시가 있는 화면이 Print-cess 화면이에요.");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
@@ -110,7 +110,7 @@ describe("home page", () => {
     expect(copy).toContain("문서 스캔하기");
     expect(copy).toContain("업무용 PC");
     expect(copy).toContain("이 기기를 Print-cess 화면으로 쓰기");
-    expect(copy).not.toContain("Here to print?");
+    expect(copy).not.toContain("Scan the QR code");
     // The category word is for installers; a first-time visitor is never asked
     // to know it.
     expect(copy).not.toContain("키오스크");
@@ -123,8 +123,8 @@ describe("home page", () => {
   it("falls back to English when no language is asked for", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("Here to print?");
-    expect(copy).toContain("Find the Print-cess screen next to the printer.");
+    expect(copy).toContain("Scan the QR code");
+    expect(copy).toContain("The Print-cess screen next to the printer shows the QR code.");
     expect(copy).toContain("Choose files to send");
     expect(copy).toContain("Receive files with a code");
     expect(copy).toContain("Scan a document");
@@ -142,7 +142,7 @@ describe("home page", () => {
     const page = await HomePage();
     const order = hrefsOf(page);
 
-    expect(headingsOf(page, "h1")).toEqual(["Here to print?"]);
+    expect(headingsOf(page, "h1")).toEqual(["Scan the QR code"]);
     expect(headingsOf(page, "h2")).toEqual(["Share", "Scan", "At work or on a public computer"]);
     expect(order[0]).toBe("/kiosk");
     expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/send"));
@@ -154,8 +154,8 @@ describe("home page", () => {
   it("keeps the first print section focused on the Beacon instead of repeating a four-step guide", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("Look for the screen with this mark.");
-    expect(copy).toContain("Here to print?");
+    expect(copy).toContain("This mark identifies the Print-cess screen.");
+    expect(copy).toContain("Scan the QR code");
     for (const duplicateStep of [
       "Find the screen",
       "Scan its QR code",
@@ -164,7 +164,7 @@ describe("home page", () => {
     ]) {
       expect(copy).not.toContain(duplicateStep);
     }
-    expect(copy.indexOf("Look for the screen with this mark.")).toBeLessThan(
+    expect(copy.indexOf("This mark identifies the Print-cess screen.")).toBeLessThan(
       copy.indexOf("Choose files to send"),
     );
   });
