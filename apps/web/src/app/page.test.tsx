@@ -110,7 +110,7 @@ describe("home page", () => {
     expect(copy).toContain("문서 스캔하기");
     expect(copy).toContain("업무용 PC");
     expect(copy).toContain("이 기기를 Print-cess 화면으로 쓰기");
-    expect(copy).not.toContain("Scan the QR code");
+    expect(copy).not.toContain("Here to print?");
     // The category word is for installers; a first-time visitor is never asked
     // to know it.
     expect(copy).not.toContain("키오스크");
@@ -123,8 +123,8 @@ describe("home page", () => {
   it("falls back to English when no language is asked for", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("Scan the QR code");
-    expect(copy).toContain("The Print-cess screen next to the printer shows the QR code.");
+    expect(copy).toContain("Here to print?");
+    expect(copy).toContain("Find the Print-cess screen next to the printer.");
     expect(copy).toContain("Choose files to send");
     expect(copy).toContain("Receive files with a code");
     expect(copy).toContain("Scan a document");
@@ -142,7 +142,7 @@ describe("home page", () => {
     const page = await HomePage();
     const order = hrefsOf(page);
 
-    expect(headingsOf(page, "h1")).toEqual(["Scan the QR code"]);
+    expect(headingsOf(page, "h1")).toEqual(["Here to print?"]);
     expect(headingsOf(page, "h2")).toEqual(["Share", "Scan", "At work or on a public computer"]);
     expect(order[0]).toBe("/kiosk");
     expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/send"));
@@ -154,8 +154,8 @@ describe("home page", () => {
   it("keeps the first print section focused on the Beacon instead of repeating a four-step guide", async () => {
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("This mark identifies the Print-cess screen.");
-    expect(copy).toContain("Scan the QR code");
+    expect(copy).toContain("Look for the screen with this mark.");
+    expect(copy).toContain("Here to print?");
     for (const duplicateStep of [
       "Find the screen",
       "Scan its QR code",
@@ -164,7 +164,7 @@ describe("home page", () => {
     ]) {
       expect(copy).not.toContain(duplicateStep);
     }
-    expect(copy.indexOf("This mark identifies the Print-cess screen.")).toBeLessThan(
+    expect(copy.indexOf("Look for the screen with this mark.")).toBeLessThan(
       copy.indexOf("Choose files to send"),
     );
   });
@@ -177,7 +177,7 @@ describe("home page", () => {
     expect(labels.lostSteps).toEqual([
       "Find the printer",
       "Find the big screen beside it",
-      "Scan the QR code on that screen",
+      "Here to print? on that screen",
     ]);
     for (const [name, value] of Object.entries(labels)) {
       expect(value, name).toBeTruthy();
