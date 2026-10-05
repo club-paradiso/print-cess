@@ -99,10 +99,10 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("인쇄하러 오셨나요?");
-    expect(copy).toContain("프린터 옆에 있는 Print-cess 화면을 찾아주세요.");
-    expect(copy).toContain("화면의 QR 코드를 찍으면 바로 시작돼요.");
-    expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
+    expect(copy).toContain("QR 코드를 스캔하세요");
+    expect(copy).toContain("프린터 옆 Print-cess 화면에 QR 코드가 있어요.");
+    expect(copy).toContain("스캔하면 인쇄할 파일을 고르는 화면이 열려요.");
+    expect(copy).toContain("이 표시가 있는 화면이 Print-cess 화면이에요.");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
