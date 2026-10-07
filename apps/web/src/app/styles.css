@@ -200,30 +200,6 @@ p {
   color: var(--pc-text-secondary);
 }
 
-/* The Beacon, with its instruction. Matching this tile to the shared display is
-   the whole job of this block, so it gets a sheet of its own. */
-.print-entry__beacon {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--pc-indigo-200);
-  border-radius: var(--pc-radius-md);
-  background: var(--pc-surface);
-}
-.print-entry__beacon .pc-beacon--lg {
-  --pc-beacon-size: 112px;
-}
-.print-entry__beacon p {
-  margin: 0;
-  color: var(--pc-text-primary);
-  font-size: 17px;
-  font-weight: 720;
-  line-height: 1.45;
-  text-wrap: balance;
-}
-
 .home-nowrap {
   white-space: nowrap;
 }
@@ -239,58 +215,6 @@ p {
 @media (max-width: 380px) {
   .print-entry {
     padding: 18px;
-  }
-  .print-entry__beacon {
-    gap: 10px;
-    padding: 12px;
-  }
-  .print-entry__beacon .pc-beacon--lg {
-    --pc-beacon-size: 88px;
-  }
-  .print-entry__beacon p {
-    font-size: 16px;
-  }
-}
-@media (min-width: 680px) {
-  .print-entry__actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-@media (min-width: 900px) {
-  .print-entry {
-    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
-    grid-template-areas:
-      "copy beacon"
-      "actions beacon";
-    column-gap: clamp(28px, 4vw, 52px);
-    row-gap: 22px;
-  }
-  .print-entry__copy {
-    grid-area: copy;
-    align-self: end;
-  }
-  .print-entry__actions {
-    grid-area: actions;
-    align-self: start;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .print-entry__actions .pc-button {
-    width: 100%;
-    padding-inline: 20px;
-  }
-  .print-entry__beacon {
-    grid-area: beacon;
-    flex-direction: column;
-    justify-content: center;
-    gap: 18px;
-    padding: 22px;
-    text-align: center;
-  }
-  .print-entry__beacon .pc-beacon--lg {
-    --pc-beacon-size: 152px;
-  }
-  .print-entry__beacon p {
-    font-size: 18px;
   }
 }
 
@@ -351,6 +275,11 @@ p {
   }
 }
 
+@media (min-width: 680px) {
+  .print-entry__actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
 @media (min-width: 900px) {
   .print-entry {
     grid-template-columns: minmax(0, 1fr) auto;

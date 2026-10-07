@@ -94,6 +94,7 @@ export default async function HomePage() {
           </p>
         </div>
 
+
         <PrintEntryActions labels={labels} />
       </section>
 

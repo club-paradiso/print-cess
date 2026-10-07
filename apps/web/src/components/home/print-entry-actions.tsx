@@ -5,12 +5,7 @@ import { Printer, QrCode, X } from "lucide-react";
 
 import { Beacon } from "@print-cess/ui";
 
-import {
-  DropScannerError,
-  startCodeScanner,
-  supportsCodeScanning,
-  type CodeScanner,
-} from "@/lib/drop-scanner";
+import { startCodeScanner, supportsCodeScanning, type CodeScanner } from "@/lib/drop-scanner";
 import { parsePrintSessionQr } from "@/lib/print-qr";
 
 export type PrintEntryLabels = {
@@ -106,13 +101,8 @@ export function PrintEntryActions({ labels }: { labels: PrintEntryLabels }) {
           if (path !== null && !cancelled) window.location.assign(path);
         });
       },
-      (error) => {
-        if (cancelled) return;
-        setScanState(
-          error instanceof DropScannerError && error.code === "scannerUnavailable"
-            ? "unsupported"
-            : "denied",
-        );
+      () => {
+        if (!cancelled) setScanState("denied");
       },
     );
     return () => {
