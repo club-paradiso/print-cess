@@ -47,9 +47,7 @@ test("@viewport the home leads with Print and keeps Share, Scan and workplaces b
   const print = page.getByRole("region", { name: "Here to print?" });
   await expect(print.getByRole("link")).toHaveCount(0);
   await expect(print.getByRole("button")).toHaveText(["Scan QR code", "I can't find the screen"]);
-  await expect(
-    print.getByRole("list", { name: "How printing works" }).getByRole("listitem"),
-  ).toHaveCount(4);
+  await expect(print.getByRole("list", { name: "How printing works" })).toHaveCount(0);
   await expect(print.locator("[data-beacon]").first()).toBeVisible();
 
   // Print must visibly outweigh the two tools beneath it.

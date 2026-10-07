@@ -67,6 +67,18 @@ export default async function HomePage() {
     <main className="home">
       <header className="home-header">
         <Wordmark />
+        {kioskAvailable ? (
+          <a className="home-kiosk-entry" href="/kiosk">
+            <span className="home-kiosk-entry__icon" aria-hidden="true">
+              <Monitor />
+            </span>
+            <span className="home-kiosk-entry__copy">
+              <span className="home-kiosk-entry__eyebrow">{text("homeWorkplaceTitle")}</span>
+              <strong>{text("homeKioskCta")}</strong>
+            </span>
+            <ArrowRight className="home-kiosk-entry__arrow" aria-hidden="true" />
+          </a>
+        ) : null}
       </header>
 
       {/* Printing is the first task, but the landing page must not become an
@@ -116,8 +128,8 @@ export default async function HomePage() {
         </section>
       </div>
 
-      {/* Managed workstations and the kiosk display are real, but they are not
-          what most visitors came for. They sit below the line, in plain text. */}
+      {/* Managed workstations remain a secondary institutional entrance.
+          The browser display entry is intentionally promoted above the fold. */}
       <nav className="home-workplace" aria-labelledby="home-workplace-title">
         <div>
           <h2 id="home-workplace-title">{text("homeWorkplaceTitle")}</h2>
@@ -130,14 +142,6 @@ export default async function HomePage() {
               {text("homeWorkstationCta")}
             </a>
           </li>
-          {kioskAvailable ? (
-            <li>
-              <a href="/kiosk">
-                <Monitor aria-hidden="true" />
-                {text("homeKioskCta")}
-              </a>
-            </li>
-          ) : null}
         </ul>
       </nav>
 

@@ -99,9 +99,9 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("인쇄하러 오셨나요?");
-    expect(copy).toContain("프린터 옆에 있는 Print-cess 화면을 찾아주세요.");
-    expect(copy).toContain("화면의 QR 코드를 찍으면 바로 시작돼요.");
+    expect(copy).toContain("QR 코드를 스캔하세요");
+    expect(copy).toContain("프린터 옆 Print-cess 화면에 QR 코드가 있어요.");
+    expect(copy).toContain("스캔하면 인쇄할 파일을 고르는 화면이 열려요.");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
@@ -133,16 +133,19 @@ describe("home page", () => {
   });
 
   /**
-   * Print is the page. Share and Scan are real but secondary, and institutional
-   * entrances come last and never as a capability: a visitor who came to print
-   * should not have to read past either to find out how.
+   * Turning the current device into the public print screen is a setup action,
+   * but it must be visible immediately. Keep it above the visitor tools so an
+   * installer never has to hunt through the bottom workplace section again.
    */
-  it("leads with Print and keeps Share, Scan and workplaces below it", async () => {
+  it("puts the kiosk display entry above the other home-page links", async () => {
     const page = await HomePage();
     const order = hrefsOf(page);
 
     expect(headingsOf(page, "h1")).toEqual(["Here to print?"]);
     expect(headingsOf(page, "h2")).toEqual(["Share", "Scan", "At work or on a public computer"]);
+    expect(order[0]).toBe("/kiosk");
+    expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/send"));
+    expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/scan"));
     expect(order.indexOf("/send")).toBeLessThan(order.indexOf("/workstation"));
     expect(order.indexOf("/scan")).toBeLessThan(order.indexOf("/workstation"));
   });

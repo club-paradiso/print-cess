@@ -35,9 +35,99 @@ p {
   transform: scaleX(-1);
 }
 .home-header {
-  display: flex;
+  display: grid;
+  gap: 12px;
   align-items: center;
   padding-block: 4px;
+}
+
+/* Setup stays impossible to miss, but the small context line makes clear that
+   this is for the machine being configured, not the visitor trying to print. */
+.home-kiosk-entry {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 14px;
+  border: 1px solid var(--pc-brand);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+  text-decoration: none;
+  box-shadow: 0 6px 18px rgb(49 46 129 / 0.14);
+  transition:
+    background 140ms ease,
+    transform 140ms ease,
+    box-shadow 140ms ease;
+}
+.home-kiosk-entry:hover {
+  background: var(--pc-brand-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgb(49 46 129 / 0.18);
+}
+.home-kiosk-entry:active {
+  background: var(--pc-brand-active);
+  transform: translateY(0);
+}
+.home-kiosk-entry:focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 3px;
+}
+.home-kiosk-entry__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--pc-radius-sm);
+  background: rgb(255 255 255 / 0.14);
+}
+.home-kiosk-entry__icon svg {
+  width: 20px;
+  height: 20px;
+}
+.home-kiosk-entry__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.home-kiosk-entry__eyebrow {
+  color: var(--pc-text-on-brand);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+}
+.home-kiosk-entry__copy strong {
+  color: var(--pc-text-on-brand);
+  font-size: clamp(16px, 2.6vw, 18px);
+  font-weight: 820;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  text-wrap: pretty;
+}
+.home-kiosk-entry__arrow {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+[dir="rtl"] .home-kiosk-entry__arrow {
+  transform: scaleX(-1);
+}
+@media (min-width: 720px) {
+  .home-header {
+    gap: 14px;
+  }
+  .home-kiosk-entry {
+    grid-template-columns: 44px minmax(0, 1fr) auto;
+    min-height: 70px;
+    padding: 12px 18px;
+  }
+  .home-kiosk-entry__icon {
+    width: 44px;
+    height: 44px;
+  }
 }
 /* The full lockup is wider than the smallest phones. There the endorsement
    stacks under the name, exactly as the compact header lockup does. */
@@ -53,28 +143,28 @@ p {
 }
 
 /* --- Home -----------------------------------------------------------------
-   One proposition, then the three things a file can do here: go to paper, go
-   to another device, or come off paper. Each capability is a sheet with a
-   turned-down corner, because what moves through this service is a document,
-   not a setting. Institutional entrances sit below a hairline in plain text. */
+   The display-mode switch is deliberately impossible to miss. After that, the
+   page explains the three things a file can do here: go to paper, go to another
+   device, or come off paper. Each capability is a sheet with a turned-down
+   corner, because what moves through this service is a document, not a setting. */
 
 .home {
   display: grid;
   align-content: start;
-  gap: clamp(28px, 6vw, 48px);
-  width: min(100% - 32px, 1120px);
+  gap: clamp(20px, 4vw, 36px);
+  width: min(100% - 32px, 1080px);
   min-height: 100dvh;
   margin: 0 auto;
   padding: max(20px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom));
 }
 .print-entry {
-  --home-fold: 36px;
+  --home-fold: 32px;
   position: relative;
   display: grid;
-  gap: 20px;
+  gap: 18px;
   min-width: 0;
-  padding: clamp(20px, 5vw, 40px);
-  border: 1.5px solid var(--pc-indigo-200);
+  padding: clamp(22px, 4.5vw, 36px);
+  border: 1px solid var(--pc-indigo-200);
   border-radius: var(--pc-radius-lg);
   border-start-end-radius: 0;
   background: var(--pc-surface-brand-subtle);
@@ -87,19 +177,19 @@ p {
 .print-entry h1 {
   margin: 0;
   color: var(--pc-text-primary);
-  font-size: clamp(32px, 8vw, 56px);
+  font-size: clamp(30px, 7vw, 52px);
   font-weight: 820;
-  line-height: 1.12;
+  line-height: 1.1;
   letter-spacing: -0.04em;
   text-wrap: balance;
 }
 .print-entry__lead {
   display: grid;
-  gap: 4px;
+  gap: 5px;
   margin: 0;
-  max-width: 30em;
-  font-size: clamp(18px, 2.4vw, 22px);
-  line-height: 1.45;
+  max-width: 31em;
+  font-size: clamp(17px, 2.2vw, 20px);
+  line-height: 1.55;
   text-wrap: pretty;
 }
 .print-entry__lead span:first-child {
@@ -115,19 +205,22 @@ p {
 .print-entry__beacon {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   min-width: 0;
-  padding: 16px;
+  padding: 14px;
   border: 1px solid var(--pc-indigo-200);
   border-radius: var(--pc-radius-md);
   background: var(--pc-surface);
 }
+.print-entry__beacon .pc-beacon--lg {
+  --pc-beacon-size: 112px;
+}
 .print-entry__beacon p {
   margin: 0;
   color: var(--pc-text-primary);
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.4;
+  font-size: 17px;
+  font-weight: 720;
+  line-height: 1.45;
   text-wrap: balance;
 }
 
@@ -136,50 +229,11 @@ p {
 }
 .print-entry__actions {
   display: grid;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 .print-entry__actions .pc-button {
   min-width: 0;
-}
-
-.print-entry__steps {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 10px 14px;
-  margin: 0;
-  padding: 18px 0 0;
-  border-top: 1px solid var(--pc-indigo-200);
-  list-style: none;
-  counter-reset: entry-step;
-}
-@media (min-width: 480px) {
-  .print-entry__steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.print-entry__steps li {
-  display: grid;
-  grid-template-columns: 30px minmax(0, 1fr);
-  align-items: center;
-  gap: 10px;
-  color: var(--pc-text-primary);
-  font-size: 16px;
-  font-weight: 650;
-  line-height: 1.35;
-  counter-increment: entry-step;
-}
-.print-entry__steps li::before {
-  content: counter(entry-step);
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: var(--pc-radius-pill);
-  background: var(--pc-brand);
-  color: var(--pc-text-on-brand);
-  font-size: 15px;
-  font-weight: 800;
 }
 
 @media (max-width: 380px) {
@@ -187,30 +241,29 @@ p {
     padding: 18px;
   }
   .print-entry__beacon {
-    gap: 12px;
+    gap: 10px;
     padding: 12px;
   }
   .print-entry__beacon .pc-beacon--lg {
-    --pc-beacon-size: 96px;
+    --pc-beacon-size: 88px;
   }
   .print-entry__beacon p {
-    font-size: 17px;
+    font-size: 16px;
   }
 }
-@media (min-width: 560px) {
+@media (min-width: 680px) {
   .print-entry__actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 @media (min-width: 900px) {
   .print-entry {
-    grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.65fr);
     grid-template-areas:
       "copy beacon"
-      "actions beacon"
-      "steps steps";
-    column-gap: clamp(32px, 5vw, 64px);
-    row-gap: 28px;
+      "actions beacon";
+    column-gap: clamp(28px, 4vw, 52px);
+    row-gap: 22px;
   }
   .print-entry__copy {
     grid-area: copy;
@@ -219,29 +272,25 @@ p {
   .print-entry__actions {
     grid-area: actions;
     align-self: start;
-    grid-template-columns: repeat(2, minmax(0, max-content));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .print-entry__actions .pc-button {
-    width: auto;
-    padding-inline: 28px;
+    width: 100%;
+    padding-inline: 20px;
   }
   .print-entry__beacon {
     grid-area: beacon;
     flex-direction: column;
     justify-content: center;
-    gap: 22px;
-    padding: 28px;
+    gap: 18px;
+    padding: 22px;
     text-align: center;
   }
   .print-entry__beacon .pc-beacon--lg {
-    --pc-beacon-size: 176px;
+    --pc-beacon-size: 152px;
   }
   .print-entry__beacon p {
-    font-size: 20px;
-  }
-  .print-entry__steps {
-    grid-area: steps;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    font-size: 18px;
   }
 }
 
