@@ -18,12 +18,14 @@ A frame that fails a gate is not auto-captured. The UI asks the user to move clo
 
 - automatic detection evaluates multiple Canny thresholds rather than trusting one global threshold;
 - detected quadrilaterals must be convex, cover a plausible portion of the frame, and have usable side lengths;
+- a quadrilateral with a side lying along the photo's own edge is rejected, because the frame edge is never the page edge;
+- the corrected page keeps the sheet's real proportions, recovered from its perspective rather than from its longest sides;
 - perspective correction is a four-point projective transform;
 - manual four-corner adjustment remains available when automatic detection is uncertain.
 
 ## Enhancement gate
 
-Auto, grayscale, and black-and-white modes estimate low-frequency illumination and normalize it before contrast enhancement. This reduces ordinary desk shadows and uneven page lighting without inventing missing text. Color mode applies illumination normalization before sharpening.
+Auto, grayscale, and black-and-white modes estimate low-frequency illumination and normalize it before contrast enhancement. Auto and grayscale then stretch levels so the paper is white; they do not use histogram equalization, which turns a mostly-paper page grey. This reduces ordinary desk shadows and uneven page lighting without inventing missing text. Color mode applies illumination normalization before sharpening.
 
 ## Searchability gate
 
@@ -37,4 +39,4 @@ The scanner deliberately does not use generative inpainting to reconstruct text 
 
 ## Verification
 
-The repository must keep unit coverage for geometry, capture-quality classification, Unicode searchable-PDF generation, and OCR-language selection. Browser E2E must preserve both the deterministic image-only workflow and the searchable-PDF workflow with a local OCR mock, plus camera-permission fallback behavior.
+`test/e2e/scanner-accuracy.spec.ts` measures detection, capture decisions, proportions and crop cleanliness against synthetic scenes with a known answer (`/demo/scanner-lab`). The repository must keep unit coverage for geometry, capture-quality classification, Unicode searchable-PDF generation, and OCR-language selection. Browser E2E must preserve both the deterministic image-only workflow and the searchable-PDF workflow with a local OCR mock, plus camera-permission fallback behavior.

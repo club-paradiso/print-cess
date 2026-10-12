@@ -271,7 +271,7 @@ export async function detectDocumentOnCanvas(
               });
             }
             const quad = orderDocumentQuad(points);
-            if (!isUsableQuad(quad)) continue;
+            if (!isUsableQuad(quad) || runsAlongFrame(quad)) continue;
 
             const score = detectionScore(quad, coverage);
             if (score > bestScore) {
@@ -414,6 +414,42 @@ function illuminationNormalizedGray(
   return normalized;
 }
 
+/**
+ * Linear levels: `black` and below to 0, `white` and above to 255. After
+ * illumination normalization the paper sits near 245 on every page, so a fixed
+ * white point is stable; the black point follows the darkest ink.
+ */
+function levels(
+  cv: CvRuntime,
+  source: InstanceType<CvRuntime["Mat"]>,
+  black: number,
+  white: number,
+): InstanceType<CvRuntime["Mat"]> {
+  const output = new cv.Mat();
+  const alpha = 255 / Math.max(1, white - black);
+  source.convertTo(output, -1, alpha, -black * alpha);
+  return output;
+}
+
+/** The 1st-percentile grey, capped so a page with no dark ink is not stretched into noise. */
+function darkPoint(gray: InstanceType<CvRuntime["Mat"]>): number {
+  const data = gray.data as Uint8Array;
+  const histogram = new Uint32Array(256);
+  const step = Math.max(1, Math.floor(data.length / 200_000));
+  let count = 0;
+  for (let index = 0; index < data.length; index += step) {
+    histogram[data[index]!] = (histogram[data[index]!] ?? 0) + 1;
+    count += 1;
+  }
+  const target = count * 0.01;
+  let seen = 0;
+  for (let value = 0; value < 256; value += 1) {
+    seen += histogram[value]!;
+    if (seen >= target) return Math.min(value, 110);
+  }
+  return 0;
+}
+
 function applyFilter(cv: CvRuntime, source: InstanceType<CvRuntime["Mat"]>, filter: ScanFilter) {
   if (filter === "color") {
     const gray = new cv.Mat();
@@ -444,8 +480,8 @@ function applyFilter(cv: CvRuntime, source: InstanceType<CvRuntime["Mat"]>, filt
   const normalized = illuminationNormalizedGray(cv, source);
 
   if (filter === "grayscale") {
-    const output = new cv.Mat();
-    cv.equalizeHist(normalized, output);
+    // Keep the tones; only lift the page to white.
+    const output = levels(cv, normalized, 0, 240);
     normalized.delete();
     return output;
   }
@@ -468,16 +504,83 @@ function applyFilter(cv: CvRuntime, source: InstanceType<CvRuntime["Mat"]>, filt
     return output;
   }
 
-  const equalized = new cv.Mat();
+  // Auto clean: paper to white, ink to black, then a light sharpen. Histogram
+  // equalization used to sit here; on a page that is mostly paper it spread
+  // the paper itself across the grey range and turned every page grey.
+  const stretched = levels(cv, normalized, darkPoint(normalized), 228);
   const blurred = new cv.Mat();
   const output = new cv.Mat();
-  cv.equalizeHist(normalized, equalized);
-  cv.GaussianBlur(equalized, blurred, new cv.Size(0, 0), 0.9);
-  cv.addWeighted(equalized, 1.18, blurred, -0.18, 2, output);
+  cv.GaussianBlur(stretched, blurred, new cv.Size(0, 0), 0.9);
+  cv.addWeighted(stretched, 1.18, blurred, -0.18, 0, output);
   normalized.delete();
-  equalized.delete();
+  stretched.delete();
   blurred.delete();
   return output;
+}
+
+/**
+ * The page's real width:height, recovered from how the rectangle is
+ * foreshortened (Zhang & He, "Whiteboard scanning and image enhancement",
+ * 2007), with the principal point at the image centre. Taking the longer of
+ * each pair of opposite sides instead squashes a tilted page: an A4 sheet
+ * photographed at 25° came out about a quarter too wide. Returns undefined when
+ * the quad is (nearly) parallel to the sensor or the estimate is implausible,
+ * so the caller keeps the side-length estimate.
+ */
+export function perspectiveAspectRatio(
+  quad: DocumentQuad,
+  sourceWidth: number,
+  sourceHeight: number,
+): number | undefined {
+  const u0 = sourceWidth / 2;
+  const v0 = sourceHeight / 2;
+  const m1 = [quad[0].x, quad[0].y, 1];
+  const m2 = [quad[1].x, quad[1].y, 1];
+  const m3 = [quad[3].x, quad[3].y, 1];
+  const m4 = [quad[2].x, quad[2].y, 1];
+  const cross = (a: number[], b: number[]) => [
+    a[1]! * b[2]! - a[2]! * b[1]!,
+    a[2]! * b[0]! - a[0]! * b[2]!,
+    a[0]! * b[1]! - a[1]! * b[0]!,
+  ];
+  const dot = (a: number[], b: number[]) => a[0]! * b[0]! + a[1]! * b[1]! + a[2]! * b[2]!;
+  const k2 = dot(cross(m1, m4), m3) / dot(cross(m2, m4), m3);
+  const k3 = dot(cross(m1, m4), m2) / dot(cross(m3, m4), m2);
+  if (!Number.isFinite(k2) || !Number.isFinite(k3)) return undefined;
+  const n2 = m2.map((value, index) => k2 * value - m1[index]!);
+  const n3 = m3.map((value, index) => k3 * value - m1[index]!);
+  const [n21, n22, n23] = n2 as [number, number, number];
+  const [n31, n32, n33] = n3 as [number, number, number];
+
+  // With no measurable perspective the image is an affine view of the page,
+  // where the side lengths are already the right proportions.
+  const perspectiveA = Math.abs(n23) > 1e-3;
+  const perspectiveB = Math.abs(n33) > 1e-3;
+  if (!perspectiveA && !perspectiveB) return undefined;
+  const longest = Math.max(sourceWidth, sourceHeight);
+  // With two vanishing points the focal length follows from the rectangle
+  // itself. A sheet tilted straight back has only one, and then nothing in the
+  // photo fixes it, so a typical phone main camera stands in: about 0.8x the
+  // long edge in pixels (a 26 mm-equivalent lens). The same prior replaces an
+  // estimate outside what a phone camera can be (0.4-4x), which means the
+  // corners were too noisy to trust.
+  const focalPrior = (0.8 * longest) ** 2;
+  let focalSquared = focalPrior;
+  if (perspectiveA && perspectiveB) {
+    const estimate =
+      -(
+        n21 * n31 -
+        (n21 * n33 + n23 * n31) * u0 +
+        n23 * n33 * u0 * u0 +
+        (n22 * n32 - (n22 * n33 + n23 * n32) * v0 + n23 * n33 * v0 * v0)
+      ) /
+      (n23 * n33);
+    if (estimate > (0.4 * longest) ** 2 && estimate < (4 * longest) ** 2) focalSquared = estimate;
+  }
+  const normSquared = ([a, b, c]: [number, number, number]) =>
+    ((a - u0 * c) ** 2 + (b - v0 * c) ** 2) / focalSquared + c * c;
+  const ratio = Math.sqrt(normSquared([n21, n22, n23]) / normSquared([n31, n32, n33]));
+  return Number.isFinite(ratio) && ratio > 0.2 && ratio < 5 ? ratio : undefined;
 }
 
 function documentDimensions(quad: DocumentQuad, sourceWidth: number, sourceHeight: number) {
@@ -485,8 +588,15 @@ function documentDimensions(quad: DocumentQuad, sourceWidth: number, sourceHeigh
   const bottom = distance(quad[3], quad[2]);
   const left = distance(quad[0], quad[3]);
   const right = distance(quad[1], quad[2]);
-  const rawWidth = Math.max(top, bottom);
-  const rawHeight = Math.max(left, right);
+  let rawWidth = Math.max(top, bottom);
+  let rawHeight = Math.max(left, right);
+  const ratio = perspectiveAspectRatio(quad, sourceWidth, sourceHeight);
+  if (ratio !== undefined) {
+    // Keep the longer measured side and derive the other from the true ratio,
+    // so no detail is thrown away along the page's longer dimension.
+    if (rawHeight >= rawWidth) rawWidth = rawHeight * ratio;
+    else rawHeight = rawWidth / ratio;
+  }
   const maximum = Math.max(rawWidth, rawHeight);
   const sourceMaximum = Math.max(sourceWidth, sourceHeight);
   const scale = Math.min(1, PROCESS_EDGE / maximum, PROCESS_EDGE / sourceMaximum);
@@ -503,7 +613,10 @@ function detectionScore(quad: DocumentQuad, coverage: number): number {
       const next = quad[(index + 1) % 4]!;
       return total + rightAngleScore(previous, point, next);
     }, 0) / 4;
-  const coverageScore = Math.min(1, Math.max(0, (coverage - 0.14) / 0.66));
+  // A page that fills half the frame is as good a capture as one that fills it
+  // all; scoring kept rising to 80% coverage, which favoured whatever large
+  // shape the edges happened to form over the page itself.
+  const coverageScore = Math.min(1, Math.max(0, (coverage - 0.14) / 0.36));
   const borderPenalty = quad.some(
     (point) => point.x < 0.004 || point.x > 0.996 || point.y < 0.004 || point.y > 0.996,
   )
@@ -520,7 +633,36 @@ function rightAngleScore(previous: ScanPoint, center: ScanPoint, next: ScanPoint
   const denominator = Math.hypot(ax, ay) * Math.hypot(bx, by);
   if (denominator === 0) return 0;
   const cosine = Math.abs((ax * bx + ay * by) / denominator);
-  return Math.max(0, 1 - cosine / 0.6);
+  // A rectangle seen at a realistic phone angle has corners well away from
+  // 90° (about 65–115° at a 40° tilt), so the score fades out only past ~37°.
+  return Math.max(0, 1 - cosine / 0.8);
+}
+
+/**
+ * True when any side of the quadrilateral lies along the frame edge. The edge
+ * of the photo is not the edge of the page: a contour that follows it is the
+ * desk, a tablecloth or the frame itself, and must not outscore the real page
+ * just because it is larger. A page that really runs off the frame cannot be
+ * found automatically either; it falls back to the full-frame crop for review.
+ */
+export function runsAlongFrame(quad: DocumentQuad): boolean {
+  const margin = 0.012;
+  const onEdge = (point: ScanPoint) => ({
+    left: point.x <= margin,
+    right: point.x >= 1 - margin,
+    top: point.y <= margin,
+    bottom: point.y >= 1 - margin,
+  });
+  return quad.some((point, index) => {
+    const first = onEdge(point);
+    const second = onEdge(quad[(index + 1) % 4]!);
+    return (
+      (first.left && second.left) ||
+      (first.right && second.right) ||
+      (first.top && second.top) ||
+      (first.bottom && second.bottom)
+    );
+  });
 }
 
 function isUsableQuad(quad: DocumentQuad): boolean {

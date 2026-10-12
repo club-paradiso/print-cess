@@ -181,3 +181,47 @@ test("benchmark produces a passing release-style verdict when all gates are met"
   assert.equal(report.metrics.autoCapturePrecision, 1);
   assert.equal(report.metrics.autoCaptureRecall, 1);
 });
+
+function geometryOnlyCases() {
+  return Array.from({ length: 4 }, (_, index) => ({
+    id: `geometry-${index + 1}`,
+    image: { width: 1512, height: 2016 },
+    expectedQuad: UNIT_SQUARE,
+    detectedQuad: UNIT_SQUARE,
+    shouldAutoCapture: index < 2,
+    didAutoCapture: index < 2,
+    processingMs: 500,
+    pdfBytes: 200 * 1024,
+    pages: 1,
+    ocrRequested: false,
+    externalOcrUpload: false,
+    generativeReconstructionUsed: false,
+  }));
+}
+
+test("a suite without OCR fails unless it explicitly opts out of OCR cases", () => {
+  const report = scoreBenchmark({ version: 1, suite: "no-ocr", cases: geometryOnlyCases() });
+  assert.equal(report.passed, false);
+  assert.equal(report.checks.find((check) => check.name === "minimum OCR cases").passed, false);
+  assert.equal(report.checks.find((check) => check.name === "mean OCR CER").passed, false);
+});
+
+test("an explicit zero-OCR suite reports OCR as not measured rather than passed", () => {
+  const report = scoreBenchmark({
+    version: 1,
+    suite: "geometry-only",
+    gates: { minOcrCases: 0 },
+    cases: geometryOnlyCases(),
+  });
+  assert.equal(report.passed, true);
+  for (const name of ["mean OCR CER", "mean OCR WER", "searchable PDF rate"]) {
+    const check = report.checks.find((candidate) => candidate.name === name);
+    assert.equal(check.measured, false, name);
+    assert.equal(check.value, null, name);
+  }
+  assert.equal(
+    report.checks.find((check) => check.name === "mean edge IoU").measured,
+    undefined,
+    "measured checks keep their normal shape",
+  );
+});
