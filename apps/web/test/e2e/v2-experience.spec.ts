@@ -299,9 +299,7 @@ test("a refused camera permission is explained instead of left blank", async ({ 
   await expect(page.getByText(/The camera is blocked/u)).toBeVisible();
 });
 
-test("@viewport on a small phone in Korean, scanning needs no scrolling", async ({
-  browser,
-}) => {
+test("@viewport on a small phone in Korean, scanning needs no scrolling", async ({ browser }) => {
   // iPhone SE / mini with Safari's toolbars showing leave about 548 px; 320 px
   // wide is the narrowest phone the layout supports.
   for (const viewport of [
