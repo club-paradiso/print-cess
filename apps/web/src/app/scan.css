@@ -541,3 +541,85 @@
   gap: 8px;
   padding-inline: 12px;
 }
+
+/* --- Scanner lab (development only) ---------------------------------------- */
+
+.scan-lab {
+  width: min(100% - 32px, 1200px);
+  margin: 0 auto;
+  padding: 32px 0 48px;
+}
+.scan-lab__header {
+  display: grid;
+  gap: 12px;
+  max-width: 60em;
+  margin-bottom: 24px;
+}
+.scan-lab__header h1 {
+  margin: 0;
+}
+.scan-lab__header .pc-button {
+  justify-self: start;
+}
+.scan-lab__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.scan-lab__grid figure {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 10px;
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+}
+.scan-lab__grid .is-problem figure {
+  border-color: var(--pc-destructive);
+}
+.scan-lab__scene {
+  position: relative;
+}
+.scan-lab__scene img,
+.scan-lab__output {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.scan-lab__output {
+  max-height: 180px;
+  object-fit: contain;
+  background: var(--pc-surface-sunken);
+}
+.scan-lab__scene svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.scan-lab__scene polygon {
+  fill: none;
+  stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
+}
+.scan-lab__scene .is-truth {
+  stroke: #22c55e;
+  stroke-width: 3;
+}
+.scan-lab__scene .is-detected {
+  stroke: #f97316;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+.scan-lab__grid figcaption {
+  display: grid;
+  gap: 2px;
+  font-size: 14px;
+}
+.scan-lab__grid small {
+  color: var(--pc-text-muted);
+}

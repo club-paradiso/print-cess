@@ -214,6 +214,16 @@ function atMostCheck(name, value, threshold) {
   return createCheck(name, value !== null && value <= threshold, value, threshold, "<=");
 }
 
+/**
+ * A metric this suite deliberately does not measure. It is allowed only when
+ * the suite has also set that metric's minimum case count to zero, so a
+ * missing measurement can never pass silently in a suite that requires it; the
+ * report still lists the check as not measured.
+ */
+function notMeasured(name, threshold, operator) {
+  return { ...createCheck(name, true, null, threshold, operator), measured: false };
+}
+
 export function scoreBenchmark(input) {
   if (input?.version !== 1 || !Array.isArray(input.cases)) {
     throw new Error("Scanner benchmark input must use version 1 and contain a cases array.");
@@ -318,8 +328,15 @@ export function scoreBenchmark(input) {
     minimumCheck("minimum capture cases", metrics.captureCases, gates.minCaptureCases),
     atLeastCheck("mean edge IoU", metrics.meanEdgeIou, gates.meanEdgeIou),
     atMostCheck("p95 corner error (%)", metrics.p95CornerErrorPercent, gates.p95CornerErrorPercent),
-    atMostCheck("mean OCR CER", metrics.meanCer, gates.meanCer),
-    atMostCheck("mean OCR WER", metrics.meanWer, gates.meanWer),
+    ...(metrics.ocrCases === 0 && gates.minOcrCases === 0
+      ? [
+          notMeasured("mean OCR CER", gates.meanCer, "<="),
+          notMeasured("mean OCR WER", gates.meanWer, "<="),
+        ]
+      : [
+          atMostCheck("mean OCR CER", metrics.meanCer, gates.meanCer),
+          atMostCheck("mean OCR WER", metrics.meanWer, gates.meanWer),
+        ]),
     atLeastCheck(
       "auto-capture precision",
       metrics.autoCapturePrecision,
@@ -328,7 +345,9 @@ export function scoreBenchmark(input) {
     atLeastCheck("auto-capture recall", metrics.autoCaptureRecall, gates.autoCaptureRecall),
     atMostCheck("p95 processing time (ms)", metrics.p95ProcessingMs, gates.p95ProcessingMs),
     atMostCheck("p95 PDF KiB/page", metrics.p95PdfKibPerPage, gates.p95PdfKibPerPage),
-    atLeastCheck("searchable PDF rate", metrics.searchablePdfRate, gates.searchablePdfRate),
+    metrics.searchablePdfRate === null && gates.minOcrCases === 0
+      ? notMeasured("searchable PDF rate", gates.searchablePdfRate, ">=")
+      : atLeastCheck("searchable PDF rate", metrics.searchablePdfRate, gates.searchablePdfRate),
     createCheck(
       "privacy/integrity violations",
       metrics.privacyIntegrityViolations === 0,
