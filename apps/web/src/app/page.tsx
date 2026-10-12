@@ -103,6 +103,15 @@ export default async function HomePage() {
         </figure>
 
         <PrintEntryActions labels={labels} />
+
+        {/* The deletion promise belongs to Print only: a Share transfer is kept
+            until it is received, erased by the sender, or expires
+            (docs/PRIVACY.md), so it must not sit under a band that reads as
+            covering every tool on the page. */}
+        <p className="print-entry__privacy">
+          <LockKeyhole aria-hidden="true" />
+          <span>{text("privacySummary")}</span>
+        </p>
       </section>
 
       {/* The same three steps the phone and the big screen show, as one strip
@@ -165,12 +174,6 @@ export default async function HomePage() {
             <UserX />
           </span>
           <span>{text("homeNoAccount")}</span>
-        </li>
-        <li>
-          <span className="home-trust__icon" aria-hidden="true">
-            <LockKeyhole />
-          </span>
-          <span>{text("privacySummary")}</span>
         </li>
       </ul>
 

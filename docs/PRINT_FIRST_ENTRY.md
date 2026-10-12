@@ -39,7 +39,7 @@ PRINT  (first visitor section, most of the first screen)
 HOW PRINTING WORKS  (three steps on one perforated strip: scan, pick, take your paper)
 MORE YOU CAN DO HERE
   SHARE  SCAN   (two smaller sheets)
-What happens to a file   (no account; locked on the way, erased after printing)
+No account needed   (true of every tool; Print's own deletion promise sits in the Print section)
 At work or on a public computer   (use this device as the print screen, work computer)
 ```
 
