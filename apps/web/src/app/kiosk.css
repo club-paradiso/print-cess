@@ -528,8 +528,11 @@
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 20px;
-  padding: 140px 50px 50px;
+  /* Height-led spacing: at 1920x1080 this is 140px / 20px / 50px; at
+     1280x720 (a 1080p kiosk at 150% Windows scaling) it tightens so the
+     countdown line stays on screen instead of below the fold. */
+  gap: clamp(12px, 1.85vh, 20px);
+  padding: clamp(96px, 13vh, 140px) 50px clamp(24px, 4.6vh, 50px);
   background: var(--pc-background);
   text-align: center;
 }
@@ -538,9 +541,9 @@
   inset: clamp(28px, 3vw, 52px) auto auto clamp(28px, 3vw, 52px);
 }
 .kiosk-result > svg {
-  width: 152px;
-  height: 152px;
-  padding: 32px;
+  width: clamp(112px, 14vh, 152px);
+  height: clamp(112px, 14vh, 152px);
+  padding: clamp(24px, 3vh, 32px);
   border-radius: 44px;
 }
 .kiosk-result h1 {
