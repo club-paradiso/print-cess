@@ -46,7 +46,7 @@ The scanner is a local-first browser document pipeline. Source photos are not up
   live-camera capture check, perspective correction and PDF steps as the scan screen.
   `apps/web/test/e2e/scanner-accuracy.spec.ts` scores the results with the benchmark gates in
   `scripts/scanner-benchmark/metrics.mjs` and holds every scene to its own floor (edge IoU ≥ 0.95,
-  proportions within 10%, desk bleed in the crop ≤ 12%), and writes
+  proportions within 10%, at most 5% of the crop outside the true page), and writes
   `artifacts/scanner-benchmark/synthetic-render-*.json` for CI. Opening the lab page and pressing
   **Run all scenes** shows each scene with the true edge (green) and the detected edge (orange).
 - These are synthetic results. They catch regressions in the pipeline; claims about real phones

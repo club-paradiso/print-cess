@@ -5,6 +5,7 @@ import {
   processDocument,
   type DocumentQuad,
   type ScanFilter,
+  type ScanPoint,
 } from "@/lib/document-scan-engine";
 import { buildScannedPdf } from "@/lib/scan-pdf";
 
@@ -48,7 +49,7 @@ export type ScanLabObservation = {
   outputAspect?: number;
   /** |outputAspect - A4| / A4, in percent. */
   aspectErrorPercent?: number;
-  /** Share of the corrected page's outer 2% ring that is not paper. */
+  /** Share of the detected crop that lies outside the true page (desk in the PDF). */
   borderBleed?: number;
 };
 
@@ -80,42 +81,66 @@ function downscale(canvas: HTMLCanvasElement, maxEdge: number): HTMLCanvasElemen
   return output;
 }
 
-/** Proportions and border cleanliness of the corrected page. */
-async function measureOutput(blob: Blob) {
+/** Proportions of the corrected page. */
+async function measureAspect(blob: Blob) {
   const bitmap = await createImageBitmap(blob);
   try {
-    const canvas = document.createElement("canvas");
-    canvas.width = bitmap.width;
-    canvas.height = bitmap.height;
-    const context = canvas.getContext("2d", { willReadFrequently: true });
-    if (!context) throw new Error("scanLabCanvasUnavailable");
-    context.drawImage(bitmap, 0, 0);
-    const { data, width, height } = context.getImageData(0, 0, canvas.width, canvas.height);
-    const ring = Math.max(2, Math.round(Math.min(width, height) * 0.02));
-    // Paper in the corrected output is light; the desks in these scenes are
-    // all clearly darker than paper once the illumination is normalized.
-    let samples = 0;
-    let bleed = 0;
-    const step = Math.max(1, Math.floor(Math.min(width, height) / 400));
-    for (let y = 0; y < height; y += step) {
-      for (let x = 0; x < width; x += step) {
-        const inRing = x < ring || y < ring || x >= width - ring || y >= height - ring;
-        if (!inRing) continue;
-        const index = (y * width + x) * 4;
-        const luma = data[index]! * 0.2126 + data[index + 1]! * 0.7152 + data[index + 2]! * 0.0722;
-        samples += 1;
-        if (luma < 150) bleed += 1;
-      }
-    }
-    const aspect = Math.min(width, height) / Math.max(width, height);
+    const aspect = Math.min(bitmap.width, bitmap.height) / Math.max(bitmap.width, bitmap.height);
     return {
       outputAspect: aspect,
       aspectErrorPercent: (Math.abs(aspect - A4_ASPECT) / A4_ASPECT) * 100,
-      borderBleed: samples === 0 ? 0 : bleed / samples,
     };
   } finally {
     bitmap.close();
   }
+}
+
+/** True when `point` is inside the convex quad (either winding). */
+function insideConvex(quad: readonly ScanPoint[], point: ScanPoint): boolean {
+  let sign = 0;
+  for (let index = 0; index < quad.length; index += 1) {
+    const a = quad[index]!;
+    const b = quad[(index + 1) % quad.length]!;
+    const cross = (b.x - a.x) * (point.y - a.y) - (b.y - a.y) * (point.x - a.x);
+    if (cross === 0) continue;
+    const current = Math.sign(cross);
+    if (sign === 0) sign = current;
+    else if (current !== sign) return false;
+  }
+  return true;
+}
+
+/**
+ * Share of the detected crop that lies outside the true page, measured on a
+ * pixel-space grid against the quad the scene was drawn with. A colour or
+ * brightness test cannot do this: a beige desk is as light as paper once the
+ * illumination is normalized, so desk inside the crop would pass unseen.
+ */
+function cropBleed(truth: DocumentQuad, detected: DocumentQuad): number {
+  const toPixels = (quad: DocumentQuad) =>
+    quad.map((point) => ({ x: point.x * SCENE_WIDTH, y: point.y * SCENE_HEIGHT }));
+  const truthPixels = toPixels(truth);
+  const detectedPixels = toPixels(detected);
+  const xs = detectedPixels.map((point) => point.x);
+  const ys = detectedPixels.map((point) => point.y);
+  const [minX, maxX, minY, maxY] = [
+    Math.min(...xs),
+    Math.max(...xs),
+    Math.min(...ys),
+    Math.max(...ys),
+  ];
+  const step = Math.max(1, Math.max(maxX - minX, maxY - minY) / 300);
+  let inCrop = 0;
+  let outsidePage = 0;
+  for (let y = minY; y <= maxY; y += step) {
+    for (let x = minX; x <= maxX; x += step) {
+      const point = { x, y };
+      if (!insideConvex(detectedPixels, point)) continue;
+      inCrop += 1;
+      if (!insideConvex(truthPixels, point)) outsidePage += 1;
+    }
+  }
+  return inCrop === 0 ? 0 : outsidePage / inCrop;
 }
 
 export async function runScanLabScene(
@@ -141,7 +166,11 @@ export async function runScanLabScene(
 
   const geometryScored =
     scene.expect.detect === true && rendered.quad !== null && rendered.fullyInFrame;
-  const output = detection.detected ? await measureOutput(processed.blob) : undefined;
+  const output = detection.detected ? await measureAspect(processed.blob) : undefined;
+  const borderBleed =
+    geometryScored && detection.detected
+      ? cropBleed(orderDocumentQuad(rendered.quad!), detection.quad)
+      : undefined;
 
   const observation: ScanLabObservation = {
     id: scene.id,
@@ -166,6 +195,7 @@ export async function runScanLabScene(
     externalOcrUpload: false,
     generativeReconstructionUsed: false,
     ...(output ?? {}),
+    ...(borderBleed === undefined ? {} : { borderBleed }),
   };
 
   if (!options.previews) return { observation };

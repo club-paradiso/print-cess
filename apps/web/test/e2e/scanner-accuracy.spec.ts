@@ -43,7 +43,8 @@ const ARTIFACT_DIR = resolve(process.cwd(), "../../artifacts/scanner-benchmark")
 /** Per-scene floors. The suite-level gates in metrics.mjs apply on top. */
 const SCENE_MIN_IOU = 0.95;
 const SCENE_MAX_ASPECT_ERROR_PERCENT = 10;
-const SCENE_MAX_BORDER_BLEED = 0.12;
+/** Share of the crop that falls outside the true page, measured geometrically. */
+const SCENE_MAX_BORDER_BLEED = 0.05;
 
 test("the scanner finds, crops and gates synthetic documents within the quality gates", async ({
   page,
