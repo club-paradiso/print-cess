@@ -183,6 +183,14 @@ export function BatchMobileFlow({
   const watchAbort = useRef<AbortController>(null);
   const claimAttempt = useRef<{ sessionId: string; outcome: Promise<ClaimOutcome> }>(null);
 
+  // An input keeps its value after a rejected pick, and choosing the same file
+  // again then fires no change event. The iCloud notice asks for exactly that
+  // second pick once the download finishes, so every rejection clears both.
+  const resetPickers = useCallback(() => {
+    if (photoInput.current) photoInput.current.value = "";
+    if (fileInput.current) fileInput.current.value = "";
+  }, []);
+
   const clearDocuments = useCallback(() => {
     setDocuments((current) => {
       for (const item of current) item.validated.bytes.fill(0);
@@ -191,9 +199,8 @@ export function BatchMobileFlow({
     setFileErrorKey(undefined);
     setBatchError(undefined);
     setFileNoticeKey(undefined);
-    if (photoInput.current) photoInput.current.value = "";
-    if (fileInput.current) fileInput.current.value = "";
-  }, []);
+    resetPickers();
+  }, [resetPickers]);
 
   const shutdownPage = useCallback(() => {
     void clearBrowserSiteData();
@@ -273,6 +280,7 @@ export function BatchMobileFlow({
       setFileNoticeKey(undefined);
       setQuotaBlock(undefined);
       if (files.length > MAX_PRINT_BUNDLE_FILES) {
+        resetPickers();
         setBatchError(copy.tooManyFiles);
         return;
       }
@@ -298,6 +306,7 @@ export function BatchMobileFlow({
         const quota = decidePrintQuota(next.map(({ validated }) => quotaDocument(validated)));
         if (quota.kind !== "allowed") {
           for (const item of next) item.validated.bytes.fill(0);
+          resetPickers();
           setQuotaBlock(quota);
           return;
         }
@@ -306,11 +315,19 @@ export function BatchMobileFlow({
         setStage("preview");
       } catch (error) {
         for (const item of next) item.validated.bytes.fill(0);
+        resetPickers();
         if (error instanceof BatchSelectionError) setBatchError(error.message);
         else setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
       }
     },
-    [clearDocuments, copy.batchTooLarge, copy.tooManyFiles, supportsHwp, supportsHwpx],
+    [
+      clearDocuments,
+      copy.batchTooLarge,
+      copy.tooManyFiles,
+      resetPickers,
+      supportsHwp,
+      supportsHwpx,
+    ],
   );
 
   const cancelClaim = useCallback(async () => {

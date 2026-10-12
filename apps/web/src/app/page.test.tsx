@@ -29,6 +29,21 @@ function headingsOf(node: unknown, level: string): string[] {
   return [];
 }
 
+/** The scan sheet's extra trusted origin, read from the client component's props. */
+function sessionOriginOf(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(sessionOriginOf).find((value) => value !== undefined);
+  if (node && typeof node === "object" && "props" in node) {
+    const element = node as {
+      props: { labels?: unknown; sessionOrigin?: unknown; children?: unknown };
+    };
+    if (element.props.labels !== undefined && "sessionOrigin" in element.props) {
+      return element.props.sessionOrigin ?? null;
+    }
+    return sessionOriginOf(element.props.children);
+  }
+  return undefined;
+}
+
 /** The client component takes its words as props, so read them from there. */
 function entryLabelsOf(node: unknown): Record<string, unknown> | undefined {
   if (Array.isArray(node)) return node.map(entryLabelsOf).find((labels) => labels !== undefined);
@@ -79,6 +94,32 @@ describe("home page", () => {
 
     expect(hrefs).toEqual(expect.arrayContaining(["/scan", "/send", "/receive", "/workstation"]));
     expect(hrefs).not.toContain("/kiosk");
+  });
+
+  it("shows the kiosk entry in Vercel Production when the flag is not set at all", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ENABLE_BROWSER_KIOSK", undefined);
+    vi.stubEnv("ENABLE_DEMO_ROUTES", "false");
+    vi.stubEnv("VERCEL_ENV", "production");
+
+    expect(hrefsOf(await HomePage())).toContain("/kiosk");
+  });
+
+  it("hides the kiosk entry in a production build outside Vercel unless it is enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ENABLE_BROWSER_KIOSK", undefined);
+    vi.stubEnv("ENABLE_DEMO_ROUTES", undefined);
+    vi.stubEnv("VERCEL_ENV", undefined);
+
+    expect(hrefsOf(await HomePage())).not.toContain("/kiosk");
+  });
+
+  it("lets the scanner accept codes for the configured public origin", async () => {
+    vi.stubEnv("PUBLIC_BASE_URL", "https://paradiso-print-cess-web.vercel.app");
+    expect(sessionOriginOf(await HomePage())).toBe("https://paradiso-print-cess-web.vercel.app");
+
+    vi.stubEnv("PUBLIC_BASE_URL", "https://print.example/not-an-origin");
+    expect(sessionOriginOf(await HomePage())).toBeNull();
   });
 
   it("keeps the public entry page on the dedicated kiosk Preview branch", async () => {

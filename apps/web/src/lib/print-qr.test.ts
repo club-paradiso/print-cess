@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parsePrintSessionQr } from "./print-qr";
+import { parsePrintSessionQr, sessionOriginFrom } from "./print-qr";
 
 const ORIGIN = "https://print.example";
 const SESSION_ID = `${"A".repeat(21)}A`;
@@ -57,5 +57,38 @@ describe("print QR validation", () => {
 
   it("ignores absurdly long content before parsing it", () => {
     expect(parsePrintSessionQr(`${VALID}${"a".repeat(600)}`, ORIGIN)).toBeNull();
+  });
+
+  it("accepts a code naming the deployment's configured origin and stays on this one", () => {
+    // Production: the kiosk draws codes for PUBLIC_BASE_URL, and the visitor's
+    // page may be on the host that the other one redirects to.
+    const configured = "https://paradiso-print-cess-web.vercel.app";
+    const fromKiosk = `${configured}/s/${SESSION_ID}${FRAGMENT}`;
+
+    expect(parsePrintSessionQr(fromKiosk, ORIGIN, [configured])).toBe(
+      `/s/${SESSION_ID}${FRAGMENT}`,
+    );
+    expect(parsePrintSessionQr(fromKiosk, ORIGIN)).toBeNull();
+    expect(
+      parsePrintSessionQr(
+        `https://paradiso-print-cess-web.vercel.app.evil.example/s/${SESSION_ID}${FRAGMENT}`,
+        ORIGIN,
+        [configured],
+      ),
+    ).toBeNull();
+  });
+});
+
+describe("configured session origin", () => {
+  it("trusts only a bare http(s) origin", () => {
+    expect(sessionOriginFrom("https://print.example")).toBe("https://print.example");
+    expect(sessionOriginFrom("https://print.example/")).toBe("https://print.example");
+    expect(sessionOriginFrom(undefined)).toBeUndefined();
+    expect(sessionOriginFrom("")).toBeUndefined();
+    expect(sessionOriginFrom("not a url")).toBeUndefined();
+    expect(sessionOriginFrom("https://print.example/app")).toBeUndefined();
+    expect(sessionOriginFrom("https://print.example/?x=1")).toBeUndefined();
+    expect(sessionOriginFrom("https://user@print.example")).toBeUndefined();
+    expect(sessionOriginFrom("javascript:alert(1)")).toBeUndefined();
   });
 });

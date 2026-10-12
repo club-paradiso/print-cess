@@ -168,19 +168,117 @@ test("scanning a QR code that is not a Print-cess session goes nowhere", async (
   }
 });
 
-test("a browser that cannot scan says so and points to the phone's camera app", async ({
-  page,
-}) => {
+/**
+ * A camera that works, for the paths that differ only in how a frame is
+ * decoded. It replaces getUserMedia on MediaDevices.prototype from an init
+ * script: Playwright's WebKit keeps the native method when only the instance
+ * property is replaced, and an init script also survives the dev server
+ * reloading the page after a route compiles.
+ */
+async function installFakeCamera(page: Page): Promise<void> {
   await page.addInitScript(() => {
     delete (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector;
+    const scope = window as unknown as { __streams: MediaStream[] };
+    scope.__streams = [];
+    const canvas = document.createElement("canvas");
+    canvas.width = 320;
+    canvas.height = 240;
+    const context = canvas.getContext("2d");
+    setInterval(() => {
+      if (!context) return;
+      context.fillStyle = "#334";
+      context.fillRect(0, 0, 320, 240);
+    }, 50);
+    MediaDevices.prototype.getUserMedia = async () => {
+      const stream = canvas.captureStream(15);
+      scope.__streams.push(stream);
+      return stream;
+    };
   });
+}
+
+test("@viewport a browser without BarcodeDetector scans through the jsQR fallback, as Safari does", async ({
+  page,
+}) => {
+  await installFakeCamera(page);
+  // Stands in for the pinned CDN decoder, which reports whatever window.__qr
+  // holds. The loader itself (URL, integrity, failure) is covered in
+  // drop-scanner.test.ts; what is under test here is the page.
+  await page.addInitScript(() => {
+    const scope = window as unknown as { __qr?: string; jsQR: unknown };
+    scope.jsQR = () => (scope.__qr ? { data: scope.__qr } : null);
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Scan QR code" }).click();
+  await expect(
+    page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
+  ).toBeVisible();
+  await expect(page.getByText(/can't scan QR codes here/u)).toHaveCount(0);
+
+  await page.evaluate(
+    ([id, token]) => {
+      (window as unknown as { __qr: string }).__qr =
+        `${location.origin}/s/${id}#t=${token}&fp=${token}`;
+    },
+    [SESSION_ID, TOKEN],
+  );
+  await expect(page).toHaveURL(new RegExp(`/s/${SESSION_ID}#t=`, "u"));
+});
+
+test("@viewport a browser that cannot scan says so and points to the phone's camera app", async ({
+  page,
+}) => {
+  // No native detector, and the fallback decoder cannot be fetched: the one
+  // case left where this page cannot read a QR code.
+  await installFakeCamera(page);
+  await page.route("**/npm/jsqr@*/**", (route) => route.abort());
   await page.goto("/");
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/can't scan QR codes here/u)).toBeVisible();
   await expect(page.getByText(/camera app/u)).toBeVisible();
+  // A decoder that failed to load is not a refused camera.
+  await expect(page.getByText(/The camera is blocked/u)).toHaveCount(0);
   // The way back to the rescue sheet stays one tap away.
   await expect(page.getByRole("button", { name: "I can't find the screen" }).last()).toBeVisible();
+});
+
+test("@viewport the camera stays off while the decoder is still downloading, and stopping leaves it off", async ({
+  page,
+}) => {
+  // Hold the decoder download open, as a slow network would.
+  let releaseDecoder: () => void = () => {};
+  const decoderHeld = new Promise<void>((resolve) => {
+    releaseDecoder = resolve;
+  });
+  await page.route("**/npm/jsqr@*/**", async (route) => {
+    await decoderHeld;
+    await route.abort();
+  });
+
+  await installFakeCamera(page);
+  await page.goto("/receive");
+  await page.getByRole("button", { name: "Scan the QR code" }).click();
+  await expect(page.getByRole("heading", { name: "Point at the other phone" })).toBeVisible();
+  // A stalled download cannot be cancelled, so the camera must not be on yet.
+  const openStreams = () =>
+    page.evaluate(
+      () =>
+        (window as unknown as { __streams: MediaStream[] }).__streams.filter((stream) =>
+          stream.getTracks().some((track) => track.readyState !== "ended"),
+        ).length,
+    );
+  await page.waitForTimeout(500);
+  expect(await openStreams()).toBe(0);
+
+  await page.getByRole("button", { name: "Type the code instead" }).click();
+  releaseDecoder();
+
+  await page.waitForTimeout(500);
+  expect(await openStreams()).toBe(0);
+  // The visitor already chose to type; a late failure must not talk over that.
+  await page.waitForTimeout(500);
+  await expect(page.getByText("This browser cannot scan.", { exact: false })).toHaveCount(0);
 });
 
 test("a refused camera permission is explained instead of left blank", async ({ page }) => {
@@ -197,6 +295,34 @@ test("a refused camera permission is explained instead of left blank", async ({ 
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/The camera is blocked/u)).toBeVisible();
+});
+
+test("@viewport on a small phone in Korean, scanning needs no scrolling", async ({ browser }) => {
+  // iPhone SE / mini with Safari's toolbars showing leave about 548 px; 320 px
+  // wide is the narrowest phone the layout supports.
+  for (const viewport of [
+    { width: 375, height: 548 },
+    { width: 320, height: 568 },
+  ]) {
+    const context = await browser.newContext({
+      locale: "ko",
+      extraHTTPHeaders: { "accept-language": "ko" },
+      viewport,
+    });
+    const page = await context.newPage();
+    await page.goto("/");
+
+    // The kiosk link is for whoever runs a station and lives in the workplace
+    // links at the foot of the page (docs/PRINT_FIRST_ENTRY.md); only the
+    // visitor's first action has to clear the fold.
+    const scan = page.getByRole("button", { name: "QR 코드 찍기" }).first();
+    await expect(scan).toBeVisible();
+    const box = await scan.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+    await expectNoSidewaysScroll(page);
+    await context.close();
+  }
 });
 
 test("@viewport the home reads right to left in Arabic without overflowing", async ({
