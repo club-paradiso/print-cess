@@ -38,10 +38,11 @@ test("@viewport the home leads with Print and keeps Share, Scan and workplaces b
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
   await expect(page.getByRole("heading", { level: 2 })).toHaveText([
-    "Share",
-    "Scan",
+    "How printing works",
+    "More you can do here",
     "At work or on a public computer",
   ]);
+  await expect(page.getByRole("heading", { level: 3 })).toHaveText(["Share", "Scan"]);
   // Printing begins at the Print-cess screen's QR code, so the print section
   // links nowhere. Its two buttons only open sheets on this page.
   const print = page.getByRole("region", { name: "Here to print?" });

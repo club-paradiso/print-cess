@@ -17,10 +17,11 @@ PAPER  →  DIGITAL FILE →  DESTINATION
 ```
 
 Print-cess has three capabilities: **Print** (a file becomes paper), **Share** (a file reaches
-another device or person), and **Scan** (paper becomes a PDF). The home page exposes one
-prominent setup action first, **Use this device as the print screen**, then leads the visitor flow
-with Print and puts Share and Scan below it as smaller sheets. `PRODUCT_V2.md` records the
-reasoning and the future native path; `PRINT_FIRST_ENTRY.md` records this hierarchy.
+another device or person), and **Scan** (paper becomes a PDF). The home page leads with Print,
+shows its three steps once, puts Share and Scan below as smaller sheets, and closes with the
+entrances for the people who run the service (**Use this device as the print screen** and the
+managed workstation). `PRODUCT_V2.md` records the reasoning and the future native path;
+`PRINT_FIRST_ENTRY.md` records this hierarchy.
 
 - **Print** leads the home page with the question "Here to print?" ("인쇄하러 오셨나요?"), the
   Beacon, and the instruction to find the Print-cess screen next to the printer. It starts at
@@ -34,11 +35,9 @@ reasoning and the future native path; `PRINT_FIRST_ENTRY.md` records this hierar
   and lands in receiving.
 - **Scan** ends in a destination: on through Share, downloaded, handed to another app where the
   browser can share that exact PDF, or printed through this device's own print window.
-- **Display setup** is a full-width, high-contrast CTA directly below the product identity and
-  before the visitor's Print section. It is the first home-page link because turning the current
-  device into the shared Print-cess screen must be immediately discoverable.
-- **Managed workstation** remains the quieter institutional entry below a hairline after the
-  visitor tools.
+- **Display setup** and the **managed workstation** share the workplace group at the bottom of
+  the page, below a hairline after the visitor tools. They are for the people who run the
+  service, so they no longer compete with the visitor's first action.
 
 ---
 
