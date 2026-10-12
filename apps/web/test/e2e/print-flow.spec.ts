@@ -4,6 +4,7 @@ import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 import {
   createBoundaryBytes,
   createSidewaysSyntheticJpeg,
+  createSyntheticJpeg,
   createSyntheticPdf,
   createSyntheticPng,
 } from "@print-cess/test-fixtures";
@@ -96,11 +97,91 @@ test("mobile PNG flow encrypts, uploads, consumes once, and completes", async ({
   }
 });
 
-test("one kiosk scan prints multiple selected photo and document files in order", async ({
+/**
+ * Chromium titles the native dialog behind `showSaveFilePicker` "Warning: this
+ * site can see edits you make". Printing must never open any file-system
+ * picker, so each one is replaced by a recorder in every frame of the kiosk.
+ */
+async function recordPickerCalls(kiosk: Page): Promise<() => Promise<string[]>> {
+  await kiosk.addInitScript(() => {
+    const calls: string[] = [];
+    Object.defineProperty(window, "__printCessPickerCalls", { value: calls });
+    for (const name of ["showSaveFilePicker", "showDirectoryPicker", "showOpenFilePicker"]) {
+      Object.defineProperty(window, name, {
+        configurable: true,
+        value: () => {
+          calls.push(name);
+          return Promise.reject(new DOMException("blocked by test", "AbortError"));
+        },
+      });
+    }
+  });
+  return () =>
+    kiosk.evaluate(
+      () => (window as unknown as { __printCessPickerCalls: string[] }).__printCessPickerCalls,
+    );
+}
+
+test("one kiosk scan prints multiple selected photos in order", async ({ page, context }) => {
+  const pickerCalls = await recordPickerCalls(page);
+  const { mobile } = await openMobile(page, context, "/kiosk?printing=auto");
+  await mobile.getByTestId("file-input").setInputFiles([
+    {
+      name: "01-photo.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(await createSyntheticPng(800, 1100)),
+    },
+    {
+      name: "02-photo.jpg",
+      mimeType: "image/jpeg",
+      buffer: Buffer.from(await createSyntheticJpeg(800, 1100)),
+    },
+  ]);
+
+  await expect(mobile.getByRole("heading", { name: "Check these files" })).toBeVisible({
+    timeout: 30_000,
+  });
+  // The files are listed in print order, each with its kind and size.
+  const listed = mobile.locator("ol.mobile-selected > li");
+  await expect(listed).toHaveCount(2);
+  await expect(listed.nth(0)).toContainText("01-photo.png");
+  await expect(listed.nth(0)).toContainText("Photo");
+  await expect(listed.nth(1)).toContainText("02-photo.jpg");
+  await expect(listed.nth(1)).toContainText("Photo");
+  await expect(mobile.getByText("2 files selected", { exact: true })).toBeVisible();
+  await mobile.getByRole("button", { name: "Print 2 files" }).click();
+
+  await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
+    timeout: 60_000,
+  });
+  await expect(page.getByText("선택한 파일 2개를 처리했습니다")).toBeVisible();
+  // Several files do get numbered, so staff can match each download to the
+  // order the visitor picked them in.
+  await expect(page.getByRole("link", { name: "파일 1 다운로드 (직원용)" })).toHaveAttribute(
+    "download",
+    /^1-print-cess-document\.png$/u,
+  );
+  await expect(page.getByRole("link", { name: "파일 2 다운로드 (직원용)" })).toHaveAttribute(
+    "download",
+    /^2-print-cess-document\.jpg$/u,
+  );
+  await expect(mobile.getByRole("heading", { name: "All done" })).toBeVisible({ timeout: 60_000 });
+  expect(await pickerCalls()).toEqual([]);
+});
+
+test("a kiosk browser that cannot open PDFs says so instead of claiming it printed", async ({
   page,
   context,
 }) => {
+  const pickerCalls = await recordPickerCalls(page);
   const { mobile } = await openMobile(page, context, "/kiosk?printing=auto");
+  // Playwright's default headless shell ships without a PDF viewer, like a
+  // managed browser that opens PDFs externally. A PDF never loads there, so
+  // nothing can reach the print dialog.
+  test.skip(
+    await page.evaluate(() => navigator.pdfViewerEnabled),
+    "needs a kiosk browser without a PDF viewer",
+  );
   await mobile.getByTestId("file-input").setInputFiles([
     {
       name: "01-photo.png",
@@ -117,32 +198,22 @@ test("one kiosk scan prints multiple selected photo and document files in order"
   await expect(mobile.getByRole("heading", { name: "Check these files" })).toBeVisible({
     timeout: 30_000,
   });
-  // The files are listed in print order, each with its kind, size, and, for a
-  // PDF of several pages, how many pages will come out.
+  // A PDF of several pages says how many pages will come out.
   const listed = mobile.locator("ol.mobile-selected > li");
-  await expect(listed).toHaveCount(2);
-  await expect(listed.nth(0)).toContainText("01-photo.png");
-  await expect(listed.nth(0)).toContainText("Photo");
   await expect(listed.nth(1)).toContainText("02-document.pdf");
   await expect(listed.nth(1)).toContainText("2 pages");
-  await expect(mobile.getByText("2 files selected", { exact: true })).toBeVisible();
   await mobile.getByRole("button", { name: "Print 2 files" }).click();
 
-  await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
+  // The whole batch loads before any dialog opens, so the photo is not
+  // printed either, and neither screen reports a print that never happened.
+  await expect(page.getByRole("heading", { name: "지금은 인쇄할 수 없어요" })).toBeVisible({
     timeout: 60_000,
   });
-  await expect(page.getByText("선택한 파일 2개를 처리했습니다")).toBeVisible();
-  // Several files do get numbered, so staff can match each download to the
-  // order the visitor picked them in.
-  await expect(page.getByRole("link", { name: "파일 1 다운로드 (직원용)" })).toHaveAttribute(
-    "download",
-    /^1-/u,
-  );
-  await expect(page.getByRole("link", { name: "파일 2 다운로드 (직원용)" })).toHaveAttribute(
-    "download",
-    /^2-/u,
-  );
-  await expect(mobile.getByRole("heading", { name: "All done" })).toBeVisible({ timeout: 60_000 });
+  await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toHaveCount(0);
+  await expect(mobile.getByRole("heading", { name: "The printer could not finish." })).toBeVisible({
+    timeout: 60_000,
+  });
+  expect(await pickerCalls()).toEqual([]);
 });
 
 test("ending a visit tells the browser to drop this origin's data", async ({ request }) => {
