@@ -761,6 +761,24 @@
 .drop-ready .drop-status.is-delivered svg {
   color: var(--pc-success);
 }
+/* One card for the code and the link. The QR keeps its own scan frame; the
+   card around both carries the border and the lift. */
+.drop-handoff {
+  display: grid;
+  gap: 14px;
+  padding: 18px 16px 16px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-raised);
+  box-shadow: var(--pc-shadow-md);
+}
+.drop-handoff .drop-qr {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
 .drop-link-actions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));

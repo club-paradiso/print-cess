@@ -107,6 +107,17 @@ GitHub-control, or institutional records; therefore they do not close any checkb
       path. Unresolved records must never be automatically pruned or replayed.
 - [ ] **Physical output control.** Approve kiosk/printer placement, privacy/collection tray,
       completion audio/arrow, abandoned-print response, and accessibility.
+- [ ] **"TITLE" warning after a Windows download (reported, not yet reproduced).** A warning
+      mentioning TITLE was reported after downloading on Windows. As of 2026-10-12 its exact text is
+      not recorded in the repository, issues or pull requests, and no code path sets a document Title
+      or `Content-Disposition`. Collect before changing code: a screenshot and the verbatim message;
+      Windows edition/build, browser and version; the file name, extension and the page it came from
+      (Windows kiosk release ZIP, the kiosk's `파일 다운로드 (직원용)` recovery copy, `/receive`, or a
+      `/scan` PDF); which program showed the warning; `Get-Content <file> -Stream Zone.Identifier`;
+      `Get-AuthenticodeSignature <file>` for executables; and the PDF's document properties if it is
+      a PDF. Do not resolve it by turning off SmartScreen, Mark-of-the-Web or Protected View, or by
+      telling visitors to run `Unblock-File`. Fix the cause: signing per `AUTHENTICODE.md`, or the
+      file's own metadata and name.
 
 ## Content, accessibility, and operations
 

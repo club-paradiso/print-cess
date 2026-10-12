@@ -4,18 +4,45 @@
 
 The Vercel project `club-paradiso/paradiso-print-cess-web` is linked to the private GitHub
 repository with Root Directory `apps/web`. The public Production alias uses isolated Production
-Blob, Redis, and QStash resources and can create browser-kiosk sessions. Production deployment is
-manual while the remaining physical-site acceptance gates are open.
+Blob, Redis, and QStash resources and can create browser-kiosk sessions. Every `main` commit
+deploys to Production (see the correction below), although physical-site acceptance gates are
+still open.
 
-Automatic `main` deployments are disabled in `apps/web/vercel.json`. Do not remove that circuit
-breaker until provider approval, isolated Production Blob/session/cleanup resources, environment
-variables, and the manual provider suite are ready. Preview credentials must never be copied into
+Correction (2026-10-12): automatic `main` deployments are **enabled**. `apps/web/vercel.json` sets
+`git.deploymentEnabled.main: true`, and GitHub records a Production deployment for each `main`
+commit (for example `81c6693` on 2026-10-05). Earlier text here said the opposite. Whether that
+circuit breaker should be restored until provider approval, isolated Production
+Blob/session/cleanup resources, environment variables, and the manual provider suite are ready is an
+owner decision that this correction does not make. Preview credentials must never be copied into
 Production. The local adapter remains the tested development baseline.
 
-Only the Next.js application is deployable to Vercel. When `ENABLE_BROWSER_KIOSK=true`, the public
-root redirects to `/kiosk`, which creates sessions through `/api/kiosk/sessions`; this flag does not
-enable `/demo/admin` or administrator diagnostics. The optional Windows kiosk is never deployed to
-Vercel.
+Only the Next.js application is deployable to Vercel. The public root is the service entry page and
+never redirects to `/kiosk`; when the browser kiosk is enabled the root shows a link to `/kiosk`,
+which creates sessions through `/api/kiosk/sessions`. The kiosk flag does not enable `/demo/admin`
+or administrator diagnostics. The optional Windows kiosk is never deployed to Vercel.
+
+### Turning the browser kiosk on and off
+
+One function decides it, `isBrowserKioskEnabled` in `apps/web/src/server/demo.ts`, and the `/kiosk`
+page, `POST /api/kiosk/sessions` and the home page's kiosk link all follow it:
+
+| Environment                        | `ENABLE_BROWSER_KIOSK` unset | `"true"` | `"false"`         |
+| ---------------------------------- | ---------------------------- | -------- | ----------------- |
+| Vercel Production                  | **on**                       | on       | off (kill switch) |
+| Vercel Preview on branch `preview` | on                           | on       | on                |
+| Other Vercel Preview               | follows `ENABLE_DEMO_ROUTES` | on       | off               |
+| Production build outside Vercel    | off                          | on       | off               |
+
+When off, `/kiosk` and the session API answer 404 and the home page hides the link. Vercel fixes
+environment variables per deployment, so a change takes effect only after a redeploy. Kiosk QR
+codes are always built from `PUBLIC_BASE_URL`. On 2026-10-12 the live kiosk QR named
+`https://paradiso-print-cess-web.vercel.app`, which answers `307` to the same path on
+`https://print-cess.vercel.app`; the phone's camera app follows that redirect and keeps the
+`#t=…` fragment. The home page's in-page scanner accepts codes for its own origin and for the
+`PUBLIC_BASE_URL` origin (`sessionOriginFrom` in `apps/web/src/lib/print-qr.ts`) and always stays on
+its own origin. Setting `PUBLIC_BASE_URL` to the canonical host would save the redirect hop; that
+is an owner change in Vercel, not made here. Check the disable path on a Preview, never by
+flipping Production.
 `apps/web/vercel.json` owns the Next.js commands; Vercel resolves the repository-root pnpm lockfile
 and workspace packages while building from `apps/web`.
 
@@ -50,8 +77,10 @@ manually under the agreed local procedure.
 ## Project setup
 
 Keep the linked project Root Directory at `apps/web`, framework `nextjs`, install command
-`pnpm install --frozen-lockfile`, build command `pnpm build`, and output directory `.next`. Disable
-automatic Production deployment until all items in `PRODUCTION_BLOCKERS.md` are closed.
+`pnpm install --frozen-lockfile`, build command `pnpm build`, and output directory `.next`.
+Automatic Production deployment of `main` is currently on (`git.deploymentEnabled.main: true`).
+The original plan was to keep it off until all items in `PRODUCTION_BLOCKERS.md` are closed;
+turning it back off is the owner decision described under "Current status".
 
 Using the registry-checked Vercel CLI 56.3.2:
 
@@ -84,7 +113,7 @@ Set each value at the appropriate Vercel environment scope. Never commit real va
 | `PRINT_CESS_ADAPTER_MODE`                                | `external` for a hosted Preview                                | `external`                                             |
 | `SESSION_TTL_SECONDS`                                    | `180`                                                          | `180`                                                  |
 | `SIGNED_URL_TTL_SECONDS`                                 | At most `120` and always capped by session expiry              | Same; reduce after latency test                        |
-| `ENABLE_BROWSER_KIOSK`                                   | `true` only on the dedicated kiosk Preview                     | `true` for the approved public browser kiosk           |
+| `ENABLE_BROWSER_KIOSK`                                   | `true` only on the dedicated kiosk Preview                     | Unset or `true` = on; `false` = off (redeploy needed)  |
 | `ENABLE_DEMO_ROUTES`                                     | Explicitly controlled; synthetic use only                      | `false`                                                |
 | `KIOSK_REGISTRATION_SECRET`                              | Independent random value, at least 32 characters               | Independent random value, at least 32 characters       |
 | `ADMIN_DIAGNOSTICS_SECRET`                               | Independent random value, at least 32 characters               | Independent random value, at least 32 characters       |
@@ -224,8 +253,9 @@ Production remains prohibited.
 - Strict CSP and security headers as specified in `SECURITY.md`.
 - CSP `connect-src` includes the exact `https://vercel.com` origin used by private Blob presigned
   operations, plus Vercel Blob delivery hosts; it does not allow `*.vercel.com`.
-- Public browser kiosk enabled only with `ENABLE_BROWSER_KIOSK=true`; demo and administrator
-  simulators remain disabled in Production.
+- Public browser kiosk on in Production unless `ENABLE_BROWSER_KIOSK=false` (see the table under
+  "Turning the browser kiosk on and off"); demo and administrator simulators remain disabled in
+  Production.
 - Production source maps private and provider request logging reviewed/redacted.
 - Function/body/time limits chosen so only small JSON can enter a Route Handler.
 - Firewall allow-list established only after the exact Vercel, Blob, Redis, and QStash hostnames are

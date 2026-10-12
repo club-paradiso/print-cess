@@ -2,12 +2,13 @@
 
 This directory defines a measurable quality contract for Print-cess document scanning.
 
-The benchmark has two deliberately separate tiers:
+The benchmark has three deliberately separate tiers:
 
-1. `synthetic-ci` keeps the scoring engine, thresholds, privacy invariants, and report format deterministic in CI.
-2. `real-device` records observations from actual phones and paper documents. Only this tier may be used to make claims about real-world scanner quality or comparisons with other scanning products.
+1. `synthetic-ci` keeps the scoring engine, thresholds, privacy invariants, and report format deterministic in CI. Its observations are hand-written; it tests the scorer, not the scanner.
+2. `synthetic-render` runs the real scanner pipeline in a browser over rendered scenes whose answer is known exactly (`apps/web/src/lib/scan-lab/`, scored by `apps/web/test/e2e/scanner-accuracy.spec.ts` on every CI run). It catches regressions in detection, crop geometry, the capture gate, image treatment and PDF size. It sets two reviewed gate overrides: `minOcrCases: 0`, because OCR needs CDN-hosted Tesseract data CI cannot rely on (the scorer then reports OCR as not measured, never as passed), and `p95ProcessingMs: 8000`, because a shared runner on a development build measures the runner, not the phone.
+3. `real-device` records observations from actual phones and paper documents. Only this tier may be used to make claims about real-world scanner quality or comparisons with other scanning products.
 
-A green synthetic fixture is **not** evidence that Print-cess matches Adobe Scan, CamScanner, Apple Notes, or any other product in real-world image quality.
+A green synthetic fixture or synthetic render is **not** evidence that Print-cess matches Adobe Scan, CamScanner, Apple Notes, or any other product in real-world image quality.
 
 ## Metrics
 

@@ -110,6 +110,10 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   const abort = useRef<AbortController>(null);
   const video = useRef<HTMLVideoElement>(null);
   const scanner = useRef<DropScanner>(null);
+  // Bumped by every scan, stop and unmount. A scanner that finishes starting
+  // after its attempt was abandoned (the camera can be live while the jsQR
+  // fallback is still downloading) is stopped instead of kept.
+  const scanAttempt = useRef(0);
   const pending = useRef<AbortController>(null);
   const canScan = useSyncExternalStore(subscribeNever, supportsCodeScanning, () => false);
   const canShare = useSyncExternalStore(subscribeNever, canShareReceivedFiles, () => false);
@@ -207,7 +211,13 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   }, [open]);
 
   useEffect(() => () => pending.current?.abort(), []);
-  useEffect(() => () => scanner.current?.stop(), []);
+  useEffect(
+    () => () => {
+      scanAttempt.current += 1;
+      scanner.current?.stop();
+    },
+    [],
+  );
 
   const updateFile = useCallback(
     (index: number, next: FileState) => {
@@ -402,8 +412,13 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
     await new Promise((resolve) => window.requestAnimationFrame(resolve));
     const element = video.current;
     if (!element) return;
+    const attempt = ++scanAttempt.current;
     try {
       const active = await startDropScanner(element);
+      if (attempt !== scanAttempt.current) {
+        active.stop();
+        return;
+      }
       scanner.current = active;
       const scanned = await active.codes;
       scanner.current = null;
@@ -412,6 +427,7 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
         await open(scanned);
       } else setStage("code");
     } catch (error) {
+      if (attempt !== scanAttempt.current) return;
       scanner.current = null;
       setNoticeKey(
         error instanceof DropScannerError && error.code === "cameraRefused"
@@ -423,6 +439,7 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   }, [open]);
 
   const stopScanning = useCallback(() => {
+    scanAttempt.current += 1;
     scanner.current?.stop();
     scanner.current = null;
     setStage("code");
