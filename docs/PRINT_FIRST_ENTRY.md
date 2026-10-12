@@ -105,8 +105,11 @@ trapped, Escape closes, and the page behind keeps its place.
 The phone's own camera app stays the primary route and needs no page. This button is for a visitor
 who opened the home page first.
 
-1. Opens the rear camera and looks for a QR code with the browser's `BarcodeDetector` (no added
-   dependency; the existing receive flow already scans this way).
+1. Opens the rear camera and looks for a QR code with the browser's `BarcodeDetector`. Where that
+   API is missing (iOS Safari among others) it loads jsQR 1.4.0 once, from
+   `cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js` with a pinned SRI hash, and decodes frames drawn
+   to a canvas capped at 960 px (`apps/web/src/lib/drop-scanner.ts`). Camera frames stay in the
+   browser; only the decoder script is fetched. The receive flow shares this scanner.
 2. Accepts a code **only** if `parsePrintSessionQr` (`apps/web/src/lib/print-qr.ts`) passes it: the
    same origin as this page, no credentials or query string, path exactly `/s/<session id>` with a
    canonical session id, and a fragment `parseSessionFragment` accepts. The navigation target is
@@ -114,19 +117,21 @@ who opened the home page first.
 3. A QR code that fails (a menu, another site, another Print-cess deployment, a lookalike domain)
    shows "여기서 인쇄할 수 있는 QR 코드가 아니에요…" and goes nowhere. The scan continues.
 4. Camera refused: says so and points to the phone's camera app.
-5. No `BarcodeDetector` (see below): says the browser cannot scan here and points to the phone's
-   camera app, with the rescue sheet one tap away.
+5. No camera API, or the jsQR fallback could not load (offline, blocked CDN, integrity mismatch):
+   says the browser cannot scan here and points to the phone's camera app, with the rescue sheet one
+   tap away. A decoder that failed to load is never reported as a refused camera.
 
 **Expired or already-used codes** cannot be detected in the browser. Only the server knows. A valid
 looking code opens the session page, which already explains an expired or used code.
 
 **Browser support, stated honestly.** `BarcodeDetector` support varies by browser and platform
-(Chromium on Android has it; Chromium on Linux does not). Support on iOS Safari was **not verified
-on a device** for this change. Wherever it is missing, the visitor reaches step 5 and is told to use
-the camera app. That is the intended fallback, not a defect, and it is why the phone's camera app
-remains the documented primary route. A bundled decoder
-(jsQR or a WASM decoder) would close the iOS gap at the cost of a new dependency and download; it
-was not added without a decision to accept that cost. Physical iPhone testing is still required.
+(Chromium on Android has it; Chromium on Linux and iOS Safari do not). The jsQR fallback was first
+written on #117 and lost when that branch was resolved against `main`; it was restored with the
+pinned SRI hash on 2026-10-12. Automated coverage: `drop-scanner.test.ts` (native path, fallback
+decode, loader URL and integrity, load failure) and the Chromium and WebKit e2e in
+`v2-experience.spec.ts` with a stand-in decoder. **Not yet verified on a physical iPhone**: decoding
+the live kiosk QR in Safari, the time to first read, and heat on older phones. Until that check, the
+phone's camera app remains the documented primary route.
 
 ### "화면을 못 찾겠어요" (I can't find the screen)
 

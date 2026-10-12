@@ -81,6 +81,24 @@ describe("home page", () => {
     expect(hrefs).not.toContain("/kiosk");
   });
 
+  it("shows the kiosk entry in Vercel Production when the flag is not set at all", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ENABLE_BROWSER_KIOSK", undefined);
+    vi.stubEnv("ENABLE_DEMO_ROUTES", "false");
+    vi.stubEnv("VERCEL_ENV", "production");
+
+    expect(hrefsOf(await HomePage())).toContain("/kiosk");
+  });
+
+  it("hides the kiosk entry in a production build outside Vercel unless it is enabled", async () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ENABLE_BROWSER_KIOSK", undefined);
+    vi.stubEnv("ENABLE_DEMO_ROUTES", undefined);
+    vi.stubEnv("VERCEL_ENV", undefined);
+
+    expect(hrefsOf(await HomePage())).not.toContain("/kiosk");
+  });
+
   it("keeps the public entry page on the dedicated kiosk Preview branch", async () => {
     vi.stubEnv("ENABLE_DEMO_ROUTES", "false");
     vi.stubEnv("VERCEL_ENV", "preview");
