@@ -26,11 +26,15 @@ type JsQrDecoder = (
   },
 ) => JsQrResult | null;
 
-const JSQR_SRC = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js";
-let jsQrLoader: Promise<JsQrDecoder> | null = null;
+// The published npm file, not jsDelivr's on-the-fly `.min.js`: only a file
+// that exists byte-for-byte in the package can carry a stable SRI hash.
+const JSQR_SRC = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
+const JSQR_INTEGRITY = "sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx";
+let jsQrLoader: Promise<JsQrDecoder> | undefined;
 
 function detectorConstructor(): BarcodeDetectorConstructor | null {
-  const candidate = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor }).BarcodeDetector;
+  const candidate = (globalThis as { BarcodeDetector?: BarcodeDetectorConstructor })
+    .BarcodeDetector;
   return typeof candidate === "function" ? candidate : null;
 }
 
@@ -39,35 +43,43 @@ function jsQrDecoder(): JsQrDecoder | null {
   return typeof candidate === "function" ? candidate : null;
 }
 
+/** Same loading shape as the OCR runtime in scan-ocr.ts, plus an integrity pin. */
 async function loadJsQrDecoder(): Promise<JsQrDecoder> {
   const existing = jsQrDecoder();
   if (existing) return existing;
   if (typeof document === "undefined") throw new DropScannerError("scannerUnavailable");
+  if (jsQrLoader) return jsQrLoader;
 
-  if (!jsQrLoader) {
-    jsQrLoader = new Promise<JsQrDecoder>((resolve, reject) => {
-      const script = document.createElement("script");
+  jsQrLoader = new Promise<JsQrDecoder>((resolve, reject) => {
+    const alreadyLoading = document.querySelector<HTMLScriptElement>("script[data-print-cess-qr]");
+    const script = alreadyLoading ?? document.createElement("script");
+
+    const finish = () => {
+      const loaded = jsQrDecoder();
+      if (loaded) resolve(loaded);
+      else reject(new DropScannerError("scannerUnavailable"));
+    };
+    const fail = () => {
+      // A failed tag never loads again; drop it so the next attempt starts clean.
+      script.remove();
+      reject(new DropScannerError("scannerUnavailable"));
+    };
+
+    script.addEventListener("load", finish, { once: true });
+    script.addEventListener("error", fail, { once: true });
+    if (!alreadyLoading) {
+      script.dataset.printCessQr = "true";
       script.src = JSQR_SRC;
+      script.integrity = JSQR_INTEGRITY;
       script.async = true;
       script.crossOrigin = "anonymous";
-
-      // Next emits a nonce for its own scripts. Copy it so this lazily loaded
-      // fallback also works under the app's strict CSP on Safari.
-      const nonce = document.querySelector<HTMLScriptElement>("script[nonce]")?.nonce;
-      if (nonce) script.nonce = nonce;
-
-      script.addEventListener("load", () => {
-        const loaded = jsQrDecoder();
-        if (loaded) resolve(loaded);
-        else reject(new DropScannerError("scannerUnavailable"));
-      });
-      script.addEventListener("error", () => {
-        jsQrLoader = null;
-        reject(new DropScannerError("scannerUnavailable"));
-      });
+      script.referrerPolicy = "no-referrer";
       document.head.append(script);
-    });
-  }
+    }
+  }).catch((error: unknown) => {
+    jsQrLoader = undefined;
+    throw error;
+  });
 
   return jsQrLoader;
 }
@@ -78,8 +90,7 @@ async function loadJsQrDecoder(): Promise<JsQrDecoder> {
  */
 export function supportsCodeScanning(): boolean {
   return (
-    typeof navigator !== "undefined" &&
-    typeof navigator.mediaDevices?.getUserMedia === "function"
+    typeof navigator !== "undefined" && typeof navigator.mediaDevices?.getUserMedia === "function"
   );
 }
 
@@ -165,6 +176,8 @@ export async function startCodeScanner<T>(
     settle = resolve;
   });
 
+  // One settle for both outcomes. Resolving on the way out of `stop` would race
+  // the found code to the promise and always win, so the code is passed in.
   const finish = (code: T | null) => {
     if (stopped) return;
     stopped = true;
@@ -176,13 +189,7 @@ export async function startCodeScanner<T>(
   const stop = () => finish(null);
 
   const decodeWithFallback = (): string | null => {
-    if (
-      !fallback ||
-      !canvas ||
-      !context ||
-      video.videoWidth === 0 ||
-      video.videoHeight === 0
-    ) {
+    if (!fallback || !canvas || !context || video.videoWidth === 0 || video.videoHeight === 0) {
       return null;
     }
 
@@ -198,9 +205,7 @@ export async function startCodeScanner<T>(
 
     context.drawImage(video, 0, 0, width, height);
     const frame = context.getImageData(0, 0, width, height);
-    return (
-      fallback(frame.data, width, height, { inversionAttempts: "dontInvert" })?.data ?? null
-    );
+    return fallback(frame.data, width, height, { inversionAttempts: "dontInvert" })?.data ?? null;
   };
 
   const tick = async () => {
