@@ -61,6 +61,14 @@ an explicit default printer, the `/kiosk?printing=auto` route, and Chrome's
 `--kiosk --kiosk-printing` switches. The managed route hides the reprint button to prevent a second
 silent job. Without that managed launcher, a visitor or operator must confirm the print dialog.
 
+A browser cannot report whether a job reached the printer or produced paper, so `completed` means
+every document was handed to the browser's print UI; the interactive screen accordingly asks the
+visitor to confirm the dialog. A document whose print frame fails to load or times out never reached
+that UI, so the session ends as `failed` instead. A batch loads every document before the first
+dialog opens, so a load failure prints nothing and resending the batch cannot duplicate pages.
+Printing never calls a File System Access picker; see `docs/FILE_DIALOG_WARNING.md` for the "This
+site can see edits you make" dialog.
+
 The download action saves a plaintext copy through the browser and can outlive the web session.
 Use it only as a recovery path. The site operator clears the kiosk account's Downloads folder
 manually under the agreed local procedure.

@@ -38,10 +38,11 @@ test("@viewport the home leads with Print and keeps Share, Scan and workplaces b
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
   await expect(page.getByRole("heading", { level: 2 })).toHaveText([
-    "Share",
-    "Scan",
+    "How printing works",
+    "More you can do here",
     "At work or on a public computer",
   ]);
+  await expect(page.getByRole("heading", { level: 3 })).toHaveText(["Share", "Scan"]);
   // Printing begins at the Print-cess screen's QR code, so the print section
   // links nowhere. Its two buttons only open sheets on this page.
   const print = page.getByRole("region", { name: "Here to print?" });
@@ -298,7 +299,7 @@ test("a refused camera permission is explained instead of left blank", async ({ 
   await expect(page.getByText(/The camera is blocked/u)).toBeVisible();
 });
 
-test("@viewport on a small phone in Korean, scanning and the kiosk entry need no scrolling", async ({
+test("@viewport on a small phone in Korean, scanning needs no scrolling", async ({
   browser,
 }) => {
   // iPhone SE / mini with Safari's toolbars showing leave about 548 px; 320 px
@@ -315,15 +316,14 @@ test("@viewport on a small phone in Korean, scanning and the kiosk entry need no
     const page = await context.newPage();
     await page.goto("/");
 
-    for (const target of [
-      page.getByRole("button", { name: "QR 코드 스캔하기" }).first(),
-      page.locator('a[href="/kiosk"]').first(),
-    ]) {
-      await expect(target).toBeVisible();
-      const box = await target.boundingBox();
-      expect(box).not.toBeNull();
-      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
-    }
+    // The kiosk link is for whoever runs a station and lives in the workplace
+    // links at the foot of the page (docs/PRINT_FIRST_ENTRY.md); only the
+    // visitor's first action has to clear the fold.
+    const scan = page.getByRole("button", { name: "QR 코드 찍기" }).first();
+    await expect(scan).toBeVisible();
+    const box = await scan.boundingBox();
+    expect(box).not.toBeNull();
+    expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
     await expectNoSidewaysScroll(page);
     await context.close();
   }
