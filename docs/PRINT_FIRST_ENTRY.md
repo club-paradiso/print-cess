@@ -34,33 +34,40 @@ recognisable in a few seconds.
 
 ```text
 Print-cess identity
-USE THIS DEVICE AS THE PRINT SCREEN   (prominent setup CTA, above the fold)
 PRINT  (first visitor section, most of the first screen)
-  heading, two short instructions, the Beacon, two buttons
-SHARE  SCAN   (two smaller sheets)
-Managed workstation   (secondary link under a hairline)
+  heading, two short instructions, the Beacon on a drawn screen, two buttons
+HOW PRINTING WORKS  (three steps on one perforated strip: scan, pick, take your paper)
+MORE YOU CAN DO HERE
+  SHARE  SCAN   (two smaller sheets)
+What happens to a file   (no account; locked on the way, erased after printing)
+At work or on a public computer   (use this device as the print screen, work computer)
 ```
 
-- **The display setup action is visible before the visitor flow.** "Use this device as the print
-  screen" is a full-width, high-contrast setup CTA directly below the Print-cess identity. Its
-  smaller context line ("At work or on a public computer" / "기관·공용 PC에서 쓰기") separates
-  machine setup from the visitor's printing task without hiding the entry again. It remains the
-  first home-page link so an installer never has to hunt through visitor tools.
-- **Print remains the page's `h1` and primary visitor task.** "Here to print?" is the question
-  most visitors arrive with. The `h2`s are Share, Scan and the workplace group.
-- **Share and Scan keep their buttons and routes.** They are smaller, not hidden. A visitor who
-  wants them finds them below Print without scrolling past anything else.
+- **Print remains the page's `h1` and primary visitor task.** The `h2`s are the three steps,
+  "More you can do here" and the workplace group; Share and Scan are `h3`s inside the second.
+- **The Beacon comes before the buttons.** On a phone it sits in a compact row (a small drawing
+  of the screen with the Beacon and a QR code, beside "Look for the screen with this mark.") so
+  the two buttons stay on the first screen. From 900 px up it moves to its own card beside the
+  copy.
+- **Three steps, once, after the Beacon.** The old four-step list competed with the first action
+  and repeated the rescue sheet. The new strip has three steps (scan, pick, take your paper), no
+  "find the screen" step (the Beacon and the rescue sheet do that job), and sits below the Print
+  section so it never competes with the first thing to do.
+- **Setup entrances close the page.** "Use this device as the print screen" used to be a
+  full-width CTA above Print, and a visitor standing in a queue read it as one more choice. It now
+  sits with the work-computer link in the workplace group at the bottom: still a plain, labelled
+  link, still hidden when the browser kiosk is disabled in Production.
+- **One primary button per screen.** "Scan QR code" is the only primary button. Share and Scan
+  use secondary buttons.
+- **Share and Scan keep their buttons and routes.** They are smaller, not hidden.
 - **Print still links nowhere.** A print session can only begin at the screen's QR code, so no
   control on the page points at a print route. Its two buttons open sheets on the same page.
-- **The four-step explainer is no longer repeated on the home page.** The heading, two short
-  instructions, Beacon and two actions already tell the visitor what to do next. Detailed recovery
-  stays in the "I can't find the screen" sheet, where it is useful instead of competing for first
-  attention.
 - **No device-specific page.** Phone and computer visitors see one page. The layout changes with
-  width (a side-by-side Print section from 900 px up), but no copy or action differs by device.
-  A computer visitor with a file on that computer is not given a different promise: the
-  managed-workstation entry stays where it was, and Share remains the way to move a file to a
-  phone. Adding a "this computer" branch would be a second product, so it was not built.
+  width, but no copy or action differs by device.
+
+Korean copy follows `docs/BRAND.md` (Voice): everyday verbs over product words ("찍기" rather
+than "스캔하기" for pointing the camera at the code), sentences that end in the action, and no
+promise beyond what the system does.
 
 ## The Beacon
 
@@ -89,8 +96,8 @@ This follows `BRAND.md` (Voice), which already asked for "the big screen" over "
 "Kiosk" stays in administrator, installation and developer surfaces, and in code identifiers, where
 the category genuinely matters. The one home-page link that opens the display on the current device
 now reads "이 기기를 Print-cess 화면으로 쓰기" / "Use this device as the print screen", because
-that is what it does. The action is deliberately promoted directly below the product identity,
-before the Print visitor section, rather than being buried in the workplace group.
+that is what it does. It sits in the workplace group at the bottom of the page, with the
+work-computer link (see Hierarchy).
 
 Other languages' strings were updated for meaning, not re-edited for style. See "Review
 needed" below.

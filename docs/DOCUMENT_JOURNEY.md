@@ -34,11 +34,9 @@ reasoning and the future native path; `PRINT_FIRST_ENTRY.md` records this hierar
   and lands in receiving.
 - **Scan** ends in a destination: on through Share, downloaded, handed to another app where the
   browser can share that exact PDF, or printed through this device's own print window.
-- **Display setup** is a full-width, high-contrast CTA directly below the product identity and
-  before the visitor's Print section. It is the first home-page link because turning the current
-  device into the shared Print-cess screen must be immediately discoverable.
-- **Managed workstation** remains the quieter institutional entry below a hairline after the
-  visitor tools.
+- **Display setup** and the **managed workstation** share the workplace group at the bottom of
+  the page, below a hairline after the visitor tools. They are for the people who run the
+  service, so they no longer compete with the visitor's first action.
 
 ---
 
