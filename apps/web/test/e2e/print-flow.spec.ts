@@ -277,6 +277,24 @@ test("large files are rejected before encryption", async ({ page, context }) => 
   await expect(mobile.getByText(/PDFs under 10 MB/u)).toBeVisible();
 });
 
+test("a rejected pick clears the picker so the same file can be chosen again", async ({
+  page,
+  context,
+}) => {
+  // iOS hands over an iCloud file before its bytes arrive, and the notice then
+  // asks for the same file again. An input that kept its value would swallow
+  // that second pick without a change event.
+  const { mobile } = await openMobile(page, context);
+  const input = mobile.getByTestId("file-input");
+  await input.setInputFiles({
+    name: "too-large.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(createBoundaryBytes(1)),
+  });
+  await expect(mobile.getByText(/PDFs under 10 MB/u)).toBeVisible();
+  await expect(input).toHaveValue("");
+});
+
 test("cancelling a file picker keeps the claimed session ready", async ({ page, context }) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("file-input").dispatchEvent("cancel");

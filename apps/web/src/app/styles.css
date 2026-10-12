@@ -117,6 +117,17 @@ p {
 .print-entry__actions .pc-button {
   min-width: 0;
 }
+/* On a 320-375 px phone with Safari's toolbars showing (about 548 px tall),
+   the scan button has to clear the fold. The e2e "small phone in Korean"
+   test holds this to the pixel. */
+@media (max-width: 380px) {
+  .home {
+    gap: 28px;
+  }
+  .print-entry {
+    gap: 16px;
+  }
+}
 
 /* The Beacon on a drawn screen, with its instruction. Matching this tile to
    the shared display is the whole job of this block. */

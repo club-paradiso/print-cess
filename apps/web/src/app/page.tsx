@@ -17,6 +17,7 @@ import { translate } from "@print-cess/i18n";
 import { Beacon, RouteGlyph, Wordmark } from "@print-cess/ui";
 
 import { PrintEntryActions, type PrintEntryLabels } from "@/components/home/print-entry-actions";
+import { sessionOriginFrom } from "@/lib/print-qr";
 import { requestLocale } from "@/lib/request-locale";
 import { isBrowserKioskEnabled } from "@/server/demo";
 
@@ -45,8 +46,10 @@ export default async function HomePage() {
   // who did not scan anything lands, and it is built for finding the screen.
   const locale = await requestLocale();
   const text = (key: string) => translate(locale, key);
-  // In Production the browser-kiosk route deliberately fails closed unless it
-  // is enabled. Do not advertise a shortcut to a route that will return 404.
+  // Same decision as /kiosk and its session API (server/demo.ts): on in Vercel
+  // Production unless ENABLE_BROWSER_KIOSK is exactly "false", the kill switch;
+  // closed in any other production build unless enabled. Do not advertise a
+  // shortcut to a route that will return 404.
   const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
 
   const labels: PrintEntryLabels = {
@@ -102,7 +105,10 @@ export default async function HomePage() {
           <figcaption>{text("homeBeaconCaption")}</figcaption>
         </figure>
 
-        <PrintEntryActions labels={labels} />
+        <PrintEntryActions
+          labels={labels}
+          sessionOrigin={sessionOriginFrom(process.env.PUBLIC_BASE_URL)}
+        />
 
         {/* The deletion promise belongs to Print only: a Share transfer is kept
             until it is received, erased by the sender, or expires

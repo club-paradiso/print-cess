@@ -5,7 +5,12 @@ import { Printer, QrCode, X } from "lucide-react";
 
 import { Beacon } from "@print-cess/ui";
 
-import { startCodeScanner, supportsCodeScanning, type CodeScanner } from "@/lib/drop-scanner";
+import {
+  DropScannerError,
+  startCodeScanner,
+  supportsCodeScanning,
+  type CodeScanner,
+} from "@/lib/drop-scanner";
 import { parsePrintSessionQr } from "@/lib/print-qr";
 
 export type PrintEntryLabels = {
@@ -40,7 +45,14 @@ const INVALID_NOTICE_MS = 4000;
  * page involved; this is the recovery path, and where the browser cannot scan
  * it says so and points back to that app instead of pretending.
  */
-export function PrintEntryActions({ labels }: { labels: PrintEntryLabels }) {
+export function PrintEntryActions({
+  labels,
+  sessionOrigin,
+}: {
+  labels: PrintEntryLabels;
+  /** The deployment's PUBLIC_BASE_URL origin, which kiosk QR codes name. */
+  sessionOrigin?: string | undefined;
+}) {
   const [panel, setPanel] = useState<Panel>(null);
   const [scanState, setScanState] = useState<ScanState>("starting");
   const [invalid, setInvalid] = useState(false);
@@ -81,7 +93,11 @@ export function PrintEntryActions({ labels }: { labels: PrintEntryLabels }) {
     if (!supportsCodeScanning()) return;
     let cancelled = false;
     void startCodeScanner(element, (raw) => {
-      const path = parsePrintSessionQr(raw, window.location.origin);
+      const path = parsePrintSessionQr(
+        raw,
+        window.location.origin,
+        sessionOrigin ? [sessionOrigin] : [],
+      );
       if (path === null) {
         setInvalid(true);
         window.clearTimeout(invalidTimer.current);
@@ -101,8 +117,13 @@ export function PrintEntryActions({ labels }: { labels: PrintEntryLabels }) {
           if (path !== null && !cancelled) window.location.assign(path);
         });
       },
-      () => {
-        if (!cancelled) setScanState("denied");
+      (error) => {
+        if (cancelled) return;
+        setScanState(
+          error instanceof DropScannerError && error.code === "scannerUnavailable"
+            ? "unsupported"
+            : "denied",
+        );
       },
     );
     return () => {
@@ -111,7 +132,7 @@ export function PrintEntryActions({ labels }: { labels: PrintEntryLabels }) {
       scanner.current?.stop();
       scanner.current = null;
     };
-  }, [panel]);
+  }, [panel, sessionOrigin]);
 
   const notice =
     scanState === "denied"
