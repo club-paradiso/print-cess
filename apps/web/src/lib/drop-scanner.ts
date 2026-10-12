@@ -136,6 +136,27 @@ export async function startCodeScanner<T>(
 ): Promise<CodeScanner<T>> {
   if (!supportsCodeScanning()) throw new DropScannerError("scannerUnavailable");
 
+  const Detector = detectorConstructor();
+  const detector = Detector ? new Detector({ formats: ["qr_code"] }) : null;
+
+  // The fallback decoder is fetched before the camera opens. A stalled or
+  // failed download then cannot leave the camera (and its privacy indicator)
+  // on: callers only get `stop` once this function returns.
+  let fallback: JsQrDecoder | null = null;
+  let canvas: HTMLCanvasElement | null = null;
+  let context: CanvasRenderingContext2D | null = null;
+
+  if (!detector) {
+    try {
+      fallback = await loadJsQrDecoder();
+    } catch {
+      throw new DropScannerError("scannerUnavailable");
+    }
+    canvas = document.createElement("canvas");
+    context = canvas.getContext("2d", { willReadFrequently: true });
+    if (!context) throw new DropScannerError("scannerUnavailable");
+  }
+
   let stream: MediaStream;
   try {
     stream = await navigator.mediaDevices.getUserMedia({
@@ -154,26 +175,6 @@ export async function startCodeScanner<T>(
   video.setAttribute("playsinline", "true");
   video.muted = true;
   await video.play().catch(() => undefined);
-
-  const Detector = detectorConstructor();
-  const detector = Detector ? new Detector({ formats: ["qr_code"] }) : null;
-
-  let fallback: JsQrDecoder | null = null;
-  let canvas: HTMLCanvasElement | null = null;
-  let context: CanvasRenderingContext2D | null = null;
-
-  if (!detector) {
-    try {
-      fallback = await loadJsQrDecoder();
-      canvas = document.createElement("canvas");
-      context = canvas.getContext("2d", { willReadFrequently: true });
-      if (!context) throw new DropScannerError("scannerUnavailable");
-    } catch {
-      for (const track of stream.getTracks()) track.stop();
-      video.srcObject = null;
-      throw new DropScannerError("scannerUnavailable");
-    }
-  }
 
   let stopped = false;
   let timer = 0;

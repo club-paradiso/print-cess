@@ -82,6 +82,11 @@ afterEach(() => {
 describe("startCodeScanner", () => {
   it("reports a refused camera as cameraRefused", async () => {
     stubCamera(() => Promise.reject(new DOMException("denied", "NotAllowedError")));
+    scope.BarcodeDetector = class {
+      async detect() {
+        return [];
+      }
+    };
     const { startCodeScanner } = await loadScanner();
 
     await expect(startCodeScanner(fakeVideo(), (raw) => raw)).rejects.toMatchObject({
@@ -165,8 +170,9 @@ describe("startCodeScanner", () => {
   });
 
   it("says the scanner is unavailable, not that the camera was refused, when jsQR cannot load", async () => {
-    const { stream, track } = fakeStream();
-    stubCamera(() => Promise.resolve(stream));
+    const { stream } = fakeStream();
+    const getUserMedia = vi.fn(() => Promise.resolve(stream));
+    stubCamera(getUserMedia);
     stubCanvas();
     const { startCodeScanner } = await loadScanner();
     const video = fakeVideo();
@@ -174,12 +180,15 @@ describe("startCodeScanner", () => {
     const starting = startCodeScanner(video, (raw) => raw);
     const outcome = expect(starting).rejects.toMatchObject({ code: "scannerUnavailable" });
     await vi.waitFor(() => expect(pendingScript()).not.toBeNull());
+    // The decoder loads before the camera opens, so a stalled download can
+    // never leave the camera on with nothing able to stop it.
+    expect(getUserMedia).not.toHaveBeenCalled();
     pendingScript()!.dispatchEvent(new Event("error"));
     await outcome;
 
-    // The camera is released, and the failed tag is gone so a retry can load again.
-    expect(track.stop).toHaveBeenCalled();
-    expect(video.srcObject).toBeNull();
+    // The camera was never opened, and the failed tag is gone so a retry can load again.
+    expect(getUserMedia).not.toHaveBeenCalled();
+    expect(video.srcObject ?? null).toBeNull();
     expect(pendingScript()).toBeNull();
 
     const retry = startCodeScanner(video, (raw) => raw);

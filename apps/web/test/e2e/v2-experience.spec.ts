@@ -243,7 +243,7 @@ test("@viewport a browser that cannot scan says so and points to the phone's cam
   await expect(page.getByRole("button", { name: "I can't find the screen" }).last()).toBeVisible();
 });
 
-test("@viewport stopping the receive scanner while the decoder is still downloading releases the camera", async ({
+test("@viewport the camera stays off while the decoder is still downloading, and stopping leaves it off", async ({
   page,
 }) => {
   // Hold the decoder download open, as a slow network would.
@@ -260,24 +260,22 @@ test("@viewport stopping the receive scanner while the decoder is still download
   await page.goto("/receive");
   await page.getByRole("button", { name: "Scan the QR code" }).click();
   await expect(page.getByRole("heading", { name: "Point at the other phone" })).toBeVisible();
-  await expect
-    .poll(() =>
-      page.evaluate(() => (window as unknown as { __streams: MediaStream[] }).__streams.length),
-    )
-    .toBe(1);
+  // A stalled download cannot be cancelled, so the camera must not be on yet.
+  const openStreams = () =>
+    page.evaluate(
+      () =>
+        (window as unknown as { __streams: MediaStream[] }).__streams.filter((stream) =>
+          stream.getTracks().some((track) => track.readyState !== "ended"),
+        ).length,
+    );
+  await page.waitForTimeout(500);
+  expect(await openStreams()).toBe(0);
 
   await page.getByRole("button", { name: "Type the code instead" }).click();
   releaseDecoder();
 
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        (window as unknown as { __streams: MediaStream[] }).__streams.every((stream) =>
-          stream.getTracks().every((track) => track.readyState === "ended"),
-        ),
-      ),
-    )
-    .toBe(true);
+  await page.waitForTimeout(500);
+  expect(await openStreams()).toBe(0);
   // The visitor already chose to type; a late failure must not talk over that.
   await page.waitForTimeout(500);
   await expect(page.getByText("This browser cannot scan.", { exact: false })).toHaveCount(0);

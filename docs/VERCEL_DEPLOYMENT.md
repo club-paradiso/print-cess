@@ -4,8 +4,9 @@
 
 The Vercel project `club-paradiso/paradiso-print-cess-web` is linked to the private GitHub
 repository with Root Directory `apps/web`. The public Production alias uses isolated Production
-Blob, Redis, and QStash resources and can create browser-kiosk sessions. Production deployment is
-manual while the remaining physical-site acceptance gates are open.
+Blob, Redis, and QStash resources and can create browser-kiosk sessions. Every `main` commit
+deploys to Production (see the correction below), although physical-site acceptance gates are
+still open.
 
 Correction (2026-10-12): automatic `main` deployments are **enabled**. `apps/web/vercel.json` sets
 `git.deploymentEnabled.main: true`, and GitHub records a Production deployment for each `main`
@@ -76,8 +77,10 @@ manually under the agreed local procedure.
 ## Project setup
 
 Keep the linked project Root Directory at `apps/web`, framework `nextjs`, install command
-`pnpm install --frozen-lockfile`, build command `pnpm build`, and output directory `.next`. Disable
-automatic Production deployment until all items in `PRODUCTION_BLOCKERS.md` are closed.
+`pnpm install --frozen-lockfile`, build command `pnpm build`, and output directory `.next`.
+Automatic Production deployment of `main` is currently on (`git.deploymentEnabled.main: true`).
+The original plan was to keep it off until all items in `PRODUCTION_BLOCKERS.md` are closed;
+turning it back off is the owner decision described under "Current status".
 
 Using the registry-checked Vercel CLI 56.3.2:
 

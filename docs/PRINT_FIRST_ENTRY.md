@@ -113,7 +113,8 @@ The phone's own camera app stays the primary route and needs no page. This butto
 who opened the home page first.
 
 1. Opens the rear camera and looks for a QR code with the browser's `BarcodeDetector`. Where that
-   API is missing (iOS Safari among others) it loads jsQR 1.4.0 once, from
+   API is missing (iOS Safari among others) it first loads jsQR 1.4.0 once, before the camera
+   opens so a stalled download can never leave the camera on, from
    `cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js` with a pinned SRI hash, and decodes frames drawn
    to a canvas capped at 960 px (`apps/web/src/lib/drop-scanner.ts`). Camera frames stay in the
    browser; only the decoder script is fetched. The receive flow shares this scanner.
