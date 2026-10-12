@@ -57,6 +57,15 @@ export async function printArtifact(artifact: PrintArtifact): Promise<void> {
   }
 }
 
+/**
+ * Prints several artifacts in the visitor's order. The first document that
+ * cannot reach the print dialog stops the run and rejects, so a caller never
+ * reports a batch as printed when part of it was not.
+ */
+export async function printArtifacts(artifacts: readonly PrintArtifact[]): Promise<void> {
+  for (const artifact of artifacts) await printArtifact(artifact);
+}
+
 function createPrintFrame(): HTMLIFrameElement {
   const frame = document.createElement("iframe");
   frame.title = "Print-cess print document";

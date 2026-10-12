@@ -100,6 +100,22 @@ test("one kiosk scan prints multiple selected photo and document files in order"
   page,
   context,
 }) => {
+  // Chromium titles the native dialog behind `showSaveFilePicker` "Warning: this
+  // site can see edits you make". Printing must never open any file-system
+  // picker, so each one is replaced by a recorder in every frame of the kiosk.
+  await page.addInitScript(() => {
+    const calls: string[] = [];
+    Object.defineProperty(window, "__printCessPickerCalls", { value: calls });
+    for (const name of ["showSaveFilePicker", "showDirectoryPicker", "showOpenFilePicker"]) {
+      Object.defineProperty(window, name, {
+        configurable: true,
+        value: () => {
+          calls.push(name);
+          return Promise.reject(new DOMException("blocked by test", "AbortError"));
+        },
+      });
+    }
+  });
   const { mobile } = await openMobile(page, context, "/kiosk?printing=auto");
   await mobile.getByTestId("file-input").setInputFiles([
     {
@@ -143,6 +159,11 @@ test("one kiosk scan prints multiple selected photo and document files in order"
     /^2-/u,
   );
   await expect(mobile.getByRole("heading", { name: "All done" })).toBeVisible({ timeout: 60_000 });
+  expect(
+    await page.evaluate(
+      () => (window as unknown as { __printCessPickerCalls: string[] }).__printCessPickerCalls,
+    ),
+  ).toEqual([]);
 });
 
 test("ending a visit tells the browser to drop this origin's data", async ({ request }) => {
