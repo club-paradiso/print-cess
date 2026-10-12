@@ -169,6 +169,38 @@ test("one kiosk scan prints multiple selected photos in order", async ({ page, c
   expect(await pickerCalls()).toEqual([]);
 });
 
+test("the finished screen fits a 1080p kiosk at 150% Windows scaling", async ({
+  page,
+  context,
+}) => {
+  // 1920x1080 with Windows display scaling at 150% gives the browser 1280x720.
+  // The countdown line at the foot of this screen used to sit below the fold.
+  await page.setViewportSize({ width: 1280, height: 720 });
+  const { mobile } = await openMobile(page, context, "/kiosk?printing=auto");
+  await mobile.getByTestId("file-input").setInputFiles([
+    {
+      name: "01-photo.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(await createSyntheticPng(800, 1100)),
+    },
+    {
+      name: "02-photo.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(await createSyntheticPng(800, 1100)),
+    },
+  ]);
+  await mobile.getByRole("button", { name: "Print 2 files" }).click({ timeout: 30_000 });
+  await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
+    timeout: 60_000,
+  });
+
+  const countdown = page.getByText(/초 후 새 QR코드$/u);
+  await expect(countdown).toBeVisible();
+  const box = await countdown.boundingBox();
+  expect(box!.y + box!.height).toBeLessThanOrEqual(720);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
+});
+
 test("a kiosk browser that cannot open PDFs says so instead of claiming it printed", async ({
   page,
   context,
