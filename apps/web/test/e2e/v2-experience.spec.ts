@@ -169,12 +169,13 @@ test("scanning a QR code that is not a Print-cess session goes nowhere", async (
 
 /**
  * A camera that works, for the paths that differ only in how a frame is
- * decoded. Installed after the page loads: Playwright's WebKit keeps the native
- * getUserMedia when it is replaced from an init script, and the native one has
- * no camera to open.
+ * decoded. It replaces getUserMedia on MediaDevices.prototype from an init
+ * script: Playwright's WebKit keeps the native method when only the instance
+ * property is replaced, and an init script also survives the dev server
+ * reloading the page after a route compiles.
  */
 async function installFakeCamera(page: Page): Promise<void> {
-  await page.evaluate(() => {
+  await page.addInitScript(() => {
     delete (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector;
     const scope = window as unknown as { __streams: MediaStream[] };
     scope.__streams = [];
@@ -187,7 +188,7 @@ async function installFakeCamera(page: Page): Promise<void> {
       context.fillStyle = "#334";
       context.fillRect(0, 0, 320, 240);
     }, 50);
-    navigator.mediaDevices.getUserMedia = async () => {
+    MediaDevices.prototype.getUserMedia = async () => {
       const stream = canvas.captureStream(15);
       scope.__streams.push(stream);
       return stream;
@@ -198,15 +199,15 @@ async function installFakeCamera(page: Page): Promise<void> {
 test("@viewport a browser without BarcodeDetector scans through the jsQR fallback, as Safari does", async ({
   page,
 }) => {
-  await page.goto("/");
   await installFakeCamera(page);
   // Stands in for the pinned CDN decoder, which reports whatever window.__qr
   // holds. The loader itself (URL, integrity, failure) is covered in
   // drop-scanner.test.ts; what is under test here is the page.
-  await page.evaluate(() => {
+  await page.addInitScript(() => {
     const scope = window as unknown as { __qr?: string; jsQR: unknown };
     scope.jsQR = () => (scope.__qr ? { data: scope.__qr } : null);
   });
+  await page.goto("/");
   await page.getByRole("button", { name: "Scan QR code" }).click();
   await expect(
     page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
@@ -228,9 +229,9 @@ test("@viewport a browser that cannot scan says so and points to the phone's cam
 }) => {
   // No native detector, and the fallback decoder cannot be fetched: the one
   // case left where this page cannot read a QR code.
+  await installFakeCamera(page);
   await page.route("**/npm/jsqr@*/**", (route) => route.abort());
   await page.goto("/");
-  await installFakeCamera(page);
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/can't scan QR codes here/u)).toBeVisible();
@@ -254,8 +255,8 @@ test("@viewport stopping the receive scanner while the decoder is still download
     await route.abort();
   });
 
-  await page.goto("/receive");
   await installFakeCamera(page);
+  await page.goto("/receive");
   await page.getByRole("button", { name: "Scan the QR code" }).click();
   await expect(page.getByRole("heading", { name: "Point at the other phone" })).toBeVisible();
   await expect

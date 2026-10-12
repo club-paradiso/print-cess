@@ -51,7 +51,7 @@ export function PrintEntryActions({
 }: {
   labels: PrintEntryLabels;
   /** The deployment's PUBLIC_BASE_URL origin, which kiosk QR codes name. */
-  sessionOrigin?: string;
+  sessionOrigin?: string | undefined;
 }) {
   const [panel, setPanel] = useState<Panel>(null);
   const [scanState, setScanState] = useState<ScanState>("starting");
