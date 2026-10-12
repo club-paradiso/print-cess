@@ -99,10 +99,15 @@ describe("home page", () => {
 
     const copy = textOf(await HomePage());
 
-    expect(copy).toContain("QR 코드를 스캔하세요");
-    expect(copy).toContain("프린터 옆 Print-cess 화면에 QR 코드가 있어요.");
-    expect(copy).toContain("스캔하면 인쇄할 파일을 고르는 화면이 열려요.");
-    expect(copy).toContain("이 표시가 있는 화면이 Print-cess 화면이에요.");
+    expect(copy).toContain("프린터 옆 화면의 QR 코드를 찍으세요");
+    expect(copy).toContain("Print-cess 화면은 프린터 바로 옆에 있어요.");
+    expect(copy).toContain("휴대전화 카메라로 찍으면 인쇄할 파일을 고르는 화면이 열려요.");
+    expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
+    expect(copy).toContain("세 번이면 끝나요");
+    expect(copy).toContain("QR 찍기");
+    expect(copy).toContain("파일 고르기");
+    expect(copy).toContain("종이 받기");
+    expect(copy).toContain("이런 것도 돼요");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
@@ -115,7 +120,7 @@ describe("home page", () => {
     // to know it.
     expect(copy).not.toContain("키오스크");
     expect(entryLabelsOf(await HomePage())).toMatchObject({
-      scanCta: "QR 코드 스캔하기",
+      scanCta: "QR 코드 찍기",
       lostCta: "화면을 못 찾겠어요",
     });
   });
@@ -134,39 +139,40 @@ describe("home page", () => {
   });
 
   /**
-   * Turning the current device into the public print screen is a setup action,
-   * but it must be visible immediately. Keep it above the visitor tools so an
-   * installer never has to hunt through the bottom workplace section again.
+   * The page is read top to bottom by a visitor standing in a queue: print
+   * first, then the other tools, and only then the entrances for the people
+   * who run the service (turning this device into the print screen, managed
+   * workstations).
    */
-  it("puts the kiosk display entry above the other home-page links", async () => {
+  it("keeps the setup entrances below every visitor tool", async () => {
     const page = await HomePage();
     const order = hrefsOf(page);
 
     expect(headingsOf(page, "h1")).toEqual(["Here to print?"]);
-    expect(headingsOf(page, "h2")).toEqual(["Share", "Scan", "At work or on a public computer"]);
-    expect(order[0]).toBe("/kiosk");
-    expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/send"));
-    expect(order.indexOf("/kiosk")).toBeLessThan(order.indexOf("/scan"));
-    expect(order.indexOf("/send")).toBeLessThan(order.indexOf("/workstation"));
-    expect(order.indexOf("/scan")).toBeLessThan(order.indexOf("/workstation"));
+    expect(headingsOf(page, "h2")).toEqual([
+      "How printing works",
+      "More you can do here",
+      "At work or on a public computer",
+    ]);
+    expect(headingsOf(page, "h3")).toEqual(["Share", "Scan"]);
+    for (const visitorLink of ["/send", "/receive", "/scan"]) {
+      expect(order.indexOf(visitorLink)).toBeLessThan(order.indexOf("/kiosk"));
+      expect(order.indexOf(visitorLink)).toBeLessThan(order.indexOf("/workstation"));
+    }
   });
 
-  it("keeps the first print section focused on the Beacon instead of repeating a four-step guide", async () => {
+  it("shows the Beacon first and the three steps after it, without the old find-the-screen step", async () => {
     const copy = textOf(await HomePage());
 
     expect(copy).toContain("Look for the screen with this mark.");
-    expect(copy).toContain("Here to print?");
-    for (const duplicateStep of [
-      "Find the screen",
-      "Scan its QR code",
-      "Pick your file",
-      "Take your paper",
-    ]) {
-      expect(copy).not.toContain(duplicateStep);
-    }
-    expect(copy.indexOf("Look for the screen with this mark.")).toBeLessThan(
-      copy.indexOf("Choose files to send"),
+    expect(copy).not.toContain("Find the screen");
+    const beacon = copy.indexOf("Look for the screen with this mark.");
+    const steps = ["Scan its QR code", "Pick your file", "Take your paper"].map((step) =>
+      copy.indexOf(step),
     );
+    for (const step of steps) expect(step).toBeGreaterThan(beacon);
+    expect(steps).toEqual([...steps].sort((first, second) => first - second));
+    expect(steps[2]).toBeLessThan(copy.indexOf("Choose files to send"));
   });
 
   it("gives the rescue sheet and the scanner every word they show", async () => {
