@@ -396,7 +396,12 @@ export function BatchMobileFlow({
     setStage("error");
   }, [cancelClaim, claimed, clearDocuments, documents, mobileToken, sessionId]);
 
-  const step = stage === "file" ? 1 : stage === "preview" ? 2 : 3;
+  // The same three steps the home page and the big screen name. Scanning is
+  // already done by the time this page exists. "Take your paper" lights only
+  // once the paper is out: while the file is still sending or printing the
+  // visitor is still on the second step, and telling them to collect output
+  // that does not exist yet would send them to an empty printer.
+  const step = stage === "complete" ? 3 : 2;
   const supportsHancom = supportsHwp || supportsHwpx;
   const hancomLabel = hancomFormatLabel(supportsHwp, supportsHwpx);
   const rules = (supportsHancom ? copy.rulesHancom : copy.rules).replaceAll(
@@ -438,8 +443,17 @@ export function BatchMobileFlow({
         )}
       </div>
 
-      {stage !== "boot" && stage !== "error" && stage !== "complete" && stage !== "closed" ? (
-        <ProgressSteps current={step} total={3} label={text("step", { current: step, total: 3 })} />
+      {stage !== "boot" && stage !== "error" && stage !== "closed" ? (
+        <ProgressSteps
+          current={step}
+          total={3}
+          label={text("step", { current: step, total: 3 })}
+          steps={[
+            text("homePrintStepScan"),
+            text("homePrintStepPick"),
+            text("homePrintStepCollect"),
+          ]}
+        />
       ) : null}
 
       {reminderStage === stage && !["boot", "complete", "error", "closed"].includes(stage) ? (
@@ -552,10 +566,21 @@ export function BatchMobileFlow({
               {formatBatchCopy(copy.selected, documents.length)}
             </p>
           )}
+          {/* Each setting as its own chip, so "A4" and "one side" can be read at
+              a glance; the sentence is still read whole by a screen reader. */}
+          <p className="mobile-print-settings">
+            <span className="drop-visually-hidden">{text("printSummary")}</span>
+            {text("printSummary")
+              .split("·")
+              .map((setting) => setting.trim())
+              .filter(Boolean)
+              .map((setting) => (
+                <span key={setting} aria-hidden="true">
+                  {setting}
+                </span>
+              ))}
+          </p>
           <div className="mobile-summary">
-            <p>
-              <Printer aria-hidden="true" /> {text("printSummary")}
-            </p>
             <p>
               <LockKeyhole aria-hidden="true" /> {text("privacySummary")}
             </p>
