@@ -397,9 +397,11 @@ export function BatchMobileFlow({
   }, [cancelClaim, claimed, clearDocuments, documents, mobileToken, sessionId]);
 
   // The same three steps the home page and the big screen name. Scanning is
-  // already done by the time this page exists; picking and checking the files
-  // is the second step, and everything after "print" is the third.
-  const step = stage === "file" || stage === "preview" ? 2 : 3;
+  // already done by the time this page exists. "Take your paper" lights only
+  // once the paper is out: while the file is still sending or printing the
+  // visitor is still on the second step, and telling them to collect output
+  // that does not exist yet would send them to an empty printer.
+  const step = stage === "complete" ? 3 : 2;
   const supportsHancom = supportsHwp || supportsHwpx;
   const hancomLabel = hancomFormatLabel(supportsHwp, supportsHwpx);
   const rules = (supportsHancom ? copy.rulesHancom : copy.rules).replaceAll(
@@ -441,7 +443,7 @@ export function BatchMobileFlow({
         )}
       </div>
 
-      {stage !== "boot" && stage !== "error" && stage !== "complete" && stage !== "closed" ? (
+      {stage !== "boot" && stage !== "error" && stage !== "closed" ? (
         <ProgressSteps
           current={step}
           total={3}

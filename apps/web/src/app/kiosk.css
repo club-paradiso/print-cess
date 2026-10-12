@@ -306,8 +306,10 @@
 /* On a landscape display the waiting screen is exactly one screen tall and
    never scrolls: the code takes whatever height the words above and below it
    leave, up to its full size. The words wrap differently at every size, so a
-   fixed "100vh minus N" guess overflowed 1920x1080 and 1280x1024. */
-@media (min-width: 961px) and (min-aspect-ratio: 1/1) {
+   fixed "100vh minus N" guess overflowed 1920x1080 and 1280x1024. Below 700px
+   of height (1024x600 panels) the words alone outgrow the screen, so those keep
+   the scrolling layout rather than clipping instructions. */
+@media (min-width: 961px) and (min-height: 700px) and (min-aspect-ratio: 1/1) {
   .kiosk-shell--waiting {
     box-sizing: border-box;
     display: grid;
