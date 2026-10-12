@@ -128,7 +128,7 @@ looking code opens the session page, which already explains an expired or used c
 (Chromium on Android has it; Chromium on Linux and iOS Safari do not). The jsQR fallback was first
 written on #117 and lost when that branch was resolved against `main`; it was restored with the
 pinned SRI hash on 2026-10-12. Automated coverage: `drop-scanner.test.ts` (native path, fallback
-decode, loader URL and integrity, load failure) and the Chromium and WebKit e2e in
+decode, loader URL and integrity, load failure) and the Chromium and WebKit (iPhone 15 profile) e2e in
 `v2-experience.spec.ts` with a stand-in decoder. **Not yet verified on a physical iPhone**: decoding
 the live kiosk QR in Safari, the time to first read, and heat on older phones. Until that check, the
 phone's camera app remains the documented primary route.
