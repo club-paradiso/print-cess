@@ -20,12 +20,7 @@ export default defineConfig({
     trace: "off",
   },
   projects: [
-    {
-      name: "chromium",
-      // The full Chromium build, not the default headless shell: the shell has
-      // no PDF viewer, so a kiosk PDF never loads there and printing fails.
-      use: { ...devices["Desktop Chrome"], channel: "chromium" },
-    },
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "iphone", grep: /@viewport/u, use: { ...devices["iPhone 15"] } },
     { name: "android", grep: /@viewport/u, use: { ...devices["Pixel 7"] } },
   ],
