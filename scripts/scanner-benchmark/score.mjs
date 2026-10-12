@@ -25,7 +25,7 @@ async function main() {
   console.log("");
 
   for (const check of report.checks) {
-    const marker = check.passed ? "PASS" : "FAIL";
+    const marker = check.measured === false ? "N/A" : check.passed ? "PASS" : "FAIL";
     console.log(
       `${marker.padEnd(4)}  ${check.name}: ${formatMetric(check.value)} ${check.operator} ${formatMetric(check.threshold)}`,
     );
