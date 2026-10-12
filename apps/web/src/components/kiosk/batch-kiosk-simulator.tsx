@@ -474,8 +474,9 @@ async function consumeValidateAndPrint(
     await kioskTransition(session, "printing");
     // `window.print()` blocks until its dialog is dismissed in the supported
     // desktop browsers, so this naturally walks the selected documents in order.
-    // A document that never reached the print dialog was not printed: the
-    // session fails rather than reporting the whole batch as completed.
+    // Every document loads before the first dialog opens, so a document that
+    // cannot load fails the session with nothing printed, and a resend never
+    // duplicates pages.
     await printArtifacts(nextArtifacts);
     await kioskTransition(session, "completed");
     setStatus("completed");

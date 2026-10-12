@@ -187,7 +187,32 @@ describe("browser kiosk printing", () => {
     expect(document.querySelector("iframe")).toBeNull();
   });
 
-  test("prints a batch in the visitor's order and stops at the first failure", async () => {
+  test("loads a whole batch before printing it in the visitor's order", async () => {
+    vi.useFakeTimers();
+    const calls: string[] = [];
+    const pending = printArtifacts([
+      artifactOf("png", "blob:first"),
+      artifactOf("pdf", "blob:second"),
+      artifactOf("jpeg", "blob:third"),
+    ]);
+
+    for (const label of ["first", "second", "third"]) {
+      const frame = await nextFrame();
+      spyOnFrame(frame, calls, label);
+      // No dialog opens while any document of the batch is still loading.
+      expect(calls).toEqual([]);
+      await loadFrame(frame);
+    }
+    await pending;
+
+    expect(calls).toEqual(["first", "second", "third"]);
+    await vi.runAllTimersAsync();
+    expect(document.querySelectorAll("iframe")).toHaveLength(0);
+  });
+
+  test("prints nothing from a batch when any document fails to load", async () => {
+    // A failed batch is resent whole, so printing the documents before the
+    // failure would put those pages on paper twice.
     vi.useFakeTimers();
     const calls: string[] = [];
     const pending = printArtifacts([
@@ -206,7 +231,6 @@ describe("browser kiosk printing", () => {
     await loadFrame(first);
 
     const second = await nextFrame();
-    expect(second.getAttribute("src")).toBe("blob:second");
     spyOnFrame(second, calls, "second");
     await loadFrame(second);
 
@@ -215,9 +239,44 @@ describe("browser kiosk printing", () => {
     third.contentDocument?.querySelector("img")?.dispatchEvent(new Event("error"));
 
     await expect(outcome).resolves.toBe("rejected");
-    // The fourth document is never sent once the third could not be.
-    expect(calls).toEqual(["first", "second"]);
-    expect(document.querySelectorAll("iframe")).toHaveLength(3);
+    expect(calls).toEqual([]);
+    // The fourth document is never loaded, and the loaded ones are released.
+    expect(document.querySelectorAll("iframe")).toHaveLength(0);
+  });
+
+  test("releases the unprinted frames when a print call itself fails", async () => {
+    vi.useFakeTimers();
+    const calls: string[] = [];
+    const pending = printArtifacts([
+      artifactOf("png", "blob:first"),
+      artifactOf("png", "blob:second"),
+      artifactOf("png", "blob:third"),
+    ]);
+    const outcome = pending.then(
+      () => "printed",
+      () => "rejected",
+    );
+
+    const first = await nextFrame();
+    spyOnFrame(first, calls, "first");
+    await loadFrame(first);
+    const second = await nextFrame();
+    Object.defineProperty(second.contentWindow, "focus", { value: () => undefined });
+    Object.defineProperty(second.contentWindow, "print", {
+      value: () => {
+        throw new Error("print unavailable");
+      },
+    });
+    await loadFrame(second);
+    const third = await nextFrame();
+    spyOnFrame(third, calls, "third");
+    await loadFrame(third);
+
+    await expect(outcome).resolves.toBe("rejected");
+    expect(calls).toEqual(["first"]);
+    expect(third.isConnected).toBe(false);
+    await vi.runAllTimersAsync();
+    expect(document.querySelectorAll("iframe")).toHaveLength(0);
   });
 
   test("never asks for file-system access while printing", async () => {

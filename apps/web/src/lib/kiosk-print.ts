@@ -34,6 +34,38 @@ export function revokePrintArtifact(artifact: PrintArtifact | undefined): void {
 }
 
 export async function printArtifact(artifact: PrintArtifact): Promise<void> {
+  printFrame(await preparePrintFrame(artifact));
+}
+
+/**
+ * Prints several artifacts in the visitor's order. Every document is loaded
+ * into its own frame before the first print dialog opens, so a document that
+ * cannot load fails the batch while nothing has been printed yet: a visitor
+ * who resends after that failure never gets the earlier pages twice.
+ */
+export async function printArtifacts(artifacts: readonly PrintArtifact[]): Promise<void> {
+  const frames: HTMLIFrameElement[] = [];
+  try {
+    for (const artifact of artifacts) frames.push(await preparePrintFrame(artifact));
+  } catch (error) {
+    for (const frame of frames) frame.remove();
+    throw error;
+  }
+
+  for (const [index, frame] of frames.entries()) {
+    try {
+      printFrame(frame);
+    } catch (error) {
+      // Only `print()` itself failing lands here, after earlier documents may
+      // already have printed. The unprinted frames are not left behind.
+      for (const remaining of frames.slice(index + 1)) remaining.remove();
+      throw error;
+    }
+  }
+}
+
+/** Loads one artifact into a hidden frame, removing the frame if it cannot load. */
+async function preparePrintFrame(artifact: PrintArtifact): Promise<HTMLIFrameElement> {
   if (artifact.fileKind === "hwp" || artifact.fileKind === "hwpx") {
     throw new Error("HWP/HWPX printing requires the configured native Windows kiosk");
   }
@@ -47,7 +79,19 @@ export async function printArtifact(artifact: PrintArtifact): Promise<void> {
     } else {
       await loadImage(frame, artifact.url);
     }
+  } catch (error) {
+    frame.remove();
+    throw error;
+  }
+  return frame;
+}
 
+/**
+ * Opens the print dialog for a loaded frame. The frame outlives `print()` long
+ * enough for the dialog to read it, then goes.
+ */
+function printFrame(frame: HTMLIFrameElement): void {
+  try {
     const printableWindow = frame.contentWindow;
     if (!printableWindow) throw new Error("print frame is unavailable");
     printableWindow.focus();
@@ -55,15 +99,6 @@ export async function printArtifact(artifact: PrintArtifact): Promise<void> {
   } finally {
     window.setTimeout(() => frame.remove(), 30_000);
   }
-}
-
-/**
- * Prints several artifacts in the visitor's order. The first document that
- * cannot reach the print dialog stops the run and rejects, so a caller never
- * reports a batch as printed when part of it was not.
- */
-export async function printArtifacts(artifacts: readonly PrintArtifact[]): Promise<void> {
-  for (const artifact of artifacts) await printArtifact(artifact);
 }
 
 function createPrintFrame(): HTMLIFrameElement {
