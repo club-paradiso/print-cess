@@ -34,10 +34,14 @@ page, `POST /api/kiosk/sessions` and the home page's kiosk link all follow it:
 
 When off, `/kiosk` and the session API answer 404 and the home page hides the link. Vercel fixes
 environment variables per deployment, so a change takes effect only after a redeploy. Kiosk QR
-codes are always built from `PUBLIC_BASE_URL`; the home page's in-page scanner accepts only codes
-for its own origin, so `PUBLIC_BASE_URL` must be the host visitors land on
-(`paradiso-print-cess-web.vercel.app` redirects to `print-cess.vercel.app`). Check the disable path
-on a Preview, never by flipping Production.
+codes are always built from `PUBLIC_BASE_URL`. On 2026-10-12 the live kiosk QR named
+`https://paradiso-print-cess-web.vercel.app`, which answers `307` to the same path on
+`https://print-cess.vercel.app`; the phone's camera app follows that redirect and keeps the
+`#t=…` fragment. The home page's in-page scanner accepts codes for its own origin and for the
+`PUBLIC_BASE_URL` origin (`sessionOriginFrom` in `apps/web/src/lib/print-qr.ts`) and always stays on
+its own origin. Setting `PUBLIC_BASE_URL` to the canonical host would save the redirect hop; that
+is an owner change in Vercel, not made here. Check the disable path on a Preview, never by
+flipping Production.
 `apps/web/vercel.json` owns the Next.js commands; Vercel resolves the repository-root pnpm lockfile
 and workspace packages while building from `apps/web`.
 

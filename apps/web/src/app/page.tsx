@@ -15,6 +15,7 @@ import { translate } from "@print-cess/i18n";
 import { Beacon, RouteGlyph, Wordmark } from "@print-cess/ui";
 
 import { PrintEntryActions, type PrintEntryLabels } from "@/components/home/print-entry-actions";
+import { sessionOriginFrom } from "@/lib/print-qr";
 import { requestLocale } from "@/lib/request-locale";
 import { isBrowserKioskEnabled } from "@/server/demo";
 
@@ -102,7 +103,10 @@ export default async function HomePage() {
           <p>{text("homeBeaconCaption")}</p>
         </div>
 
-        <PrintEntryActions labels={labels} />
+        <PrintEntryActions
+          labels={labels}
+          sessionOrigin={sessionOriginFrom(process.env.PUBLIC_BASE_URL)}
+        />
       </section>
 
       {/* Share and Scan are real, first-class tools, but they are not why most

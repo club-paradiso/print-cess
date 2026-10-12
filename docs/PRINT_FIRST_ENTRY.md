@@ -111,8 +111,10 @@ who opened the home page first.
    to a canvas capped at 960 px (`apps/web/src/lib/drop-scanner.ts`). Camera frames stay in the
    browser; only the decoder script is fetched. The receive flow shares this scanner.
 2. Accepts a code **only** if `parsePrintSessionQr` (`apps/web/src/lib/print-qr.ts`) passes it: the
-   same origin as this page, no credentials or query string, path exactly `/s/<session id>` with a
-   canonical session id, and a fragment `parseSessionFragment` accepts. The navigation target is
+   same origin as this page or the deployment's `PUBLIC_BASE_URL` origin (the kiosk builds its QR
+   from that, and in Production it is the host that redirects here), no credentials or query
+   string, path exactly `/s/<session id>` with a canonical session id, and a fragment
+   `parseSessionFragment` accepts. The navigation target is
    rebuilt from the checked parts. The scanned text is never navigated to.
 3. A QR code that fails (a menu, another site, another Print-cess deployment, a lookalike domain)
    shows "여기서 인쇄할 수 있는 QR 코드가 아니에요…" and goes nowhere. The scan continues.
