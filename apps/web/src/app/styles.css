@@ -236,16 +236,20 @@ p {
   min-width: 0;
 }
 
+/* On a 320-375 px phone with Safari's toolbars showing, the scan button has
+   to clear the fold with the Beacon still beside its caption. The e2e
+   "small phone in Korean" test holds this to the pixel. */
 @media (max-width: 380px) {
   .print-entry {
+    gap: 14px;
     padding: 18px;
   }
   .print-entry__beacon {
     gap: 10px;
-    padding: 12px;
+    padding: 10px 12px;
   }
   .print-entry__beacon .pc-beacon--lg {
-    --pc-beacon-size: 88px;
+    --pc-beacon-size: 72px;
   }
   .print-entry__beacon p {
     font-size: 16px;
