@@ -46,6 +46,7 @@ import {
 import {
   createPrintArtifact,
   printArtifact,
+  printArtifacts,
   revokePrintArtifact,
   type PrintArtifact,
 } from "@/lib/kiosk-print";
@@ -473,10 +474,16 @@ async function consumeValidateAndPrint(
     await kioskTransition(session, "printing");
     // `window.print()` blocks until its dialog is dismissed in the supported
     // desktop browsers, so this naturally walks the selected documents in order.
-    for (const artifact of nextArtifacts) await printArtifact(artifact).catch(() => undefined);
+    // Every document loads before the first dialog opens, so a document that
+    // cannot load fails the session with nothing printed, and a resend never
+    // duplicates pages.
+    await printArtifacts(nextArtifacts);
     await kioskTransition(session, "completed");
     setStatus("completed");
   } catch {
+    // The failure screen offers no reprint or download, so the decrypted Blob
+    // is released now instead of when the next QR code is created.
+    setArtifacts([]);
     setStatus("failed");
     await kioskTransition(session, "failed").catch(() => undefined);
   } finally {
