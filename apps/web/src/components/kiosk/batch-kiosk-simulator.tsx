@@ -287,7 +287,7 @@ export function BatchKioskSimulator({
   const spotlight = SPOTLIGHT_LOCALES[spotlightIndex] ?? "zh-CN";
 
   return (
-    <main className="kiosk-shell" lang="ko">
+    <main className="kiosk-shell kiosk-shell--waiting" lang="ko">
       <header className="kiosk-header">
         <Wordmark />
         {/* The same Beacon the phone's home page shows. A visitor matches the
