@@ -1,0 +1,91 @@
+# "This site can see edits you make" file-dialog warning
+
+A visitor reported a Windows file dialog during printing whose title read, approximately,
+"Warning: This site can see edits you make" (`경고: 이 사이트에서 사용자가 수정한 내용을 볼 수
+있습니다`). This document records what produces that dialog, which Print-cess code can and cannot
+reach it, and what to collect when it is reported again.
+
+## What the title means
+
+The text is not a Windows or printer-driver string. It is the title Chromium gives the native file
+dialog it opens for the File System Access API's `window.showSaveFilePicker()`:
+
+- `chrome/browser/file_system_access/chrome_file_system_access_permission_context.cc`,
+  `GetPickerTitle()`: the `kSaveFilePickerOptions` case, and only that case, uses
+  `IDS_FILE_SYSTEM_ACCESS_CHOOSER_OPEN_SAVE_FILE_TITLE`.
+- `chrome/app/generated_resources.grd`: `IDS_FILE_SYSTEM_ACCESS_CHOOSER_OPEN_SAVE_FILE_TITLE` is
+  "Warning: this site can see edits you make".
+- `chrome/app/resources/generated_resources_ko.xtb`: the Korean translation is
+  `경고: 이 사이트에서 내가 수정한 내용을 볼 수 있습니다`.
+
+Other pickers carry different titles: `showDirectoryPicker({ mode: "readwrite" })` is "Select where
+this site can save changes", a read-only directory picker is "Select a folder this site can view",
+and `showOpenFilePicker()` is "Select a file this site can read". An ordinary browser download
+("Ask where to save each file") and a printer driver's print-to-file prompt ("Save Print Output
+As") use the platform's default title and never show this warning.
+
+Chromium shows the warning because the API returns a file handle the page could keep writing to
+after the dialog closes. It is a disclosure of the permission being granted, not evidence that
+anything was read or sent.
+
+## Where Print-cess can and cannot produce it
+
+| Path                                                                                          | Calls `showSaveFilePicker`?  |
+| --------------------------------------------------------------------------------------------- | ---------------------------- |
+| Browser kiosk printing, `apps/web/src/lib/kiosk-print.ts` (`printArtifact`, `printArtifacts`) | No                           |
+| Kiosk completion screen, "파일 다운로드 (직원용)" (`<a download>`)                            | No (ordinary download)       |
+| Scan, "print" (`apps/web/src/components/scan/scanner-flow.tsx`, hidden iframe)                | No                           |
+| Native Windows kiosk (`apps/kiosk`, WPF, `System.Printing`, never opens a dialog)             | No (no Chromium at all)      |
+| Share receive, **"저장하기 / Save"** (`/receive`, `drop-save.ts` `pickSaveTarget`)            | **Yes**, on Chromium desktop |
+| Share receive, "폴더에 모두 저장하기…" (`showDirectoryPicker`)                                | No (different title)         |
+
+The repository's only `showSaveFilePicker()` call is `openFilePicker()` in
+`apps/web/src/lib/drop-save.ts`, reached from `saveOne()` in
+`apps/web/src/components/drop/receive-flow.tsx`. It has never been in a print path
+(`git log -S showSaveFilePicker` shows it arriving with the transfer save work only).
+`docs/GOVERNMENT_WORKSTATION.md` describes the workstation flow that uses it: a phone sends a
+document to a work computer through `/receive`, the visitor saves it, and then prints the saved
+file from that computer. The warning there is Chromium's legitimate disclosure for a deliberate
+save; Print-cess writes the chosen file once and keeps no handle afterwards.
+
+Decision (2026-10-12): `/receive` keeps `showSaveFilePicker()` and accepts the warning. Replacing it
+with an ordinary download would remove the warning but also the confirmed "Saved" outcome and the
+visitor's choice of location, which `drop-save.ts` exists to provide.
+
+Outside Print-cess code, two Chromium-side callers exist and cannot be excluded remotely:
+
+- Chrome's built-in PDF viewer saves through `showSaveFilePicker()` when the
+  `PdfUseShowSaveFilePicker` feature is enabled (disabled by default, but field trials can enable
+  it). A save in the viewer (Ctrl+S, or the viewer's download button) would show the same title.
+- A browser extension or a site in another tab can call the API.
+
+## Regression guards
+
+- `apps/web/test/kiosk-print.test.ts` fails if PDF, PNG or JPEG printing calls
+  `showSaveFilePicker`, `showDirectoryPicker` or `showOpenFilePicker`.
+- `apps/web/test/e2e/print-flow.spec.ts` ("one kiosk scan prints multiple…") records every picker
+  call in real Chromium while a PNG and a PDF go through the kiosk and fails on any call.
+
+## When it is reported again
+
+Collect, without any real document:
+
+1. A screenshot of the whole dialog, including its title bar.
+2. The address of the tab that was in front when the dialog opened (`/kiosk`, `/receive`, `/scan`,
+   or something else) and the last button pressed.
+3. `chrome://version` or `edge://version`, including the "Variations" / command-line section, and
+   whether `PdfUseShowSaveFilePicker` appears there.
+4. The list of installed extensions (`chrome://extensions`).
+5. The selected printer's port in Windows printer properties (`FILE:`, `PORTPROMPT:`, or a
+   virtual writer such as Microsoft XPS Document Writer).
+
+Then classify it:
+
+| Dialog title                                            | Origin                                                              | Action                                                   |
+| ------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------- |
+| "Warning: this site can see edits you make"             | `showSaveFilePicker()` by the page, the PDF viewer, or an extension | Match the tab address and button against the table above |
+| "Select where this site can save changes"               | `showDirectoryPicker({ mode: "readwrite" })`                        | `/receive` "Save all to a folder…"                       |
+| "Save Print Output As" / "다른 이름으로 인쇄 결과 저장" | Printer driver or `FILE:` port                                      | Printer configuration, not Print-cess                    |
+| Platform "Save As" / "다른 이름으로 저장"               | Ordinary browser download                                           | Download setting or the staff download link              |
+
+Do not suppress or work around the Chromium warning. It is browser security UI.
