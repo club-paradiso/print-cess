@@ -167,6 +167,24 @@ p {
   text-wrap: balance;
 }
 
+.print-entry__privacy {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+.print-entry__privacy svg {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  color: var(--pc-success);
+}
+
 @media (min-width: 560px) {
   .print-entry__actions {
     grid-template-columns: repeat(2, minmax(0, max-content));
@@ -180,7 +198,8 @@ p {
     grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr);
     grid-template-areas:
       "copy beacon"
-      "actions beacon";
+      "actions beacon"
+      "privacy beacon";
     column-gap: clamp(32px, 5vw, 64px);
     row-gap: 32px;
     padding-block: 24px;
@@ -191,6 +210,10 @@ p {
   }
   .print-entry__actions {
     grid-area: actions;
+    align-self: start;
+  }
+  .print-entry__privacy {
+    grid-area: privacy;
     align-self: start;
   }
   .print-entry__beacon {
@@ -399,8 +422,8 @@ p {
   text-underline-offset: 4px;
 }
 
-/* What happens to a file, on the one dark band of the page. Mint is a fill
-   here, never the colour of text. */
+/* What holds for every tool on the page, on the one dark band. Mint is a
+   fill here, never the colour of text. */
 .home-trust {
   display: grid;
   gap: 18px;
@@ -437,7 +460,7 @@ p {
 }
 @media (min-width: 720px) {
   .home-trust {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 24px;
   }
 }
