@@ -48,6 +48,10 @@ document to a work computer through `/receive`, the visitor saves it, and then p
 file from that computer. The warning there is Chromium's legitimate disclosure for a deliberate
 save; Print-cess writes the chosen file once and keeps no handle afterwards.
 
+Decision (2026-10-12): `/receive` keeps `showSaveFilePicker()` and accepts the warning. Replacing it
+with an ordinary download would remove the warning but also the confirmed "Saved" outcome and the
+visitor's choice of location, which `drop-save.ts` exists to provide.
+
 Outside Print-cess code, two Chromium-side callers exist and cannot be excluded remotely:
 
 - Chrome's built-in PDF viewer saves through `showSaveFilePicker()` when the
