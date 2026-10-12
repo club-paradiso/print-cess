@@ -483,10 +483,15 @@ async function consumeAndPrint(
     setArtifact(artifact);
     setStatus("printing");
     await kioskTransition(session, "printing");
-    await printArtifact(artifact).catch(() => undefined);
+    // A document that never reached the print dialog was not printed, so a
+    // frame that failed to load ends the session as failed, never completed.
+    await printArtifact(artifact);
     await kioskTransition(session, "completed");
     setStatus("completed");
   } catch {
+    // The failure screen offers no reprint or download, so the decrypted Blob
+    // is released now instead of when the next QR code is created.
+    setArtifact(undefined);
     setStatus("failed");
     await kioskTransition(session, "failed").catch(() => undefined);
   } finally {
