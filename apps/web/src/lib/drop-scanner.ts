@@ -56,8 +56,14 @@ async function loadJsQrDecoder(): Promise<JsQrDecoder> {
 
     const finish = () => {
       const loaded = jsQrDecoder();
-      if (loaded) resolve(loaded);
-      else reject(new DropScannerError("scannerUnavailable"));
+      if (loaded) {
+        resolve(loaded);
+        return;
+      }
+      // Loaded but exported nowhere this page can see; a reused tag would never
+      // fire again, so it goes too.
+      script.remove();
+      reject(new DropScannerError("scannerUnavailable"));
     };
     const fail = () => {
       // A failed tag never loads again; drop it so the next attempt starts clean.

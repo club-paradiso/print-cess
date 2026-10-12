@@ -167,10 +167,17 @@ test("scanning a QR code that is not a Print-cess session goes nowhere", async (
   }
 });
 
-/** A camera that works, for the paths that differ only in how a frame is decoded. */
+/**
+ * A camera that works, for the paths that differ only in how a frame is
+ * decoded. Installed after the page loads: Playwright's WebKit keeps the native
+ * getUserMedia when it is replaced from an init script, and the native one has
+ * no camera to open.
+ */
 async function installFakeCamera(page: Page): Promise<void> {
-  await page.addInitScript(() => {
+  await page.evaluate(() => {
     delete (window as unknown as { BarcodeDetector?: unknown }).BarcodeDetector;
+    const scope = window as unknown as { __streams: MediaStream[] };
+    scope.__streams = [];
     const canvas = document.createElement("canvas");
     canvas.width = 320;
     canvas.height = 240;
@@ -180,22 +187,26 @@ async function installFakeCamera(page: Page): Promise<void> {
       context.fillStyle = "#334";
       context.fillRect(0, 0, 320, 240);
     }, 50);
-    navigator.mediaDevices.getUserMedia = async () => canvas.captureStream(15);
+    navigator.mediaDevices.getUserMedia = async () => {
+      const stream = canvas.captureStream(15);
+      scope.__streams.push(stream);
+      return stream;
+    };
   });
 }
 
-test("a browser without BarcodeDetector scans through the jsQR fallback, as Safari does", async ({
+test("@viewport a browser without BarcodeDetector scans through the jsQR fallback, as Safari does", async ({
   page,
 }) => {
+  await page.goto("/");
   await installFakeCamera(page);
   // Stands in for the pinned CDN decoder, which reports whatever window.__qr
   // holds. The loader itself (URL, integrity, failure) is covered in
   // drop-scanner.test.ts; what is under test here is the page.
-  await page.addInitScript(() => {
+  await page.evaluate(() => {
     const scope = window as unknown as { __qr?: string; jsQR: unknown };
     scope.jsQR = () => (scope.__qr ? { data: scope.__qr } : null);
   });
-  await page.goto("/");
   await page.getByRole("button", { name: "Scan QR code" }).click();
   await expect(
     page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
@@ -212,14 +223,14 @@ test("a browser without BarcodeDetector scans through the jsQR fallback, as Safa
   await expect(page).toHaveURL(new RegExp(`/s/${SESSION_ID}#t=`, "u"));
 });
 
-test("a browser that cannot scan says so and points to the phone's camera app", async ({
+test("@viewport a browser that cannot scan says so and points to the phone's camera app", async ({
   page,
 }) => {
   // No native detector, and the fallback decoder cannot be fetched: the one
   // case left where this page cannot read a QR code.
-  await installFakeCamera(page);
   await page.route("**/npm/jsqr@*/**", (route) => route.abort());
   await page.goto("/");
+  await installFakeCamera(page);
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/can't scan QR codes here/u)).toBeVisible();
@@ -228,6 +239,46 @@ test("a browser that cannot scan says so and points to the phone's camera app", 
   await expect(page.getByText(/The camera is blocked/u)).toHaveCount(0);
   // The way back to the rescue sheet stays one tap away.
   await expect(page.getByRole("button", { name: "I can't find the screen" }).last()).toBeVisible();
+});
+
+test("@viewport stopping the receive scanner while the decoder is still downloading releases the camera", async ({
+  page,
+}) => {
+  // Hold the decoder download open, as a slow network would.
+  let releaseDecoder: () => void = () => {};
+  const decoderHeld = new Promise<void>((resolve) => {
+    releaseDecoder = resolve;
+  });
+  await page.route("**/npm/jsqr@*/**", async (route) => {
+    await decoderHeld;
+    await route.abort();
+  });
+
+  await page.goto("/receive");
+  await installFakeCamera(page);
+  await page.getByRole("button", { name: "Scan the QR code" }).click();
+  await expect(page.getByRole("heading", { name: "Point at the other phone" })).toBeVisible();
+  await expect
+    .poll(() =>
+      page.evaluate(() => (window as unknown as { __streams: MediaStream[] }).__streams.length),
+    )
+    .toBe(1);
+
+  await page.getByRole("button", { name: "Type the code instead" }).click();
+  releaseDecoder();
+
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        (window as unknown as { __streams: MediaStream[] }).__streams.every((stream) =>
+          stream.getTracks().every((track) => track.readyState === "ended"),
+        ),
+      ),
+    )
+    .toBe(true);
+  // The visitor already chose to type; a late failure must not talk over that.
+  await page.waitForTimeout(500);
+  await expect(page.getByText("This browser cannot scan.", { exact: false })).toHaveCount(0);
 });
 
 test("a refused camera permission is explained instead of left blank", async ({ page }) => {

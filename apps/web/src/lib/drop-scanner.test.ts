@@ -190,4 +190,19 @@ describe("startCodeScanner", () => {
     scanner.stop();
     await expect(scanner.codes).resolves.toBeNull();
   });
+
+  it("drops a tag that loaded without defining jsQR, so a retry is not left waiting", async () => {
+    const { stream } = fakeStream();
+    stubCamera(() => Promise.resolve(stream));
+    stubCanvas();
+    const { startCodeScanner } = await loadScanner();
+
+    const starting = startCodeScanner(fakeVideo(), (raw) => raw);
+    const outcome = expect(starting).rejects.toMatchObject({ code: "scannerUnavailable" });
+    await vi.waitFor(() => expect(pendingScript()).not.toBeNull());
+    pendingScript()!.dispatchEvent(new Event("load"));
+    await outcome;
+
+    expect(pendingScript()).toBeNull();
+  });
 });
