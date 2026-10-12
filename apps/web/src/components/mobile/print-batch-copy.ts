@@ -44,8 +44,8 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
   },
   ko: {
     chooseFiles: "인쇄할 파일을 고르세요",
-    rules: "사진·PDF 최대 10개 · 모두 합쳐 32MB, 50페이지 이하",
-    rulesHancom: "사진·PDF·HWP/HWPX 최대 10개 · 모두 합쳐 32MB, 50페이지 이하",
+    rules: "사진·PDF 10개까지 · 모두 합쳐 32MB, 50쪽까지",
+    rulesHancom: "사진·PDF·HWP/HWPX 10개까지 · 모두 합쳐 32MB, 50쪽까지",
     checkFiles: "이 파일들이 맞나요?",
     previewHelp: "아래 순서대로 한 부씩 인쇄돼요.",
     printFiles: "파일 {{count}}개 인쇄",

@@ -115,18 +115,27 @@ export function DestructiveButton({
   );
 }
 
+/**
+ * Where the visitor is in a short flow. With `steps`, each segment carries its
+ * name, so the phone shows the same three words as the home page and the big
+ * screen: a finished step in mint with a tick, the current one in indigo.
+ */
 export function ProgressSteps({
   current,
   total,
   label,
+  steps,
 }: {
   current: number;
   total: number;
   label: string;
+  steps?: readonly string[] | undefined;
 }) {
+  const stateOf = (index: number) =>
+    index + 1 < current ? "is-done" : index + 1 === current ? "is-active" : "";
   return (
     <div
-      className="pc-progress"
+      className={steps ? "pc-progress pc-progress--named" : "pc-progress"}
       aria-label={label}
       role="progressbar"
       aria-valuemin={1}
@@ -139,15 +148,31 @@ export function ProgressSteps({
         style={{ "--pc-progress-total": total } as CSSProperties}
       >
         {Array.from({ length: total }, (_, index) => (
-          <span
-            key={index}
-            className={index + 1 <= current ? "pc-progress__dot is-active" : "pc-progress__dot"}
-          >
+          <span key={index} className={`pc-progress__dot ${stateOf(index)}`.trim()}>
             {index + 1 < current ? <Check size={14} strokeWidth={3} /> : null}
           </span>
         ))}
       </div>
-      <span className="pc-progress__label">{label}</span>
+      {steps ? (
+        <ol
+          className="pc-progress__steps"
+          aria-hidden="true"
+          style={{ "--pc-progress-total": total } as CSSProperties}
+        >
+          {steps.slice(0, total).map((name, index) => (
+            <li key={name} className={stateOf(index) || undefined}>
+              {index + 1 < current ? (
+                <Check size={14} strokeWidth={3} />
+              ) : (
+                <span className="pc-progress__number">{index + 1}</span>
+              )}
+              {name}
+            </li>
+          ))}
+        </ol>
+      ) : (
+        <span className="pc-progress__label">{label}</span>
+      )}
     </div>
   );
 }

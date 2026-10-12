@@ -457,26 +457,30 @@ export function SendFlow({
                 <p>{text("dropStillSending")}</p>
               </div>
             ) : null}
-            {qrImage ? (
-              <figure className="drop-qr">
-                <div className="drop-qr__code">
-                  <ScanFrame />
-                  {/* eslint-disable-next-line @next/next/no-img-element -- a data URL generated in the browser */}
-                  <img src={qrImage} alt={text("dropScanToReceive")} />
-                </div>
-                <figcaption>{text("dropScanToReceive")}</figcaption>
-              </figure>
-            ) : null}
-            <div className="drop-link-actions">
-              {canShare ? (
-                <SecondaryButton onClick={() => void share()}>
-                  <Share2 aria-hidden="true" /> {text("dropShareLink")}
-                </SecondaryButton>
+            {/* The two ways to hand the files over (the code to scan, the link
+                to send) sit on one card, so they read as one choice. */}
+            <div className="drop-handoff">
+              {qrImage ? (
+                <figure className="drop-qr">
+                  <div className="drop-qr__code">
+                    <ScanFrame />
+                    {/* eslint-disable-next-line @next/next/no-img-element -- a data URL generated in the browser */}
+                    <img src={qrImage} alt={text("dropScanToReceive")} />
+                  </div>
+                  <figcaption>{text("dropScanToReceive")}</figcaption>
+                </figure>
               ) : null}
-              <SecondaryButton onClick={() => void copyLink()}>
-                {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}{" "}
-                {copied ? text("dropCopied") : text("dropCopyLink")}
-              </SecondaryButton>
+              <div className="drop-link-actions">
+                {canShare ? (
+                  <SecondaryButton onClick={() => void share()}>
+                    <Share2 aria-hidden="true" /> {text("dropShareLink")}
+                  </SecondaryButton>
+                ) : null}
+                <SecondaryButton onClick={() => void copyLink()}>
+                  {copied ? <CheckCircle2 aria-hidden="true" /> : <Copy aria-hidden="true" />}{" "}
+                  {copied ? text("dropCopied") : text("dropCopyLink")}
+                </SecondaryButton>
+              </div>
             </div>
             {/* QR and shared-link hand-offs keep the transfer code in the URL
                 fragment. The optional nearby-phone flow below escrows it for

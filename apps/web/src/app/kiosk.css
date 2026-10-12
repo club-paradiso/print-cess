@@ -303,6 +303,40 @@
   height: 40px;
   color: var(--pc-brand);
 }
+/* On a landscape display the waiting screen is exactly one screen tall and
+   never scrolls: the code takes whatever height the words above and below it
+   leave, up to its full size. The words wrap differently at every size, so a
+   fixed "100vh minus N" guess overflowed 1920x1080 and 1280x1024. Below 700px
+   of height (1024x600 panels) the words alone outgrow the screen, so those keep
+   the scrolling layout rather than clipping instructions. */
+@media (min-width: 961px) and (min-height: 700px) and (min-aspect-ratio: 1/1) {
+  .kiosk-shell--waiting {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+  }
+  .kiosk-shell--waiting .kiosk-layout {
+    height: 100%;
+    min-height: 0;
+  }
+  .kiosk-shell--waiting .kiosk-qr {
+    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    height: 100%;
+    min-height: 0;
+  }
+  .kiosk-shell--waiting .kiosk-qr__frame {
+    box-sizing: border-box;
+    align-self: center;
+    width: auto;
+    height: 100%;
+    max-width: 100%;
+    max-height: calc(600px + 2 * clamp(14px, 2.2vh, 24px));
+    aspect-ratio: 1;
+  }
+}
 @keyframes kiosk-loading {
   to {
     background-position: -200% 0;
