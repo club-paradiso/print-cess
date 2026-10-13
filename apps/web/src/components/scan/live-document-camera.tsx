@@ -21,6 +21,30 @@ const STABLE_DRIFT = 0.018;
 const STABLE_FRAMES = 3;
 const NEW_PAGE_DRIFT = 0.055;
 
+async function waitForVideoDimensions(video: HTMLVideoElement): Promise<boolean> {
+  if (video.videoWidth > 0 && video.videoHeight > 0) return true;
+  // Safari can resolve play() before the stream has produced its first frame.
+  // Never enable an apparently functional shutter on a 0 × 0 video.
+  return new Promise((resolve) => {
+    let finished = false;
+    const finish = (ready: boolean) => {
+      if (finished) return;
+      finished = true;
+      window.clearTimeout(timeout);
+      video.removeEventListener("loadedmetadata", check);
+      video.removeEventListener("resize", check);
+      resolve(ready);
+    };
+    const check = () => {
+      if (video.videoWidth > 0 && video.videoHeight > 0) finish(true);
+    };
+    const timeout = window.setTimeout(() => finish(false), 8000);
+    video.addEventListener("loadedmetadata", check);
+    video.addEventListener("resize", check);
+    check();
+  });
+}
+
 function captureIssueText(issue: CaptureIssue, copy: ReturnType<typeof proScanCopy>): string {
   switch (issue) {
     case "no-document":
@@ -68,6 +92,9 @@ export function LiveDocumentCamera({
   const capturedQuad = useRef<DocumentQuad | null>(null);
   const stableFrames = useRef(0);
   const waitingForNewPage = useRef(false);
+  const analysisFailures = useRef(0);
+  const analysisUnavailableRef = useRef(false);
+  const [analysisUnavailable, setAnalysisUnavailable] = useState(false);
   const [started, setStarted] = useState(false);
   const [error, setError] = useState(false);
   const [autoCapture, setAutoCapture] = useState(true);
@@ -135,6 +162,11 @@ export function LiveDocumentCamera({
       stableFrames.current = 0;
       setMessage(copyRef.current.holdSteady);
       await onCaptureRef.current(file);
+    } catch (captureError) {
+      console.error("[scan-camera] capture failed", captureError);
+      // The video might still be running, so retain manual capture and provide
+      // a direct route to the platform camera instead of a silent dead button.
+      setMessage(copyRef.current.cameraFallback);
     } finally {
       window.setTimeout(() => {
         captureBusy.current = false;
@@ -148,7 +180,13 @@ export function LiveDocumentCamera({
     let timer: number | undefined;
 
     const inspect = async () => {
-      if (cancelled || disabledRef.current || analysisBusy.current || captureBusy.current) return;
+      if (
+        cancelled ||
+        disabledRef.current ||
+        analysisUnavailableRef.current ||
+        analysisBusy.current ||
+        captureBusy.current
+      ) return;
       const video = videoRef.current;
       if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
       analysisBusy.current = true;
@@ -163,6 +201,7 @@ export function LiveDocumentCamera({
         context.drawImage(video, 0, 0, canvas.width, canvas.height);
         const inspection = await inspectDocumentFrame(canvas);
         if (cancelled) return;
+        analysisFailures.current = 0;
         const activeCopy = copyRef.current;
 
         setQuad(inspection.detection.quad);
@@ -208,8 +247,21 @@ export function LiveDocumentCamera({
         if (autoCaptureRef.current) await captureFrame();
       } catch (analysisError) {
         console.error("[scan-camera] frame analysis failed", analysisError);
+        if (cancelled) return;
         stableFrames.current = 0;
-        setMessage(copyRef.current.holdSteady);
+        analysisFailures.current += 1;
+        if (analysisFailures.current >= 2) {
+          // A failed WASM runtime must not keep the phone busy forever.
+          // Manual shutter remains available; the native camera is one tap away.
+          analysisUnavailableRef.current = true;
+          setAnalysisUnavailable(true);
+          autoCaptureRef.current = false;
+          setAutoCapture(false);
+          setMessage(copyRef.current.cameraFallback);
+          if (timer !== undefined) window.clearInterval(timer);
+        } else {
+          setMessage(copyRef.current.holdSteady);
+        }
       } finally {
         analysisBusy.current = false;
       }
@@ -239,7 +291,9 @@ export function LiveDocumentCamera({
         if (!video) return;
         video.srcObject = stream;
         await video.play();
+        const hasVideo = await waitForVideoDimensions(video);
         if (cancelled) return;
+        if (!hasVideo) throw new Error("scanCameraNoVideoFrames");
         setAspectRatio(`${video.videoWidth || 3} / ${video.videoHeight || 4}`);
         setStarted(true);
         setMessage(copyRef.current.holdSteady);
@@ -336,7 +390,10 @@ export function LiveDocumentCamera({
             </div>
 
             <div className="scan-live-controls">
-              <SecondaryButton onClick={toggleAutoCapture} disabled={disabled || capturing}>
+              <SecondaryButton
+                onClick={toggleAutoCapture}
+                disabled={disabled || capturing || analysisUnavailable}
+              >
                 {autoCapture ? copy.autoCaptureOn : copy.autoCaptureOff}
               </SecondaryButton>
               <PrimaryButton
@@ -345,6 +402,18 @@ export function LiveDocumentCamera({
               >
                 <Camera aria-hidden="true" /> {copy.manualCapture}
               </PrimaryButton>
+            </div>
+            <div className="scan-live-fallback">
+              <SecondaryButton
+                disabled={disabled || capturing}
+                onClick={() => {
+                  stopCamera();
+                  onClose();
+                  onFallback();
+                }}
+              >
+                <Camera aria-hidden="true" /> {copy.cameraFallback}
+              </SecondaryButton>
             </div>
           </>
         )}
