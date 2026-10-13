@@ -48,9 +48,8 @@ export function buildContentSecurityPolicy(
   // WebAssembly compilation itself only needs wasm-unsafe-eval. Production
   // scanner tests confirmed that denying unsafe-eval breaks edge detection.
   // Scope the exception to /scan; never weaken the other app routes.
-  const scriptEvaluation = ` 'wasm-unsafe-eval'${
-    isDevelopment || isScannerRoute ? " 'unsafe-eval'" : ""
-  }`;
+  const allowScannerRuntime = isDevelopment || isScannerRoute;
+  const scriptEvaluation = ` 'wasm-unsafe-eval'${allowScannerRuntime ? " 'unsafe-eval'" : ""}`;
   return [
     "default-src 'self'",
     "base-uri 'none'",
@@ -66,9 +65,7 @@ export function buildContentSecurityPolicy(
     "script-src-attr 'none'",
     // WebKit rejects scanner dynamic styles if nonce propagation fails. Only
     // the scanner permits inline styles; all other production pages stay nonce-only.
-    `style-src 'self' ${
-      isDevelopment || isScannerRoute ? "'unsafe-inline'" : `'nonce-${nonce}'`
-    }`,
+    `style-src 'self' ${allowScannerRuntime ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
     "worker-src 'self' blob: https://cdn.jsdelivr.net",
     ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
