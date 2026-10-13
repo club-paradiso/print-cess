@@ -23,6 +23,7 @@ const NEW_PAGE_DRIFT = 0.055;
 
 function captureIssueText(issue: CaptureIssue, copy: ReturnType<typeof proScanCopy>): string {
   switch (issue) {
+    case "no-document":
     case "move-closer":
       return copy.moveCloser;
     case "too-dark":

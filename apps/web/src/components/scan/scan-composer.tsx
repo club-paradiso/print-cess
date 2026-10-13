@@ -64,7 +64,9 @@ export function ScanComposer({
   const [error, setError] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
-  const [searchablePdf, setSearchablePdf] = useState(true);
+  // OCR downloads a large language model; make it opt-in so the basic scan
+  // completes even with poor connectivity or a blocked OCR CDN.
+  const [searchablePdf, setSearchablePdf] = useState(false);
   const [ocrFallbackPages, setOcrFallbackPages] = useState<PdfImagePage[] | null>(null);
   const cameraInput = useRef<HTMLInputElement>(null);
   const galleryInput = useRef<HTMLInputElement>(null);

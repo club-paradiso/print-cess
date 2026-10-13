@@ -131,4 +131,31 @@ describe("live capture quality gates", () => {
     expect(quality.ready).toBe(true);
     expect(quality.score).toBeGreaterThanOrEqual(0.62);
   });
+
+  it("does not mistake pure-white paper with dark print for glare", () => {
+    const quality = analyzeCapturePixels(
+      imageData(160, 220, (x, y) => {
+        const onPaper = x >= 12 && x <= 148 && y >= 15 && y <= 205;
+        const ink = onPaper && y % 24 < 4 && x > 30 && x < 125;
+        return ink ? 35 : onPaper ? 255 : 177;
+      }),
+      GOOD_DETECTION,
+    );
+    expect(quality.issue).toBe("ready");
+    expect(quality.glare).toBe(0);
+    expect(quality.ready).toBe(true);
+  });
+
+  it("still flags isolated clipped hotspots against darker document content", () => {
+    const quality = analyzeCapturePixels(
+      imageData(160, 220, (x, y) => {
+        if (x > 55 && x < 104 && y > 74 && y < 133) return 255;
+        return y % 21 < 3 && x > 20 && x < 142 ? 33 : 190;
+      }),
+      GOOD_DETECTION,
+    );
+    expect(quality.glare).toBeGreaterThan(0.72);
+    expect(quality.issue).toBe("glare");
+    expect(quality.ready).toBe(false);
+  });
 });

@@ -43,7 +43,8 @@ test("document scanner detects edges, lets the user refine them, and produces an
   await page.getByRole("button", { name: "Apply" }).click();
   await expect(dialog).toBeHidden({ timeout: 60_000 });
 
-  await page.getByRole("checkbox", { name: /Searchable PDF/u }).uncheck();
+  // Image-only PDF is the reliable default; it must not need an OCR download.
+  await expect(page.getByRole("checkbox", { name: /Searchable PDF/u })).not.toBeChecked();
   await page.getByRole("button", { name: "Make PDF" }).click();
   await expect(page.getByRole("heading", { name: "Your scan is ready" })).toBeVisible({
     timeout: 60_000,
@@ -106,7 +107,8 @@ test("searchable PDF runs local OCR and completes without sending the page to an
 
   await page.goto("/scan");
   await uploadSyntheticDocument(page);
-  await expect(page.getByRole("checkbox", { name: /Searchable PDF/u })).toBeChecked();
+  await expect(page.getByRole("checkbox", { name: /Searchable PDF/u })).not.toBeChecked();
+  await page.getByRole("checkbox", { name: /Searchable PDF/u }).check();
   await page.getByRole("button", { name: "Make PDF" }).click();
   await expect(page.getByRole("heading", { name: "Your scan is ready" })).toBeVisible({
     timeout: 60_000,
