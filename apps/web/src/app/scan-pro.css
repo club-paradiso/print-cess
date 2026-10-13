@@ -235,6 +235,23 @@
   height: 22px;
 }
 
+.scan-live-fallback {
+  display: flex;
+  justify-content: center;
+  padding: 0 4px 6px;
+}
+
+.scan-live-fallback .pc-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scan-live-fallback svg {
+  width: 20px;
+  height: 20px;
+}
+
 .scan-camera-error {
   display: grid;
   min-height: 55dvh;
