@@ -39,19 +39,21 @@ export function buildContentSecurityPolicy(
   nonce: string,
   isDevelopment: boolean,
   environment: NodeJS.ProcessEnv = process.env,
+  isScannerRoute = false,
 ): string {
   const connectSources = ["'self'", ...blobConnectOrigins(environment), ...OCR_ASSET_ORIGINS].join(
     " ",
   );
-  // OpenCV and the optional OCR engine compile WebAssembly locally.
-  // `wasm-unsafe-eval` permits that without granting JavaScript string
-  // evaluation (`unsafe-eval`) in production. OCR code/models are pinned to
-  // two explicit HTTPS asset origins; page pixels are never posted there.
-  const scriptEvaluation = ` 'wasm-unsafe-eval'${isDevelopment ? " 'unsafe-eval'" : ""}`;
+  // The bundled OpenCV Emscripten glue invokes new Function() even though
+  // WebAssembly compilation itself only needs wasm-unsafe-eval. Production
+  // scanner tests confirmed that denying unsafe-eval breaks edge detection.
+  // Scope the exception to /scan; never weaken the other app routes.
+  const allowScannerRuntime = isDevelopment || isScannerRoute;
+  const scriptEvaluation = ` 'wasm-unsafe-eval'${allowScannerRuntime ? " 'unsafe-eval'" : ""}`;
   return [
     "default-src 'self'",
     "base-uri 'none'",
-    "frame-ancestors 'none'",
+    isScannerRoute ? "frame-ancestors 'self'" : "frame-ancestors 'none'",
     "form-action 'self'",
     "object-src 'none'",
     "font-src 'self'",
@@ -61,7 +63,9 @@ export function buildContentSecurityPolicy(
     `connect-src ${connectSources}`,
     `script-src 'self' https://cdn.jsdelivr.net 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
     "script-src-attr 'none'",
-    `style-src 'self' ${isDevelopment ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
+    // WebKit rejects scanner dynamic styles if nonce propagation fails. Only
+    // the scanner permits inline styles; all other production pages stay nonce-only.
+    `style-src 'self' ${allowScannerRuntime ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
     "worker-src 'self' blob: https://cdn.jsdelivr.net",
     ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
@@ -72,6 +76,8 @@ export function proxy(request: NextRequest) {
   const contentSecurityPolicy = buildContentSecurityPolicy(
     nonce,
     process.env.NODE_ENV === "development",
+    process.env,
+    request.nextUrl.pathname === "/scan",
   );
   const requestHeaders = new Headers(request.headers);
 

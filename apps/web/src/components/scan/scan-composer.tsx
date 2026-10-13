@@ -513,6 +513,12 @@ export function ScanComposer({
           </SecondaryButton>
         )}
         <SecondaryButton
+          onClick={() => cameraInput.current?.click()}
+          disabled={busy || pages.length >= MAX_PAGES}
+        >
+          <Camera aria-hidden="true" /> {pro.cameraFallback}
+        </SecondaryButton>
+        <SecondaryButton
           onClick={() => galleryInput.current?.click()}
           disabled={busy || pages.length >= MAX_PAGES}
         >
