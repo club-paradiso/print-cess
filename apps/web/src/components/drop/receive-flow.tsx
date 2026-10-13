@@ -15,10 +15,11 @@ import {
 } from "lucide-react";
 
 import type { SupportedLocale } from "@print-cess/i18n";
-import { PrimaryButton, SecondaryButton, StatusIcon } from "@print-cess/ui";
+import { PrimaryButton, SecondaryButton, StatusIcon, TertiaryButton } from "@print-cess/ui";
 
 import { reportDropDelivered } from "@/lib/drop-client";
 import { parseDropFragment, readDropCodeEntry } from "@/lib/drop-link";
+import { splitFirstSentence } from "@/lib/first-sentence";
 import {
   estimateMinutesRemaining,
   holdScreenAwake,
@@ -481,6 +482,9 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
   const anyFailed = fileStates.some((state) => state.status === "failed");
   const busy = fileStates.some((state) => state.status === "saving");
   const everythingArrived = fileStates.length > 0 && outstanding === 0;
+  // "Not saved yet" only means something once at least one file has moved;
+  // before that, every row would repeat it.
+  const anyStarted = fileStates.some((state) => state.status !== "waiting");
 
   return (
     <DropShell locale={locale} onLocaleChange={setLocale} text={text}>
@@ -564,9 +568,26 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
       ) : null}
 
       {stage === "files" && drop ? (
-        <section className="mobile-step">
+        <section className="mobile-step drop-receive-files">
           <h1>{text("dropFilesTitle")}</h1>
           <p>{text("dropFilesHint")}</p>
+          {/* How much, and for how long, before the list: the two facts that
+              decide whether to save everything now. */}
+          <p className="drop-status">
+            <Timer aria-hidden="true" />{" "}
+            {text("dropExpiresIn", { minutes: minutesUntil(expiresAt) })} ·{" "}
+            {formatBytes(totalBytes)}
+          </p>
+          {/* Once everything is out of the service, that is the news; it sits
+              where the eye already is rather than under the list. */}
+          {everythingArrived ? (
+            <div className="drop-complete" role="status">
+              <StatusIcon tone="success">
+                <CheckCircle2 size={28} aria-hidden="true" />
+              </StatusIcon>
+              <p>{text(completionKey(fileStates))}</p>
+            </div>
+          ) : null}
           <ul className="drop-file-list drop-file-list--actions">
             {drop.manifest.files.map((file, index) => (
               <ReceivedFileRow
@@ -576,16 +597,12 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
                 text={text}
                 canShare={canShare}
                 busy={busy}
+                showWaiting={anyStarted}
                 onSave={() => void saveOne(index)}
                 onShare={() => void shareOne(index)}
               />
             ))}
           </ul>
-          <p className="drop-status">
-            <Timer aria-hidden="true" />{" "}
-            {text("dropExpiresIn", { minutes: minutesUntil(expiresAt) })} ·{" "}
-            {formatBytes(totalBytes)}
-          </p>
           {showMemoryNotice ? (
             <p className="drop-notice" role="status">
               {text("dropMemoryNotice")}
@@ -596,37 +613,38 @@ export function ReceiveFlow({ initialLocale }: { initialLocale?: SupportedLocale
               {text(noticeKey)}
             </p>
           ) : null}
-          {everythingArrived ? (
-            <div className="drop-complete" role="status">
-              <StatusIcon tone="success">
-                <CheckCircle2 size={28} aria-hidden="true" />
-              </StatusIcon>
-              <p>{text(completionKey(fileStates))}</p>
-            </div>
-          ) : (
-            <PrimaryButton disabled={busy} onClick={() => void saveRemaining()}>
-              {anyFailed ? (
-                <>
-                  <RotateCcw aria-hidden="true" /> {text("dropRetryRemaining")}
-                </>
-              ) : canPickFolder ? (
-                <>
-                  <FolderDown aria-hidden="true" /> {text("dropSaveAllToFolder")}
-                </>
-              ) : (
-                <>
-                  <Download aria-hidden="true" /> {text("dropSaveAll")}
-                </>
-              )}
-            </PrimaryButton>
-          )}
-          {busy ? (
-            <SecondaryButton onClick={() => abort.current?.abort()}>
-              {text("dropCancel")}
-            </SecondaryButton>
-          ) : (
-            <SecondaryButton onClick={restart}>{text("dropReceiveAnother")}</SecondaryButton>
-          )}
+          {/* Saving everything is the one forward action, so it stays on screen
+              however long the list is; the way out sits quietly under it. */}
+          <div className="mobile-actions">
+            {everythingArrived ? null : (
+              <PrimaryButton disabled={busy} onClick={() => void saveRemaining()}>
+                {anyFailed ? (
+                  <>
+                    <RotateCcw aria-hidden="true" /> {text("dropRetryRemaining")}
+                  </>
+                ) : canPickFolder ? (
+                  <>
+                    <FolderDown aria-hidden="true" /> {text("dropSaveAllToFolder")}
+                  </>
+                ) : (
+                  <>
+                    <Download aria-hidden="true" /> {text("dropSaveAll")}
+                  </>
+                )}
+              </PrimaryButton>
+            )}
+            {busy ? (
+              <SecondaryButton onClick={() => abort.current?.abort()}>
+                {text("dropCancel")}
+              </SecondaryButton>
+            ) : everythingArrived ? (
+              <PrimaryButton onClick={restart}>{text("dropReceiveAnother")}</PrimaryButton>
+            ) : (
+              <TertiaryButton className="drop-receive-another" onClick={restart}>
+                {text("dropReceiveAnother")}
+              </TertiaryButton>
+            )}
+          </div>
         </section>
       ) : null}
 
@@ -641,6 +659,7 @@ function ReceivedFileRow({
   text,
   canShare,
   busy,
+  showWaiting,
   onSave,
   onShare,
 }: {
@@ -649,6 +668,7 @@ function ReceivedFileRow({
   text: Text;
   canShare: boolean;
   busy: boolean;
+  showWaiting: boolean;
   onSave: () => void;
   onShare: () => void;
 }) {
@@ -663,9 +683,11 @@ function ReceivedFileRow({
           minutesRemaining={state.minutesRemaining}
         />
       ) : null}
-      <p className="drop-file__state" role="status">
-        {text(fileStateKey(state))}
-      </p>
+      {state.status === "waiting" && !showWaiting ? null : (
+        <p className="drop-file__state" role="status">
+          {text(fileStateKey(state))}
+        </p>
+      )}
       {settled || state.status === "saving" ? null : (
         <div className="drop-file__actions">
           <SecondaryButton disabled={busy} onClick={onSave}>
@@ -750,13 +772,19 @@ function ErrorState({
   text: Text;
   onRetry: () => void;
 }) {
+  const [heading, instruction] = splitFirstSentence(text(errorKey));
   return (
     <section className="mobile-step mobile-step--single">
       <StatusIcon tone="error">
         <TriangleAlert size={34} aria-hidden="true" />
       </StatusIcon>
-      <h1>{text(errorKey)}</h1>
-      <PrimaryButton onClick={onRetry}>{text("dropTryAgain")}</PrimaryButton>
+      {/* A message that carries its own next step reads as a title and then
+          an instruction, not one paragraph at headline size. */}
+      <h1>{heading}</h1>
+      {instruction ? <p>{instruction}</p> : null}
+      <PrimaryButton onClick={onRetry}>
+        <RotateCcw aria-hidden="true" /> {text("dropTryAgain")}
+      </PrimaryButton>
     </section>
   );
 }

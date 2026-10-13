@@ -214,6 +214,21 @@ Not applied, on purpose: swapping the typeface or the icon set, grain or noise t
 asymmetric layouts. The brand fixes those choices, and a utility used once by a stranger in a
 queue gains nothing from them.
 
+### Receiving screens, 2026-10-13 pass
+
+The same checklists, applied to `/receive`:
+
+| Change                                                                                                  | Rule                                     |
+| ------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| The two digits are two large boxes; the next one to fill is outlined in indigo                          | Show where the user is (state clarity)   |
+| A keypad key gives way under the finger (scale 0.96; off under reduced motion)                          | Press feedback                           |
+| Size and time left sit above the file list, not under it                                                | Decision facts first                     |
+| "아직 저장 안 했어요" only appears once at least one file has moved                                     | Rows speak only when they have news      |
+| Per-file save/share buttons are compact                                                                 | A list reads as a list, not a wall       |
+| "휴대전화에 저장하기" is pinned to the bottom of the screen; "다른 파일 받기" is a text action          | One primary action, never below the fold |
+| When everything is out, the completion card sits above the list and "다른 파일 받기" becomes the button | Success feedback with a next step        |
+| Error screens split the title from the instruction and the retry button carries an icon                 | Error states state cause and recovery    |
+
 ### What the sender is told
 
 Four states, and the service knows all four honestly:

@@ -95,13 +95,28 @@ export function PairingEntry({
     <section className="mobile-step">
       <h1>{text("pairEnterShortCode")}</h1>
       <p>{text("pairEnterShortCodeHint")}</p>
+      {/* One box per digit, the next one to fill drawn as active, so the
+          visitor sees where they are without counting dashes. */}
       <p
-        className={digits ? "pairing-entry" : "pairing-entry pairing-entry--empty"}
+        className="pairing-entry pairing-entry--slots"
         data-testid="pairing-entry"
         aria-label={text("pairEnterShortCode")}
         role="status"
       >
-        {digits.padEnd(PAIRING_CODE_LENGTH, "–")}
+        {Array.from({ length: PAIRING_CODE_LENGTH }, (_, index) => (
+          <span
+            key={index}
+            className={
+              index === digits.length
+                ? "pairing-slot is-next"
+                : digits[index]
+                  ? "pairing-slot is-filled"
+                  : "pairing-slot"
+            }
+          >
+            {digits[index] ?? ""}
+          </span>
+        ))}
       </p>
       {noticeKey ? (
         <p className="drop-notice" role="alert">
