@@ -47,13 +47,23 @@ export const FULL_FRAME_QUAD: DocumentQuad = [
 type CvRuntime = Awaited<ReturnType<(typeof import("@opencvjs/web"))["loadOpenCV"]>>;
 
 let cvPromise: Promise<CvRuntime> | undefined;
+let cvRetryAfter = 0;
+const OPENCV_RETRY_COOLDOWN_MS = 30_000;
 
 async function getOpenCv(): Promise<CvRuntime> {
   if (!cvPromise) {
+    // Live camera inspects a frame several times per second. Repeatedly
+    // attempting a blocked/unsupported WASM initialization can freeze phones.
+    if (Date.now() < cvRetryAfter) throw new Error("scanOpenCvUnavailable");
     cvPromise = import("@opencvjs/web")
       .then(({ loadOpenCV }) => loadOpenCV())
+      .then((runtime) => {
+        cvRetryAfter = 0;
+        return runtime;
+      })
       .catch((error: unknown) => {
-        // A transient WASM loading failure must not poison every later scan.
+        // A transient failure can be retried, but not every video frame.
+        cvRetryAfter = Date.now() + OPENCV_RETRY_COOLDOWN_MS;
         cvPromise = undefined;
         throw error;
       });
