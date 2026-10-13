@@ -57,7 +57,7 @@ describe("royal promo page", () => {
       return typeof href === "string" ? [href] : [];
     });
 
-    expect(hrefs).toContain("/");
+    expect(hrefs).toContain("/start");
     expect(hrefs).toContain("#royal-gallery");
     expect(metadata.title).toBe("공주는 편한 게 최고야 | Print-cess by Club Paradiso");
   });

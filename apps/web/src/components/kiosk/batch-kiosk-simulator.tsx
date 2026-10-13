@@ -1,17 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  CheckCircle2,
-  Download,
-  FileCheck2,
-  Files,
-  Languages,
-  LockKeyhole,
-  Printer,
-  PrinterX,
-  Smartphone,
-} from "lucide-react";
 import QRCode from "qrcode";
 
 import {
@@ -27,15 +16,15 @@ import {
   parsePrintBundle,
   type PrintableFileKind,
 } from "@print-cess/protocol";
-import {
-  isRightToLeft,
-  LOCALE_NAMES,
-  SUPPORTED_LOCALES,
-  translate,
-  type SupportedLocale,
-} from "@print-cess/i18n";
-import { Beacon, ScanFrame, Wordmark } from "@print-cess/ui";
 
+import {
+  CompletedScreen,
+  ConnectedScreen,
+  KioskWaitingScreen,
+  playCompletionTone,
+  UnavailableScreen,
+  type KioskStatus,
+} from "@/components/kiosk/kiosk-screens";
 import {
   detectFileKind,
   parseJpegDimensions,
@@ -45,31 +34,11 @@ import {
 } from "@/lib/file-validation";
 import {
   createPrintArtifact,
-  printArtifact,
   printArtifacts,
   revokePrintArtifact,
   type PrintArtifact,
 } from "@/lib/kiosk-print";
 import { QR_COLORS } from "@/lib/qr-style";
-
-type KioskStatus =
-  | "preparing"
-  | "waiting"
-  | "claimed"
-  | "uploading"
-  | "uploaded"
-  | "validating"
-  | "printing"
-  | "completed"
-  | "failed";
-
-// Korean and English stay on screen permanently; the remaining languages take
-// turns on one line so a visitor sees the same instruction in their own
-// language without the display filling up with text.
-const SPOTLIGHT_LOCALES: readonly SupportedLocale[] = SUPPORTED_LOCALES.filter(
-  (locale) => locale !== "ko" && locale !== "en",
-);
-const SPOTLIGHT_INTERVAL_MS = 4500;
 
 type RegisteredSession = {
   sessionId: string;
@@ -135,10 +104,12 @@ export function BatchKioskSimulator({
   const [session, setSession] = useState<RegisteredSession>();
   const [status, setStatus] = useState<KioskStatus>("preparing");
   const [remaining, setRemaining] = useState(120);
+  // How long this QR code lived when it appeared, so the bar under it can show
+  // the time left as a share of the whole rather than as a bare number.
+  const [sessionLifetime, setSessionLifetime] = useState(120);
   const [completionRemaining, setCompletionRemaining] = useState(60);
   const [artifacts, setArtifacts] = useState<PrintArtifact[]>([]);
   const [generation, setGeneration] = useState(0);
-  const [spotlightIndex, setSpotlightIndex] = useState(0);
   const processing = useRef(false);
   const artifactsRef = useRef<PrintArtifact[]>([]);
   const preparation = useRef<{ generation: number; ready: Promise<PreparedSession> }>(null);
@@ -168,14 +139,6 @@ export function BatchKioskSimulator({
   );
 
   useEffect(() => {
-    const timer = window.setInterval(
-      () => setSpotlightIndex((index) => (index + 1) % SPOTLIGHT_LOCALES.length),
-      SPOTLIGHT_INTERVAL_MS,
-    );
-    return () => window.clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
     let active = true;
     // Registering a session mints server-side state and counts against the
     // per-counter creation limit, so it is started once per QR generation.
@@ -190,7 +153,9 @@ export function BatchKioskSimulator({
         setStatus("failed");
         return;
       }
-      setRemaining(Math.max(0, Math.ceil((prepared.session.expiresAt - Date.now()) / 1000)));
+      const lifetime = Math.max(0, Math.ceil((prepared.session.expiresAt - Date.now()) / 1000));
+      setRemaining(lifetime);
+      setSessionLifetime(lifetime);
       setSession(prepared.session);
       setStatus("waiting");
     });
@@ -285,126 +250,14 @@ export function BatchKioskSimulator({
     return <ConnectedScreen status={status} remaining={remaining} />;
   }
 
-  const spotlight = SPOTLIGHT_LOCALES[spotlightIndex] ?? "zh-CN";
-
   return (
-    <main className="kiosk-shell kiosk-shell--waiting" lang="ko">
-      <header className="kiosk-header">
-        <Wordmark />
-        {/* The same Beacon the phone's home page shows. A visitor matches the
-            tile on their phone to this one, so it stays large and plain, and
-            well clear of the QR code and its quiet zone. */}
-        <div className="kiosk-beacon">
-          <Beacon size="md" />
-          <p>
-            <strong>{translate("ko", "kioskStartHere")}</strong>
-            <small lang="en">{translate("en", "kioskStartHere")}</small>
-          </p>
-        </div>
-      </header>
-      <div className="kiosk-layout">
-        <section className="kiosk-instructions">
-          <h1 className="kiosk-step-heading">
-            <span className="kiosk-step-number" aria-hidden="true">
-              1
-            </span>
-            <span className="kiosk-step-heading__text">
-              <span>휴대전화에서</span>
-              <span>카메라를 여세요</span>
-            </span>
-          </h1>
-          <p className="kiosk-english" lang="en">
-            Open the camera on your phone
-          </p>
-          {/* One line, rotating through the languages that are not permanently
-              on screen, so a visitor who reads neither Korean nor English still
-              sees what to do. Hidden from assistive technology because a line
-              that changes on a timer would interrupt it repeatedly. */}
-          <p
-            className="kiosk-spotlight"
-            lang={spotlight}
-            dir={isRightToLeft(spotlight) ? "rtl" : "ltr"}
-            aria-hidden="true"
-          >
-            <span>{LOCALE_NAMES[spotlight]}</span>
-            {translate(spotlight, "kioskScanTitle")}
-          </p>
-          <div className="kiosk-facts">
-            <p>
-              <Files aria-hidden="true" />
-              <span>
-                한 번에 여러 개
-                <br />
-                <strong>사진과 문서 최대 {MAX_PRINT_BUNDLE_FILES}개</strong>
-              </span>
-            </p>
-            <p>
-              <FileCheck2 aria-hidden="true" />
-              <span>
-                인쇄할 수 있는 파일
-                <br />
-                <strong>PDF · JPG/JPEG · HEIC 등 사진</strong>
-              </span>
-            </p>
-            <p>
-              <LockKeyhole aria-hidden="true" />
-              <span>
-                인쇄가 끝나면
-                <br />
-                <strong>업로드 파일 자동 삭제</strong>
-              </span>
-            </p>
-          </div>
-          <div className="kiosk-status-row" aria-live="polite">
-            <span className="kiosk-status-dot">
-              <CheckCircle2 aria-hidden="true" />
-            </span>
-            <strong>{statusLabel(status)}</strong>
-            <span className="kiosk-countdown">
-              QR코드 변경까지 <b>{formatTime(remaining)}</b>
-            </span>
-          </div>
-        </section>
-        <section
-          className="kiosk-qr"
-          aria-label="휴대전화로 스캔할 QR코드"
-          data-session-url={process.env.NODE_ENV === "production" ? undefined : session?.qrUrl}
-        >
-          <div className="kiosk-qr__instruction">
-            <span className="kiosk-step-number" aria-hidden="true">
-              2
-            </span>
-            <div>
-              <strong>QR코드를 카메라로 비추세요</strong>
-              <small>Point your camera at the QR code</small>
-            </div>
-          </div>
-          <div className="kiosk-qr__frame">
-            <ScanFrame />
-            {session ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={session.qrImage} alt="휴대전화로 스캔할 Print-cess 보안 QR코드" />
-            ) : (
-              <div className="kiosk-qr__loading" aria-busy="true" />
-            )}
-          </div>
-          <div className="kiosk-qr__action">
-            <span className="kiosk-step-number" aria-hidden="true">
-              3
-            </span>
-            <Smartphone aria-hidden="true" />
-            <div>
-              <strong>화면에 나타나는 링크를 누르세요</strong>
-              <small>사진을 찍을 필요는 없습니다 · Tap the link that appears</small>
-            </div>
-          </div>
-          <p className="kiosk-languages">
-            <Languages aria-hidden="true" />
-            <span>{SUPPORTED_LOCALES.length}개 언어 · languages</span>
-          </p>
-        </section>
-      </div>
-    </main>
+    <KioskWaitingScreen
+      status={status}
+      session={session}
+      remaining={remaining}
+      lifetime={sessionLifetime}
+      maxFiles={MAX_PRINT_BUNDLE_FILES}
+    />
   );
 }
 
@@ -523,192 +376,4 @@ async function kioskTransition(
     body: JSON.stringify({ status }),
   });
   if (!response.ok) throw new Error(`transition ${status} failed`);
-}
-
-/**
- * The stations the files pass through, as the kiosk sees them. Each one maps
- * to a state the protocol actually has, so a step lights up only because the
- * session reached it: what the room sees and what the service knows cannot
- * drift apart.
- */
-const JOURNEY: { status: KioskStatus; korean: string; english: string }[] = [
-  { status: "uploading", korean: "도착하는 중", english: "Arriving" },
-  { status: "validating", korean: "확인하는 중", english: "Checking" },
-  { status: "printing", korean: "인쇄하는 중", english: "Printing" },
-];
-
-const JOURNEY_ORDER: KioskStatus[] = [
-  "claimed",
-  "uploading",
-  "uploaded",
-  "validating",
-  "printing",
-  "completed",
-];
-
-/**
- * What the shared screen shows while the work is happening on somebody's
- * phone: a category and a stage, never a file name, a count, or a thumbnail.
- */
-function ConnectedScreen({ status, remaining }: { status: KioskStatus; remaining: number }) {
-  const reached = JOURNEY_ORDER.indexOf(status);
-  return (
-    <main className="kiosk-shell kiosk-shell--connected" lang="ko" data-kiosk-state="connected">
-      <Wordmark />
-      <div className="kiosk-connected">
-        <p className="kiosk-connected__badge">
-          <Smartphone aria-hidden="true" /> 휴대전화가 연결됐어요
-          <small lang="en">Phone connected</small>
-        </p>
-        <h1 className="kiosk-connected__headline">
-          {status === "printing" ? "선택한 파일을 인쇄하고 있어요" : "휴대전화에서 계속하세요"}
-          <small lang="en">
-            {status === "printing" ? "Printing your selected files" : "Continue on your phone"}
-          </small>
-        </h1>
-        <div
-          className={`kiosk-token kiosk-token--${status}`}
-          aria-hidden="true"
-          data-testid="kiosk-document-token"
-        >
-          <Files />
-        </div>
-        <ol className="kiosk-journey">
-          {JOURNEY.map((step) => {
-            const at = JOURNEY_ORDER.indexOf(step.status);
-            const state = reached > at ? "is-done" : reached === at ? "is-active" : undefined;
-            return (
-              <li key={step.status} className={state}>
-                {/* The word carries the stage as well as the colour, so it
-                    survives a monochrome screen and reduced motion alike. */}
-                <strong>{step.korean}</strong>
-                <small lang="en">{step.english}</small>
-              </li>
-            );
-          })}
-        </ol>
-        <div className="kiosk-status-row" aria-live="polite">
-          <span className="kiosk-status-dot">
-            <Printer aria-hidden="true" />
-          </span>
-          <strong>{statusLabel(status)}</strong>
-          <span className="kiosk-countdown">
-            작업 만료까지 <b>{formatTime(remaining)}</b>
-          </span>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function CompletedScreen({
-  artifacts,
-  automaticPrinting,
-  remaining,
-}: {
-  artifacts: PrintArtifact[];
-  automaticPrinting: boolean;
-  remaining: number;
-}) {
-  return (
-    <main
-      className="kiosk-result kiosk-result--success"
-      lang="ko"
-      data-printing-mode={automaticPrinting ? "automatic" : "interactive"}
-    >
-      <Wordmark />
-      <CheckCircle2 aria-hidden="true" />
-      <h1>{automaticPrinting ? "인쇄가 시작됐어요" : "인쇄 준비가 끝났어요"}</h1>
-      <p>
-        <Printer aria-hidden="true" /> 선택한 파일 {artifacts.length}개를 처리했습니다
-      </p>
-      <p className="kiosk-result__english" lang="en">
-        Processed {artifacts.length} selected file{artifacts.length === 1 ? "" : "s"}.
-      </p>
-      <div className="kiosk-result__actions">
-        {automaticPrinting ? null : (
-          <button type="button" onClick={() => void printAll(artifacts)}>
-            <Printer aria-hidden="true" /> 인쇄 창 다시 열기
-          </button>
-        )}
-        {artifacts.map((artifact, index) => (
-          <a
-            key={artifact.url}
-            href={artifact.url}
-            // The artifact already carries a descriptive name. Numbering it is
-            // only useful when there is more than one file to tell apart, and
-            // a second `print-cess-` prefix in front of that name is noise on
-            // the counter staff's download.
-            download={
-              artifacts.length === 1 ? artifact.filename : `${index + 1}-${artifact.filename}`
-            }
-            className="kiosk-download"
-          >
-            <Download aria-hidden="true" />{" "}
-            {artifacts.length === 1
-              ? "파일 다운로드 (직원용)"
-              : `파일 ${index + 1} 다운로드 (직원용)`}
-          </a>
-        ))}
-      </div>
-      <span>서버에 보관된 파일은 삭제됐습니다 · {remaining}초 후 새 QR코드</span>
-    </main>
-  );
-}
-
-async function printAll(artifacts: readonly PrintArtifact[]) {
-  for (const artifact of artifacts) await printArtifact(artifact).catch(() => undefined);
-}
-
-function UnavailableScreen({ onReset }: { onReset: () => void }) {
-  return (
-    <main className="kiosk-result kiosk-result--error" lang="ko">
-      <Wordmark />
-      {/* A failure never wears a security badge: the icon says what broke. */}
-      <PrinterX aria-hidden="true" />
-      <h1>지금은 인쇄할 수 없어요</h1>
-      <p>잠시 뒤에 다시 시도해 주세요.</p>
-      <p className="kiosk-result__english" lang="en">
-        Printing is unavailable right now. Please try again in a moment.
-      </p>
-      <span>보내신 파일은 삭제됐습니다.</span>
-      <button type="button" onClick={onReset}>
-        새 QR코드 만들기
-      </button>
-    </main>
-  );
-}
-
-function statusLabel(status: KioskStatus): string {
-  return {
-    preparing: "준비 중",
-    waiting: "사용할 수 있어요",
-    claimed: "휴대전화가 연결됐어요",
-    uploading: "파일을 받고 있어요",
-    uploaded: "파일을 받았어요",
-    validating: "파일을 확인하고 있어요",
-    printing: "인쇄하고 있어요",
-    completed: "인쇄가 끝났어요",
-    failed: "잠시 사용할 수 없어요",
-  }[status];
-}
-
-function formatTime(seconds: number): string {
-  return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
-}
-
-function playCompletionTone() {
-  try {
-    const context = new AudioContext();
-    const oscillator = context.createOscillator();
-    const gain = context.createGain();
-    oscillator.frequency.value = 740;
-    gain.gain.setValueAtTime(0.08, context.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + 0.28);
-    oscillator.connect(gain).connect(context.destination);
-    oscillator.start();
-    oscillator.stop(context.currentTime + 0.28);
-  } catch {
-    // Completion remains visible when audio is blocked.
-  }
 }

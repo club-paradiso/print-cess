@@ -151,11 +151,37 @@ line of text after it, no FAQ and no accordions.
 
 ## Kiosk display
 
-`/kiosk` and `/demo/kiosk` show the Beacon in the header with "여기서 인쇄 시작 / Start printing
-here". The QR column is unchanged apart from a 20 px larger height reservation for the taller
-header (`--kiosk-qr-size` subtracts 380 px instead of 360 px), so on short displays the QR is
-about 20 px smaller (about 354 px wide at 1366×768). At 1920×1080 the QR is capped by its maximum
-size and does not change.
+Since 2026-10-13 the root URL `/` opens the shared display itself (the same screen and
+`?printing=auto` / `?sound=off` switches as `/kiosk`), so a station can simply be pointed at the
+domain. The visitor's guide described in the sections above moved to `/start`, and every "home"
+link (the header name, the 404 page, the workstation page and the campaign page) now points
+there. When the browser kiosk is switched off in Production, `/` redirects to `/start` instead of
+returning 404.
+
+`/kiosk` (and `/demo/kiosk`, which shares its screens through
+`apps/web/src/components/kiosk/kiosk-screens.tsx`) is the primary screen of the service, so it was
+redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
+
+- **Waiting.** Left: the Beacon with "여기서 인쇄 시작 / Start printing here", one headline
+  ("휴대전화 카메라로 QR코드를 비추세요"), English beneath it, the rotating language line, and the
+  whole visit as three steps (point the camera, choose files on the phone, take the paper), with
+  the first drawn as current. Right: the QR code on a solid Royal Indigo panel, the largest block
+  of colour on the screen, with "사진을 찍을 필요는 없습니다" above the code and an emptying bar plus
+  the countdown below it. A footer carries the small print (deletion, no sign-up, file types,
+  languages). The old green "사용할 수 있어요" banner became a small status pill in the header.
+- **Sizing.** On landscape displays from 961×700 the screen never scrolls: the code sits in a
+  size container and is the largest square that fits (`min(100cqw, 100cqh)`), up to 600 px plus
+  its padding. This fixes 1280×1024, where the old `height: 100%` rule pushed the code past its
+  column. Portrait displays stack the words above the code and let the code grow with the width.
+- **Phone connected.** A stage-specific headline and one-line hint (choose files on the phone /
+  receiving / wait at the printer) above a four-station tracker (connected, arriving, checking,
+  printing) that marks each station with a word and an icon as well as colour.
+- **Done.** "프린터에서 종이를 가져가세요" on the indigo panel is the loudest thing on the screen; the
+  staff download stays the quietest control, and an emptying bar shows when the next QR appears.
+- **Unavailable.** The display retries on its own after 30 seconds, because a shared screen is
+  usually unattended; the button stays for anyone who does not want to wait.
+
+The Beacon still sits away from the code, so the QR keeps its full quiet zone and colours.
 
 ## Languages
 

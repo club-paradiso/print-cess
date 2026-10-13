@@ -105,7 +105,7 @@ export default async function WorkstationPage() {
     <main className="workstation-page">
       <header className="workstation-header">
         <Wordmark />
-        <Link className="workstation-back" href="/">
+        <Link className="workstation-back" href="/start">
           <ArrowLeft aria-hidden="true" /> {text.back}
         </Link>
       </header>

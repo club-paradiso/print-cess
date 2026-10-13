@@ -1,274 +1,289 @@
 /* The shared display. It is read from a step or two away by somebody who has
    never seen it before, in a room full of strangers, so it has one job per
    state: the QR code while waiting, the stage while working, the paper when
-   done. Everything is solid colour; the brand shows in the mark, the indigo
-   step numbers, and the scan frame around the code. */
+   done.
+
+   The waiting screen reads left to right in the order things happen: where
+   you are ("Start printing here"), the one instruction, the whole visit in
+   three steps, then the code itself on an indigo panel that is the brightest
+   thing in the room. Everything is solid colour; the brand shows in the mark,
+   the panel, and the scan frame around the code. */
 
 .kiosk-shell {
+  box-sizing: border-box;
   min-height: 100vh;
-  padding: clamp(28px, 3vw, 52px);
+  padding: clamp(24px, 2.6vw, 48px);
   background: var(--pc-background);
   color: var(--pc-text-primary);
 }
-.kiosk-shell > .pc-wordmark,
-.kiosk-header {
-  margin-bottom: clamp(20px, 3.4vh, 44px);
-}
+
+/* --- Header ------------------------------------------------------------------ */
+
 .kiosk-header {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 16px 32px;
+  gap: 12px 32px;
+  margin-bottom: clamp(16px, 2.6vh, 36px);
 }
 .kiosk-header > .pc-wordmark {
   margin: 0;
 }
+.kiosk-header > .pc-wordmark svg,
+.kiosk-result > .pc-wordmark svg {
+  width: clamp(40px, 4.6vh, 52px);
+  height: clamp(40px, 4.6vh, 52px);
+}
+.kiosk-header > .pc-wordmark strong,
+.kiosk-result > .pc-wordmark strong {
+  font-size: clamp(30px, 4vh, 46px);
+}
+.kiosk-header > .pc-wordmark small,
+.kiosk-result > .pc-wordmark small {
+  font-size: clamp(15px, 2vh, 22px);
+}
+
+/* A quiet "this screen is working" signal. It replaces the old green banner,
+   which shouted a fact ("available") that the QR code already proves. */
+.kiosk-availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 10px 20px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  font-size: clamp(16px, 2vh, 22px);
+  font-weight: 700;
+}
+.kiosk-availability__dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--pc-border-strong);
+}
+.kiosk-availability__dot--waiting {
+  background: var(--pc-success-accent);
+  box-shadow: 0 0 0 5px var(--pc-success-surface);
+}
+
+/* --- Waiting: the words ------------------------------------------------------ */
+
+.kiosk-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(460px, 0.92fr);
+  gap: clamp(28px, 3.6vw, 64px);
+  align-items: center;
+}
+.kiosk-instructions {
+  display: grid;
+  align-content: center;
+  min-width: 0;
+}
+
 .kiosk-beacon {
   display: flex;
   align-items: center;
-  gap: clamp(14px, 1.6vw, 24px);
+  gap: 14px;
+  margin-bottom: clamp(14px, 2.4vh, 28px);
 }
 .kiosk-beacon .pc-beacon {
-  --pc-beacon-size: clamp(72px, 10vh, 112px);
+  --pc-beacon-size: clamp(52px, 7vh, 72px);
 }
 .kiosk-beacon p {
   margin: 0;
 }
 .kiosk-beacon strong {
   display: block;
-  color: var(--pc-text-primary);
-  font-size: clamp(26px, 4vh, 44px);
+  color: var(--pc-text-brand);
+  font-size: clamp(20px, 2.8vh, 30px);
   font-weight: 800;
   line-height: 1.15;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.03em;
 }
 .kiosk-beacon small {
   display: block;
-  margin-top: 2px;
-  color: var(--pc-text-secondary);
-  font-size: clamp(16px, 2.2vh, 24px);
+  color: var(--pc-text-muted);
+  font-size: clamp(14px, 1.8vh, 19px);
   line-height: 1.3;
 }
-.kiosk-shell > .pc-wordmark svg,
-.kiosk-header > .pc-wordmark svg,
-.kiosk-result > .pc-wordmark svg {
-  width: clamp(44px, 5vh, 56px);
-  height: clamp(44px, 5vh, 56px);
-}
-.kiosk-shell > .pc-wordmark strong,
-.kiosk-header > .pc-wordmark strong,
-.kiosk-result > .pc-wordmark strong {
-  font-size: clamp(34px, 4.6vh, 52px);
-}
-.kiosk-shell > .pc-wordmark small,
-.kiosk-header > .pc-wordmark small,
-.kiosk-result > .pc-wordmark small {
-  font-size: clamp(17px, 2.2vh, 24px);
-}
-.kiosk-layout {
+
+.kiosk-title {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(500px, 1.05fr);
-  gap: clamp(32px, 4vw, 72px);
-  align-items: center;
-}
-.kiosk-instructions {
-  --kiosk-heading-gap: clamp(18px, 1.8vw, 30px);
-  --kiosk-heading-number-size: clamp(78px, 6.2vw, 96px);
-  min-width: 0;
-}
-.kiosk-step-heading {
-  display: grid;
-  grid-template-columns: var(--kiosk-heading-number-size) minmax(0, 1fr);
-  gap: var(--kiosk-heading-gap);
-  align-items: start;
+  gap: 0.02em;
   margin: 0;
-  font-size: clamp(44px, 3.6vw, 72px);
-  font-weight: 820;
-  line-height: 1.06;
+  font-size: clamp(40px, min(4vw, 7.4vh), 84px);
+  font-weight: 830;
+  line-height: 1.1;
   letter-spacing: -0.05em;
-}
-.kiosk-step-heading__text {
-  display: grid;
-  gap: 0.04em;
-  min-width: 0;
   word-break: keep-all;
 }
-.kiosk-step-heading__text > span {
+.kiosk-title > span {
   display: block;
   white-space: nowrap;
 }
-.kiosk-step-number {
-  display: grid;
-  flex: none;
-  place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-brand);
-  color: var(--pc-text-on-brand);
-  font-size: 32px;
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-.kiosk-step-heading .kiosk-step-number {
-  width: var(--kiosk-heading-number-size);
-  height: var(--kiosk-heading-number-size);
-  margin-top: 0.06em;
-  border-radius: var(--pc-radius-xl);
-  font-size: clamp(40px, 3.4vw, 52px);
+.kiosk-title em {
+  color: var(--pc-brand);
+  font-style: normal;
 }
 .kiosk-english {
-  margin: 14px 0 0 calc(var(--kiosk-heading-number-size) + var(--kiosk-heading-gap));
+  margin: clamp(8px, 1.4vh, 14px) 0 0;
   color: var(--pc-text-secondary);
-  font-size: clamp(24px, 2.1vw, 36px);
-  font-weight: 550;
+  font-size: clamp(20px, min(1.8vw, 3.2vh), 32px);
+  font-weight: 560;
 }
 
-/* Three short facts a visitor wants before walking up: how many, which kinds,
-   and what happens to the file. Tiles in a row, so they cost width, not the
-   height the QR code needs. */
-.kiosk-facts {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 12px;
-  margin-top: clamp(30px, 4vh, 44px);
-}
-.kiosk-facts p {
-  display: grid;
-  align-content: start;
-  gap: 12px;
-  margin: 0;
-  padding: 18px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-surface);
-  color: var(--pc-text-secondary);
-  font-size: clamp(15px, 1.05vw, 19px);
+/* The rotating instruction for the languages that are not permanently on
+   screen. A fixed height keeps a longer language from shifting the layout
+   every few seconds. */
+.kiosk-spotlight {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  min-height: 2.9em;
+  margin: clamp(6px, 1vh, 12px) 0 0;
+  color: var(--pc-text-brand);
+  font-size: clamp(16px, min(1.35vw, 2.4vh), 24px);
   line-height: 1.4;
 }
-.kiosk-facts svg {
-  flex: none;
-  width: 44px;
-  height: 44px;
-  padding: 10px;
-  border-radius: var(--pc-radius-md);
-  color: var(--pc-text-brand);
+.kiosk-spotlight > span {
+  padding: 2px 12px;
+  border-radius: var(--pc-radius-pill);
   background: var(--pc-surface-brand);
-}
-.kiosk-facts p:last-child svg {
-  color: var(--pc-success);
-  background: var(--pc-success-surface);
-}
-.kiosk-facts strong {
-  color: var(--pc-text-primary);
-  font-size: 1.12em;
+  font-size: 0.8em;
   font-weight: 750;
 }
 
-.kiosk-status-row {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 26px;
-  padding: 14px 20px 14px 14px;
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-success-surface);
-  color: var(--pc-success);
-  font-size: clamp(24px, 2vw, 34px);
-}
-.kiosk-status-row strong {
-  font-weight: 780;
-  white-space: nowrap;
-}
-.kiosk-status-dot {
+/* The whole visit, top to bottom. The first step is the one that happens at
+   this screen, so it is the only one drawn as current. */
+.kiosk-steps {
   display: grid;
-  flex: none;
+  gap: clamp(8px, 1.2vh, 14px);
+  margin: clamp(14px, 2.4vh, 30px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.kiosk-step {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(12px, 1.2vw, 18px);
+  padding: clamp(10px, 1.5vh, 18px) clamp(14px, 1.4vw, 22px);
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+}
+.kiosk-step.is-current {
+  border-color: var(--pc-brand);
+  background: var(--pc-surface-brand-subtle);
+}
+.kiosk-step__icon {
+  display: grid;
   place-items: center;
-  width: 56px;
-  height: 56px;
+  width: clamp(44px, 6vh, 60px);
+  height: clamp(44px, 6vh, 60px);
   border-radius: var(--pc-radius-md);
-  background: var(--pc-success-accent);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.kiosk-step.is-current .kiosk-step__icon {
+  background: var(--pc-brand);
   color: var(--pc-text-on-brand);
 }
-.kiosk-status-dot svg {
-  width: 32px;
-  height: 32px;
+.kiosk-step__icon svg {
+  width: 55%;
+  height: 55%;
 }
-.kiosk-countdown {
-  margin-left: auto;
-  color: var(--pc-text-secondary);
-  font-size: clamp(16px, 1.15vw, 21px);
-}
-.kiosk-countdown b {
-  margin-left: 8px;
-  color: var(--pc-text-primary);
-  font-size: 1.6em;
+.kiosk-step__number {
+  color: var(--pc-text-muted);
+  font-size: clamp(22px, 3vh, 32px);
+  font-weight: 800;
   font-variant-numeric: tabular-nums;
 }
+.kiosk-step.is-current .kiosk-step__number {
+  color: var(--pc-brand);
+}
+.kiosk-step strong {
+  display: block;
+  color: var(--pc-text-primary);
+  font-size: clamp(19px, min(1.6vw, 2.9vh), 30px);
+  font-weight: 780;
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+}
+.kiosk-step small {
+  display: block;
+  margin-top: 2px;
+  color: var(--pc-text-secondary);
+  font-size: clamp(14px, min(1.05vw, 1.9vh), 19px);
+  line-height: 1.35;
+}
+.kiosk-step small [lang="en"] {
+  color: var(--pc-text-muted);
+}
 
-/* --- The code ------------------------------------------------------------- */
+/* --- Waiting: the code --------------------------------------------------------- */
 
-/* The code is sized from the screen's height, after the header and the two
-   instructions around it, so the whole column is always on screen at once:
-   1080p gives a 600px code, a 768-line display still ~400px. */
+/* The code lives on a solid indigo panel: the one large block of colour on the
+   screen, so it is what a visitor's eye lands on from across the room. The
+   code itself stays pure ink on white with a quiet zone, which is what a phone
+   camera needs, and it never moves. */
 .kiosk-qr {
-  --kiosk-qr-size: min(100%, calc(100vh - 380px), 600px);
+  --kiosk-qr-size: min(100%, calc(100vh - 420px), 600px);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   justify-items: center;
-  gap: clamp(10px, 1.6vh, 16px);
+  gap: clamp(12px, 1.8vh, 20px);
   min-width: 0;
-}
-.kiosk-qr__instruction,
-.kiosk-qr__action,
-.kiosk-qr__frame,
-.kiosk-languages {
-  /* The words around the code may run wider than the code itself, so each
-     instruction stays on one line instead of stealing height from it. */
-  width: min(100%, 680px);
-}
-.kiosk-qr__frame {
-  width: var(--kiosk-qr-size);
-}
-.kiosk-qr .kiosk-step-number {
-  width: clamp(44px, 6vh, 64px);
-  height: clamp(44px, 6vh, 64px);
-  border-radius: var(--pc-radius-md);
-  font-size: clamp(24px, 3.2vh, 32px);
+  padding: clamp(18px, 2.6vh, 32px);
+  border-radius: calc(var(--pc-radius-xl) + 8px);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
 }
 .kiosk-qr__instruction {
   display: flex;
   align-items: center;
-  gap: 18px;
+  justify-content: center;
+  gap: 14px;
+  margin: 0;
+  text-align: start;
 }
-.kiosk-qr__instruction strong,
-.kiosk-qr__action strong {
+.kiosk-qr__instruction > svg {
+  flex: none;
+  width: clamp(36px, 5vh, 52px);
+  height: clamp(36px, 5vh, 52px);
+}
+.kiosk-qr__instruction strong {
   display: block;
-  color: var(--pc-text-primary);
-  font-size: clamp(22px, 3.2vh, 36px);
-  font-weight: 780;
+  font-size: clamp(22px, 3.4vh, 38px);
+  font-weight: 800;
   line-height: 1.2;
   letter-spacing: -0.035em;
 }
-.kiosk-qr__instruction small,
-.kiosk-qr__action small {
+.kiosk-qr__instruction small {
   display: block;
-  margin-top: 4px;
-  color: var(--pc-text-secondary);
-  font-size: clamp(15px, 2vh, 21px);
-  line-height: 1.35;
+  color: var(--pc-text-on-inverse-muted);
+  font-size: clamp(14px, 1.9vh, 20px);
+  line-height: 1.3;
 }
-
-/* The scan frame from the mark: four indigo corners around a white sheet. The
-   code itself stays pure ink on white with a quiet zone, which is what a phone
-   camera needs, and it never moves. */
+.kiosk-qr__stage {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: 0;
+}
 .kiosk-qr__frame {
+  box-sizing: border-box;
   position: relative;
+  width: var(--kiosk-qr-size);
   padding: clamp(14px, 2.2vh, 24px);
   border-radius: var(--pc-radius-xl);
   background: var(--pc-surface-raised);
-  box-shadow: var(--pc-shadow-md);
+  box-shadow: 0 18px 48px rgb(13 11 38 / 28%);
 }
 .kiosk-qr__frame img,
 .kiosk-qr__loading {
@@ -288,32 +303,96 @@
   background-size: 200% 100%;
   animation: kiosk-loading 1.2s infinite linear;
 }
-.kiosk-qr__action {
+@keyframes kiosk-loading {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* The time left as an emptying bar as well as a number. */
+.kiosk-qr__timer {
   display: grid;
-  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 8px;
+  width: min(100%, 560px);
+}
+.kiosk-qr__timer-bar,
+.kiosk-result__timer {
+  position: relative;
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--pc-radius-pill);
+  background: rgb(255 255 255 / 24%);
+}
+.kiosk-qr__timer-bar::after,
+.kiosk-result__timer::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--pc-white);
+  content: "";
+  transform: scaleX(var(--kiosk-qr-progress, 1));
+  transform-origin: left center;
+  transition: transform 500ms linear;
+}
+.kiosk-qr .kiosk-countdown {
+  color: var(--pc-text-on-inverse-muted);
+  font-size: clamp(15px, 1.9vh, 20px);
+  text-align: center;
+}
+.kiosk-qr .kiosk-countdown b {
+  margin-left: 8px;
+  color: var(--pc-text-on-brand);
+  font-size: 1.3em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Waiting: the small print -------------------------------------------------- */
+
+.kiosk-footer {
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 14px;
-  padding: clamp(10px, 1.6vh, 16px) 18px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-lg);
-  background: var(--pc-surface);
+  gap: 10px 28px;
+  margin-top: clamp(14px, 2.2vh, 28px);
+  padding-top: clamp(12px, 1.8vh, 20px);
+  border-top: 1px solid var(--pc-border);
+  color: var(--pc-text-secondary);
+  font-size: clamp(14px, min(1.05vw, 1.9vh), 19px);
 }
-.kiosk-qr__action > svg {
-  width: 40px;
-  height: 40px;
-  color: var(--pc-brand);
+.kiosk-footer p {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
 }
+.kiosk-footer svg {
+  flex: none;
+  width: 1.3em;
+  height: 1.3em;
+  color: var(--pc-text-brand);
+}
+.kiosk-footer p:first-child svg {
+  color: var(--pc-success);
+}
+.kiosk-footer strong {
+  color: var(--pc-text-primary);
+  font-weight: 750;
+}
+.kiosk-languages {
+  margin-left: auto !important;
+  color: var(--pc-text-muted);
+}
+
 /* On a landscape display the waiting screen is exactly one screen tall and
-   never scrolls: the code takes whatever height the words above and below it
-   leave, up to its full size. The words wrap differently at every size, so a
-   fixed "100vh minus N" guess overflowed 1920x1080 and 1280x1024. Below 700px
-   of height (1024x600 panels) the words alone outgrow the screen, so those keep
-   the scrolling layout rather than clipping instructions. */
+   never scrolls: the code takes whatever height the words around it leave, up
+   to its full size. Below 700px of height (1024x600 panels) the words alone
+   outgrow the screen, so those keep the scrolling layout rather than clipping
+   instructions. */
 @media (min-width: 961px) and (min-height: 700px) and (min-aspect-ratio: 1/1) {
   .kiosk-shell--waiting {
-    box-sizing: border-box;
     display: grid;
-    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100vh;
     height: 100dvh;
     min-height: 0;
@@ -321,61 +400,43 @@
   .kiosk-shell--waiting .kiosk-layout {
     height: 100%;
     min-height: 0;
+    align-items: stretch;
   }
   .kiosk-shell--waiting .kiosk-qr {
-    grid-template-rows: auto minmax(0, 1fr) auto auto;
+    box-sizing: border-box;
+    grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100%;
     min-height: 0;
   }
-  .kiosk-shell--waiting .kiosk-qr__frame {
-    box-sizing: border-box;
-    align-self: center;
-    width: auto;
+  /* The stage is whatever box the words leave; the code is the largest square
+     that fits in it, up to its full size. */
+  .kiosk-shell--waiting .kiosk-qr__stage {
     height: 100%;
-    max-width: 100%;
-    max-height: calc(600px + 2 * clamp(14px, 2.2vh, 24px));
-    aspect-ratio: 1;
+    container-type: size;
   }
-}
-@keyframes kiosk-loading {
-  to {
-    background-position: -200% 0;
+  .kiosk-shell--waiting .kiosk-qr__frame {
+    width: min(100cqw, 100cqh, calc(600px + 2 * clamp(14px, 2.2vh, 24px)));
   }
 }
 
-/* The rotating instruction for the languages that are not permanently on
-   screen. A fixed height keeps a longer language from shifting the layout
-   every few seconds. */
-.kiosk-spotlight {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 8px 14px;
-  min-height: 2.9em;
-  margin: 14px 0 0 calc(var(--kiosk-heading-number-size) + var(--kiosk-heading-gap));
-  font-size: clamp(19px, 1.55vw, 26px);
-  line-height: 1.4;
-  color: var(--pc-text-brand);
-}
-.kiosk-spotlight > span {
-  padding: 3px 12px;
-  border-radius: var(--pc-radius-pill);
-  background: var(--pc-surface-brand);
-  font-weight: 750;
-  font-size: 0.8em;
-}
-.kiosk-languages {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
-  color: var(--pc-text-muted);
-  font-size: clamp(15px, 1.05vw, 18px);
-  font-weight: 550;
-}
-.kiosk-languages svg {
-  width: 24px;
-  height: 24px;
+/* A portrait display (a totem, or a monitor turned on its side) stacks the
+   words above the code and lets the code grow with the width it now has. */
+@media (min-width: 621px) and (max-aspect-ratio: 1/1) {
+  .kiosk-shell--waiting {
+    display: flex;
+    flex-direction: column;
+  }
+  .kiosk-shell--waiting .kiosk-layout {
+    flex: 1;
+    grid-template-columns: 1fr;
+    align-content: center;
+  }
+  .kiosk-shell--waiting .kiosk-title {
+    font-size: clamp(40px, 7vw, 96px);
+  }
+  .kiosk-shell--waiting .kiosk-qr {
+    --kiosk-qr-size: min(100%, 72vw, 760px);
+  }
 }
 
 /* --- After a phone has connected ----------------------------------------- */
@@ -386,28 +447,26 @@
   display: grid;
   grid-template-rows: auto 1fr;
 }
-.kiosk-shell--connected > .pc-wordmark {
-  margin-bottom: 0;
-}
 .kiosk-connected {
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: clamp(20px, 3.4vh, 36px);
-  max-width: 64ch;
+  gap: clamp(16px, 2.8vh, 32px);
+  width: min(100%, 1180px);
   margin: 0 auto;
   text-align: center;
 }
 .kiosk-connected__badge {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 12px;
+  gap: 4px 12px;
   margin: 0;
   padding: 10px 22px;
   border-radius: var(--pc-radius-pill);
   background: var(--pc-surface-brand);
   color: var(--pc-text-brand);
-  font-size: clamp(20px, 2.2vh, 28px);
+  font-size: clamp(18px, 2.2vh, 26px);
   font-weight: 750;
 }
 .kiosk-connected__badge svg {
@@ -428,10 +487,25 @@
 .kiosk-connected__headline {
   margin: 0;
   color: var(--pc-text-primary);
-  font-size: clamp(36px, 6.4vh, 72px);
-  font-weight: 820;
+  font-size: clamp(36px, 6.6vh, 76px);
+  font-weight: 830;
   line-height: 1.15;
   letter-spacing: -0.045em;
+  word-break: keep-all;
+}
+.kiosk-connected__headline small {
+  margin-top: 6px;
+  letter-spacing: -0.01em;
+}
+.kiosk-connected__hint {
+  margin: 0;
+  padding: 12px 26px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+  color: var(--pc-text-secondary);
+  font-size: clamp(18px, 2.6vh, 28px);
+  font-weight: 650;
 }
 
 /* The document as a room full of strangers is allowed to see it: a shape and a
@@ -439,17 +513,22 @@
 .kiosk-token {
   display: grid;
   place-items: center;
-  width: clamp(104px, 15vh, 176px);
-  height: clamp(104px, 15vh, 176px);
+  width: clamp(96px, 14vh, 160px);
+  height: clamp(96px, 14vh, 160px);
   border-radius: var(--pc-radius-xl);
-  background: var(--pc-surface);
+  background: var(--pc-surface-brand);
   color: var(--pc-brand);
-  box-shadow: var(--pc-shadow-md);
   animation: kiosk-token-arrive var(--pc-duration-slow) var(--pc-ease-out);
 }
 .kiosk-token svg {
-  width: 46%;
-  height: 46%;
+  width: 48%;
+  height: 48%;
+}
+.kiosk-token--uploading svg,
+.kiosk-token--uploaded svg,
+.kiosk-token--validating svg,
+.kiosk-token--printing svg {
+  animation: kiosk-token-pulse 1.6s ease-in-out infinite;
 }
 .kiosk-token--printing {
   background: var(--pc-printing);
@@ -465,26 +544,50 @@
     transform: translateY(14px) scale(0.92);
   }
 }
+@keyframes kiosk-token-pulse {
+  50% {
+    transform: translateY(-6%);
+  }
+}
 
+/* Four stations joined by a line, the way a parcel tracker reads. */
 .kiosk-journey {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: clamp(8px, 1.4vw, 18px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(8px, 1.2vw, 18px);
+  width: 100%;
   margin: 0;
   padding: 0;
   list-style: none;
+  counter-reset: none;
 }
 .kiosk-journey li {
+  position: relative;
   display: grid;
-  gap: 2px;
-  min-width: 9em;
-  padding: 12px 20px;
+  justify-items: center;
+  gap: 4px;
+  padding: clamp(12px, 1.8vh, 20px) 12px;
   border: 2px solid var(--pc-border);
   border-radius: var(--pc-radius-lg);
   background: var(--pc-surface);
   color: var(--pc-text-muted);
-  font-size: clamp(16px, 1.9vh, 24px);
+  font-size: clamp(16px, 2.2vh, 26px);
+}
+.kiosk-journey__icon {
+  display: grid;
+  place-items: center;
+  width: clamp(40px, 5.6vh, 56px);
+  height: clamp(40px, 5.6vh, 56px);
+  margin-bottom: 4px;
+  border-radius: 50%;
+  background: var(--pc-surface-sunken);
+}
+.kiosk-journey__icon svg {
+  width: 56%;
+  height: 56%;
+}
+.kiosk-journey__index {
+  font-variant-numeric: tabular-nums;
 }
 .kiosk-journey strong {
   font-weight: 720;
@@ -492,107 +595,141 @@
 .kiosk-journey small {
   font-size: 0.72em;
 }
-/* Reached, in progress, and still to come are three different words as well as
-   three different weights, so the sequence reads without colour. */
+/* Reached, in progress, and still to come differ in words, icon and weight as
+   well as colour, so the sequence reads without colour. */
 .kiosk-journey .is-done {
   border-color: var(--pc-success-surface);
   background: var(--pc-success-surface);
   color: var(--pc-success);
+}
+.kiosk-journey .is-done .kiosk-journey__icon {
+  background: var(--pc-success-accent);
+  color: var(--pc-text-on-brand);
 }
 .kiosk-journey .is-active {
   border-color: var(--pc-printing);
   background: var(--pc-printing);
   color: var(--pc-text-on-brand);
 }
+.kiosk-journey .is-active .kiosk-journey__icon {
+  background: var(--pc-white);
+  color: var(--pc-brand);
+}
 .kiosk-journey .is-active strong {
   font-weight: 800;
 }
 
-.kiosk-shell--connected .kiosk-status-row {
-  min-width: min(100%, 560px);
-  margin-top: 4px;
-  text-align: start;
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-  color: var(--pc-text-primary);
+.kiosk-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 24px;
+  color: var(--pc-text-secondary);
+  font-size: clamp(16px, 2vh, 22px);
 }
-.kiosk-shell--connected .kiosk-status-dot {
-  background: var(--pc-brand);
+.kiosk-status-row strong {
+  color: var(--pc-text-primary);
+  font-weight: 750;
+}
+.kiosk-countdown b {
+  margin-left: 6px;
+  color: var(--pc-text-primary);
+  font-variant-numeric: tabular-nums;
 }
 
 /* --- Finished, or unavailable ---------------------------------------------- */
 
 .kiosk-result {
+  box-sizing: border-box;
   position: relative;
   min-height: 100vh;
   display: grid;
   align-content: center;
   justify-items: center;
-  /* Height-led spacing: at 1920x1080 this is 140px / 20px / 50px; at
-     1280x720 (a 1080p kiosk at 150% Windows scaling) it tightens so the
-     countdown line stays on screen instead of below the fold. */
-  gap: clamp(12px, 1.85vh, 20px);
-  padding: clamp(96px, 13vh, 140px) 50px clamp(24px, 4.6vh, 50px);
+  /* Height-led spacing: at 1280x720 (a 1080p kiosk at 150% Windows scaling)
+     it tightens so the countdown line stays on screen instead of below the
+     fold. */
+  gap: clamp(10px, 1.7vh, 20px);
+  padding: clamp(88px, 12vh, 132px) 48px clamp(20px, 4vh, 44px);
   background: var(--pc-background);
   text-align: center;
 }
 .kiosk-result > .pc-wordmark {
   position: absolute;
-  inset: clamp(28px, 3vw, 52px) auto auto clamp(28px, 3vw, 52px);
+  inset: clamp(24px, 2.6vw, 48px) auto auto clamp(24px, 2.6vw, 48px);
 }
 .kiosk-result > svg {
-  width: clamp(112px, 14vh, 152px);
-  height: clamp(112px, 14vh, 152px);
-  padding: clamp(24px, 3vh, 32px);
-  border-radius: 44px;
+  width: clamp(96px, 13vh, 144px);
+  height: clamp(96px, 13vh, 144px);
+  padding: clamp(20px, 2.8vh, 30px);
+  border-radius: 50%;
 }
 .kiosk-result h1 {
-  margin: 8px 0 0;
-  font-size: clamp(60px, 6.6vw, 104px);
-  font-weight: 820;
-  letter-spacing: -0.05em;
+  margin: 4px 0 0;
   color: var(--pc-text-primary);
+  font-size: clamp(48px, min(6vw, 9vh), 100px);
+  font-weight: 830;
+  line-height: 1.1;
+  letter-spacing: -0.05em;
 }
 .kiosk-result p {
-  display: flex;
-  align-items: center;
-  gap: 16px;
   margin: 0;
-  font-size: 32px;
   color: var(--pc-text-secondary);
-}
-.kiosk-result p svg {
-  width: 40px;
-  height: 40px;
-  color: var(--pc-brand);
+  font-size: clamp(20px, 3.2vh, 32px);
 }
 .kiosk-result__english {
   color: var(--pc-text-muted) !important;
-  font-size: 24px !important;
+  font-size: clamp(16px, 2.4vh, 24px) !important;
 }
-.kiosk-result > span {
+/* "Take your paper" is the one instruction left, so it gets the panel. */
+.kiosk-result .kiosk-result__next {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-  padding: 10px 18px;
-  border-radius: var(--pc-radius-pill);
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-  font-size: 21px;
-  color: var(--pc-text-secondary);
+  gap: 18px;
+  margin-top: 4px;
+  padding: clamp(12px, 2vh, 20px) clamp(20px, 2.4vw, 36px);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+  font-size: clamp(24px, 4vh, 40px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-align: start;
+}
+.kiosk-result__next svg {
+  flex: none;
+  width: 1.4em;
+  height: 1.4em;
+}
+.kiosk-result__next small {
+  display: block;
+  color: var(--pc-text-on-inverse-muted);
+  font-size: 0.55em;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.kiosk-result .kiosk-result__count {
+  font-size: clamp(16px, 2.4vh, 22px);
+}
+.kiosk-result__count [lang="en"] {
+  color: var(--pc-text-muted);
 }
 .kiosk-result--success > svg {
   color: var(--pc-text-on-brand);
   background: var(--pc-completed);
+  animation: kiosk-token-arrive var(--pc-duration-slow) var(--pc-ease-out);
 }
 .kiosk-result--error > svg {
   color: var(--pc-destructive);
   background: var(--pc-destructive-surface);
 }
 .kiosk-result > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
   min-height: 72px;
-  margin-top: 12px;
+  margin-top: 8px;
   padding: 16px 32px;
   border: 0;
   border-radius: var(--pc-radius-md);
@@ -602,6 +739,10 @@
   font-weight: 750;
   cursor: pointer;
 }
+.kiosk-result > button svg {
+  width: 26px;
+  height: 26px;
+}
 .kiosk-result > button:hover {
   background: var(--pc-brand-hover);
 }
@@ -609,8 +750,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 14px;
-  margin-top: 16px;
+  gap: 10px;
+  max-width: 1100px;
+}
+.kiosk-result__actions:empty {
+  display: none;
 }
 .kiosk-result__actions button,
 .kiosk-download {
@@ -618,13 +762,13 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 64px;
-  padding: 16px 24px;
+  min-height: 56px;
+  padding: 12px 22px;
   border: 2px solid var(--pc-border);
   border-radius: var(--pc-radius-md);
   background: var(--pc-surface);
   color: var(--pc-text-primary);
-  font-size: 19px;
+  font-size: 18px;
   font-weight: 700;
   text-decoration: none;
   cursor: pointer;
@@ -635,23 +779,65 @@
 /* Staff recovery action. It stays reachable but must not compete with the
    visitor's own next step, so it is deliberately the quietest control here. */
 .kiosk-download {
+  min-height: 48px;
+  padding: 8px 16px;
   border-style: dashed;
   background: transparent;
   color: var(--pc-text-muted);
+  font-size: 16px;
   font-weight: 500;
 }
 .kiosk-result__actions svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
+.kiosk-result__footer {
+  display: grid;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
+  min-width: min(100%, 480px);
+  margin-top: 4px;
+}
+.kiosk-result__timer {
+  width: 100%;
+  height: 6px;
+  background: var(--pc-surface-sunken);
+}
+.kiosk-result__timer::after {
+  background: var(--pc-completed);
+}
+.kiosk-result__reset {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 18px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  font-size: clamp(16px, 2.4vh, 21px);
+}
+.kiosk-result__reset svg {
+  flex: none;
+  width: 1.1em;
+  height: 1.1em;
+  color: var(--pc-success);
+}
+
+/* --- Narrow and portrait displays ----------------------------------------- */
 
 @media (max-width: 960px) {
   .kiosk-layout {
     grid-template-columns: 1fr;
-    gap: 38px;
+    gap: 28px;
   }
   .kiosk-qr {
-    --kiosk-qr-size: min(82vw, 560px);
+    --kiosk-qr-size: min(78vw, 560px);
+  }
+  .kiosk-title {
+    font-size: clamp(34px, 8vw, 72px);
   }
   .kiosk-result__actions {
     flex-direction: column;
@@ -661,59 +847,61 @@
 
 @media (max-width: 620px) {
   .kiosk-shell {
-    padding: 24px;
+    padding: 20px;
   }
-  .kiosk-shell > .pc-wordmark,
-  .kiosk-header {
-    margin-bottom: 32px;
+  .kiosk-title > span {
+    white-space: normal;
   }
-  .kiosk-instructions {
-    --kiosk-heading-gap: 14px;
-    --kiosk-heading-number-size: 56px;
-  }
-  .kiosk-step-heading {
-    font-size: clamp(28px, 9vw, 48px);
-  }
-  .kiosk-step-heading .kiosk-step-number,
-  .kiosk-step-number {
-    width: 56px;
-    height: 56px;
-    border-radius: var(--pc-radius-md);
-    font-size: 28px;
-  }
-  .kiosk-english {
-    margin-left: calc(var(--kiosk-heading-number-size) + var(--kiosk-heading-gap));
-    font-size: clamp(18px, 5vw, 26px);
-  }
-  .kiosk-status-row {
-    flex-wrap: wrap;
-  }
-  .kiosk-countdown {
-    width: 100%;
-    margin-left: 0;
-  }
-  .kiosk-qr__action {
+  .kiosk-step {
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .kiosk-qr__action > svg {
+  .kiosk-step__number {
     display: none;
   }
+  .kiosk-qr {
+    padding: 16px;
+  }
+  .kiosk-qr__frame {
+    width: 100%;
+  }
+  .kiosk-languages {
+    margin-left: 0 !important;
+  }
+  .kiosk-journey {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .kiosk-result {
-    padding: 120px 24px 32px;
+    padding: 112px 20px 28px;
   }
   .kiosk-result h1 {
-    font-size: clamp(40px, 12vw, 60px);
+    font-size: clamp(36px, 11vw, 56px);
   }
-  .kiosk-result p {
-    font-size: 22px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kiosk-token,
+  .kiosk-token svg,
+  .kiosk-result--success > svg,
+  .kiosk-qr__loading {
+    animation: none;
+  }
+  .kiosk-qr__timer-bar::after,
+  .kiosk-result__timer::after {
+    transition: none;
   }
 }
 
 @media (forced-colors: active) {
+  .kiosk-qr,
   .kiosk-qr__frame,
-  .kiosk-facts p,
+  .kiosk-step,
   .kiosk-journey li,
-  .kiosk-status-row {
+  .kiosk-availability,
+  .kiosk-result__next {
     border: 2px solid CanvasText;
+  }
+  .kiosk-step.is-current,
+  .kiosk-journey .is-active {
+    border-width: 4px;
   }
 }

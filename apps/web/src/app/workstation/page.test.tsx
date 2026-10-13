@@ -34,7 +34,7 @@ describe("workstation page", () => {
     const hrefs = hrefsOf(page);
     const copy = textOf(page);
 
-    expect(hrefs).toEqual(expect.arrayContaining(["/", "/receive", "/send"]));
+    expect(hrefs).toEqual(expect.arrayContaining(["/start", "/receive", "/send"]));
     expect(copy).toContain("Use Print-cess in a managed browser, with no install");
     expect(copy).toContain("Print-cess does not bypass agency security controls");
     expect(copy).not.toContain("Open kiosk");

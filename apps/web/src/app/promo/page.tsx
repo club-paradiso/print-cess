@@ -56,7 +56,7 @@ export default function RoyalPromoPage() {
             <small>by Club Paradiso</small>
           </span>
         </Link>
-        <Link href="/" className={styles.serviceLink}>
+        <Link href="/start" className={styles.serviceLink}>
           서비스로 돌아가기 <ArrowRight aria-hidden="true" />
         </Link>
       </header>
@@ -78,7 +78,7 @@ export default function RoyalPromoPage() {
           <h1 id="royal-title">공주는 편한 게 최고야</h1>
           <p className={styles.heroLead}>황궁에서도 결국 출력은 셀프.</p>
           <div className={styles.heroActions}>
-            <Link href="/" className={styles.primaryCta}>
+            <Link href="/start" className={styles.primaryCta}>
               지금 출력하기 <ArrowRight aria-hidden="true" />
             </Link>
             <a href="#royal-gallery" className={styles.secondaryCta}>
@@ -185,7 +185,7 @@ export default function RoyalPromoPage() {
             출력은 편한 게 최고니까.
           </h2>
         </div>
-        <Link href="/" className={styles.finalButton}>
+        <Link href="/start" className={styles.finalButton}>
           Print-cess 사용하기 <ArrowRight aria-hidden="true" />
         </Link>
       </section>
