@@ -36,6 +36,7 @@ test("smart camera keeps its media stream while a captured page is processed", a
   await page.goto("/scan");
   await page.getByTestId("scan-smart-camera").click();
   await expect(page.getByRole("dialog", { name: "Smart camera" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Use the device camera instead" })).toBeVisible();
 
   // Next.js development mode can mount effects more than once. Record the
   // settled start count instead of assuming that getUserMedia is called
@@ -50,4 +51,27 @@ test("smart camera keeps its media stream while a captured page is processed", a
   await page.locator(".scan-live-controls button").last().click();
   await page.waitForTimeout(900);
   expect(await cameraStarts()).toBe(initialCameraStarts);
+});
+
+test("smart shutter is disabled until a usable video frame arrives", async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "mediaDevices", {
+      configurable: true,
+      value: { getUserMedia: async () => new MediaStream() },
+    });
+    HTMLMediaElement.prototype.play = async function play() {
+      window.setTimeout(() => {
+        Object.defineProperty(this, "videoWidth", { configurable: true, value: 800 });
+        Object.defineProperty(this, "videoHeight", { configurable: true, value: 1200 });
+        this.dispatchEvent(new Event("loadedmetadata"));
+      }, 650);
+    };
+  });
+
+  await page.goto("/scan");
+  await page.getByTestId("scan-smart-camera").click();
+  const dialog = page.getByRole("dialog", { name: "Smart camera" });
+  const shutter = dialog.getByRole("button", { name: "Capture now" });
+  await expect(shutter).toBeDisabled();
+  await expect(shutter).toBeEnabled({ timeout: 5_000 });
 });
