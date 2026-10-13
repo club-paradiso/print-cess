@@ -623,3 +623,38 @@
 .scan-lab__grid small {
   color: var(--pc-text-muted);
 }
+
+/* --- 2026-10-13 pass ---------------------------------------------------------
+   The page tools were five 33 px-wide buttons under a half-width card; every
+   one is now at least 44 px in both directions. The two other ways in sit
+   side by side under the smart camera instead of as two more full buttons. */
+
+.scan-page-actions {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--pc-border);
+}
+.scan-page-actions button {
+  min-height: 48px;
+  border-right: 0;
+}
+.scan-page-actions button:last-child {
+  grid-column: span 2;
+}
+.scan-page-actions button:active:not(:disabled) {
+  background: var(--pc-surface-brand-subtle);
+}
+
+/* Before the first page: one primary way in, two quieter ones beside each
+   other. */
+.scan-primary-actions:not(.scan-primary-actions--more) {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.scan-primary-actions:not(.scan-primary-actions--more) > :first-child {
+  grid-column: 1 / -1;
+}
+.scan-primary-actions:not(.scan-primary-actions--more) > .pc-button--secondary {
+  min-height: 56px;
+  padding-inline: 10px;
+  font-size: 15px;
+}
