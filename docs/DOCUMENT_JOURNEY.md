@@ -101,12 +101,13 @@ one.
 
 | Stage             | The kiosk says                           | The phone says                                           |
 | ----------------- | ---------------------------------------- | -------------------------------------------------------- |
-| Waiting           | Open your camera · scan this QR          | —                                                        |
-| Phone connected   | Phone connected · continue on your phone | Pick one file to print                                   |
-| Document arriving | Arriving                                 | Sending…                                                 |
-| Checking          | Checking                                 | Waiting for the printer                                  |
-| Printing          | Printing · one moment                    | Waiting for the printer                                  |
-| Done              | Take your paper                          | All done · collect your document                         |
+| Waiting           | Point your camera at the QR · 3 steps    | —                                                        |
+| Phone connected   | Phone connected · continue on your phone | Pick files to print                                      |
+| Document arriving | Receiving your files · Arriving          | Sending…                                                 |
+| Checking          | Receiving your files · Checking          | Waiting for the printer                                  |
+| Printing          | Printing · wait at the printer           | Waiting for the printer                                  |
+| Done              | Take your paper from the printer         | All done · collect your document                         |
+| Unavailable       | Can't print right now · retries in 30 s  | (the phone shows its own error)                          |
 | Connection lost   | (unchanged — the kiosk still knows)      | Connection interrupted · the kiosk may still be printing |
 
 The kiosk stops asking the room to scan a code the moment a phone claims the

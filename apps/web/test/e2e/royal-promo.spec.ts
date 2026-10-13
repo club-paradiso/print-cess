@@ -20,10 +20,13 @@ test("the royal campaign keeps one heading, four artworks, exact captions, and r
     await expect(page.locator("figcaption").filter({ hasText: slogan })).toHaveCount(1);
   }
   await expect(page.locator("img")).toHaveCount(5);
-  await expect(page.getByRole("link", { name: /지금 출력하기/u })).toHaveAttribute("href", "/");
+  await expect(page.getByRole("link", { name: /지금 출력하기/u })).toHaveAttribute(
+    "href",
+    "/start",
+  );
   await expect(page.getByRole("link", { name: /Print-cess 사용하기/u })).toHaveAttribute(
     "href",
-    "/",
+    "/start",
   );
 
   const results = await new AxeBuilder({ page })
@@ -33,7 +36,7 @@ test("the royal campaign keeps one heading, four artworks, exact captions, and r
 });
 
 test("the campaign route does not replace the service home", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/start");
   await expect(page.getByRole("heading", { level: 1 })).not.toHaveText("공주는 편한 게 최고야");
   await expect(page.locator('[class*="promo-module"]')).toHaveCount(0);
 });
