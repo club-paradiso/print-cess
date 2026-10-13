@@ -26,7 +26,7 @@ test("shows three simple QR steps without network jargon", async ({ page }) => {
   const steps = page.getByRole("list", { name: "인쇄하는 방법" }).getByRole("listitem");
   await expect(steps).toHaveCount(3);
   await expect(steps.nth(0)).toContainText("QR코드 비추기");
-  await expect(steps.nth(0)).toContainText("화면에 나타나는 링크를 누르세요");
+  await expect(steps.nth(0)).toContainText("휴대전화에 뜨는 링크를 누르세요");
   await expect(steps.nth(1)).toContainText("휴대전화에서 파일 고르기");
   await expect(steps.nth(2)).toContainText("프린터에서 종이 받기");
   await expect(page.getByText("사진을 찍을 필요는 없습니다", { exact: false })).toBeVisible();
@@ -109,5 +109,7 @@ test("fits the whole waiting screen, QR code included, on one landscape screen",
 test("shows the two-minute QR renewal window", async ({ page }) => {
   await page.goto("/kiosk");
 
-  await expect(page.locator(".kiosk-countdown")).toHaveText(/QR코드 변경까지 (?:02:00|01:5\d)/u);
+  await expect(page.locator(".kiosk-countdown")).toHaveText(
+    /새 QR코드로 바뀌기까지 (?:02:00|01:5\d)/u,
+  );
 });
