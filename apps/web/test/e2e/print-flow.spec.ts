@@ -66,7 +66,7 @@ test("mobile PNG flow encrypts, uploads, consumes once, and completes", async ({
   await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
     timeout: 60_000,
   });
-  await expect(page.getByText("선택한 파일 1개를 처리했습니다")).toBeVisible();
+  await expect(page.getByText("파일 1개를 프린터로 보냈어요")).toBeVisible();
   await expect(page.getByRole("button", { name: "인쇄 창 다시 열기" })).toHaveCount(0);
   // A single file needs no number to tell it apart, so it keeps the plain
   // label and the artifact's own name.
@@ -154,7 +154,7 @@ test("one kiosk scan prints multiple selected photos in order", async ({ page, c
   await expect(page.getByRole("heading", { name: "인쇄가 시작됐어요" })).toBeVisible({
     timeout: 60_000,
   });
-  await expect(page.getByText("선택한 파일 2개를 처리했습니다")).toBeVisible();
+  await expect(page.getByText("파일 2개를 프린터로 보냈어요")).toBeVisible();
   // Several files do get numbered, so staff can match each download to the
   // order the visitor picked them in.
   await expect(page.getByRole("link", { name: "파일 1 다운로드 (직원용)" })).toHaveAttribute(

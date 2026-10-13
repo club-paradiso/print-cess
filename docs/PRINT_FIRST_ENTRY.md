@@ -79,11 +79,12 @@ One marker, shown in two places: on the phone's home page and on the shared disp
   Indigo, the white sheet). A visitor matches indigo tile plus corner brackets to the same tile on
   the display, so finding the display is a recognition task, not a reading one.
 - **Where:** `Beacon` in `packages/ui` (`pc-beacon` in `packages/ui/src/styles.css`). Home:
-  `print-entry__beacon`, with "Look for the screen with this mark." Display: `kiosk-beacon` in the
-  header, with "여기서 인쇄 시작 / Start printing here". The rescue sheet repeats it on step 2.
+  `print-entry__beacon`, with "Look for the screen with this mark." Display: `kiosk-beacon` above
+  the headline, with no label of its own (see "Kiosk copy" below). The rescue sheet repeats it on
+  step 2.
 - **Never near the QR code.** It sits in the display's header, away from the code, so the QR keeps
   its full quiet zone and colours (`apps/web/src/lib/qr-style.ts`).
-- **Never the only carrier of meaning.** It is `aria-hidden`. The words beside it say the same
+- **Never the only carrier of meaning.** It is `aria-hidden`. The words around it say the same
   thing, so the page works with a screen reader and in forced-colours mode.
 
 ## Terminology: why consumer copy says "화면", not "키오스크"
@@ -162,13 +163,14 @@ returning 404.
 `apps/web/src/components/kiosk/kiosk-screens.tsx`) is the primary screen of the service, so it was
 redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 
-- **Waiting.** Left: the Beacon with "여기서 인쇄 시작 / Start printing here", one headline
+- **Waiting.** Left: the Beacon (unlabelled), one headline
   ("휴대전화 카메라로 QR코드를 비추세요"), English beneath it, the rotating language line, and the
   whole visit as three steps (point the camera, choose files on the phone, take the paper), with
   the first drawn as current. Right: the QR code on a solid Royal Indigo panel, the largest block
   of colour on the screen, with "사진을 찍을 필요는 없습니다" above the code and an emptying bar plus
   the countdown below it. A footer carries the small print (deletion, no sign-up, file types,
-  languages). The old green "사용할 수 있어요" banner became a small status pill in the header.
+  languages). The old green "사용할 수 있어요" banner is gone; a small header pill appears only
+  while the code is being made ("QR코드를 준비하고 있어요").
 - **Sizing.** On landscape displays from 961×700 the screen never scrolls: the code sits in a
   size container and is the largest square that fits (`min(100cqw, 100cqh)`), up to 600 px plus
   its padding. This fixes 1280×1024, where the old `height: 100%` rule pushed the code past its
@@ -183,6 +185,26 @@ redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 
 The Beacon still sits away from the code, so the QR keeps its full quiet zone and colours.
 
+### Kiosk copy
+
+Reviewed on 2026-10-13 for words a first-time visitor could misread. Each change, and why:
+
+| Was                                    | Now                                                    | Why                                                                                     |
+| -------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------- |
+| 여기서 인쇄 시작 / Start printing here | (removed; the Beacon stays, unlabelled)                | Read as a button to press on a screen that takes no input; the headline already says it |
+| 사용할 수 있어요 (header pill)         | shown only while preparing: QR코드를 준비하고 있어요   | "Available" left visitors asking what was available                                     |
+| 화면에 나타나는 링크를 누르세요        | 휴대전화에 뜨는 링크를 누르세요                        | "화면" could mean this display, which has no link                                       |
+| QR코드 변경까지                        | 새 QR코드로 바뀌기까지                                 | "변경" is an administrative word                                                        |
+| 13개 언어 · languages                  | 휴대전화 화면은 13개 언어 지원                         | The display itself cannot change language; the phone can                                |
+| [인쇄하기]를 누르세요                  | 휴대전화의 인쇄 버튼을 누르세요                        | The phone's button reads "파일 N개 인쇄", not "인쇄하기"                                |
+| 작업 만료까지                          | 남은 시간                                              | "작업 만료" is system jargon                                                            |
+| 선택한 파일 N개를 처리했습니다         | 파일 N개를 프린터로 보냈어요 (or 인쇄할 준비를 했어요) | "처리" says nothing about where the paper is                                            |
+| 서버에 보관된 파일은 삭제됐습니다      | 보내신 파일은 모두 지웠어요                            | Visitors do not know or need "서버"                                                     |
+| 새 QR코드 만들기 (failure screen)      | 다시 시도하기                                          | The visitor's goal is to retry, not to make a code                                      |
+| 보내신 파일은 삭제됐습니다 (failure)   | (removed)                                              | Often nothing had been sent yet, so it raised a question it did not answer              |
+
+`kioskStartHere` was removed from all thirteen locales.
+
 ## Languages
 
 All thirteen locales have every new key; the type of `Translation` enforces parity. Korean and
@@ -193,7 +215,8 @@ not polished, and **need native-speaker review** before being treated as final: 
 Keys added: `homePrintHeading`, `homePrintLead`, `homePrintLead2`, `homeBeaconCaption`,
 `homeScanQrCta`, `homeLostCta`, `homePrintStepFind`, `homeStepsLabel`, `homeLostTitle`,
 `homeLostStep1`–`3`, `homeLostHint`, `homeDialogClose`, `qrScanTitle`, `qrScanHint`,
-`qrScanStarting`, `qrScanDenied`, `qrScanUnsupported`, `qrScanInvalid`, `kioskStartHere`.
+`qrScanStarting`, `qrScanDenied`, `qrScanUnsupported`, `qrScanInvalid`, and `kioskStartHere`
+(removed again on 2026-10-13, see "Kiosk copy").
 Removed: `homeTitle`, `homeLead`, `homePrintBody`. Reworded: `homeKioskCta`.
 
 Spelling note: existing Korean strings write "QR코드" without a space; the new strings write

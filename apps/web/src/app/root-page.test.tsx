@@ -16,7 +16,7 @@ describe("root page", () => {
     redirect.mockReset();
   });
 
-  it("shows the browser kiosk, with its URL switches", async () => {
+  it("shows the browser kiosk with links to the other features, and its URL switches", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("ENABLE_BROWSER_KIOSK", "true");
 
@@ -25,7 +25,7 @@ describe("root page", () => {
     });
 
     expect(redirect).not.toHaveBeenCalled();
-    expect(page.props).toEqual({ automaticPrinting: true, sound: false });
+    expect(page.props).toEqual({ automaticPrinting: true, sound: false, services: true });
   });
 
   it("sends visitors to the guide when the browser kiosk is switched off", async () => {
