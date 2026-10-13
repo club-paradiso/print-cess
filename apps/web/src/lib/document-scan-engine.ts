@@ -370,10 +370,22 @@ async function processCanvasFallback(
   const quad = clampQuad(options.quad);
   // Crop to the bounding rectangle. Without OpenCV, perspective correction
   // is not available; the original pixels are still usable for an image PDF.
-  const x0 = Math.max(0, Math.floor(Math.min(...quad.map((point) => point.x)) * sourceCanvas.width));
-  const y0 = Math.max(0, Math.floor(Math.min(...quad.map((point) => point.y)) * sourceCanvas.height));
-  const x1 = Math.min(sourceCanvas.width, Math.ceil(Math.max(...quad.map((point) => point.x)) * sourceCanvas.width));
-  const y1 = Math.min(sourceCanvas.height, Math.ceil(Math.max(...quad.map((point) => point.y)) * sourceCanvas.height));
+  const x0 = Math.max(
+    0,
+    Math.floor(Math.min(...quad.map((point) => point.x)) * sourceCanvas.width),
+  );
+  const y0 = Math.max(
+    0,
+    Math.floor(Math.min(...quad.map((point) => point.y)) * sourceCanvas.height),
+  );
+  const x1 = Math.min(
+    sourceCanvas.width,
+    Math.ceil(Math.max(...quad.map((point) => point.x)) * sourceCanvas.width),
+  );
+  const y1 = Math.min(
+    sourceCanvas.height,
+    Math.ceil(Math.max(...quad.map((point) => point.y)) * sourceCanvas.height),
+  );
   const canvas = document.createElement("canvas");
   canvas.width = Math.max(1, x1 - x0);
   canvas.height = Math.max(1, y1 - y0);
@@ -381,7 +393,17 @@ async function processCanvasFallback(
   if (!context) throw new Error("scanImageError");
   context.fillStyle = "#fff";
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.drawImage(sourceCanvas, x0, y0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+  context.drawImage(
+    sourceCanvas,
+    x0,
+    y0,
+    canvas.width,
+    canvas.height,
+    0,
+    0,
+    canvas.width,
+    canvas.height,
+  );
   const rotated = rotateCanvas(canvas, options.rotation ?? 0);
   const blob = await canvasBlob(rotated, JPEG_QUALITY);
   return { blob, width: rotated.width, height: rotated.height };
