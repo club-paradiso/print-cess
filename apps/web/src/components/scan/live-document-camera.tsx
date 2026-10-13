@@ -300,6 +300,8 @@ export function LiveDocumentCamera({
         timer = window.setInterval(() => void inspect(), ANALYSIS_INTERVAL_MS);
       } catch (cameraError) {
         console.error("[scan-camera] unable to start camera", cameraError);
+        stopCamera();
+        if (cancelled) return;
         setError(true);
         setMessage(copyRef.current.cameraDenied);
       }
