@@ -1,0 +1,27 @@
+name: Scanner production diagnostic
+on:
+  push:
+    branches:
+      - fix/scan-camera-prod-repro-20261013
+permissions:
+  contents: read
+jobs:
+  production-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    env:
+      PUBLIC_BASE_URL: http://127.0.0.1:3000
+      ALLOWED_ORIGINS: http://127.0.0.1:3000
+      PRINT_CESS_ADAPTER_MODE: local
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @print-cess/test-fixtures build
+      - run: pnpm --filter @print-cess/web exec playwright install --with-deps chromium webkit
+      - name: Probe deployed scan routes in Chromium and WebKit
+        run: CI= pnpm --filter @print-cess/web exec playwright test scanner-production-smoke.spec.ts --project=chromium --project=iphone --reporter=line --workers=1
