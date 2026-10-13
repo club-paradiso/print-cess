@@ -1192,3 +1192,110 @@ ol.mobile-selected li::before {
   border-radius: 20px;
   pointer-events: none;
 }
+
+/* --- Phone print flow polish ---------------------------------------------- */
+
+/* Time left while choosing. Quiet until the last half minute. */
+.mobile-time-left {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary) !important;
+  font-size: 14px !important;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+}
+.mobile-time-left svg {
+  flex: none;
+  width: 16px;
+  height: 16px;
+}
+.mobile-time-left.is-urgent {
+  background: var(--pc-warning-surface);
+  color: var(--pc-warning) !important;
+}
+
+/* The preview's actions stay on screen however tall the preview is. */
+.mobile-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  display: grid;
+  gap: 4px;
+  margin-inline: -4px;
+  padding: 12px 4px max(12px, env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--pc-background) 18px);
+}
+.mobile-step--preview .mobile-preview {
+  max-height: 40vh;
+}
+.mobile-step--preview .mobile-preview img,
+.mobile-step--preview .mobile-preview canvas {
+  max-height: calc(40vh - 24px);
+}
+
+/* Waiting screens read centred, with the stages under the sentence. */
+.mobile-step--progress {
+  justify-items: center;
+  text-align: center;
+}
+.mobile-progress-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mobile-progress-list li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface);
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  font-weight: 650;
+}
+.mobile-progress-list li > span {
+  font-variant-numeric: tabular-nums;
+}
+.mobile-progress-list svg {
+  width: 16px;
+  height: 16px;
+}
+.mobile-progress-list .is-done {
+  border-color: var(--pc-success-surface);
+  background: var(--pc-success-surface);
+  color: var(--pc-success);
+}
+.mobile-progress-list .is-active {
+  border-color: var(--pc-brand);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+}
+
+.mobile-step__note {
+  padding: 12px 14px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand) !important;
+  font-size: 16px !important;
+}
+.mobile-start-over {
+  margin-top: 8px;
+  text-decoration: none;
+}
+
+@media (forced-colors: active) {
+  .mobile-progress-list .is-active {
+    border-width: 3px;
+  }
+}

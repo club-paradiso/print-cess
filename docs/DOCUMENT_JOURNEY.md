@@ -85,6 +85,25 @@ flow — paper comes out of a machine in a room — and it deserves a deliberate
 tap. Nothing else may be added beside it: a second "are you sure?" would be
 ceremony, not safety.
 
+### Phone screens, 2026-10-13 pass
+
+Observed on a 390×844 phone, then changed:
+
+- **Each tile says what lives behind it.** "갤러리·카메라로 찍은 사진" under Photos, "PDF, 카톡·메일로
+  받은 파일" under Files, so the choice no longer needs Help.
+- **Time left is shown while choosing** ("2:59 안에 인쇄 버튼을 눌러 주세요"), quiet until the last
+  30 seconds, then amber. It is the claimed session's own expiry, so the number is never a guess.
+- **The print button is pinned to the bottom of the screen.** A tall single-page preview used to push
+  it below the fold; it now sits in a sticky bar with "choose another" under it, and the preview
+  is capped at 40% of the screen height.
+- **Waiting has visible stages**: 준비 → 보내기 → 인쇄 시작, each marked done, current or still to
+  come in words and a check mark as well as colour.
+- **The end says what next time looks like**: "더 인쇄하려면 큰 화면의 새 QR코드를 찍으세요."
+- **Errors have a way out**: "처음 화면으로" links to `/start`, where the in-page QR scanner lives.
+
+All new strings live in `print-batch-copy.ts` for all thirteen locales; Korean and English were
+edited, the other eleven were written for meaning and need native review like the rest.
+
 ### Assisted path
 
 Help carries everything a first-time visitor needs and an experienced one never
