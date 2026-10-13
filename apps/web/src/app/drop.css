@@ -869,3 +869,123 @@
   field-sizing: content;
   padding-inline-end: 2px;
 }
+
+/* --- Sending, 2026-10-13 pass ----------------------------------------------
+   Checked against the redesign, UI/UX and motion checklists the team was
+   given, inside this brand: one primary action per screen, secondary actions
+   visibly subordinate, the fallback behind progressive disclosure, a clear
+   success state with a next step, and motion that only marks a change. */
+
+/* Changing the selection: two compact actions on one row, not two more
+   full-width buttons stacked under the list. */
+.drop-selection__actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.drop-selection__actions .pc-button {
+  min-height: 44px;
+  padding: 8px 10px;
+  border-color: transparent;
+  background: var(--pc-surface-sunken);
+  font-size: 15px;
+}
+.drop-selection__actions .pc-button:hover {
+  background: var(--pc-surface-brand-subtle);
+}
+
+/* Who has the files now, as the largest status on the screen once delivered. */
+.drop-ready .drop-status.is-delivered {
+  justify-self: stretch;
+  padding: 14px 16px;
+  border-radius: var(--pc-radius-lg);
+  font-size: 18px !important;
+  animation: drop-arrive var(--pc-duration-slow) var(--pc-ease-out);
+}
+
+/* The fallback hand-off, one tap away. */
+.drop-more-ways {
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+}
+.drop-more-ways > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 12px 16px;
+  color: var(--pc-text-primary);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.35;
+  cursor: pointer;
+  list-style: none;
+}
+.drop-more-ways > summary::-webkit-details-marker {
+  display: none;
+}
+.drop-more-ways > summary::after {
+  content: "";
+  flex: none;
+  width: 9px;
+  height: 9px;
+  margin-inline-start: auto;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform var(--pc-duration-fast) ease;
+}
+.drop-more-ways[open] > summary::after {
+  transform: rotate(-135deg) translateY(-2px);
+}
+.drop-more-ways > summary:focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--pc-radius-lg);
+}
+.drop-more-ways > .pairing-pick,
+.drop-more-ways > .pairing-created {
+  padding: 0 16px 16px;
+}
+
+/* Erasing is final and never the next step: a quiet red text action at the
+   end, not a second big button competing with the code. */
+.drop-erase.pc-button {
+  justify-self: center;
+  min-height: 44px;
+  margin-top: 4px;
+  padding: 8px 14px;
+  border-color: transparent;
+  background: transparent;
+  font-size: 15px;
+}
+.drop-erase.pc-button:hover {
+  background: var(--pc-destructive-surface);
+}
+
+/* A new stage arrives from just below, once; nothing loops. */
+.drop-pick,
+.drop-ready {
+  animation: drop-arrive var(--pc-duration-slow) var(--pc-ease-out);
+}
+@keyframes drop-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drop-pick,
+  .drop-ready,
+  .drop-ready .drop-status.is-delivered {
+    animation: none;
+  }
+  .drop-more-ways > summary::after {
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .drop-more-ways,
+  .drop-selection__actions .pc-button {
+    border: 1px solid CanvasText;
+  }
+}

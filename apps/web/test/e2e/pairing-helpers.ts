@@ -3,6 +3,13 @@ import { expect, type Page } from "@playwright/test";
 import type { PairingShape } from "@print-cess/protocol";
 
 export async function chooseSenderShape(page: Page, shape: PairingShape = "star"): Promise<void> {
+  // The number-and-shape hand-off sits behind a disclosure once the upload has
+  // sealed; open it the way a visitor would.
+  const moreWays = page.locator("details.drop-more-ways");
+  await expect(moreWays).toBeVisible({ timeout: 120_000 });
+  if (!(await moreWays.evaluate((element) => (element as HTMLDetailsElement).open))) {
+    await moreWays.locator("summary").click();
+  }
   await page.getByTestId(`pairing-choice-${shape}`).click();
   await expect(page.getByTestId(`pairing-selected-${shape}`)).toBeVisible({ timeout: 60_000 });
 }

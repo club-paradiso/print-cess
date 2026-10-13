@@ -33,6 +33,7 @@ import type { DropReceiverState } from "@print-cess/protocol";
 import {
   DestructiveButton,
   PrimaryButton,
+  ProgressSteps,
   ScanFrame,
   SecondaryButton,
   StatusIcon,
@@ -72,6 +73,7 @@ import {
   type Text,
 } from "./drop-shell";
 import { dropErrorKey } from "./drop-errors";
+import { dropFlowCopy } from "./drop-flow-copy";
 import { PairingHandover } from "./pairing-handover";
 
 type Stage = "pick" | "sending" | "ready" | "error";
@@ -320,8 +322,23 @@ export function SendFlow({
     },
   };
 
+  const flowCopy = dropFlowCopy(locale);
+  // The same three-step strip the print flow shows, once the visitor is past
+  // choosing, so a hand-off reads as a short sequence with an end rather than
+  // a screen that just sits there. The first screen stays as bare as V2 made
+  // it: the two source tiles are the whole job there.
+  const step = receiver === "delivered" ? 3 : 2;
+
   return (
     <DropShell locale={locale} onLocaleChange={setLocale} text={text}>
+      {(stage === "sending" || stage === "ready") && !deleted ? (
+        <ProgressSteps
+          current={step}
+          total={3}
+          label={text("step", { current: step, total: 3 })}
+          steps={[flowCopy.stepPick, flowCopy.stepHandOver, flowCopy.stepReceived]}
+        />
+      ) : null}
       {stage === "pick" ? (
         <section
           className={dragging ? "mobile-step drop-pick is-dragging" : "mobile-step drop-pick"}
@@ -389,9 +406,13 @@ export function SendFlow({
             />
           )}
           {selection ? (
-            <PrimaryButton onClick={() => void start()}>
-              <Send aria-hidden="true" /> {text("dropStartSending")}
-            </PrimaryButton>
+            // Pinned to the bottom like the print flow's button, so a long
+            // list of files never pushes the one forward action off screen.
+            <div className="mobile-actions">
+              <PrimaryButton onClick={() => void start()}>
+                <Send aria-hidden="true" /> {text("dropStartSending")}
+              </PrimaryButton>
+            </div>
           ) : null}
           <p className="drop-privacy">
             <LockKeyhole aria-hidden="true" /> {text("dropPrivacyNote")}
@@ -439,7 +460,8 @@ export function SendFlow({
           >
             <h1>{text(sealed ? "dropReady" : "dropReadyEarly")}</h1>
             {/* What the other side has done, first: it is the one thing the
-                sender keeps glancing back at. */}
+                sender keeps glancing back at. Once they have the files, the
+                next thing to do sits right under it. */}
             <p
               className={receiver === "delivered" ? "drop-status is-delivered" : "drop-status"}
               role="status"
@@ -451,6 +473,11 @@ export function SendFlow({
                 text={text}
               />
             </p>
+            {receiver === "delivered" ? (
+              <PrimaryButton onClick={restart}>
+                <FilePlus2 aria-hidden="true" /> {text("dropSendAnother")}
+              </PrimaryButton>
+            ) : null}
             {!sealed && progress ? (
               <div className="drop-still-sending">
                 <TransferBar progress={progress} text={text} minutesRemaining={minutesRemaining} />
@@ -485,12 +512,17 @@ export function SendFlow({
             {/* QR and shared-link hand-offs keep the transfer code in the URL
                 fragment. The optional nearby-phone flow below escrows it for
                 three minutes so the sender can leave after upload. */}
+            {/* The number-and-shape hand-off is the fallback for a phone that
+                cannot scan, so it waits behind one line instead of filling the
+                screen under the code most people will simply scan. */}
             {sealed ? (
-              <p className="drop-or" aria-hidden="true">
-                <span>{text("orDivider")}</span>
-              </p>
-            ) : null}
-            <PairingHandover transferCode={result.code} sealed={sealed} text={text} />
+              <details className="drop-more-ways">
+                <summary>{flowCopy.moreWays}</summary>
+                <PairingHandover transferCode={result.code} sealed={sealed} text={text} />
+              </details>
+            ) : (
+              <PairingHandover transferCode={result.code} sealed={sealed} text={text} />
+            )}
             <DestructiveButton className="drop-erase" onClick={() => void erase()}>
               <Trash2 aria-hidden="true" /> {text("dropDeleteNow")}
             </DestructiveButton>
