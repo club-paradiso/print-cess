@@ -186,7 +186,8 @@ export function LiveDocumentCamera({
         analysisUnavailableRef.current ||
         analysisBusy.current ||
         captureBusy.current
-      ) return;
+      )
+        return;
       const video = videoRef.current;
       if (!video || video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
       analysisBusy.current = true;
