@@ -50,7 +50,13 @@ let cvPromise: Promise<CvRuntime> | undefined;
 
 async function getOpenCv(): Promise<CvRuntime> {
   if (!cvPromise) {
-    cvPromise = import("@opencvjs/web").then(({ loadOpenCV }) => loadOpenCV());
+    cvPromise = import("@opencvjs/web")
+      .then(({ loadOpenCV }) => loadOpenCV())
+      .catch((error: unknown) => {
+        // A transient WASM loading failure must not poison every later scan.
+        cvPromise = undefined;
+        throw error;
+      });
   }
   return cvPromise;
 }
@@ -123,6 +129,7 @@ export function analyzeCapturePixels(
   const tileRows = 10;
   const clipped = new Uint32Array(tileColumns * tileRows);
   const tileSamples = new Uint32Array(tileColumns * tileRows);
+  const tileLuminance = new Float64Array(tileColumns * tileRows);
 
   const lumaAt = (x: number, y: number) => {
     const index = (y * width + x) * 4;
@@ -138,6 +145,7 @@ export function analyzeCapturePixels(
       const tileY = Math.min(tileRows - 1, Math.floor((y / height) * tileRows));
       const tileIndex = tileY * tileColumns + tileX;
       tileSamples[tileIndex] = (tileSamples[tileIndex] ?? 0) + 1;
+      tileLuminance[tileIndex] += center;
       if (center >= 252) clipped[tileIndex] = (clipped[tileIndex] ?? 0) + 1;
 
       const laplacian =
@@ -159,14 +167,24 @@ export function analyzeCapturePixels(
       ? 0
       : Math.max(0, laplacianSquared / laplacianSamples - lapMean * lapMean);
   const sharpness = Math.min(1, Math.sqrt(lapVariance) / 32);
+  // White paper often contains entire tiles of pure white pixels. A saturated
+  // tile alone is not glare: only a bright outlier against darker neighboring
+  // document regions suggests a blown highlight.
+  const tileBrightness = Array.from(tileSamples, (count, index) =>
+    count ? tileLuminance[index]! / count : 0,
+  )
+    .filter((value) => value > 0)
+    .sort((a, b) => a - b);
+  const medianBrightness = tileBrightness[Math.floor(tileBrightness.length / 2)] ?? 0;
   let glare = 0;
   for (let index = 0; index < clipped.length; index += 1) {
     const count = tileSamples[index]!;
     if (count === 0) continue;
     const ratio = clipped[index]! / count;
-    // A fully clipped local tile is the strongest glare signal. Whole-frame
-    // overexposure is classified earlier by the average brightness gate.
-    if (ratio > 0.58) glare = Math.max(glare, ratio);
+    const tileMean = tileLuminance[index]! / count;
+    if (ratio > 0.72 && medianBrightness < 225 && tileMean > medianBrightness + 24) {
+      glare = Math.max(glare, ratio);
+    }
   }
 
   const coverage = detection.detected ? quadArea(detection.quad) : 0;
@@ -210,7 +228,14 @@ export async function inspectDocumentFrame(canvas: HTMLCanvasElement): Promise<F
 export async function detectDocument(file: File): Promise<DocumentDetection> {
   const loaded = await fileToCanvas(file, DETECTION_EDGE);
   try {
-    return await detectDocumentOnCanvas(loaded.canvas);
+    try {
+      return await detectDocumentOnCanvas(loaded.canvas);
+    } catch (error) {
+      // The user can still make a basic PDF if the OpenCV/WASM runtime fails
+      // (particularly useful on older mobile browsers).
+      console.warn("[scan] edge detection unavailable; allowing manual review", error);
+      return { quad: FULL_FRAME_QUAD, confidence: 0, detected: false };
+    }
   } finally {
     loaded.release();
   }
@@ -320,10 +345,42 @@ export async function processDocument(
 ): Promise<ProcessedDocument> {
   const loaded = await fileToCanvas(file, options.preview ? PREVIEW_EDGE : PROCESS_EDGE);
   try {
-    return await processCanvas(loaded.canvas, options);
+    try {
+      return await processCanvas(loaded.canvas, options);
+    } catch (error) {
+      // Preserve the document instead of blocking PDF creation when WASM or
+      // an advanced image filter cannot initialize. No edge correction or
+      // enhancement is claimed on this basic canvas fallback.
+      console.warn("[scan] advanced processing unavailable; using canvas fallback", error);
+      return await processCanvasFallback(loaded.canvas, options);
+    }
   } finally {
     loaded.release();
   }
+}
+
+async function processCanvasFallback(
+  sourceCanvas: HTMLCanvasElement,
+  options: { quad: DocumentQuad; filter: ScanFilter; rotation?: number },
+): Promise<ProcessedDocument> {
+  const quad = clampQuad(options.quad);
+  // Crop to the bounding rectangle. Without OpenCV, perspective correction
+  // is not available; the original pixels are still usable for an image PDF.
+  const x0 = Math.max(0, Math.floor(Math.min(...quad.map((point) => point.x)) * sourceCanvas.width));
+  const y0 = Math.max(0, Math.floor(Math.min(...quad.map((point) => point.y)) * sourceCanvas.height));
+  const x1 = Math.min(sourceCanvas.width, Math.ceil(Math.max(...quad.map((point) => point.x)) * sourceCanvas.width));
+  const y1 = Math.min(sourceCanvas.height, Math.ceil(Math.max(...quad.map((point) => point.y)) * sourceCanvas.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, x1 - x0);
+  canvas.height = Math.max(1, y1 - y0);
+  const context = canvas.getContext("2d", { alpha: false });
+  if (!context) throw new Error("scanImageError");
+  context.fillStyle = "#fff";
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.drawImage(sourceCanvas, x0, y0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+  const rotated = rotateCanvas(canvas, options.rotation ?? 0);
+  const blob = await canvasBlob(rotated, JPEG_QUALITY);
+  return { blob, width: rotated.width, height: rotated.height };
 }
 
 async function processCanvas(
