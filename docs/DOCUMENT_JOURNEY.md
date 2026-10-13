@@ -183,9 +183,36 @@ code still gets the same "not found" they always did.
    glancing back at.
 2. The QR code, the private default.
 3. Share the link or copy it.
-4. "or", then the optional two-digit hand-off. Its trade-off (the service holds the key for
-   three minutes) is stated here, where the choice is made, and not on the pick screen.
-5. Erase it now: final, quiet, and never the next step.
+4. The optional two-digit hand-off, folded behind one line ("QR을 찍을 수 없나요? 숫자와 도형으로
+   건네기"). Its trade-off (the service holds the key for three minutes) is stated inside, where
+   the choice is made, and not on the pick screen.
+5. Erase it now: final, quiet (a red text action, not a second big button), and never the next
+   step.
+
+Once the receipt arrives, "다른 파일 보내기" appears directly under the status, so the end of a
+hand-off has a next step instead of a screen that just sits there.
+
+### Sending screens, 2026-10-13 pass
+
+The team was handed three public design checklists (taste-skill's redesign audit, UI/UX Pro Max's
+quick reference, and Design Motion Principles). They were read as references, not installed, and
+applied only where they agree with `docs/BRAND.md`. What changed, and the rule behind it:
+
+| Change                                                                           | Rule                                            |
+| -------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Three-step strip (파일 고르기 → 건네기 → 받음 확인) from hand-over on            | Multi-step flows show progress                  |
+| Choosing stays bare: no strip on the first screen                                | V2 decision, kept (the tiles are the whole job) |
+| "파일 더 고르기 / 다시 고르기" became two compact actions on one row             | One primary action; secondaries subordinate     |
+| "이 파일 보내기" is pinned to the bottom of the screen                           | Primary action never below the fold             |
+| The two-digit hand-off sits behind a disclosure                                  | Progressive disclosure                          |
+| "지금 지우기" is a quiet text action                                             | Destructive actions separated from primary ones |
+| Delivered status grows and offers "다른 파일 보내기"                             | Success feedback with a next step               |
+| Each stage arrives once from 8 px below; nothing loops; off under reduced motion | Motion marks a change; rare event, subtle       |
+| Headings use `text-wrap: balance` across the phone flows                         | No orphaned words                               |
+
+Not applied, on purpose: swapping the typeface or the icon set, grain or noise textures, and
+asymmetric layouts. The brand fixes those choices, and a utility used once by a stranger in a
+queue gains nothing from them.
 
 ### What the sender is told
 
