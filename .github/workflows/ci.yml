@@ -49,11 +49,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Show scanner Prettier diff (temporary diagnostic)
-        run: |
-          pnpm exec prettier --write apps/web/src/components/scan/live-document-camera.tsx
-          git diff -- apps/web/src/components/scan/live-document-camera.tsx
-
       - name: Check formatting
         run: pnpm format:check
 
