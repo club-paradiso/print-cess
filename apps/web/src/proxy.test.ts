@@ -25,6 +25,18 @@ describe("Content Security Policy", () => {
     expect(policy).not.toContain(" 'unsafe-eval'");
   });
 
+  it("allows Emscripten eval and same-origin PDF preview only on the scanner route", () => {
+    const scanner = buildContentSecurityPolicy("test-nonce", false, env(), true);
+    const ordinary = buildContentSecurityPolicy("test-nonce", false, env(), false);
+
+    expect(scanner).toContain(" 'unsafe-eval'");
+    expect(scanner).toContain("frame-ancestors 'self'");
+    expect(scanner).toContain("style-src 'self' 'unsafe-inline'");
+    expect(ordinary).not.toContain(" 'unsafe-eval'");
+    expect(ordinary).toContain("frame-ancestors 'none'");
+    expect(ordinary).toContain("style-src 'self' 'nonce-test-nonce'");
+  });
+
   it("allows only the pinned OCR asset origins required for local recognition", () => {
     const policy = buildContentSecurityPolicy("test-nonce", false, env());
 
