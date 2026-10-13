@@ -36,7 +36,11 @@ test("smart camera keeps its media stream while a captured page is processed", a
   await page.goto("/scan");
   await page.getByTestId("scan-smart-camera").click();
   await expect(page.getByRole("dialog", { name: "Smart camera" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Use the device camera instead" })).toBeVisible();
+  await expect(
+    page.getByRole("dialog", { name: "Smart camera" }).getByRole("button", {
+      name: "Use the device camera instead",
+    }),
+  ).toBeVisible();
 
   // Next.js development mode can mount effects more than once. Record the
   // settled start count instead of assuming that getUserMedia is called
