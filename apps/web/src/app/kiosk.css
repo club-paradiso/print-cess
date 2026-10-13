@@ -66,6 +66,59 @@
   background: var(--pc-border-strong);
 }
 
+/* The main page's links to the other features. Plain chips in the header, so
+   they are easy to find without competing with the QR code for attention. */
+.kiosk-services ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.kiosk-services a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 6px 16px 6px 12px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  text-decoration: none;
+  transition:
+    border-color var(--pc-duration-fast) ease,
+    background-color var(--pc-duration-fast) ease;
+}
+.kiosk-services a:hover {
+  border-color: var(--pc-brand);
+  background: var(--pc-surface-brand-subtle);
+}
+.kiosk-services a:focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 2px;
+}
+.kiosk-services svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--pc-text-brand);
+}
+.kiosk-services strong,
+.kiosk-services small {
+  display: block;
+  line-height: 1.2;
+}
+.kiosk-services strong {
+  font-size: clamp(14px, 1.9vh, 17px);
+  font-weight: 750;
+}
+.kiosk-services small {
+  color: var(--pc-text-muted);
+  font-size: 12px;
+}
+
 /* --- Waiting: the words ------------------------------------------------------ */
 
 .kiosk-layout {
@@ -827,6 +880,17 @@
   .kiosk-shell {
     padding: 20px;
   }
+  .kiosk-services {
+    width: 100%;
+  }
+  .kiosk-services ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kiosk-services a {
+    width: 100%;
+    box-sizing: border-box;
+  }
   .kiosk-title > span {
     white-space: normal;
   }
@@ -870,6 +934,7 @@
 }
 
 @media (forced-colors: active) {
+  .kiosk-services a,
   .kiosk-qr,
   .kiosk-qr__frame,
   .kiosk-step,

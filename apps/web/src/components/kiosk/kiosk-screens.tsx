@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import {
+  ArrowDownToLine,
+  Building2,
   Camera,
   CheckCircle2,
+  CircleHelp,
   Download,
   FileCheck2,
   FileSearch,
@@ -13,6 +17,7 @@ import {
   PrinterX,
   RotateCcw,
   ScanLine,
+  Send,
   Smartphone,
   UploadCloud,
   UserX,
@@ -55,6 +60,19 @@ const SPOTLIGHT_LOCALES: readonly SupportedLocale[] = SUPPORTED_LOCALES.filter(
 );
 const SPOTLIGHT_INTERVAL_MS = 4500;
 
+/**
+ * Everything else the service does, for the main page. Printing starts at the
+ * QR code; these are the other doors, so nobody who came to send a file or
+ * scan a page has to know another address.
+ */
+const SERVICES: { href: string; korean: string; english: string; icon: typeof Send }[] = [
+  { href: "/send", korean: "파일 보내기", english: "Send files", icon: Send },
+  { href: "/receive", korean: "파일 받기", english: "Receive files", icon: ArrowDownToLine },
+  { href: "/scan", korean: "문서 스캔", english: "Scan a document", icon: ScanLine },
+  { href: "/workstation", korean: "업무용 PC", english: "Work computer", icon: Building2 },
+  { href: "/start", korean: "이용 안내", english: "How it works", icon: CircleHelp },
+];
+
 /** The waiting screen: one instruction, the whole visit, and the code. */
 export function KioskWaitingScreen({
   status,
@@ -62,6 +80,7 @@ export function KioskWaitingScreen({
   remaining,
   lifetime: sessionLifetime,
   maxFiles,
+  services = false,
 }: {
   status: KioskStatus;
   session?: { qrUrl: string; qrImage: string } | undefined;
@@ -70,6 +89,12 @@ export function KioskWaitingScreen({
   lifetime: number;
   /** How many files one visit may print; omitted for the one-file kiosk. */
   maxFiles?: number;
+  /**
+   * Show the links to the service's other features. On for the main page;
+   * off for `/kiosk`, the station URL, where a tap away would leave the
+   * printer's screen without its QR code.
+   */
+  services?: boolean;
 }) {
   const [spotlightIndex, setSpotlightIndex] = useState(0);
   useEffect(() => {
@@ -96,6 +121,23 @@ export function KioskWaitingScreen({
             <span className="kiosk-availability__dot" />
             QR코드를 준비하고 있어요
           </p>
+        ) : null}
+        {services ? (
+          <nav className="kiosk-services" aria-label="다른 기능 · More">
+            <ul>
+              {SERVICES.map(({ href, korean, english, icon: Icon }) => (
+                <li key={href}>
+                  <Link href={href}>
+                    <Icon aria-hidden="true" />
+                    <span>
+                      <strong>{korean}</strong>
+                      <small lang="en">{english}</small>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         ) : null}
       </header>
 

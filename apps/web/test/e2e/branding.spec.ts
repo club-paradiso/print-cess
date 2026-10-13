@@ -14,6 +14,27 @@ test("the root URL opens the shared display", async ({ page }) => {
     page.getByRole("heading", { name: /휴대전화 카메라로\s*QR코드를 비추세요/u }),
   ).toBeVisible();
   await expect(page.locator(".kiosk-qr")).toBeVisible();
+
+  // The main page is also the way into everything else.
+  const more = page.getByRole("navigation", { name: /다른 기능/u });
+  for (const [name, href] of [
+    [/파일 보내기/u, "/send"],
+    [/파일 받기/u, "/receive"],
+    [/문서 스캔/u, "/scan"],
+    [/업무용 PC/u, "/workstation"],
+    [/이용 안내/u, "/start"],
+  ] as const) {
+    await expect(more.getByRole("link", { name })).toHaveAttribute("href", href);
+  }
+  await more.getByRole("link", { name: /파일 보내기/u }).click();
+  await expect(page).toHaveURL(/\/send$/u);
+});
+
+test("the station URL keeps the screen to the QR code alone", async ({ page }) => {
+  await page.goto("/kiosk");
+
+  await expect(page.locator(".kiosk-qr")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: /다른 기능/u })).toHaveCount(0);
 });
 
 test("shows three simple QR steps without network jargon", async ({ page }) => {
