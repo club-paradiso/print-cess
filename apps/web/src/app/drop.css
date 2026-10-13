@@ -594,9 +594,6 @@
   letter-spacing: 0.16em;
   text-align: center;
 }
-.pairing-entry--empty {
-  color: var(--pc-border-strong);
-}
 .pairing-back {
   min-height: 48px;
   border: 0;
@@ -987,5 +984,72 @@
   .drop-more-ways,
   .drop-selection__actions .pc-button {
     border: 1px solid CanvasText;
+  }
+}
+
+/* --- Receiving, 2026-10-13 pass ---------------------------------------------
+   Same checklists as the sending screens: the next digit is shown, the one
+   forward action stays on screen, rows only speak when they have news, and
+   the end of the visit is announced where the eye already is. */
+
+.pairing-entry--slots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 4px 0;
+  letter-spacing: 0;
+}
+.pairing-slot {
+  display: grid;
+  place-items: center;
+  width: clamp(64px, 20vw, 84px);
+  height: clamp(76px, 24vw, 96px);
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  font-size: clamp(40px, 13vw, 56px);
+  line-height: 1;
+}
+.pairing-slot.is-next {
+  border-color: var(--pc-brand);
+  box-shadow: 0 0 0 4px var(--pc-surface-brand);
+}
+.pairing-slot.is-filled {
+  border-color: var(--pc-brand-muted);
+  background: var(--pc-surface-brand-subtle);
+}
+
+/* A keypad key gives way under the finger. */
+.pairing-keypad button:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+/* Per-file actions: compact, so a list of files reads as a list. */
+.drop-receive-files .drop-file-list--actions .drop-file__actions > * {
+  min-width: 0;
+  min-height: 44px;
+  padding: 8px 14px;
+  font-size: 15px;
+}
+.drop-receive-files .drop-complete {
+  animation: drop-arrive var(--pc-duration-slow) var(--pc-ease-out);
+}
+.drop-receive-another {
+  justify-self: center;
+  min-height: 44px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pairing-keypad button:active:not(:disabled) {
+    transform: none;
+  }
+  .drop-receive-files .drop-complete {
+    animation: none;
+  }
+}
+@media (forced-colors: active) {
+  .pairing-slot.is-next {
+    border-width: 4px;
   }
 }
