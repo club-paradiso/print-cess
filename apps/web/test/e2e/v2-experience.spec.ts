@@ -399,7 +399,7 @@ test("the sender sees the other side's state above the code, and erasing comes l
   const status = ready.getByRole("status").first();
   await expect(status).toContainText("Waiting for the other phone");
   const order = await ready.evaluate((section) =>
-    [".drop-status", ".drop-qr", ".drop-link-actions", ".pairing-pick", ".drop-erase"].map(
+    [".drop-status", ".drop-qr", ".drop-link-actions", ".drop-more-ways", ".drop-erase"].map(
       (selector) => {
         const element = section.querySelector(selector);
         return element ? element.getBoundingClientRect().top : Number.NaN;
@@ -408,6 +408,9 @@ test("the sender sees the other side's state above the code, and erasing comes l
   );
   expect(order).toEqual([...order].sort((a, b) => a - b));
   expect(order.every(Number.isFinite)).toBe(true);
+  // The number-and-shape hand-off is one tap away, not gone.
+  await ready.locator(".drop-more-ways > summary").click();
+  await expect(ready.locator(".pairing-pick")).toBeVisible();
   await expectAccessible(page);
 });
 
