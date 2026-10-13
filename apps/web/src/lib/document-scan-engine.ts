@@ -145,7 +145,7 @@ export function analyzeCapturePixels(
       const tileY = Math.min(tileRows - 1, Math.floor((y / height) * tileRows));
       const tileIndex = tileY * tileColumns + tileX;
       tileSamples[tileIndex] = (tileSamples[tileIndex] ?? 0) + 1;
-      tileLuminance[tileIndex] += center;
+      tileLuminance[tileIndex] = (tileLuminance[tileIndex] ?? 0) + center;
       if (center >= 252) clipped[tileIndex] = (clipped[tileIndex] ?? 0) + 1;
 
       const laplacian =
