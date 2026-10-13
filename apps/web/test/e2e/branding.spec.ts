@@ -14,6 +14,27 @@ test("the root URL opens the shared display", async ({ page }) => {
     page.getByRole("heading", { name: /휴대전화 카메라로\s*QR코드를 비추세요/u }),
   ).toBeVisible();
   await expect(page.locator(".kiosk-qr")).toBeVisible();
+
+  // The main page is also the way into everything else.
+  const more = page.getByRole("navigation", { name: /다른 기능/u });
+  for (const [name, href] of [
+    [/파일 보내기/u, "/send"],
+    [/파일 받기/u, "/receive"],
+    [/문서 스캔/u, "/scan"],
+    [/업무용 PC/u, "/workstation"],
+    [/이용 안내/u, "/start"],
+  ] as const) {
+    await expect(more.getByRole("link", { name })).toHaveAttribute("href", href);
+  }
+  await more.getByRole("link", { name: /파일 보내기/u }).click();
+  await expect(page).toHaveURL(/\/send$/u);
+});
+
+test("the station URL keeps the screen to the QR code alone", async ({ page }) => {
+  await page.goto("/kiosk");
+
+  await expect(page.locator(".kiosk-qr")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: /다른 기능/u })).toHaveCount(0);
 });
 
 test("shows three simple QR steps without network jargon", async ({ page }) => {
@@ -26,7 +47,7 @@ test("shows three simple QR steps without network jargon", async ({ page }) => {
   const steps = page.getByRole("list", { name: "인쇄하는 방법" }).getByRole("listitem");
   await expect(steps).toHaveCount(3);
   await expect(steps.nth(0)).toContainText("QR코드 비추기");
-  await expect(steps.nth(0)).toContainText("화면에 나타나는 링크를 누르세요");
+  await expect(steps.nth(0)).toContainText("휴대전화에 뜨는 링크를 누르세요");
   await expect(steps.nth(1)).toContainText("휴대전화에서 파일 고르기");
   await expect(steps.nth(2)).toContainText("프린터에서 종이 받기");
   await expect(page.getByText("사진을 찍을 필요는 없습니다", { exact: false })).toBeVisible();
@@ -109,5 +130,7 @@ test("fits the whole waiting screen, QR code included, on one landscape screen",
 test("shows the two-minute QR renewal window", async ({ page }) => {
   await page.goto("/kiosk");
 
-  await expect(page.locator(".kiosk-countdown")).toHaveText(/QR코드 변경까지 (?:02:00|01:5\d)/u);
+  await expect(page.locator(".kiosk-countdown")).toHaveText(
+    /새 QR코드로 바뀌기까지 (?:02:00|01:5\d)/u,
+  );
 });

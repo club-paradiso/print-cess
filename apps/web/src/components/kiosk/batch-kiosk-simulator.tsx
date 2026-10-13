@@ -97,9 +97,12 @@ async function prepareSession(): Promise<PreparedSession> {
 export function BatchKioskSimulator({
   automaticPrinting = false,
   sound = true,
+  services = false,
 }: {
   automaticPrinting?: boolean;
   sound?: boolean;
+  /** Show links to the other features (the main page only). */
+  services?: boolean;
 }) {
   const [session, setSession] = useState<RegisteredSession>();
   const [status, setStatus] = useState<KioskStatus>("preparing");
@@ -257,6 +260,7 @@ export function BatchKioskSimulator({
       remaining={remaining}
       lifetime={sessionLifetime}
       maxFiles={MAX_PRINT_BUNDLE_FILES}
+      services={services}
     />
   );
 }

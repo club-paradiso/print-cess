@@ -121,7 +121,6 @@ describe("translations", () => {
       "qrScanDenied",
       "qrScanUnsupported",
       "qrScanInvalid",
-      "kioskStartHere",
     ];
     for (const locale of SUPPORTED_LOCALES) {
       for (const key of keys) expectTranslated(locale, key);

@@ -1,9 +1,13 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import Link from "next/link";
 import {
+  ArrowDownToLine,
+  Building2,
   Camera,
   CheckCircle2,
+  CircleHelp,
   Download,
   FileCheck2,
   FileSearch,
@@ -13,6 +17,7 @@ import {
   PrinterX,
   RotateCcw,
   ScanLine,
+  Send,
   Smartphone,
   UploadCloud,
   UserX,
@@ -55,6 +60,19 @@ const SPOTLIGHT_LOCALES: readonly SupportedLocale[] = SUPPORTED_LOCALES.filter(
 );
 const SPOTLIGHT_INTERVAL_MS = 4500;
 
+/**
+ * Everything else the service does, for the main page. Printing starts at the
+ * QR code; these are the other doors, so nobody who came to send a file or
+ * scan a page has to know another address.
+ */
+const SERVICES: { href: string; korean: string; english: string; icon: typeof Send }[] = [
+  { href: "/send", korean: "파일 보내기", english: "Send files", icon: Send },
+  { href: "/receive", korean: "파일 받기", english: "Receive files", icon: ArrowDownToLine },
+  { href: "/scan", korean: "문서 스캔", english: "Scan a document", icon: ScanLine },
+  { href: "/workstation", korean: "업무용 PC", english: "Work computer", icon: Building2 },
+  { href: "/start", korean: "이용 안내", english: "How it works", icon: CircleHelp },
+];
+
 /** The waiting screen: one instruction, the whole visit, and the code. */
 export function KioskWaitingScreen({
   status,
@@ -62,6 +80,7 @@ export function KioskWaitingScreen({
   remaining,
   lifetime: sessionLifetime,
   maxFiles,
+  services = false,
 }: {
   status: KioskStatus;
   session?: { qrUrl: string; qrImage: string } | undefined;
@@ -70,6 +89,12 @@ export function KioskWaitingScreen({
   lifetime: number;
   /** How many files one visit may print; omitted for the one-file kiosk. */
   maxFiles?: number;
+  /**
+   * Show the links to the service's other features. On for the main page;
+   * off for `/kiosk`, the station URL, where a tap away would leave the
+   * printer's screen without its QR code.
+   */
+  services?: boolean;
 }) {
   const [spotlightIndex, setSpotlightIndex] = useState(0);
   useEffect(() => {
@@ -88,23 +113,43 @@ export function KioskWaitingScreen({
     <main className="kiosk-shell kiosk-shell--waiting" lang="ko" data-kiosk-state="waiting">
       <header className="kiosk-header">
         <Wordmark />
-        <p className="kiosk-availability" aria-live="polite">
-          <span className={`kiosk-availability__dot kiosk-availability__dot--${status}`} />
-          {statusLabel(status)}
-        </p>
+        {/* Only while the code is still being made. Once it is on screen the
+            code itself says the display is ready; a pill reading "available"
+            only made visitors wonder what was available. */}
+        {status === "preparing" ? (
+          <p className="kiosk-availability" aria-live="polite">
+            <span className="kiosk-availability__dot" />
+            QR코드를 준비하고 있어요
+          </p>
+        ) : null}
+        {services ? (
+          <nav className="kiosk-services" aria-label="다른 기능 · More">
+            <ul>
+              {SERVICES.map(({ href, korean, english, icon: Icon }) => (
+                <li key={href}>
+                  <Link href={href}>
+                    <Icon aria-hidden="true" />
+                    <span>
+                      <strong>{korean}</strong>
+                      <small lang="en">{english}</small>
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
       </header>
 
       <div className="kiosk-layout">
         <section className="kiosk-instructions" aria-labelledby="kiosk-title">
-          {/* The same Beacon the phone's home page shows. A visitor matches the
-              tile on their phone to this one, so it stays plain and well clear
-              of the QR code and its quiet zone. */}
+          {/* The same Beacon the visitor's guide (/start) shows, so somebody
+              told to "look for the screen with this mark" can match it. It
+              carries no words of its own: a label like "Start printing here"
+              read as a button to press, and the headline below already says
+              what to do. */}
           <div className="kiosk-beacon">
             <Beacon size="sm" />
-            <p>
-              <strong>{translate("ko", "kioskStartHere")}</strong>
-              <small lang="en">{translate("en", "kioskStartHere")}</small>
-            </p>
           </div>
 
           <h1 id="kiosk-title" className="kiosk-title">
@@ -144,8 +189,8 @@ export function KioskWaitingScreen({
               <div>
                 <strong>QR코드 비추기</strong>
                 <small>
-                  화면에 나타나는 링크를 누르세요
-                  <span lang="en"> · Tap the link that appears</span>
+                  휴대전화에 뜨는 링크를 누르세요
+                  <span lang="en"> · Tap the link on your phone</span>
                 </small>
               </div>
             </li>
@@ -226,7 +271,7 @@ export function KioskWaitingScreen({
               style={{ "--kiosk-qr-progress": qrProgress } as CSSProperties}
             />
             <span className="kiosk-countdown">
-              QR코드 변경까지 <b>{formatTime(remaining)}</b>
+              새 QR코드로 바뀌기까지 <b>{formatTime(remaining)}</b>
             </span>
           </div>
         </section>
@@ -236,7 +281,7 @@ export function KioskWaitingScreen({
         <p>
           <LockKeyhole aria-hidden="true" />
           <span>
-            인쇄가 끝나면 <strong>업로드 파일 자동 삭제</strong>
+            인쇄가 끝나면 <strong>보낸 파일은 바로 삭제</strong>
           </span>
         </p>
         <p>
@@ -253,7 +298,10 @@ export function KioskWaitingScreen({
         </p>
         <p className="kiosk-languages">
           <Languages aria-hidden="true" />
-          <span>{SUPPORTED_LOCALES.length}개 언어 · languages</span>
+          <span>
+            휴대전화 화면은 {SUPPORTED_LOCALES.length}개 언어 지원 ·{" "}
+            <span lang="en">{SUPPORTED_LOCALES.length} languages on your phone</span>
+          </span>
         </p>
       </footer>
     </main>
@@ -314,7 +362,7 @@ function connectedCopy(status: KioskStatus): {
   return {
     headline: "휴대전화에서 계속하세요",
     english: "Continue on your phone",
-    hint: "인쇄할 파일을 고르고 [인쇄하기]를 누르세요",
+    hint: "인쇄할 파일을 고르고 휴대전화의 인쇄 버튼을 누르세요",
   };
 }
 
@@ -384,7 +432,7 @@ export function ConnectedScreen({ status, remaining }: { status: KioskStatus; re
               copy is for a screen reader, which hears it as it changes. */}
           <strong className="drop-visually-hidden">{statusLabel(status)}</strong>
           <span className="kiosk-countdown">
-            작업 만료까지 <b>{formatTime(remaining)}</b>
+            남은 시간 <b>{formatTime(remaining)}</b>
           </span>
         </div>
       </div>
@@ -427,10 +475,13 @@ export function CompletedScreen({
         )}
       </p>
       <p className="kiosk-result__count">
-        선택한 파일 {artifacts.length}개를 처리했습니다
+        {automaticPrinting
+          ? `파일 ${artifacts.length}개를 프린터로 보냈어요`
+          : `파일 ${artifacts.length}개를 인쇄할 준비를 했어요`}
         <span lang="en">
           {" "}
-          · Processed {artifacts.length} selected file{artifacts.length === 1 ? "" : "s"}.
+          · {artifacts.length} file{artifacts.length === 1 ? "" : "s"}{" "}
+          {automaticPrinting ? "sent to the printer" : "ready to print"}
         </span>
       </p>
       <div className="kiosk-result__actions">
@@ -467,7 +518,7 @@ export function CompletedScreen({
         />
         <span className="kiosk-result__reset">
           <LockKeyhole aria-hidden="true" />
-          <span>서버에 보관된 파일은 삭제됐습니다 · {remaining}초 후 새 QR코드</span>
+          <span>보내신 파일은 모두 지웠어요 · {remaining}초 후 새 QR코드</span>
         </span>
       </div>
     </main>
@@ -510,12 +561,12 @@ export function UnavailableScreen({ onReset }: { onReset: () => void }) {
         Printing is unavailable right now. Please try again in a moment.
       </p>
       <button type="button" onClick={onReset}>
-        <RotateCcw aria-hidden="true" />새 QR코드 만들기
+        <RotateCcw aria-hidden="true" />
+        다시 시도하기
       </button>
       <div className="kiosk-result__footer">
         <span className="kiosk-result__reset">
-          <LockKeyhole aria-hidden="true" />
-          <span>보내신 파일은 삭제됐습니다 · {retryIn}초 후 자동으로 다시 시도해요</span>
+          <span>{retryIn}초 후 자동으로 다시 시도해요</span>
         </span>
       </div>
     </main>
@@ -525,7 +576,7 @@ export function UnavailableScreen({ onReset }: { onReset: () => void }) {
 export function statusLabel(status: KioskStatus): string {
   return {
     preparing: "준비 중",
-    waiting: "사용할 수 있어요",
+    waiting: "QR코드를 비춰 주세요",
     claimed: "휴대전화가 연결됐어요",
     uploading: "파일을 받고 있어요",
     uploaded: "파일을 받았어요",
