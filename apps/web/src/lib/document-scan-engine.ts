@@ -176,13 +176,17 @@ export function analyzeCapturePixels(
     .filter((value) => value > 0)
     .sort((a, b) => a - b);
   const medianBrightness = tileBrightness[Math.floor(tileBrightness.length / 2)] ?? 0;
+  const tileClipping = Array.from(tileSamples, (count, index) =>
+    count ? clipped[index]! / count : 0,
+  ).sort((a, b) => a - b);
+  const medianClipping = tileClipping[Math.floor(tileClipping.length / 2)] ?? 0;
   let glare = 0;
   for (let index = 0; index < clipped.length; index += 1) {
     const count = tileSamples[index]!;
     if (count === 0) continue;
     const ratio = clipped[index]! / count;
     const tileMean = tileLuminance[index]! / count;
-    if (ratio > 0.72 && medianBrightness < 225 && tileMean > medianBrightness + 24) {
+    if (ratio > 0.72 && ratio > medianClipping + 0.42 && tileMean > medianBrightness + 24) {
       glare = Math.max(glare, ratio);
     }
   }
