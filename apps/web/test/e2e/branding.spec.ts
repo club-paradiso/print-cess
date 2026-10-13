@@ -7,6 +7,15 @@ test("uses the Club Paradiso service name", async ({ page }) => {
   await expect(page.getByLabel("Print-cess by Club Paradiso")).toBeVisible();
 });
 
+test("the root URL opens the shared display", async ({ page }) => {
+  await page.goto("/");
+
+  await expect(
+    page.getByRole("heading", { name: /휴대전화 카메라로\s*QR코드를 비추세요/u }),
+  ).toBeVisible();
+  await expect(page.locator(".kiosk-qr")).toBeVisible();
+});
+
 test("shows three simple QR steps without network jargon", async ({ page }) => {
   await page.goto("/kiosk");
 

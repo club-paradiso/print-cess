@@ -42,7 +42,7 @@ cp .env.example apps/web/.env.local
 pnpm dev
 ```
 
-Open `http://localhost:3000/kiosk`, scan the generated QR with a phone on the same reachable
+Open `http://localhost:3000/` (the shared display; `/kiosk` is the same screen), scan the generated QR with a phone on the same reachable
 development URL, or open its mobile link in another browser tab. Local mode stores ciphertext
 only under an application-owned development directory. Open `http://localhost:3000/workstation`
 to exercise the managed-workstation entry and local browser capability diagnostics.

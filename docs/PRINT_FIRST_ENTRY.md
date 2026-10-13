@@ -151,6 +151,13 @@ line of text after it, no FAQ and no accordions.
 
 ## Kiosk display
 
+Since 2026-10-13 the root URL `/` opens the shared display itself (the same screen and
+`?printing=auto` / `?sound=off` switches as `/kiosk`), so a station can simply be pointed at the
+domain. The visitor's guide described in the sections above moved to `/start`, and every "home"
+link (the header name, the 404 page, the workstation page and the campaign page) now points
+there. When the browser kiosk is switched off in Production, `/` redirects to `/start` instead of
+returning 404.
+
 `/kiosk` (and `/demo/kiosk`, which shares its screens through
 `apps/web/src/components/kiosk/kiosk-screens.tsx`) is the primary screen of the service, so it was
 redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
