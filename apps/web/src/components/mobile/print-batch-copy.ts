@@ -18,6 +18,17 @@ export type PrintBatchCopy = {
   helpPreview: string;
   /** Shown only for a PDF of more than one page, so no singular is needed. */
   pages: string;
+  /** What lives behind each picker button, so the visitor knows which to tap. */
+  photosHint: string;
+  filesHint: string;
+  /** "{{time}}" is the claimed session's remaining time, as m:ss. */
+  timeLeft: string;
+  /** The three things that happen after the print button, as a checklist. */
+  stepPrepare: string;
+  stepSend: string;
+  stepPrint: string;
+  printMore: string;
+  startOver: string;
 };
 
 const COPY: Record<SupportedLocale, PrintBatchCopy> = {
@@ -41,6 +52,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Check the list. The files print once each in this order, then tap the print button.",
     pages: "{{count}} pages",
+    photosHint: "Gallery and camera photos",
+    filesHint: "PDFs and files from chat or email",
+    timeLeft: "Tap print within {{time}}",
+    stepPrepare: "Preparing",
+    stepSend: "Sending",
+    stepPrint: "Printing starts",
+    printMore: "To print more, scan the new QR code on the big screen.",
+    startOver: "Back to start",
   },
   ko: {
     chooseFiles: "인쇄할 파일을 고르세요",
@@ -60,6 +79,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "사진이나 문서를 하나 또는 여러 개 고르세요. 한 번에 10개까지 인쇄할 수 있어요.",
     helpPreview: "목록과 순서를 확인하세요. 한 부씩 인쇄돼요. 맞으면 인쇄 버튼을 누르세요.",
     pages: "{{count}}페이지",
+    photosHint: "갤러리·카메라로 찍은 사진",
+    filesHint: "PDF, 카톡·메일로 받은 파일",
+    timeLeft: "{{time}} 안에 인쇄 버튼을 눌러 주세요",
+    stepPrepare: "준비",
+    stepSend: "보내기",
+    stepPrint: "인쇄 시작",
+    printMore: "더 인쇄하려면 큰 화면의 새 QR코드를 찍으세요.",
+    startOver: "처음 화면으로",
   },
   "zh-CN": {
     chooseFiles: "选择要打印的文件",
@@ -78,6 +105,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "请选择一个或多个照片或文档。一次最多可打印10个文件。",
     helpPreview: "请确认列表和顺序。每个文件打印1份，然后点击打印按钮。",
     pages: "{{count}}页",
+    photosHint: "相册和相机照片",
+    filesHint: "PDF及聊天、邮件收到的文件",
+    timeLeft: "请在{{time}}内点击打印",
+    stepPrepare: "准备",
+    stepSend: "发送",
+    stepPrint: "开始打印",
+    printMore: "如需继续打印，请扫描大屏幕上的新二维码。",
+    startOver: "返回首页",
   },
   id: {
     chooseFiles: "Pilih file yang akan dicetak",
@@ -98,6 +133,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Periksa daftar dan urutannya. Setiap file dicetak sekali, lalu ketuk tombol cetak.",
     pages: "{{count}} halaman",
+    photosHint: "Foto galeri dan kamera",
+    filesHint: "PDF dan file dari chat atau email",
+    timeLeft: "Ketuk cetak dalam {{time}}",
+    stepPrepare: "Menyiapkan",
+    stepSend: "Mengirim",
+    stepPrint: "Mulai mencetak",
+    printMore: "Untuk mencetak lagi, pindai kode QR baru di layar besar.",
+    startOver: "Kembali ke awal",
   },
   fil: {
     chooseFiles: "Piliin ang mga file na ipi-print",
@@ -119,6 +162,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Suriin ang listahan at ayos. Tig-iisang kopya ang ipi-print, saka pindutin ang print.",
     pages: "{{count}} pahina",
+    photosHint: "Mga larawan sa gallery at camera",
+    filesHint: "PDF at file mula sa chat o email",
+    timeLeft: "Pindutin ang print sa loob ng {{time}}",
+    stepPrepare: "Inihahanda",
+    stepSend: "Ipinapadala",
+    stepPrint: "Magsisimulang mag-print",
+    printMore: "Para mag-print pa, i-scan ang bagong QR code sa malaking screen.",
+    startOver: "Bumalik sa simula",
   },
   vi: {
     chooseFiles: "Chọn các tệp cần in",
@@ -137,6 +188,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "Chọn một hoặc nhiều ảnh hay tài liệu. Mỗi lần in tối đa 10 tệp.",
     helpPreview: "Kiểm tra danh sách và thứ tự. Mỗi tệp in 1 bản, sau đó nhấn nút in.",
     pages: "{{count}} trang",
+    photosHint: "Ảnh trong thư viện và máy ảnh",
+    filesHint: "PDF và tệp nhận qua chat hoặc email",
+    timeLeft: "Nhấn in trong vòng {{time}}",
+    stepPrepare: "Chuẩn bị",
+    stepSend: "Gửi",
+    stepPrint: "Bắt đầu in",
+    printMore: "Để in thêm, hãy quét mã QR mới trên màn hình lớn.",
+    startOver: "Về trang đầu",
   },
   th: {
     chooseFiles: "เลือกไฟล์ที่จะพิมพ์",
@@ -155,6 +214,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "เลือกภาพหรือเอกสารหนึ่งไฟล์หรือหลายไฟล์ได้ สูงสุด 10 ไฟล์ต่อการพิมพ์หนึ่งครั้ง",
     helpPreview: "ตรวจสอบรายการและลำดับ แต่ละไฟล์พิมพ์ 1 ชุด แล้วกดปุ่มพิมพ์",
     pages: "{{count}} หน้า",
+    photosHint: "รูปในแกลเลอรีและกล้อง",
+    filesHint: "PDF และไฟล์จากแชทหรืออีเมล",
+    timeLeft: "แตะพิมพ์ภายใน {{time}}",
+    stepPrepare: "เตรียม",
+    stepSend: "ส่ง",
+    stepPrint: "เริ่มพิมพ์",
+    printMore: "หากต้องการพิมพ์เพิ่ม ให้สแกนคิวอาร์โค้ดใหม่บนจอใหญ่",
+    startOver: "กลับไปหน้าแรก",
   },
   ne: {
     chooseFiles: "प्रिन्ट गर्ने फाइलहरू छान्नुहोस्",
@@ -174,6 +241,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "सूची र क्रम जाँच्नुहोस्। प्रत्येक फाइल १ पटक प्रिन्ट हुन्छ, त्यसपछि प्रिन्ट बटन थिच्नुहोस्।",
     pages: "{{count}} पृष्ठ",
+    photosHint: "ग्यालेरी र क्यामेराका फोटो",
+    filesHint: "PDF र च्याट वा इमेलबाट आएका फाइल",
+    timeLeft: "{{time}} भित्र प्रिन्ट थिच्नुहोस्",
+    stepPrepare: "तयारी",
+    stepSend: "पठाउँदै",
+    stepPrint: "प्रिन्ट सुरु",
+    printMore: "थप प्रिन्ट गर्न ठूलो स्क्रिनको नयाँ QR कोड स्क्यान गर्नुहोस्।",
+    startOver: "सुरुमा फर्कनुहोस्",
   },
   km: {
     chooseFiles: "ជ្រើសឯកសារដែលត្រូវបោះពុម្ព",
@@ -192,6 +267,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "ជ្រើសរូប ឬឯកសារមួយ ឬច្រើន។ ការបោះពុម្ពមួយដងអតិបរមា 10 ឯកសារ។",
     helpPreview: "ពិនិត្យបញ្ជី និងលំដាប់។ ឯកសារនីមួយៗបោះពុម្ព 1 ច្បាប់ រួចចុចប៊ូតុងបោះពុម្ព។",
     pages: "{{count}} ទំព័រ",
+    photosHint: "រូបថតក្នុងវិចិត្រសាល និងកាមេរ៉ា",
+    filesHint: "PDF និងឯកសារពីការជជែក ឬអ៊ីមែល",
+    timeLeft: "ចុចបោះពុម្ពក្នុងរយៈពេល {{time}}",
+    stepPrepare: "កំពុងរៀបចំ",
+    stepSend: "កំពុងផ្ញើ",
+    stepPrint: "ចាប់ផ្តើមបោះពុម្ព",
+    printMore: "ដើម្បីបោះពុម្ពបន្ថែម សូមស្កេនកូដ QR ថ្មីនៅលើអេក្រង់ធំ។",
+    startOver: "ត្រឡប់ទៅដើម",
   },
   ar: {
     chooseFiles: "اختر الملفات للطباعة",
@@ -210,6 +293,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpFile: "اختر صورة أو مستندًا واحدًا أو عدة ملفات. الحد الأقصى 10 ملفات لكل مهمة طباعة.",
     helpPreview: "تحقق من القائمة والترتيب. تُطبع نسخة واحدة من كل ملف، ثم اضغط زر الطباعة.",
     pages: "عدد الصفحات: {{count}}",
+    photosHint: "صور المعرض والكاميرا",
+    filesHint: "ملفات PDF والملفات من الدردشة أو البريد",
+    timeLeft: "اضغط على الطباعة خلال {{time}}",
+    stepPrepare: "التحضير",
+    stepSend: "الإرسال",
+    stepPrint: "بدء الطباعة",
+    printMore: "للطباعة مرة أخرى، امسح رمز QR الجديد على الشاشة الكبيرة.",
+    startOver: "العودة إلى البداية",
   },
   ru: {
     chooseFiles: "Выберите файлы для печати",
@@ -230,6 +321,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Проверьте список и порядок. Каждый файл печатается один раз, затем нажмите кнопку печати.",
     pages: "Страниц: {{count}}",
+    photosHint: "Фото из галереи и камеры",
+    filesHint: "PDF и файлы из чатов или почты",
+    timeLeft: "Нажмите «Печать» в течение {{time}}",
+    stepPrepare: "Подготовка",
+    stepSend: "Отправка",
+    stepPrint: "Начало печати",
+    printMore: "Чтобы напечатать ещё, отсканируйте новый QR-код на большом экране.",
+    startOver: "На главную",
   },
   mn: {
     chooseFiles: "Хэвлэх файлуудаа сонгоно уу",
@@ -250,6 +349,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Жагсаалт ба дарааллыг шалгана уу. Файл бүр 1 удаа хэвлэгдэнэ, дараа нь хэвлэх товчийг дарна уу.",
     pages: "{{count}} хуудас",
+    photosHint: "Галерей болон камерын зураг",
+    filesHint: "PDF болон чат, имэйлээр ирсэн файл",
+    timeLeft: "{{time}} дотор хэвлэх товчийг дарна уу",
+    stepPrepare: "Бэлтгэж байна",
+    stepSend: "Илгээж байна",
+    stepPrint: "Хэвлэж эхэлнэ",
+    printMore: "Дахин хэвлэх бол том дэлгэц дээрх шинэ QR кодыг уншуулна уу.",
+    startOver: "Эхлэл рүү буцах",
   },
   uk: {
     chooseFiles: "Виберіть файли для друку",
@@ -271,6 +378,14 @@ const COPY: Record<SupportedLocale, PrintBatchCopy> = {
     helpPreview:
       "Перевірте список і порядок. Кожен файл друкується один раз, потім натисніть кнопку друку.",
     pages: "Сторінок: {{count}}",
+    photosHint: "Фото з галереї та камери",
+    filesHint: "PDF і файли з чатів або пошти",
+    timeLeft: "Натисніть «Друк» протягом {{time}}",
+    stepPrepare: "Підготовка",
+    stepSend: "Надсилання",
+    stepPrint: "Початок друку",
+    printMore: "Щоб надрукувати ще, відскануйте новий QR-код на великому екрані.",
+    startOver: "На початок",
   },
 };
 

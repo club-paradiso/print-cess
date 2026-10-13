@@ -5,6 +5,7 @@ import {
   Ban,
   CheckCircle2,
   CircleQuestionMark,
+  Clock3,
   FileCheck2,
   Files,
   Image as ImageIcon,
@@ -13,6 +14,7 @@ import {
   Mail,
   MessageCircle,
   Printer,
+  RotateCcw,
   ScanLine,
   Send,
   TriangleAlert,
@@ -178,6 +180,7 @@ export function BatchMobileFlow({
   const [supportsHwp, setSupportsHwp] = useState(false);
   const [reminderStage, setReminderStage] = useState<Stage>();
   const [helpOpen, setHelpOpen] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   const photoInput = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
   const watchAbort = useRef<AbortController>(null);
@@ -228,6 +231,14 @@ export function BatchMobileFlow({
   }, [stage]);
 
   useEffect(() => () => watchAbort.current?.abort(), []);
+
+  // A ticking clock only while the visitor is choosing: that is the part of the
+  // visit they control, and the code runs out if they wander off mid-choice.
+  useEffect(() => {
+    if (stage !== "file" && stage !== "preview") return;
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [stage]);
 
   useEffect(() => {
     if (stage !== "file") return;
@@ -427,6 +438,14 @@ export function BatchMobileFlow({
   );
   const single = documents.length === 1;
   const reminder = helpForStage(stage, text, copy);
+  const secondsLeft = claimed ? Math.max(0, Math.ceil((claimed.expiresAt - now) / 1000)) : 0;
+  const timeLeft =
+    claimed && (stage === "file" || stage === "preview") ? (
+      <p className={secondsLeft <= 30 ? "mobile-time-left is-urgent" : "mobile-time-left"}>
+        <Clock3 aria-hidden="true" />
+        {copy.timeLeft.replace("{{time}}", formatClock(secondsLeft))}
+      </p>
+    ) : null;
 
   return (
     <ScreenShell>
@@ -485,6 +504,7 @@ export function BatchMobileFlow({
         <section className="mobile-step">
           <h1>{copy.chooseFiles}</h1>
           <p>{rules}</p>
+          {timeLeft}
           <input
             ref={photoInput}
             data-testid="photo-input"
@@ -525,12 +545,14 @@ export function BatchMobileFlow({
                 id: "photos",
                 icon: <ImageIcon />,
                 label: text("locationPhotos"),
+                hint: copy.photosHint,
                 onPick: () => photoInput.current?.click(),
               },
               {
                 id: "files",
                 icon: <Files />,
                 label: text("locationFiles"),
+                hint: copy.filesHint,
                 onPick: () => fileInput.current?.click(),
               },
             ]}
@@ -545,6 +567,7 @@ export function BatchMobileFlow({
         <section className="mobile-step mobile-step--preview">
           <h1>{single ? text("checkDocument") : copy.checkFiles}</h1>
           <p>{single ? text("previewHelp") : copy.previewHelp}</p>
+          {timeLeft}
           {single && documents[0] ? (
             <>
               <DocumentPreview
@@ -602,30 +625,43 @@ export function BatchMobileFlow({
               <LockKeyhole aria-hidden="true" /> {text("privacySummary")}
             </p>
           </div>
-          <PrimaryButton onClick={() => void print()}>
-            <Printer aria-hidden="true" />
-            {single ? text("printOneCopy") : formatBatchCopy(copy.printFiles, documents.length)}
-          </PrimaryButton>
-          <TertiaryButton
-            className="mobile-change-selection"
-            onClick={() => {
-              clearDocuments();
-              setStage("file");
-            }}
-          >
-            {single ? text("chooseAnother") : copy.changeSelection}
-          </TertiaryButton>
+          {/* The one forward action stays pinned to the bottom of the screen: a
+              tall preview used to push it below the fold, and visitors scrolled
+              looking for a button they could not see. */}
+          <div className="mobile-actions">
+            <PrimaryButton onClick={() => void print()}>
+              <Printer aria-hidden="true" />
+              {single ? text("printOneCopy") : formatBatchCopy(copy.printFiles, documents.length)}
+            </PrimaryButton>
+            <TertiaryButton
+              className="mobile-change-selection"
+              onClick={() => {
+                clearDocuments();
+                setStage("file");
+              }}
+            >
+              {single ? text("chooseAnother") : copy.changeSelection}
+            </TertiaryButton>
+          </div>
         </section>
       ) : null}
 
       {stage === "transfer" ? (
-        <ProgressState phase="sending" text={text(progressKey)} note={text("keepPageOpen")} />
+        <ProgressState
+          phase="sending"
+          text={text(progressKey)}
+          note={text("keepPageOpen")}
+          steps={[copy.stepPrepare, copy.stepSend, copy.stepPrint]}
+          current={progressKey === "encrypting" ? 0 : 1}
+        />
       ) : null}
       {stage === "progress" ? (
         <ProgressState
           phase={watching.kind === "reconnecting" ? "reconnecting" : "printing"}
           text={text(watching.kind === "reconnecting" ? "reconnecting" : progressKey)}
           note={text(watching.kind === "reconnecting" ? "kioskMayStillBePrinting" : "keepPageOpen")}
+          steps={[copy.stepPrepare, copy.stepSend, copy.stepPrint]}
+          current={2}
         />
       ) : null}
       {stage === "complete" ? (
@@ -633,6 +669,7 @@ export function BatchMobileFlow({
           icon="success"
           title={text("completed")}
           body={text("collectOutput")}
+          note={copy.printMore}
           action={text("closePage")}
           onAction={shutdownPage}
         />
@@ -654,6 +691,7 @@ export function BatchMobileFlow({
           icon={errorKey === "printOutcomeUnknown" ? "info" : "error"}
           title={text(errorKey)}
           body={errorKey === "printOutcomeUnknown" ? text("printOutcomeUnknownBody") : ""}
+          link={{ href: "/start", label: copy.startOver }}
         />
       ) : null}
       <HelpSheet
@@ -827,13 +865,18 @@ function ProgressState({
   phase,
   text,
   note,
+  steps,
+  current,
 }: {
   phase: "sending" | "printing" | "reconnecting";
   text: string;
   note: string;
+  /** What happens after the print button, so the wait has visible stages. */
+  steps: readonly string[];
+  current: number;
 }) {
   return (
-    <section className="mobile-step mobile-step--single" aria-live="polite">
+    <section className="mobile-step mobile-step--single mobile-step--progress" aria-live="polite">
       {phase === "reconnecting" ? (
         <StatusIcon tone="warning">
           <WifiOff size={32} aria-hidden="true" />
@@ -843,6 +886,19 @@ function ProgressState({
       )}
       <h1>{text}</h1>
       {note ? <p>{note}</p> : null}
+      {/* The stage in words and a mark as well as colour; the heading above
+          already announces it, so the list itself stays quiet. */}
+      <ol className="mobile-progress-list" aria-hidden="true">
+        {steps.map((step, index) => (
+          <li
+            key={step}
+            className={index < current ? "is-done" : index === current ? "is-active" : undefined}
+          >
+            {index < current ? <CheckCircle2 /> : <span>{index + 1}</span>}
+            {step}
+          </li>
+        ))}
+      </ol>
     </section>
   );
 }
@@ -851,14 +907,20 @@ function SingleAction({
   icon = "info",
   title,
   body,
+  note,
   action,
   onAction,
+  link,
 }: {
   icon?: "info" | "success" | "error";
   title: string;
   body: string;
+  /** A quieter second line: what to do next time. */
+  note?: string;
   action?: string;
   onAction?: () => void;
+  /** A way out that is a place, not a command. */
+  link?: { href: string; label: string };
 }) {
   const Icon =
     icon === "success" ? CheckCircle2 : icon === "error" ? TriangleAlert : CircleQuestionMark;
@@ -872,10 +934,16 @@ function SingleAction({
       </StatusIcon>
       <h1>{heading}</h1>
       {instruction ? <p>{instruction}</p> : null}
+      {note ? <p className="mobile-step__note">{note}</p> : null}
       {action && onAction ? (
         <PrimaryButton onClick={onAction}>
           <X aria-hidden="true" /> {action}
         </PrimaryButton>
+      ) : null}
+      {link ? (
+        <a className="pc-button pc-button--secondary mobile-start-over" href={link.href}>
+          <RotateCcw aria-hidden="true" /> {link.label}
+        </a>
       ) : null}
     </section>
   );
@@ -914,3 +982,7 @@ function documentAccept(supportsHwp: boolean, supportsHwpx: boolean): string {
 }
 
 class BatchSelectionError extends Error {}
+
+function formatClock(seconds: number): string {
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
