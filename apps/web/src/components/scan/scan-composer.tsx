@@ -480,12 +480,9 @@ export function ScanComposer({
 
       {/* Once there is a page, making the PDF is the step forward and adding
           another page is the quieter alternative; before that, the camera is
-          the only way in. One primary action at a time. */}
-      {pages.length > 0 ? (
-        <PrimaryButton className="scan-make-pdf" onClick={() => void makePdf()} disabled={busy}>
-          <ScanLine aria-hidden="true" /> {busy ? copy.making : copy.makePdf}
-        </PrimaryButton>
-      ) : null}
+          the only way in. One primary action at a time. Adding comes first
+          because it happens first; making the PDF is pinned to the bottom of
+          the screen so a long run of pages never pushes it out of reach. */}
       <div
         className={
           pages.length > 0
@@ -525,6 +522,13 @@ export function ScanComposer({
           <Images aria-hidden="true" /> {copy.gallery}
         </SecondaryButton>
       </div>
+      {pages.length > 0 ? (
+        <div className="mobile-actions">
+          <PrimaryButton className="scan-make-pdf" onClick={() => void makePdf()} disabled={busy}>
+            <ScanLine aria-hidden="true" /> {busy ? copy.making : copy.makePdf}
+          </PrimaryButton>
+        </div>
+      ) : null}
       {editingPage ? (
         <DocumentCropEditor
           locale={locale}
