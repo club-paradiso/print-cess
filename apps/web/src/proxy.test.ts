@@ -41,9 +41,28 @@ describe("Content Security Policy", () => {
 
     expect(policy).toContain("https://cdn.jsdelivr.net");
     expect(policy).toContain("https://tessdata.projectnaptha.com");
-    expect(policy).toContain("worker-src 'self' blob: https://cdn.jsdelivr.net");
+    expect(policy).toContain(
+      "worker-src 'self' blob: https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js",
+    );
     expect(policy).not.toContain("worker-src *");
     expect(policy).not.toContain("connect-src *");
+  });
+
+  it("allows the exact CDN packages the app loads, not the whole CDN host", () => {
+    const policy = buildContentSecurityPolicy("test-nonce", false, env());
+    const directive = (name: string) =>
+      policy
+        .split("; ")
+        .find((part) => part.startsWith(`${name} `))!
+        .split(" ")
+        .slice(1);
+
+    for (const name of ["script-src", "worker-src"]) {
+      const sources = directive(name);
+      expect(sources).not.toContain("https://cdn.jsdelivr.net");
+      expect(sources).toContain("https://cdn.jsdelivr.net/npm/tesseract.js@7.0.0/");
+      expect(sources).toContain("https://cdn.jsdelivr.net/npm/tesseract.js-core@7.0.0/");
+    }
   });
 
   it("admits the configured S3 endpoint so the browser can reach it", () => {
