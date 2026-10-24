@@ -30,6 +30,15 @@ It does three things:
 | **Share** | A file goes from one phone to another, end-to-end encrypted. | `/send` and `/receive`                     |
 | **Scan**  | Paper becomes a PDF on the phone, ready to share or print.   | `/scan`                                    |
 
+<p align="center">
+  <img src="docs/assets/screenshots/kiosk.png" alt="The kiosk screen beside the printer, asking visitors to point their phone camera at a QR code" width="640" />
+</p>
+<p align="center">
+  <img src="docs/assets/screenshots/home.png" alt="Home screen on a phone" width="200" />
+  <img src="docs/assets/screenshots/send.png" alt="Choosing files to send" width="200" />
+  <img src="docs/assets/screenshots/receive.png" alt="Typing the four numbers to receive files" width="200" />
+</p>
+
 For counters, `/visitor` shows a QR code, the print progress and a countdown, and `/workstation`
 lets a managed office PC take part through an ordinary browser, without installing software or
 working around endpoint controls.
@@ -129,7 +138,8 @@ deployment.
 
 ## Contributing
 
-Bug reports and pull requests are welcome. For anything larger than a small fix, please open an
+Bug reports and pull requests are welcome; see [`CONTRIBUTING.md`](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). For anything larger than a small fix, please open an
 issue first so we can agree on the approach. Pull requests go to `main`, should pass the checks
 above, and must use made-up data only. [`docs/GITHUB_WORKFLOW.md`](docs/GITHUB_WORKFLOW.md)
 describes the review and release process.

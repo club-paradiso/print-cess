@@ -30,6 +30,15 @@ Print-cess는 손에 휴대전화밖에 없는데 서류 한 장을 뽑아야 �
 | **보내기** | 파일을 다른 휴대전화로 보냅니다. 처음부터 끝까지 암호화됩니다. | `/send`, `/receive`                |
 | **스캔**   | 종이를 찍어 PDF로 만들고, 바로 보내거나 출력합니다.            | `/scan`                            |
 
+<p align="center">
+  <img src="docs/assets/screenshots/kiosk.png" alt="프린터 옆 키오스크 화면. 휴대전화 카메라로 QR 코드를 비추라고 안내한다" width="640" />
+</p>
+<p align="center">
+  <img src="docs/assets/screenshots/home.png" alt="휴대전화 첫 화면" width="200" />
+  <img src="docs/assets/screenshots/send.png" alt="보낼 파일 고르기 화면" width="200" />
+  <img src="docs/assets/screenshots/receive.png" alt="받을 때 숫자 네 자리를 입력하는 화면" width="200" />
+</p>
+
 창구용 화면도 있습니다. `/visitor`는 QR 코드, 출력 진행 상황, 남은 시간을 보여 줍니다.
 `/workstation`은 보안 정책이 걸린 업무용 PC에서 일반 브라우저만으로 쓸 수 있는 입구입니다.
 프로그램을 설치하지 않고, 보안 통제를 피해 가지도 않습니다.
@@ -129,7 +138,8 @@ Windows 키오스크는 GitHub Actions에서 빌드하고 테스트합니다. �
 
 ## 기여하기
 
-버그 제보와 풀 리퀘스트를 환영합니다. 작은 수정이 아니라면 먼저 이슈를 열어 방향을 같이 정해
+버그 제보와 풀 리퀘스트를 환영합니다. [`CONTRIBUTING.md`](CONTRIBUTING.md)와
+[행동 강령](CODE_OF_CONDUCT.md)을 먼저 읽어 주세요. 작은 수정이 아니라면 먼저 이슈를 열어 방향을 같이 정해
 주세요. 풀 리퀘스트는 `main`으로 보내 주시고, 위 검사를 통과해야 하며, 지어낸 데이터만 써야
 합니다. 리뷰와 배포 절차는 [`docs/GITHUB_WORKFLOW.md`](docs/GITHUB_WORKFLOW.md)에 있습니다.
 

@@ -1,0 +1,29 @@
+name: Feature request
+description: Suggest an improvement or a new capability
+title: "feat: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Describe the problem first, then the change you have in mind. Use made-up examples only.
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: Who runs into it, and where (phone, kiosk screen, Windows kiosk, office PC)?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What would you like to happen?
+    validations:
+      required: true
+  - type: textarea
+    id: guarantees
+    attributes:
+      label: Does this touch a privacy or security guarantee?
+      description: >-
+        For example where files are stored, how long they live, or what the server can see.
+        Say "no" if not.

@@ -1,5 +1,5 @@
 name: Production readiness gate
-description: Track one formally owned deployment blocker
+description: For maintainers and deploying institutions. Track one formally owned production blocker
 title: "prod-gate: "
 body:
   - type: markdown
