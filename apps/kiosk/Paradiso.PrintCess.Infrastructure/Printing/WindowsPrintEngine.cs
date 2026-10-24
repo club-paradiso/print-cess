@@ -294,7 +294,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
         return kind switch
         {
             DocumentKind.Pdf => await RenderPdfAsync(content, maximumPages, cancellationToken),
-            DocumentKind.Jpeg or DocumentKind.Png => [DecodeImage(content)],
+            DocumentKind.Jpeg or DocumentKind.Png => [DecodePhoto(content)],
             DocumentKind.Hwp or DocumentKind.Hwpx => await RenderHangulAsync(
                 content,
                 kind,
@@ -304,7 +304,57 @@ public sealed class WindowsPrintEngine : IPrintEngine
         };
     }
 
-    private static BitmapFrame DecodeImage(byte[] content)
+    /// <summary>
+    /// The long side of an A4 page at 300 dpi. A photo is decoded no larger than
+    /// this, so a batch of large images cannot exhaust memory for detail the
+    /// printer would discard anyway.
+    /// </summary>
+    private const int MaximumDecodedLongSide = 3508;
+
+    private static BitmapImage DecodePhoto(byte[] content)
+    {
+        int width;
+        int height;
+        using (var probe = new MemoryStream(content, writable: false))
+        {
+            var decoder = BitmapDecoder.Create(
+                probe,
+                BitmapCreateOptions.DelayCreation,
+                BitmapCacheOption.None);
+            if (decoder.Frames.Count != 1 || decoder.Frames[0].PixelWidth <= 0 || decoder.Frames[0].PixelHeight <= 0)
+            {
+                throw new InvalidDataException("Image decoder rejected the document.");
+            }
+
+            width = decoder.Frames[0].PixelWidth;
+            height = decoder.Frames[0].PixelHeight;
+        }
+
+        using var stream = new MemoryStream(content, writable: false);
+        var image = new BitmapImage();
+        image.BeginInit();
+        image.CacheOption = BitmapCacheOption.OnLoad;
+        image.StreamSource = stream;
+        if (Math.Max(width, height) > MaximumDecodedLongSide)
+        {
+            // Setting one side keeps the aspect ratio.
+            if (width >= height)
+            {
+                image.DecodePixelWidth = MaximumDecodedLongSide;
+            }
+            else
+            {
+                image.DecodePixelHeight = MaximumDecodedLongSide;
+            }
+        }
+
+        image.EndInit();
+        image.Freeze();
+        return image;
+    }
+
+    /// <summary>A PDF page the renderer already produced at print resolution.</summary>
+    private static BitmapFrame DecodeRenderedPage(byte[] content)
     {
         using var stream = new MemoryStream(content, writable: false);
         var decoder = BitmapDecoder.Create(
@@ -394,7 +444,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
             await reader.LoadAsync(checked((uint)output.Size));
             var bytes = new byte[checked((int)output.Size)];
             reader.ReadBytes(bytes);
-            bitmaps.Add(DecodeImage(bytes));
+            bitmaps.Add(DecodeRenderedPage(bytes));
             Array.Clear(bytes);
         }
 
