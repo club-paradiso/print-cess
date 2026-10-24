@@ -58,6 +58,80 @@ public sealed class AdminAuthenticationTests
         Assert.True(throttle.TryBegin(out _));
     }
 
+    [Fact]
+    public void EachLockoutDoublesUntilACorrectPasswordAndNeverExceedsAnHour()
+    {
+        var clock = new ManualTimeProvider(new DateTimeOffset(2026, 8, 3, 12, 0, 0, TimeSpan.Zero));
+        var throttle = new AdminAuthenticationThrottle(clock, failureLimit: 1, lockoutDuration: TimeSpan.FromMinutes(20));
+
+        foreach (var expected in new[] { 20, 40, 60, 60 })
+        {
+            Assert.True(throttle.TryBegin(out _));
+            throttle.RecordFailure();
+            Assert.False(throttle.TryBegin(out var retryAfter));
+            Assert.Equal(TimeSpan.FromMinutes(expected), retryAfter);
+            clock.Advance(retryAfter);
+        }
+
+        Assert.True(throttle.TryBegin(out _));
+        throttle.RecordSuccess();
+        throttle.RecordFailure();
+        Assert.False(throttle.TryBegin(out var reset));
+        Assert.Equal(TimeSpan.FromMinutes(20), reset);
+    }
+
+    [Fact]
+    public void ALockoutSurvivesARestartThroughTheStore()
+    {
+        var clock = new ManualTimeProvider(new DateTimeOffset(2026, 8, 3, 12, 0, 0, TimeSpan.Zero));
+        var store = new MemoryStore();
+        var first = new AdminAuthenticationThrottle(clock, failureLimit: 2, store: store);
+        first.RecordFailure();
+        first.RecordFailure();
+
+        var restarted = new AdminAuthenticationThrottle(clock, failureLimit: 2, store: store);
+        Assert.False(restarted.TryBegin(out var retryAfter));
+        Assert.Equal(TimeSpan.FromSeconds(30), retryAfter);
+    }
+
+    [Fact]
+    public void ASavedLockoutCannotOutlastTheLongestOne()
+    {
+        var clock = new ManualTimeProvider(new DateTimeOffset(2026, 8, 3, 12, 0, 0, TimeSpan.Zero));
+        var store = new MemoryStore { State = new AdminThrottleState(0, 3, clock.GetUtcNow().AddYears(1)) };
+        var throttle = new AdminAuthenticationThrottle(clock, store: store);
+
+        Assert.False(throttle.TryBegin(out var retryAfter));
+        Assert.Equal(TimeSpan.FromHours(1), retryAfter);
+    }
+
+    [Fact]
+    public void TheFileStoreRoundTripsAndToleratesAMissingFile()
+    {
+        var path = Path.Combine(Path.GetTempPath(), "PrintCessTest", Guid.NewGuid().ToString("N"), "throttle.json");
+        try
+        {
+            var store = new FileAdminThrottleStore(path);
+            Assert.Null(store.Load());
+            var state = new AdminThrottleState(2, 1, new DateTimeOffset(2026, 8, 3, 12, 0, 0, TimeSpan.Zero));
+            store.Save(state);
+            Assert.Equal(state, new FileAdminThrottleStore(path).Load());
+        }
+        finally
+        {
+            Directory.Delete(Path.GetDirectoryName(path)!, recursive: true);
+        }
+    }
+
+    private sealed class MemoryStore : IAdminThrottleStore
+    {
+        public AdminThrottleState? State { get; set; }
+
+        public AdminThrottleState? Load() => State;
+
+        public void Save(AdminThrottleState state) => State = state;
+    }
+
     private sealed class ManualTimeProvider : TimeProvider
     {
         private DateTimeOffset _utcNow;

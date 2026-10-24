@@ -1,6 +1,8 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
+import { CDN_SCRIPT_SOURCES } from "./lib/cdn-assets";
+
 const OCR_ASSET_ORIGINS = ["https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com"];
 
 export function blobConnectOrigins(environment: NodeJS.ProcessEnv = process.env): string[] {
@@ -49,10 +51,10 @@ export function buildContentSecurityPolicy(
     "img-src 'self' blob: data:",
     "media-src 'self' blob:",
     `connect-src ${connectSources}`,
-    `script-src 'self' https://cdn.jsdelivr.net 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
+    `script-src 'self' ${CDN_SCRIPT_SOURCES.join(" ")} 'nonce-${nonce}' 'strict-dynamic'${scriptEvaluation}`,
     "script-src-attr 'none'",
     `style-src 'self' ${allowScannerRuntime ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
-    "worker-src 'self' blob: https://cdn.jsdelivr.net",
+    `worker-src 'self' blob: ${CDN_SCRIPT_SOURCES.join(" ")}`,
     ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
   ].join("; ");
 }

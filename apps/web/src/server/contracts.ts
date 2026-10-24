@@ -110,6 +110,17 @@ export interface DropStore {
   recordReceiverEvent(dropId: string, event: DropReceiverEvent, now: number): Promise<DropRecord>;
   remove(dropId: string): Promise<void>;
   listExpired(now: number, limit: number): Promise<DropRecord[]>;
+  /**
+   * Adds `amount` to a fixed-window total shared by every instance. Returns
+   * false, and changes nothing, when the total would pass `limit`.
+   */
+  consumeBudget(
+    key: string,
+    amount: number,
+    limit: number,
+    windowMs: number,
+    now: number,
+  ): Promise<boolean>;
 }
 
 export interface PairingStore {

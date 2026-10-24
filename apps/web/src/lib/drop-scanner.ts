@@ -1,3 +1,4 @@
+import { JSQR_SRC } from "./cdn-assets";
 import { parseDropCode } from "./drop-link";
 
 /**
@@ -28,7 +29,6 @@ type JsQrDecoder = (
 
 // The published npm file, not jsDelivr's on-the-fly `.min.js`: only a file
 // that exists byte-for-byte in the package can carry a stable SRI hash.
-const JSQR_SRC = "https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js";
 const JSQR_INTEGRITY = "sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx";
 let jsQrLoader: Promise<JsQrDecoder> | undefined;
 

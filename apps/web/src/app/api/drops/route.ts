@@ -7,6 +7,7 @@ import {
   createDropRequestSchema,
 } from "@print-cess/protocol";
 
+import { chargeDropBudget } from "@/server/drop-budget";
 import { ServiceError } from "@/server/errors";
 import { assertAllowedOrigin, errorResponse, json, readJson } from "@/server/http";
 import { enforceRateLimit } from "@/server/rate-limit";
@@ -19,12 +20,14 @@ export async function POST(request: Request) {
   try {
     const server = getRuntime();
     assertAllowedOrigin(request, server.config);
-    enforceRateLimit(`drop-create:${clientAddress(request)}`, 10, 60_000);
+    const address = clientAddress(request);
+    enforceRateLimit(`drop-create:${address}`, 10, 60_000);
 
     const body = await readJson(request, createDropRequestSchema, MAX_DROP_MANIFEST_BYTES + 2048);
     if (body.totalBytes > server.config.dropMaxTotalBytes) {
       throw new ServiceError("payload_too_large", "This transfer is larger than the limit.", 413);
     }
+    await chargeDropBudget(server.drops, server.config, address, body.totalBytes);
     const drop = await createDrop(body);
 
     if (server.cleanup.scheduleSweep) {
