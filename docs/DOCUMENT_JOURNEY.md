@@ -98,7 +98,7 @@ Observed on a 390×844 phone, then changed:
   is capped at 40% of the screen height.
 - **Waiting has visible stages**: 준비 → 보내기 → 인쇄 시작, each marked done, current or still to
   come in words and a check mark as well as colour.
-- **The end says what next time looks like**: "더 인쇄하려면 큰 화면의 새 QR코드를 찍으세요."
+- **The end says what next time looks like**: "더 인쇄하려면 큰 화면의 새 QR 코드를 찍으세요."
 - **Errors have a way out**: "처음 화면으로" links to `/start`, where the in-page QR scanner lives.
 
 All new strings live in `print-batch-copy.ts` for all thirteen locales; Korean and English were
@@ -183,7 +183,7 @@ code still gets the same "not found" they always did.
    glancing back at.
 2. The QR code, the private default.
 3. Share the link or copy it.
-4. The optional four-digit hand-off, folded behind one line ("QR을 찍을 수 없나요? 숫자와 도형으로
+4. The optional four-digit hand-off, folded behind one line ("QR 코드를 찍을 수 없나요? 숫자와 도형으로
    건네기"). Its trade-off (the service holds the key for three minutes) is stated inside, where
    the choice is made, and not on the pick screen.
 5. Erase it now: final, quiet (a red text action, not a second big button), and never the next
@@ -200,7 +200,7 @@ applied only where they agree with `docs/BRAND.md`. What changed, and the rule b
 
 | Change                                                                           | Rule                                            |
 | -------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Three-step strip (파일 고르기 → 건네기 → 받음 확인) from hand-over on            | Multi-step flows show progress                  |
+| Three-step strip (파일 고르기 → 건네기 → 받았는지 확인) from hand-over on        | Multi-step flows show progress                  |
 | Choosing stays bare: no strip on the first screen                                | V2 decision, kept (the tiles are the whole job) |
 | "파일 더 고르기 / 다시 고르기" became two compact actions on one row             | One primary action; secondaries subordinate     |
 | "이 파일 보내기" is pinned to the bottom of the screen                           | Primary action never below the fold             |
@@ -223,7 +223,7 @@ The same checklists, applied to `/receive`:
 | The four digits are four large boxes; the next one to fill is outlined in indigo                        | Show where the user is (state clarity)   |
 | A keypad key gives way under the finger (scale 0.96; off under reduced motion)                          | Press feedback                           |
 | Size and time left sit above the file list, not under it                                                | Decision facts first                     |
-| "아직 저장 안 했어요" only appears once at least one file has moved                                     | Rows speak only when they have news      |
+| "아직 저장하지 않았어요" only appears once at least one file has moved                                  | Rows speak only when they have news      |
 | Per-file save/share buttons are compact                                                                 | A list reads as a list, not a wall       |
 | "휴대전화에 저장하기" is pinned to the bottom of the screen; "다른 파일 받기" is a text action          | One primary action, never below the fold |
 | When everything is out, the completion card sits above the list and "다른 파일 받기" becomes the button | Success feedback with a next step        |

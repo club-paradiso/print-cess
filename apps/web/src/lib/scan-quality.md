@@ -8,7 +8,7 @@ Automatic capture is allowed only after the document quadrilateral remains stabl
 
 - a plausible four-corner document is detected;
 - document coverage is large enough to preserve useful resolution;
-- mean exposure is neither dark nor clipped bright;
+- mean exposure is neither too dark nor clipped bright;
 - local clipped-highlight concentration does not indicate strong glare;
 - sampled Laplacian detail is high enough to reject obvious motion/focus blur.
 

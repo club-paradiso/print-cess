@@ -30,7 +30,7 @@ const en: AdvancedScanCopy = {
   detecting: "Finding document edges…",
   processing: "Correcting perspective…",
   edgeFound: "Document edges detected",
-  edgeNotFound: "Edges need a quick check",
+  edgeNotFound: "Check the edges",
   cropHelp: "Drag the four corners to the edges of the paper.",
 };
 
@@ -40,7 +40,7 @@ const ko: AdvancedScanCopy = {
   apply: "적용",
   cancel: "취소",
   filter: "문서 보정",
-  auto: "자동 선명화",
+  auto: "자동 보정",
   color: "컬러",
   grayscale: "그레이스케일",
   blackWhite: "흑백",
@@ -48,7 +48,7 @@ const ko: AdvancedScanCopy = {
   processing: "원근을 보정하는 중…",
   edgeFound: "문서 경계를 자동으로 찾았어요",
   edgeNotFound: "문서 경계를 확인해 주세요",
-  cropHelp: "네 모서리를 종이 끝에 맞게 끌어 옮기세요.",
+  cropHelp: "네 모서리를 끌어서 종이 끝에 맞추세요.",
 };
 
 const zhCN: AdvancedScanCopy = {

@@ -24,13 +24,6 @@ id = "generic-api-key"
   regexes = ['''^UPSTASH_REDIS_REST_TOKEN=\r?\nUPSTASH_DISABLE_TELEMETRY=1\r?$''']
 
   [[rules.allowlists]]
-  description = "Public Figma file identifier documented in the Royal promo handoff"
-  condition = "AND"
-  regexTarget = "match"
-  paths = ['''^docs/design/ROYAL_PROMO_FIGMA\.md$''']
-  regexes = ['''tqEGayhvXtIhAC1WQ89fps''']
-
-  [[rules.allowlists]]
   description = "Synthetic Vercel Blob token used to test store-id parsing for the same-origin relay"
   condition = "AND"
   regexTarget = "match"

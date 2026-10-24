@@ -2,7 +2,7 @@
 
 ## Current status
 
-The Vercel project `club-paradiso/paradiso-print-cess-web` is linked to the private GitHub
+The Vercel project `club-paradiso/paradiso-print-cess-web` is linked to the public GitHub
 repository with Root Directory `apps/web`. The public Production alias uses isolated Production
 Blob, Redis, and QStash resources and can create browser-kiosk sessions. Every `main` commit
 deploys to Production (see the correction below), although physical-site acceptance gates are
@@ -36,7 +36,7 @@ page, `POST /api/kiosk/sessions` and the home page's kiosk link all follow it:
 Keeping it on in Production is a decision, recorded on 2026-10-24: the public browser kiosk is
 a feature, so anyone can open `/kiosk` and create a print session. Two things follow and are
 accepted. A request with a forged `Origin` header can create sessions outside a browser, and a
-visitor can only trust a QR code shown on a screen they can see is the official kiosk. The
+visitor can trust a QR code only when it is shown on a screen they can see is the official kiosk. The
 per-address limit and the session's short lifetime bound the abuse, and the registered Windows
 kiosk path (`POST /api/sessions` with `KIOSK_REGISTRATION_SECRET`) stays separate. Set
 `ENABLE_BROWSER_KIOSK=false` if a deployment should print only through registered kiosks.
@@ -51,6 +51,7 @@ codes are always built from `PUBLIC_BASE_URL`. On 2026-10-12 the live kiosk QR n
 its own origin. Setting `PUBLIC_BASE_URL` to the canonical host would save the redirect hop; that
 is an owner change in Vercel, not made here. Check the disable path on a Preview, never by
 flipping Production.
+
 `apps/web/vercel.json` owns the Next.js commands; Vercel resolves the repository-root pnpm lockfile
 and workspace packages while building from `apps/web`.
 
@@ -240,7 +241,7 @@ A later processing-lease deadline gets a distinct ID. Use the three-minute upper
 only a pseudonymous cleanup reference. The endpoint:
 
 - in external mode, requires either a QStash signature verified against current/next keys or the
-  timing-safely checked administrator secret used for an authorized sweep;
+  administrator secret, compared in constant time, used for an authorized sweep;
 - is POST-only with a strict small-body schema and a sweep limit of 100; Production WAF/rate policy
   remains an infrastructure gate;
 - seals state and deletes Blob by expected path/ETag;

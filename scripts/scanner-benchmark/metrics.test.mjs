@@ -38,7 +38,7 @@ test("corner error is normalized by source image diagonal", () => {
 });
 
 test("OCR rates handle Unicode text after normalization", () => {
-  assert.equal(characterErrorRate("제주 출입국", "제주 출입국"), 0);
+  assert.equal(characterErrorRate("민원 창구", "민원 창구"), 0);
   assert.equal(wordErrorRate("hello world", "hello word"), 0.5);
 });
 

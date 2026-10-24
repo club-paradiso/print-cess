@@ -105,22 +105,22 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         SafeErrorCode = string.Empty;
         State = KioskUiState.Waiting;
         StatusLabel = "준비";
-        PrimaryInstruction = "휴대전화 카메라로 QR코드를 스캔하세요";
-        SecondaryInstruction = "QR코드를 비춘 뒤 휴대전화 화면에 나타나는 링크를 누르세요";
+        PrimaryInstruction = "휴대전화 카메라로 QR 코드를 비춰 주세요";
+        SecondaryInstruction = "QR 코드를 비춘 뒤 휴대전화에 뜨는 링크를 누르세요";
         UpdateCountdown();
     }
 
     public void ShowClaimed()
     {
         ClearQr();
-        SetProgress(KioskUiState.Claimed, "휴대전화 연결됨", "휴대전화에서 문서를 선택해 주세요", "휴대전화 화면에 표시되는 지원 형식의 파일 한 개를 보낼 수 있습니다", preserveDeadline: true);
+        SetProgress(KioskUiState.Claimed, "휴대전화 연결됨", "휴대전화에서 문서를 선택해 주세요", "휴대전화 화면에 나온 형식의 파일을 한 개 보낼 수 있습니다", preserveDeadline: true);
     }
 
     public void ShowUploading() =>
-        SetProgress(KioskUiState.Uploading, "파일 전송 중", "문서를 안전하게 전송하고 있습니다", "화면을 닫지 말아 주세요", preserveDeadline: true);
+        SetProgress(KioskUiState.Uploading, "파일 전송 중", "문서를 안전하게 전송하고 있습니다", "휴대전화 화면을 닫지 말아 주세요", preserveDeadline: true);
 
     public void ShowValidating() =>
-        SetProgress(KioskUiState.Validating, "파일 검증 중", "인쇄할 수 있는 문서인지 확인하고 있습니다", "암호화된 문서를 이 컴퓨터에서만 열어 확인합니다");
+        SetProgress(KioskUiState.Validating, "파일 확인 중", "인쇄할 수 있는 문서인지 확인하고 있습니다", "암호화된 문서를 이 컴퓨터에서만 열어 확인합니다");
 
     public void ShowPrinting() =>
         SetProgress(KioskUiState.Printing, "인쇄 중", "A4 한 부를 인쇄하고 있습니다", "프린터 출력구를 확인해 주세요");
@@ -230,7 +230,7 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         State = KioskUiState.Preparing;
         StatusLabel = "준비";
         PrimaryInstruction = "새 인쇄 세션을 준비하고 있습니다";
-        SecondaryInstruction = "이전 사용자의 화면과 데이터는 모두 초기화되었습니다";
+        SecondaryInstruction = "이전 사용자의 화면과 데이터를 모두 지웠습니다";
         CountdownText = string.Empty;
         SafeErrorCode = string.Empty;
         _deadline = null;
@@ -248,9 +248,9 @@ public sealed class MainViewModel : INotifyPropertyChanged, IDisposable
         var seconds = Math.Max(0, (int)Math.Ceiling((_deadline.Value - DateTimeOffset.UtcNow).TotalSeconds));
         CountdownText = State switch
         {
-            KioskUiState.Completed or KioskUiState.SessionError => $"{seconds}초 후 새 화면으로 돌아갑니다",
-            KioskUiState.Waiting => $"QR 유효 시간 {seconds / 60}:{seconds % 60:00}",
-            _ => $"세션 유효 시간 {seconds / 60}:{seconds % 60:00}",
+            KioskUiState.Completed or KioskUiState.SessionError => $"{seconds}초 뒤 처음 화면으로 돌아갑니다",
+            KioskUiState.Waiting => $"QR 코드 남은 시간 {seconds / 60}:{seconds % 60:00}",
+            _ => $"남은 시간 {seconds / 60}:{seconds % 60:00}",
         };
     }
 

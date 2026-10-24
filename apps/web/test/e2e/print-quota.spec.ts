@@ -31,7 +31,8 @@ async function pickPdf(mobile: Page, pages: number): Promise<void> {
   });
 }
 
-const paywall = (page: Page) => page.getByRole("dialog", { name: "Print-cess+" });
+const staffNotice = (page: Page) =>
+  page.getByRole("dialog", { name: "This print job is over the free limit." });
 
 test("eleven pages is the last selection that just prints", async ({ page, context }) => {
   const mobile = await openMobile(page, context);
@@ -40,52 +41,33 @@ test("eleven pages is the last selection that just prints", async ({ page, conte
   await expect(mobile.getByRole("dialog")).toHaveCount(0);
 });
 
-test("twelve pages meets the paywall rather than an error", async ({ page, context }) => {
+test("twelve pages explains staff approval rather than an error", async ({ page, context }) => {
   const mobile = await openMobile(page, context);
   await pickPdf(mobile, 12);
 
-  const dialog = paywall(mobile);
+  const dialog = staffNotice(mobile);
   await expect(dialog).toBeVisible();
 
   await expect(dialog.getByText("12 pages", { exact: true })).toBeVisible();
   await expect(dialog.getByText("Up to 11 pages", { exact: true })).toBeVisible();
-  await expect(dialog.getByText("This print job is over the free limit.")).toBeVisible();
+  await expect(dialog.getByText(/at the kiosk itself/u)).toBeVisible();
   await expect(dialog.getByRole("button", { name: "Choose files again" })).toBeVisible();
-
-  await expect(dialog.getByText(/not a product for sale/u)).toBeVisible();
+  await expect(dialog.getByRole("button", { name: "Cancel" })).toBeVisible();
 
   await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toHaveCount(0);
 });
 
-test("the upgrade button admits there is nothing to buy", async ({ page, context }) => {
+test("the staff notice offers no payment", async ({ page, context }) => {
   const mobile = await openMobile(page, context);
   await pickPdf(mobile, 37);
 
-  const dialog = paywall(mobile);
+  const dialog = staffNotice(mobile);
   await expect(dialog.getByText("37 pages", { exact: true })).toBeVisible();
-  await expect(dialog.getByText("₩999,000")).toBeVisible();
-  await expect(dialog.getByText("₩20,000,000")).toBeVisible();
-
-  await dialog.getByRole("button", { name: "Upgrade to Print-cess+" }).click();
-  await expect(dialog.getByText("We could not find a payment screen.")).toBeVisible({
-    timeout: 10_000,
-  });
-  await expect(dialog.getByText(/never going to charge|nobody here intends/iu)).toBeVisible();
+  await expect(dialog.getByText(/₩/u)).toHaveCount(0);
+  await expect(dialog.getByRole("button")).toHaveCount(2);
 });
 
-test("staff access explains where authorization actually happens", async ({ page, context }) => {
-  const mobile = await openMobile(page, context);
-  await pickPdf(mobile, 20);
-
-  const dialog = paywall(mobile);
-  const toggle = dialog.getByRole("button", { name: "Staff access" });
-  await expect(toggle).toHaveAttribute("aria-expanded", "false");
-  await toggle.click();
-  await expect(dialog.getByText(/at the kiosk itself/u)).toBeVisible();
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
-});
-
-test("past the technical ceiling the joke stops", async ({ page, context }) => {
+test("past the technical ceiling no approval is offered", async ({ page, context }) => {
   const mobile = await openMobile(page, context);
   await pickPdf(mobile, 51);
 
@@ -95,7 +77,7 @@ test("past the technical ceiling the joke stops", async ({ page, context }) => {
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText("51 pages", { exact: true })).toBeVisible();
   await expect(dialog.getByText("50 pages", { exact: true })).toBeVisible();
-  await expect(dialog.getByText("₩999,000")).toHaveCount(0);
+  await expect(dialog.getByText(/at the kiosk itself/u)).toHaveCount(0);
   await expect(dialog.getByRole("button", { name: "Cancel" })).toHaveCount(0);
 });
 
@@ -119,7 +101,7 @@ test("a batch is judged on its total, not file by file", async ({ page, context 
     },
   ]);
 
-  const dialog = paywall(mobile);
+  const dialog = staffNotice(mobile);
   await expect(dialog).toBeVisible();
   await expect(dialog.getByText("12 pages", { exact: true })).toBeVisible();
 });
@@ -147,10 +129,10 @@ test("a batch one page under the limit still prints", async ({ page, context }) 
   await expect(mobile.getByRole("dialog")).toHaveCount(0);
 });
 
-test("the paywall has no accessibility violations", async ({ page, context }) => {
+test("the staff notice has no accessibility violations", async ({ page, context }) => {
   const mobile = await openMobile(page, context);
   await pickPdf(mobile, 24);
-  await expect(paywall(mobile)).toBeVisible();
+  await expect(staffNotice(mobile)).toBeVisible();
 
   const results = await new AxeBuilder({ page: mobile })
     .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"])
@@ -158,10 +140,13 @@ test("the paywall has no accessibility violations", async ({ page, context }) =>
   expect(results.violations).toEqual([]);
 });
 
-test("@viewport the paywall fits a phone without sideways scrolling", async ({ page, context }) => {
+test("@viewport the staff notice fits a phone without sideways scrolling", async ({
+  page,
+  context,
+}) => {
   const mobile = await openMobile(page, context);
   await pickPdf(mobile, 37);
-  await expect(paywall(mobile)).toBeVisible();
+  await expect(staffNotice(mobile)).toBeVisible();
 
   const overflow = await mobile.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,

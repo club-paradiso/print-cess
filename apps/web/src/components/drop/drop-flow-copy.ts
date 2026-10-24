@@ -17,8 +17,8 @@ const COPY: Record<SupportedLocale, DropFlowCopy> = {
   ko: {
     stepPick: "파일 고르기",
     stepHandOver: "건네기",
-    stepReceived: "받음 확인",
-    moreWays: "QR을 찍을 수 없나요? 숫자와 도형으로 건네기",
+    stepReceived: "받았는지 확인",
+    moreWays: "QR 코드를 찍을 수 없나요? 숫자와 도형으로 건네기",
   },
   "zh-CN": {
     stepPick: "选择文件",

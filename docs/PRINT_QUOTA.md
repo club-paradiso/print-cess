@@ -2,11 +2,11 @@
 
 Print-cess uses two deliberately separate page limits.
 
-| Range       | Public web flow                                 | Kiosk authority                                       |
-| ----------- | ----------------------------------------------- | ----------------------------------------------------- |
-| 1–11 pages  | Allowed                                         | Allowed after native validation                       |
-| 12–50 pages | Shows the deliberately fake Print-cess+ paywall | Requires a staff password after native rendering      |
-| 51+ pages   | Hard-limit explanation; no plan is offered      | Always rejected, including after staff authentication |
+| Range       | Public web flow                             | Kiosk authority                                       |
+| ----------- | ------------------------------------------- | ----------------------------------------------------- |
+| 1–11 pages  | Allowed                                     | Allowed after native validation                       |
+| 12–50 pages | Explains that staff approve it at the kiosk | Requires a staff password after native rendering      |
+| 51+ pages   | Hard-limit explanation                      | Always rejected, including after staff authentication |
 
 The public courtesy limit is 11 pages. The technical ceiling is 50 pages. Raising one must never silently raise the other.
 
@@ -23,7 +23,7 @@ The browser decision improves the visitor experience, but it is not trusted. The
 
 For a rendered job of 12–50 pages, the kiosk opens a dedicated staff prompt. It uses the same externally configured, throttled administrator authenticator as the diagnostics flow. The password is cleared after the attempt and is never logged.
 
-The fake paywall never starts checkout, loads a payment provider, or accepts payment details. Its action ends by explaining that there is no product to buy and directs the visitor to choose 11 pages or fewer. Staff authorization happens only at the kiosk.
+The phone notice offers no payment of any kind. It tells the visitor that staff approve 12–50 pages at the kiosk, or lets them choose 11 pages or fewer. Staff authorization happens only at the kiosk.
 
 ## Safe operational record
 

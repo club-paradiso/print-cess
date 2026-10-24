@@ -53,8 +53,8 @@ On pull requests and pushes to `main`:
 
 The Web workflow uploads only coverage and the HTML Playwright report for three days; raw
 `test-results`, screenshots, and traces are excluded. Windows TRX and publish-smoke artifacts are
-retained for seven days, which `PRODUCTION_BLOCKERS.md` requires and which storage pressure is not a
-reason to shorten.
+retained for seven days, as `PRODUCTION_BLOCKERS.md` requires; storage pressure is not a reason to
+shorten that window.
 
 Retention windows say how long evidence lives; they do not say how many copies are worth keeping.
 Web evidence and the publish-smoke binary are uploaded on `main` pushes and, for the Web job, on any
@@ -63,8 +63,11 @@ self-contained kiosk binary alone is roughly 180 MB against an account-wide 500 
 check still runs on every pull request, including the assertion that the single-file executable
 exists; only the stored copy is skipped. The TRX is small and is uploaded always, pass or fail.
 
+The repository is public: anyone can read workflow logs, and anyone signed in to GitHub can
+download an artifact until it expires. Treat every log line and artifact as published.
+
 Artifact names contain only run identifiers. If a failure output includes a URL,
-token, fragment, filename, document data, or provider body, cancel sharing, delete the artifact,
+token, fragment, filename, document data, or provider body, stop sharing, delete the artifact,
 rotate any affected credential, and treat the run as a security/privacy incident.
 
 Every artifact upload is `continue-on-error`, and the Gitleaks SARIF upload is disabled outright
@@ -82,18 +85,19 @@ driver, spool retention, kiosk lockdown, touch/audio, or physical output.
 
 ### `security.yml`
 
-Runs on relevant pushes/PRs, manual dispatch, and weekly schedule:
+Runs on relevant pushes/PRs, manual dispatch, and a weekly schedule:
 
 - CodeQL JavaScript/TypeScript analysis on Ubuntu when repository variable `ENABLE_CODEQL=true`;
 - CodeQL C# analysis with a manual WPF build on Windows under the same gate;
 - production pnpm audit and NuGet transitive-vulnerability report;
 - full-history Gitleaks helper scan.
 
-The GitHub API reported on 2026-07-20 that code scanning is not enabled for this private
-repository, so both CodeQL jobs are explicitly skipped until an administrator enables the feature
-and sets `ENABLE_CODEQL=true`. Do not set that variable merely to make the jobs appear active;
-first confirm licensing and a successful manual run. The Gitleaks helper complements, but does not
-enable, GitHub native secret scanning or push protection. Gitleaks Action licensing must be checked
+On 2026-07-20, while the repository was private, the GitHub API reported that code scanning was
+not enabled, so both CodeQL jobs stayed skipped. The repository became public on 2026-10-24,
+`ENABLE_CODEQL=true` was set the same day, and both jobs now upload CodeQL analyses. The jobs
+running is not a clean result: open code-scanning alerts must be triaged, and GitHub default
+setup remains unconfigured because these workflow jobs are the configured analysis. The Gitleaks
+helper complements, but does not enable, GitHub native secret scanning or push protection. Gitleaks Action licensing must be checked
 if ownership moves from a personal account to an organization.
 
 ### `release-kiosk.yml`
@@ -101,9 +105,9 @@ if ownership moves from a personal account to an organization.
 This is manual-only and tag-based. The operator must dispatch the workflow from the exact existing
 `vX.Y.Z` stable tag or `vX.Y.Z-rc.N` prerelease tag supplied as the input. The workflow rejects a
 branch dispatch, a ref/input mismatch, a tag whose commit differs from the workflow ref, or a tag
-whose commit is not reachable from protected `main`. It restores, builds, tests, publishes
-self-contained `win-x64` whose product version is bound to the tag and commit, and uploads a one-day
-unsigned handoff. A separate protected `windows-signing` job signs `Print-cess Kiosk.exe`, runs
+whose commit is not reachable from protected `main`. It restores, builds, tests, and publishes a
+self-contained `win-x64` build whose product version is bound to the tag and commit, then uploads
+the unsigned build for a one-day handoff. A separate protected `windows-signing` job signs `Print-cess Kiosk.exe`, runs
 `signtool verify /pa /all /tw /v`, checks the exact approved publisher subject and certificate
 thumbprint, requires a timestamp certificate, removes PDBs, and creates the signed ZIP, checksums,
 and structured Authenticode manifest. No unsigned artifact can reach the GitHub Release job. See
@@ -114,7 +118,7 @@ administrator has set repository variable `ENABLE_GITHUB_RELEASES=true`, and the
 protected `github-release` environment. Stable and prerelease inputs are validated against tag
 syntax. Keep the variable absent until the environment is configured; otherwise GitHub can create
 a referenced environment without the intended protection. The workflow exists for future
-authorized use; it was not run and no GitHub Release is published by this task.
+authorized use; it was not run, and this task did not publish a GitHub Release.
 
 ## Branch protection / ruleset
 
@@ -124,8 +128,9 @@ up-to-date branches, conversation resolution, linear history, and checks `Web`, 
 administrators, and blocks force-push and deletion. Repository merge settings allow squash only,
 delete merged branches, allow update-branch, and enable auto-merge capability.
 
-The repository is currently a single-maintainer private personal repository, so required approvals
-and CODEOWNER reviews are set to zero rather than creating an impossible self-approval gate. This
+The repository is a public repository on a personal account with a single maintainer, so required
+approvals and CODEOWNER reviews are set to zero rather than creating an impossible self-approval
+gate. Making the repository public did not add a second reviewer. This
 is not adequate institutional separation of duties. Active repository ruleset `19197379` protects
 `refs/tags/v*` from creation, update, and deletion by every actor except the repository owner's
 bypass. That preserves current solo release administration, but it is not independent approval.
@@ -149,9 +154,11 @@ release workflow also binds its tag input to the exact tag ref in code. Current 
 - `Production`: `main` only; Vercel Production deployment remains disabled and this environment
   still needs multiple required reviewers and approved Production credentials.
 
-Required-reviewer protection is unavailable for this private personal repository's current plan,
-and no environment contains secrets or release-enabling variables. The ref restrictions therefore
-reduce accidental execution but do not provide institutional separation of duties.
+Required-reviewer protection was unavailable while the repository was private on its current
+plan. Public repositories can use it, but no environment has required reviewers configured yet,
+and the only available reviewer is the sole maintainer, which is not independent approval. No
+environment contains secrets or release-enabling variables. The ref restrictions therefore reduce
+accidental execution but do not provide institutional separation of duties.
 
 Vercel also created a generic `Preview` deployment-record environment with no protection rules.
 It is not an authorized provider-acceptance gate: the controlled workflow uses `vercel-preview`,
@@ -166,11 +173,11 @@ No real secret belongs in Git, fixtures, workflow YAML, artifacts, PR text, or s
 GitHub Release signing credentials and Vercel/Upstash values in their protected environment or
 provider secret store. Rotate any value that reaches logs or history.
 
-GitHub returned HTTP 422 for native secret scanning/push protection and HTTP 403 for CodeQL default
-setup on this private personal repository. The current account/repository does not have the required
-GitHub security feature entitlement. Keep Gitleaks and dependency checks required, keep
-`ENABLE_CODEQL` unset, and upgrade or move the repository before treating native secret or code
-scanning as present.
+While the repository was private, GitHub returned HTTP 422 for native secret scanning/push
+protection and HTTP 403 for CodeQL default setup. Since it became public on 2026-10-24, native
+secret scanning and push protection are enabled and `ENABLE_CODEQL=true` runs the CodeQL jobs.
+Keep Gitleaks and dependency checks required anyway: native scanning complements them and does
+not replace them.
 
 Required Production secret inventory and owners must include Blob/OIDC, Redis, QStash current/next
 keys, kiosk registration, administrator authentication, code-signing certificate access, and

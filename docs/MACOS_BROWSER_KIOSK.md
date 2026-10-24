@@ -11,7 +11,7 @@ tray, duplex mode, or color mode from JavaScript.
 
 ## One-time station setup
 
-1. Install current Google Chrome in `/Applications`.
+1. Install the current version of Google Chrome in `/Applications`.
 2. Add the approved printer in **System Settings > Printers & Scanners**.
 3. Set that device as the explicit default printer. Do not leave the setting at “Last Printer
    Used” and do not select “Save as PDF”. Verify it in Terminal:
@@ -38,7 +38,7 @@ tray, duplex mode, or color mode from JavaScript.
    ./scripts/kiosk/install-browser-kiosk-macos.sh --install
    ```
 
-The installer copies the launcher under the kiosk account's Application Support directory, creates
+The installer copies the launcher into the kiosk account's Application Support directory, creates
 `com.paradiso.print-cess.browser-kiosk`, and starts it immediately. At each login it opens only the
 managed `/kiosk?printing=auto` URL in a dedicated Chrome profile. That mode hides the manual
 reprint control after submission to prevent an accidental duplicate silent print. `KeepAlive`

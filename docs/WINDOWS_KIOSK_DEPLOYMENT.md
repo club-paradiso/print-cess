@@ -32,7 +32,7 @@ injection and target-Windows acceptance remain required.
 - Application state/temp under the dedicated account's ACL-restricted
   `%LocalAppData%\Paradiso\PrintCess` location, never Downloads or Documents.
 
-The projects target .NET 8 as required by the objective. Microsoft lists .NET 8 LTS end of support
+The projects target .NET 8, as the original requirements specified. Microsoft lists .NET 8 LTS end of support
 as **2026-11-10** in its
 [lifecycle table](https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-and-net-core).
 Self-contained deployment does not extend security support. Approve and test migration to a
@@ -64,8 +64,8 @@ on the target before install. Never distribute an unsigned “stable” build.
 The native WPF kiosk does not require WebView2 unless a later feature explicitly introduces it. Do
 not install it speculatively. If introduced, use Microsoft's
 [WebView2 Runtime distribution guidance](https://learn.microsoft.com/en-us/microsoft-edge/webview2/concepts/distribution):
-detect the Runtime and deploy the Evergreen bootstrapper for online or standalone installer for
-controlled/offline installation. Pin and test the WebView2 SDK, apply update policy, and reassess
+detect the Runtime and deploy the Evergreen bootstrapper for online installation or the standalone
+installer for controlled/offline installation. Pin and test the WebView2 SDK, apply update policy, and reassess
 the browser attack surface.
 
 ## HWPX direct printing
@@ -137,8 +137,8 @@ Configure Shell Launcher through the Assigned Access CSP/MDM or approved provisi
 2. Install and verify the signed application as administrator.
 3. Create the non-admin kiosk identity and a separate service administrator identity.
 4. Enable/configure Shell Launcher for the kiosk identity only. Use the full executable path.
-5. Set the default exit action to restart the shell. Define a documented exit code for restart
-   device only when the app intentionally requests it.
+5. Set the default exit action to restart the shell. Define a documented exit code for the
+   restart-device action only when the app intentionally requests it.
 6. Sign out/in and test normal exit, crash, hang/watchdog, Windows update restart, and loss of
    network/printer.
 
@@ -198,8 +198,8 @@ policy.
 The selected queue is stored atomically under the app-owned
 `%LocalAppData%\Paradiso\PrintCess\printer-selection.json`. At startup it is accepted only when the
 exact queue is still installed and present in the environment allow-list; otherwise the configured
-default is used or startup fails closed. Changing the queue cancels/cleans a waiting session and
-creates a fresh QR. The action is rejected after encrypted content has been consumed.
+default is used or startup fails closed. Changing the queue cancels and cleans up a waiting session
+and creates a fresh QR. The action is rejected after encrypted content has been consumed.
 
 Mock printing defaults off and requires all three conditions: the literal opt-in value `true`,
 `PRINT_CESS_ENVIRONMENT=Development` with exact casing, and a loopback server URL. The app fails
@@ -217,8 +217,8 @@ Do not store secrets in a world-readable JSON file, command line, shortcut, or s
 - On every startup, delete app-owned temp remnants, discard unrecoverable session/key state, request
   server cleanup if safely identifiable, and show a fresh QR.
 - Do not persist plaintext, private keys, signed URLs, or a recoverable print payload.
-- A session found as `consumed`, `validating`, or `printing` after crash is failed/cleaned; it is not
-  printed again.
+- A session found as `consumed`, `validating`, or `printing` after a crash is marked failed and
+  cleaned up; it is not printed again.
 - Use Windows Event Log or approved telemetry with stable redacted codes only.
 - Keep Windows time synchronized because token/URL expiry and TLS depend on it.
 - The administrator health refresh calls `/api/admin/health` with the independently provisioned
@@ -252,7 +252,7 @@ Deploy through institution-managed software distribution during a service window
 kiosk, let or force active sessions to terminal cleanup, then install. Verify signature, checksum,
 configuration, printer, server health, and one synthetic test print before returning to service.
 
-Keep the last signed approved package and configuration. Rollback only while the kiosk is out of
+Keep the last signed approved package and configuration. Roll back only while the kiosk is out of
 service; never recover or replay an old session. Revoke/rotate credentials if the rollback relates
 to compromise. Record application version, protocol version, Windows build, printer driver, policy
 revision, operator, and outcome.

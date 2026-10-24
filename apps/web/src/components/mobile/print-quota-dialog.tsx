@@ -1,7 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useId, useRef, useState } from "react";
-import { Lock, Printer, ShieldCheck } from "lucide-react";
+import { useCallback, useEffect, useId, useRef } from "react";
+import { Printer, ShieldCheck } from "lucide-react";
 
 import type { PrintQuotaDecision } from "@print-cess/protocol";
 import { PrimaryButton, SecondaryButton } from "@print-cess/ui";
@@ -59,7 +59,7 @@ export function PrintQuotaDialog({
         {hardLimit ? (
           <HardLimitPanel decision={decision} text={text} titleId={titleId} bodyId={bodyId} />
         ) : (
-          <PaywallPanel decision={decision} text={text} titleId={titleId} bodyId={bodyId} />
+          <StaffApprovalPanel decision={decision} text={text} titleId={titleId} bodyId={bodyId} />
         )}
 
         <div className="quota-actions">
@@ -129,14 +129,11 @@ function HardLimitPanel({
           limitValue={text("quotaPagesValue", { pages: decision.systemLimit })}
         />
       </div>
-      <p className="quota-hard__aside">{text("quotaHardJoke")}</p>
     </div>
   );
 }
 
-type CtaStage = "idle" | "searching" | "notFound";
-
-function PaywallPanel({
+function StaffApprovalPanel({
   decision,
   text,
   titleId,
@@ -147,27 +144,12 @@ function PaywallPanel({
   titleId: string;
   bodyId: string;
 }) {
-  const [stage, setStage] = useState<CtaStage>("idle");
-  const [staffOpen, setStaffOpen] = useState(false);
-  const staffBodyId = useId();
-
-  useEffect(() => {
-    if (stage !== "searching") return;
-    const reduced = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
-    const timer = window.setTimeout(() => setStage("notFound"), reduced ? 200 : 1400);
-    return () => window.clearTimeout(timer);
-  }, [stage]);
-
   return (
-    <div className="quota-paywall">
-      <header className="quota-paywall__head">
-        <span className="quota-paywall__badge" aria-hidden="true">
-          <Lock />
-        </span>
-        <h2 id={titleId}>{text("quotaPaywallTitle")}</h2>
-        <p className="quota-paywall__lead">{text("quotaPaywallLead")}</p>
-      </header>
-
+    <div className="quota-over">
+      <span className="quota-over__icon" aria-hidden="true">
+        <ShieldCheck />
+      </span>
+      <h2 id={titleId}>{text("quotaOverBody")}</h2>
       <div id={bodyId}>
         <QuotaSummary
           decision={decision}
@@ -175,101 +157,7 @@ function PaywallPanel({
           limitLabel={text("quotaFreeLabel")}
           limitValue={text("quotaFreePagesValue", { pages: decision.publicLimit })}
         />
-        <p className="quota-paywall__over">{text("quotaOverBody")}</p>
-      </div>
-
-      <ol className="quota-plans">
-        <li className="quota-plan">
-          <p className="quota-plan__name">{text("quotaPlanFree")}</p>
-          <p className="quota-plan__price">
-            <strong>₩0</strong>
-          </p>
-          <p className="quota-plan__pages">
-            {text("quotaPagesValue", { pages: decision.publicLimit })}
-          </p>
-        </li>
-        <li className="quota-plan quota-plan--pro">
-          <p className="quota-plan__badge">{text("quotaBadgePopular")}</p>
-          <p className="quota-plan__name">{text("quotaPlanPro")}</p>
-          <p className="quota-plan__price">
-            <strong>₩999,000</strong>
-            <span>{text("quotaPerMonth")}</span>
-          </p>
-          <p className="quota-plan__pages">
-            {text("quotaPagesValue", { pages: decision.systemLimit })}
-          </p>
-        </li>
-        <li className="quota-plan quota-plan--ultra">
-          <p className="quota-plan__badge">{text("quotaBadgeValue")}</p>
-          <p className="quota-plan__name">{text("quotaPlanUltra")}</p>
-          <p className="quota-plan__price">
-            <strong>₩20,000,000</strong>
-            <span>{text("quotaPerYear")}</span>
-          </p>
-          <p className="quota-plan__pages">
-            {text("quotaPagesValue", { pages: decision.systemLimit })}
-          </p>
-        </li>
-      </ol>
-
-      <table className="quota-compare">
-        <caption>{text("quotaCompareTitle")}</caption>
-        <tbody>
-          <tr>
-            <th scope="row">{text("quotaComparePrinter")}</th>
-            <td>{text("quotaCompareSame")}</td>
-          </tr>
-          <tr>
-            <th scope="row">{text("quotaCompareQuality")}</th>
-            <td>{text("quotaCompareSame")}</td>
-          </tr>
-          <tr>
-            <th scope="row">{text("quotaComparePaper")}</th>
-            <td>{text("quotaCompareSame")}</td>
-          </tr>
-        </tbody>
-      </table>
-
-      {stage === "notFound" ? (
-        <div className="quota-cta-result" role="status" aria-live="polite">
-          <strong>{text("quotaNotFoundTitle")}</strong>
-          <p>{text("quotaNotFoundBody", { pages: decision.publicLimit })}</p>
-        </div>
-      ) : (
-        <button
-          type="button"
-          className="quota-cta"
-          onClick={() => setStage("searching")}
-          disabled={stage === "searching"}
-          aria-live="polite"
-        >
-          {stage === "searching" ? (
-            <>
-              <span className="quota-cta__spinner" aria-hidden="true" />
-              {text("quotaCtaSearching")}
-            </>
-          ) : (
-            text("quotaCta")
-          )}
-        </button>
-      )}
-
-      <p className="quota-disclaimer">{text("quotaDisclaimer")}</p>
-
-      <div className="quota-staff">
-        <button
-          type="button"
-          className="quota-staff__toggle"
-          aria-expanded={staffOpen}
-          aria-controls={staffBodyId}
-          onClick={() => setStaffOpen((open) => !open)}
-        >
-          <ShieldCheck aria-hidden="true" />
-          {text("quotaStaffAccess")}
-        </button>
-        <p id={staffBodyId} hidden={!staffOpen} className="quota-staff__body">
-          {text("quotaStaffBody")}
-        </p>
+        <p className="quota-over__body">{text("quotaStaffBody")}</p>
       </div>
     </div>
   );

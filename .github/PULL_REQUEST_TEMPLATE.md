@@ -1,6 +1,6 @@
 ## Outcome
 
-Describe the user-visible or operational outcome.
+Describe the outcome for users or operators.
 
 ## Scope
 
@@ -38,8 +38,9 @@ physical-printer evidence.
 
 ## UX and brand
 
-- [ ] Full Print-cess by Paradiso identity and government-neutral tone are preserved.
-- [ ] One-action error guidance does not default to staff handling a visitor's phone/account.
+- [ ] The full Print-cess by Paradiso identity and a government-neutral tone are preserved.
+- [ ] Error guidance gives one action and does not default to staff handling a visitor's phone or
+      account.
 - [ ] Accessibility, reduced motion, and translations were considered.
 - [ ] Screenshots contain synthetic data and no live QR/URL credentials.
 

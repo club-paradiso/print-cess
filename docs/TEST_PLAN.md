@@ -2,9 +2,9 @@
 
 ## Rules
 
-Use only generated, obviously synthetic documents. No real name, booking, flight, passport,
-immigration, email, phone, or other personal data may enter fixtures, local storage, Preview, CI,
-artifacts, screenshots, or logs.
+Use only generated, obviously synthetic documents. No real name, booking, flight, passport, email,
+phone, or other personal data may enter fixtures, local storage, Preview, CI, artifacts,
+screenshots, or logs.
 
 Tests distinguish four evidence levels:
 

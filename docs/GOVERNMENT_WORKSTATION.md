@@ -11,9 +11,9 @@ Two directions are supported:
 1. Phone to work computer: create a transfer on `/send` from the phone, then enter the four digits and shape it shows on `/receive` from the managed computer, or paste the transfer link there. Neither needs a camera.
 2. Work computer to phone: create a transfer on `/send` from the managed computer, then open it on the phone by QR code, the four digits and shape, or the transfer link.
 
-The actual main screen at `/` exposes Send, Receive, and Scan directly alongside the printing QR; it does not expose a redundant Workstation menu item. On `/start`, the optional environment diagnostics remain available for any device.
+The main screen at `/` exposes Send, Receive, and Scan directly alongside the printing QR; it does not expose a redundant Workstation menu item. On `/start`, the optional environment diagnostics remain available for any device.
 
-The common start page provides an optional environment check before the user starts. The required capabilities are:
+The shared start page provides an optional environment check before the user starts. The required capabilities are:
 
 - HTTPS secure context;
 - standards-compliant Web Crypto;
@@ -43,7 +43,7 @@ By default the browser moves encrypted parts straight to blob storage on its own
 The deployment therefore also exposes each signed part operation at `/relay/blob/<path>?<signature>` on its own origin. A platform rewrite (`apps/web/src/server/blob-relay.ts`, wired in `next.config.ts`) forwards it to this deployment's own Vercel Blob store only; it is not an open proxy, and the signature, expiry, size limit, and end-to-end encryption are unchanged.
 
 - Every device uses the same transfer engine: the storage host is attempted first and the relay is used after supported network refusals. A user may explicitly select same-origin transfer in the shared environment diagnostics to avoid the initial blocked request; this is not an agency-policy bypass.
-- Everyone else tries the storage host first; if the network refuses it (network error, timeout, 403/407/451, or 5xx), the part is retried through the relay and the rest of the browser session stays on the relay.
+- If the network refuses the storage host (network error, timeout, 403/407/451, or 5xx), the part is retried through the relay and the rest of the browser session stays on the relay.
 - An agency allowlist therefore needs only the Print-cess origin.
 - Set `PRINT_CESS_BLOB_RELAY=off` to disable the route. It is only available with the Vercel Blob provider; Railway S3 deployments still use the storage host directly.
 
@@ -70,7 +70,7 @@ A green application CI build is not proof that a specific managed image is usabl
 
 Minimum acceptance evidence should include:
 
-- `/start` loads over HTTPS and `/workstation` redirects to `/start#environment`;
+- `/start` loads over HTTPS, its environment check opens at `/start#environment`, and a legacy `/workstation` bookmark redirects to `/`;
 - the readiness panel reports HTTPS, Web Crypto, File API support, and a reachable Print-cess server;
 - the browser's network log shows part uploads and downloads going to `/relay/blob/...` on the Print-cess origin, with no request to the storage host;
 - a synthetic non-sensitive file can be sent from phone to workstation;

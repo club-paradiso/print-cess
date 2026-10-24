@@ -23,7 +23,8 @@ flowchart LR
 
 The kiosk advertises its document capabilities — legacy HWP and HWPX — as two independent flags in
 the QR fragment. They are never inferred from one another: a printer without a legacy renderer must
-not be offered a `.hwp` the visitor only discovers it cannot print once they reach the paper.
+not be offered a `.hwp`, or the visitor would only find out it cannot be printed once they reach
+the paper.
 
 The phone and kiosk can be on unrelated networks. The web service coordinates a bearer-authorized
 session but does not receive the plaintext, ECDH private key, or shared AES key. Route Handlers
@@ -99,7 +100,7 @@ answered. The picker stays in the header and the guide lives in Help; neither bl
    enter normal HTTP request lines; the page must remove sensitive fragment material from visible
    browser state after reading it.
 3. The phone loads the public page, obtains the kiosk public key, hashes its raw 65-byte SEC1
-   encoding, and timing-safely compares it with `fp`. Missing or mismatched fragments stop the flow.
+   encoding, and compares it with `fp` in constant time. Missing or mismatched fragments stop the flow.
 4. Claim is an atomic compare-and-set from `waiting`. A second phone receives a neutral used-session
    result and cannot advance.
 5. The visitor selects and previews one supported file. Mobile validation is an early usability
@@ -113,8 +114,8 @@ answered. The picker stays in the header and the guide lives in Help; neither bl
 8. The phone polls a redacted public status view until terminal or expired. Once the upload is
    committed the phone is a status observer and nothing more: a failed poll reports a lost
    connection and retries, never cancels the session, and never reports a print outcome the phone
-   cannot know. Exhausting the deadline without contact yields an explicit "we do not know", not a
-   failure.
+   cannot know. If the deadline passes without contact, the phone says explicitly "we do not know"
+   rather than reporting a failure.
 
 ## Kiosk flow
 

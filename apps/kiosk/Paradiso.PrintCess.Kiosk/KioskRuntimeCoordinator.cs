@@ -534,7 +534,7 @@ internal sealed class KioskRuntimeCoordinator : IKioskAdminRuntime
                 {
                     _viewModel.ShowSessionError(
                         "이 문서를 안전하게 열 수 없습니다",
-                        "휴대전화에서 파일을 다시 저장한 뒤 새 QR로 다시 보내세요",
+                        "휴대전화에서 파일을 다시 저장한 뒤 새 QR 코드로 다시 보내세요",
                         failedCleanupConfirmed);
                 }
                 else if (string.Equals(printResult.Code, "Q-01", StringComparison.Ordinal))
@@ -548,7 +548,7 @@ internal sealed class KioskRuntimeCoordinator : IKioskAdminRuntime
                 {
                     _viewModel.ShowSessionError(
                         "시스템 최대 출력량 50페이지를 넘었습니다",
-                        "50페이지 이하로 나누어 새 QR로 다시 보내세요. 이건 구독으로도 안 돼요",
+                        "50페이지 이하로 나누어 새 QR 코드로 다시 보내세요",
                         failedCleanupConfirmed);
                 }
                 else
@@ -635,15 +635,15 @@ internal sealed class KioskRuntimeCoordinator : IKioskAdminRuntime
     private static (string Primary, string NextAction) DocumentErrorMessage(Exception exception) => exception switch
     {
         DocumentValidationException { Error: DocumentValidationError.LockedPdf } =>
-            ("암호가 설정된 PDF는 인쇄할 수 없습니다", "휴대전화에서 필요한 페이지를 화면 캡처한 뒤 새 QR로 다시 보내세요"),
+            ("암호가 설정된 PDF는 인쇄할 수 없습니다", "휴대전화에서 필요한 페이지를 화면 캡처한 뒤 새 QR 코드로 다시 보내세요"),
         DocumentValidationException { Error: DocumentValidationError.TooManyPages } =>
-            ("시스템 최대 출력량 50페이지를 넘었습니다", "50페이지 이하로 나누어 새 QR로 다시 보내세요. 이건 구독으로도 안 돼요"),
+            ("시스템 최대 출력량 50페이지를 넘었습니다", "50페이지 이하로 나누어 새 QR 코드로 다시 보내세요"),
         DocumentValidationException { Error: DocumentValidationError.TypeMismatch or DocumentValidationError.MimeMismatch } =>
-            ("PDF, JPG, PNG 파일만 인쇄할 수 있습니다", "지원 형식으로 저장하거나 선명한 화면 캡처를 새 QR로 보내세요"),
+            ("PDF, JPG, PNG 파일만 인쇄할 수 있습니다", "지원 형식으로 저장하거나 선명한 화면 캡처를 새 QR 코드로 보내세요"),
         DocumentValidationException =>
-            ("이 문서를 안전하게 열 수 없습니다", "휴대전화에서 파일을 다시 저장한 뒤 새 QR로 다시 보내세요"),
+            ("이 문서를 안전하게 열 수 없습니다", "휴대전화에서 파일을 다시 저장한 뒤 새 QR 코드로 다시 보내세요"),
         _ =>
-            ("전송된 문서를 안전하게 확인할 수 없습니다", "새 QR이 나타나면 휴대전화에서 파일을 다시 보내세요"),
+            ("전송된 문서를 안전하게 확인할 수 없습니다", "새 QR 코드가 나타나면 휴대전화에서 파일을 다시 보내세요"),
     };
 
     private static string CodeFor(Exception exception) => exception switch

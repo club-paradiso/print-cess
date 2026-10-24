@@ -13,8 +13,8 @@ this repository. Include:
 - what an attacker can do, and what they need first;
 - steps to reproduce, using made-up documents and test accounts only.
 
-Never attach a real identity, travel or immigration document, a live credential, a transfer code or
-a signed URL. If you find an exposed credential, say so in the report and we will revoke it before
+Never attach a real identity or travel document, a live credential, a transfer code or a signed
+URL. If you find an exposed credential, say so in the report and we will revoke it before
 anything else.
 
 ## What to expect

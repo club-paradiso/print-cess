@@ -155,7 +155,7 @@ line of text after it, no FAQ and no accordions.
 Since 2026-10-13 the root URL `/` opens the shared display itself (the same screen and
 `?printing=auto` / `?sound=off` switches as `/kiosk`), so a station can simply be pointed at the
 domain. The visitor's guide described in the sections above moved to `/start`, and every "home"
-link (the header name, the 404 page, the workstation page and the campaign page) now points
+link (the header name, the 404 page and the workstation page) now points
 there. When the browser kiosk is switched off in Production, `/` redirects to `/start` instead of
 returning 404.
 
@@ -164,13 +164,13 @@ returning 404.
 redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 
 - **Waiting.** Left: the Beacon (unlabelled), one headline
-  ("휴대전화 카메라로 QR코드를 비추세요"), English beneath it, the rotating language line, and the
+  ("휴대전화 카메라로 QR 코드를 비추세요"), English beneath it, the rotating language line, and the
   whole visit as three steps (point the camera, choose files on the phone, take the paper), with
   the first drawn as current. Right: the QR code on a solid Royal Indigo panel, the largest block
-  of colour on the screen, with "사진을 찍을 필요는 없습니다" above the code and an emptying bar plus
+  of colour on the screen, with "사진은 찍지 않아도 돼요" above the code and an emptying bar plus
   the countdown below it. A footer carries the small print (deletion, no sign-up, file types,
   languages). The old green "사용할 수 있어요" banner is gone; a small header pill appears only
-  while the code is being made ("QR코드를 준비하고 있어요").
+  while the code is being made ("QR 코드를 준비하고 있어요").
 - **Sizing.** On landscape displays from 961×700 the screen never scrolls: the code sits in a
   size container and is the largest square that fits (`min(100cqw, 100cqh)`), up to 600 px plus
   its padding. This fixes 1280×1024, where the old `height: 100%` rule pushed the code past its
@@ -192,15 +192,15 @@ Reviewed on 2026-10-13 for words a first-time visitor could misread. Each change
 | Was                                    | Now                                                    | Why                                                                                     |
 | -------------------------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------------- |
 | 여기서 인쇄 시작 / Start printing here | (removed; the Beacon stays, unlabelled)                | Read as a button to press on a screen that takes no input; the headline already says it |
-| 사용할 수 있어요 (header pill)         | shown only while preparing: QR코드를 준비하고 있어요   | "Available" left visitors asking what was available                                     |
+| 사용할 수 있어요 (header pill)         | shown only while preparing: QR 코드를 준비하고 있어요  | "Available" left visitors asking what was available                                     |
 | 화면에 나타나는 링크를 누르세요        | 휴대전화에 뜨는 링크를 누르세요                        | "화면" could mean this display, which has no link                                       |
-| QR코드 변경까지                        | 새 QR코드로 바뀌기까지                                 | "변경" is an administrative word                                                        |
+| QR 코드 변경까지                       | 새 QR 코드로 바뀌기까지                                | "변경" is an administrative word                                                        |
 | 13개 언어 · languages                  | 휴대전화 화면은 13개 언어 지원                         | The display itself cannot change language; the phone can                                |
 | [인쇄하기]를 누르세요                  | 휴대전화의 인쇄 버튼을 누르세요                        | The phone's button reads "파일 N개 인쇄", not "인쇄하기"                                |
 | 작업 만료까지                          | 남은 시간                                              | "작업 만료" is system jargon                                                            |
 | 선택한 파일 N개를 처리했습니다         | 파일 N개를 프린터로 보냈어요 (or 인쇄할 준비를 했어요) | "처리" says nothing about where the paper is                                            |
 | 서버에 보관된 파일은 삭제됐습니다      | 보내신 파일은 모두 지웠어요                            | Visitors do not know or need "서버"                                                     |
-| 새 QR코드 만들기 (failure screen)      | 다시 시도하기                                          | The visitor's goal is to retry, not to make a code                                      |
+| 새 QR 코드 만들기 (failure screen)     | 다시 시도하기                                          | The visitor's goal is to retry, not to make a code                                      |
 | 보내신 파일은 삭제됐습니다 (failure)   | (removed)                                              | Often nothing had been sent yet, so it raised a question it did not answer              |
 
 `kioskStartHere` was removed from all thirteen locales.
@@ -219,8 +219,7 @@ Keys added: `homePrintHeading`, `homePrintLead`, `homePrintLead2`, `homeBeaconCa
 (removed again on 2026-10-13, see "Kiosk copy").
 Removed: `homeTitle`, `homeLead`, `homePrintBody`. Reworded: `homeKioskCta`.
 
-Spelling note: existing Korean strings write "QR코드" without a space; the new strings write
-"QR 코드", which is the standard spacing. They have not been unified.
+Spelling note: all Korean strings write "QR 코드" with a space, the standard spacing.
 
 ---
 

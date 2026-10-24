@@ -67,9 +67,9 @@ and the two are not interchangeable.
 
 The iteration count stays at 310,000 rather than the 600,000 OWASP suggests for passwords, by
 decision. That figure assumes a human-chosen password; this code is about sixty random bits, so an
-exhaustive search already costs about 2^78 PBKDF2 rounds. Doubling the iterations adds one bit, while
-it would double the wait on low-end phones and, because the identifier is derived from the code,
-break every transfer in flight at deploy. If the work factor ever needs to rise, lengthen the code
+exhaustive search already costs about 2^78 PBKDF2 rounds. Doubling the iterations would add one bit,
+but it would also double the wait on low-end phones and, because the identifier is derived from the
+code, break every transfer in flight at deploy. If the work factor ever needs to rise, lengthen the code
 instead: each extra character adds five bits.
 
 ### Optional nearby pairing
@@ -115,7 +115,8 @@ The file list travels as a separately encrypted manifest stored beside the recor
 blob, so opening a transfer costs one request and reveals nothing until the code decrypts it. File
 names are budgeted in UTF-8 bytes rather than characters, which is what keeps twenty Korean or
 emoji names inside the manifest's 16 KiB ceiling by construction; the sending phone measures the
-sealed manifest before creating anything and refuses with a sentence about the names.
+sealed manifest before creating anything and, if it is too large, refuses with a message about the
+names.
 
 Each client address may also create `DROP_CLIENT_HOURLY_TRANSFERS` transfers (default 60) totalling
 `DROP_CLIENT_HOURLY_MB` (default 16384) per hour. The budget is counted in the shared store, so
