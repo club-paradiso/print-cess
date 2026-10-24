@@ -37,6 +37,11 @@ const configSchema = z.object({
     .int()
     .min(16 * 1024 * 1024)
     .max(MAX_DROP_TOTAL_BYTES),
+  dropClientHourlyBytes: z
+    .number()
+    .int()
+    .min(16 * 1024 * 1024),
+  dropClientHourlyTransfers: z.number().int().min(1).max(10_000),
   demoEnabled: z.boolean(),
 });
 
@@ -78,6 +83,8 @@ export function loadConfig(environment: NodeJS.ProcessEnv = process.env): Server
     visitorTtlMs: Number(environment.VISITOR_TTL_SECONDS ?? 600) * 1000,
     dropTtlMs: Number(environment.DROP_TTL_SECONDS ?? 1800) * 1000,
     dropMaxTotalBytes: Number(environment.DROP_MAX_TOTAL_MB ?? 2048) * 1024 * 1024,
+    dropClientHourlyBytes: Number(environment.DROP_CLIENT_HOURLY_MB ?? 16384) * 1024 * 1024,
+    dropClientHourlyTransfers: Number(environment.DROP_CLIENT_HOURLY_TRANSFERS ?? 60),
     demoEnabled: isDemoRouteEnabled(environment) || environment.NODE_ENV !== "production",
   });
 

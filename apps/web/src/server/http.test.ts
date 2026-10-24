@@ -18,6 +18,8 @@ const originConfig = {
   signedUrlTtlMs: 120_000,
   dropTtlMs: 1_800_000,
   dropMaxTotalBytes: 2 * 1024 * 1024 * 1024,
+  dropClientHourlyBytes: 16 * 1024 * 1024 * 1024,
+  dropClientHourlyTransfers: 60,
   visitorTtlMs: 600_000,
   demoEnabled: false,
 } satisfies ServerConfig;

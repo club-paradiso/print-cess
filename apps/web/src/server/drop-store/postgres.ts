@@ -12,6 +12,7 @@ import {
 } from "./transitions";
 
 const TABLE_NAME = "print_cess_drop_state_v1";
+const BUDGET_TABLE_NAME = "print_cess_drop_budget_v1";
 
 type DropRow = { drop: unknown; retention_expires_at: string | number };
 
@@ -124,6 +125,33 @@ export class RailwayPostgresDropStore implements DropStore {
     });
   }
 
+  public async consumeBudget(
+    key: string,
+    amount: number,
+    limit: number,
+    windowMs: number,
+    now: number,
+  ): Promise<boolean> {
+    if (amount > limit) return false;
+    await this.ensureSchema();
+    const windowStart = now - (now % windowMs);
+    await this.#executor.query(`DELETE FROM ${BUDGET_TABLE_NAME} WHERE window_start < $1`, [
+      windowStart - windowMs,
+    ]);
+    const result = await this.#executor.query(
+      `
+      INSERT INTO ${BUDGET_TABLE_NAME} (budget_key, window_start, used)
+      VALUES ($1, $2, $3)
+      ON CONFLICT (budget_key, window_start) DO UPDATE
+        SET used = ${BUDGET_TABLE_NAME}.used + EXCLUDED.used
+        WHERE ${BUDGET_TABLE_NAME}.used + EXCLUDED.used <= $4
+      RETURNING used
+      `,
+      [key, windowStart, amount, limit],
+    );
+    return result.rowCount === 1;
+  }
+
   private async ensureSchema(): Promise<void> {
     this.#schema ??= (async () => {
       await this.#executor.query(`
@@ -133,6 +161,14 @@ export class RailwayPostgresDropStore implements DropStore {
           retention_expires_at BIGINT NOT NULL,
           expires_at BIGINT NOT NULL,
           updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+        )
+      `);
+      await this.#executor.query(`
+        CREATE TABLE IF NOT EXISTS ${BUDGET_TABLE_NAME} (
+          budget_key TEXT NOT NULL,
+          window_start BIGINT NOT NULL,
+          used BIGINT NOT NULL,
+          PRIMARY KEY (budget_key, window_start)
         )
       `);
       await this.#executor.query(`

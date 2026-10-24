@@ -142,4 +142,16 @@ describe("RedisDropStore", () => {
       makeStore(redis).commitParts(DROP_ID, OWNER, [{ index: 0, size: 40 }], NOW + 2),
     ).rejects.toMatchObject({ status: 410 });
   });
+
+  it("charges a budget in one shared key per window and reports a refusal", async () => {
+    const redis = client();
+    const store = new RedisDropStore(redis);
+    redis.eval.mockResolvedValueOnce(1).mockResolvedValueOnce(0);
+
+    await expect(store.consumeBudget("bytes:abc", 5, 10, 60_000, 125_000)).resolves.toBe(true);
+    await expect(store.consumeBudget("bytes:abc", 6, 10, 60_000, 125_000)).resolves.toBe(false);
+    const [, keys, args] = redis.eval.mock.calls[0] as [string, string[], (string | number)[]];
+    expect(keys).toEqual(["pc:v1:budget:bytes:abc:120000"]);
+    expect(args).toEqual([5, 10, 120_000]);
+  });
 });
