@@ -13,6 +13,7 @@ import {
 
 const DROP_KEY_PREFIX = "pc:v1:drop:";
 const DROP_DUE_KEY = "pc:v1:drops:due";
+const BUDGET_KEY_PREFIX = "pc:v1:budget:";
 const MAX_CAS_ATTEMPTS = 3;
 
 const CREATE_SCRIPT = `
@@ -32,6 +33,15 @@ local requestedTtl = tonumber(ARGV[3])
 local nextTtl = requestedTtl
 if currentTtl > nextTtl then nextTtl = currentTtl end
 redis.call('SET', KEYS[1], ARGV[2], 'PX', nextTtl)
+return 1
+`;
+
+const BUDGET_SCRIPT = `
+local used = tonumber(redis.call('GET', KEYS[1]) or '0')
+local amount = tonumber(ARGV[1])
+if used + amount > tonumber(ARGV[2]) then return 0 end
+redis.call('INCRBY', KEYS[1], amount)
+redis.call('PEXPIRE', KEYS[1], ARGV[3])
 return 1
 `;
 
@@ -96,6 +106,22 @@ export class RedisDropStore implements DropStore {
 
   public async remove(dropId: string): Promise<void> {
     await this.redis.eval(REMOVE_SCRIPT, [dropKey(dropId), DROP_DUE_KEY], [dropId]);
+  }
+
+  public async consumeBudget(
+    key: string,
+    amount: number,
+    limit: number,
+    windowMs: number,
+    now: number,
+  ): Promise<boolean> {
+    const windowStart = now - (now % windowMs);
+    const result = await this.redis.eval(
+      BUDGET_SCRIPT,
+      [`${BUDGET_KEY_PREFIX}${key}:${windowStart}`],
+      [amount, limit, windowMs * 2],
+    );
+    return Number(result) === 1;
   }
 
   public async listExpired(now: number, limit: number): Promise<DropRecord[]> {

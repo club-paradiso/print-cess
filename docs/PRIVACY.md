@@ -85,6 +85,10 @@ orphaned print ciphertext. The service never holds the transfer code, so it cann
 list, a file name, or any content it stores. The sender can erase a transfer at any time from the
 ready screen. Full detail is in `FILE_TRANSFER.md`.
 
+To stop one sender from filling the storage, each client address has an hourly allowance of
+transfers and bytes, counted in the shared store. The store sees only a SHA-256 hash of the address
+salted with the hour, never the address itself, and the record expires within two hours.
+
 ## Deletion triggers and backstops
 
 Explicit cleanup runs after successful print, print failure, cancellation, QR/work expiry,

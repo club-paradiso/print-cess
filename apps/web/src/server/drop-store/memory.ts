@@ -14,6 +14,7 @@ type StoredDrop = { drop: DropRecord; retentionExpiresAt: number };
 
 export class MemoryDropStore implements DropStore {
   readonly #drops = new Map<string, StoredDrop>();
+  readonly #budgets = new Map<string, { used: number; windowStart: number }>();
 
   public async create(drop: DropRecord, retentionMs: number): Promise<void> {
     this.prune();
@@ -88,6 +89,23 @@ export class MemoryDropStore implements DropStore {
     const next = mutation(structuredClone(stored.drop));
     stored.drop = structuredClone(next);
     return structuredClone(next);
+  }
+
+  public async consumeBudget(
+    key: string,
+    amount: number,
+    limit: number,
+    windowMs: number,
+    now: number,
+  ): Promise<boolean> {
+    const windowStart = now - (now % windowMs);
+    for (const [candidate, budget] of this.#budgets) {
+      if (budget.windowStart < windowStart) this.#budgets.delete(candidate);
+    }
+    const used = this.#budgets.get(key)?.used ?? 0;
+    if (used + amount > limit) return false;
+    this.#budgets.set(key, { used: used + amount, windowStart });
+    return true;
   }
 
   private prune(now = Date.now()): void {

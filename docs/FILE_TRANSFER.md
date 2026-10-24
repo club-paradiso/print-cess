@@ -110,6 +110,11 @@ names are budgeted in UTF-8 bytes rather than characters, which is what keeps tw
 emoji names inside the manifest's 16 KiB ceiling by construction; the sending phone measures the
 sealed manifest before creating anything and refuses with a sentence about the names.
 
+Each client address may also create `DROP_CLIENT_HOURLY_TRANSFERS` transfers (default 60) totalling
+`DROP_CLIENT_HOURLY_MB` (default 16384) per hour. The budget is counted in the shared store, so
+adding serverless instances does not multiply it, and the address is kept only as a hash salted with
+the hour. A refused create returns 429.
+
 Ceilings: 20 files, 4096 parts, and `DROP_MAX_TOTAL_MB` (default 2048) per transfer. The size
 ceiling is measured in bytes: `GET /api/drops/capabilities` publishes it so the phone can refuse a
 selection before key stretching, the create request declares its plaintext size, the schema pins the
