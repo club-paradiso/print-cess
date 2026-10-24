@@ -33,6 +33,14 @@ page, `POST /api/kiosk/sessions` and the home page's kiosk link all follow it:
 | Other Vercel Preview               | follows `ENABLE_DEMO_ROUTES` | on       | off               |
 | Production build outside Vercel    | off                          | on       | off               |
 
+Keeping it on in Production is a decision, recorded on 2026-10-24: the public browser kiosk is
+a feature, so anyone can open `/kiosk` and create a print session. Two things follow and are
+accepted. A request with a forged `Origin` header can create sessions outside a browser, and a
+visitor can only trust a QR code shown on a screen they can see is the official kiosk. The
+per-address limit and the session's short lifetime bound the abuse, and the registered Windows
+kiosk path (`POST /api/sessions` with `KIOSK_REGISTRATION_SECRET`) stays separate. Set
+`ENABLE_BROWSER_KIOSK=false` if a deployment should print only through registered kiosks.
+
 When off, `/kiosk` and the session API answer 404 and the home page hides the link. Vercel fixes
 environment variables per deployment, so a change takes effect only after a redeploy. Kiosk QR
 codes are always built from `PUBLIC_BASE_URL`. On 2026-10-12 the live kiosk QR named

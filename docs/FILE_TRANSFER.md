@@ -65,6 +65,13 @@ misconfiguration, say. It lifts an offline search by roughly nineteen bits. This
 trade against a code a person can read out loud; it is weaker than the print flow's ECDH exchange,
 and the two are not interchangeable.
 
+The iteration count stays at 310,000 rather than the 600,000 OWASP suggests for passwords, by
+decision. That figure assumes a human-chosen password; this code is about sixty random bits, so an
+exhaustive search already costs about 2^78 PBKDF2 rounds. Doubling the iterations adds one bit, while
+it would double the wait on low-end phones and, because the identifier is derived from the code,
+break every transfer in flight at deploy. If the work factor ever needs to rise, lengthen the code
+instead: each extra character adds five bits.
+
 ### Optional nearby pairing
 
 People standing together can avoid scanning or typing the full transfer code. The sender chooses

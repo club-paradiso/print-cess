@@ -12,20 +12,20 @@ rather than an ECDH exchange, so the two are not interchangeable.
 
 ## Primitives and encodings
 
-| Purpose                | Protocol value                                                      |
-| ---------------------- | ------------------------------------------------------------------- |
-| Key agreement          | ECDH on NIST P-256                                                  |
-| Public-key wire format | 65-byte uncompressed SEC1 point: `04` + `X(32)` + `Y(32)`           |
-| Fingerprint            | SHA-256 of the exact 65 public-key bytes, base64url without padding |
-| KDF                    | HKDF-SHA-256                                                        |
-| HKDF salt              | Fresh 32 random bytes per document                                  |
-| HKDF info              | UTF-8 bytes of `print-cess-by-paradiso:file:v1`                     |
-| AEAD                   | AES-256-GCM                                                         |
-| IV                     | Fresh 12 random bytes per document                                  |
-| Authentication tag     | 16 bytes (128 bits), appended by Web Crypto after ciphertext        |
-| Integer encoding       | Unsigned, network byte order (big-endian)                           |
-| Maximum plaintext      | 10,485,760 bytes (10 MiB)                                           |
-| Maximum envelope       | 10,485,911 bytes (10 MiB + 151 bytes overhead)                      |
+| Purpose                | Protocol value                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------ |
+| Key agreement          | ECDH on NIST P-256                                                                   |
+| Public-key wire format | 65-byte uncompressed SEC1 point: `04` + `X(32)` + `Y(32)`                            |
+| Fingerprint            | SHA-256 of the exact 65 public-key bytes, base64url without padding                  |
+| KDF                    | HKDF-SHA-256                                                                         |
+| HKDF salt              | Fresh 32 random bytes per document                                                   |
+| HKDF info              | UTF-8 bytes of `print-cess-by-paradiso:file:v1`                                      |
+| AEAD                   | AES-256-GCM                                                                          |
+| IV                     | Fresh 12 random bytes per document                                                   |
+| Authentication tag     | 16 bytes (128 bits), appended by Web Crypto after ciphertext                         |
+| Integer encoding       | Unsigned, network byte order (big-endian)                                            |
+| Maximum plaintext      | 10,485,760 bytes (10 MiB) per document; 33,554,432 bytes (32 MiB) for a print bundle |
+| Maximum envelope       | The plaintext maximum plus 151 bytes of overhead                                     |
 
 Randomness comes from Web Crypto `crypto.getRandomValues` on the phone and a platform CSPRNG on
 Windows. IVs and salts must never be counters, timestamps, session IDs, or reused values.
@@ -67,24 +67,24 @@ rate limits reduce but do not eliminate that risk.
 The complete object is `header || ciphertext || tag`. The fixed header is 26 bytes; variable header
 fields make the version-1 header exactly 135 bytes.
 
-|                 Offset |             Size | Field                       | Version-1 value/rule                                    |
-| ---------------------: | ---------------: | --------------------------- | ------------------------------------------------------- |
-|                      0 |                8 | Magic                       | Hex `50 43 45 4e 56 30 31 00`, ASCII `PCENV01` plus NUL |
-|                      8 |                1 | Protocol version            | `01`                                                    |
-|                      9 |                1 | File kind                   | `01` PDF, `02` JPEG, `03` PNG                           |
-|                     10 |                2 | Flags                       | `0000`; reject every non-zero bit                       |
-|                     12 |                2 | Ephemeral public-key length | `0041` (65)                                             |
-|                     14 |                1 | Salt length                 | `20` (32)                                               |
-|                     15 |                1 | IV length                   | `0c` (12)                                               |
-|                     16 |                1 | Tag length                  | `10` (16)                                               |
-|                     17 |                1 | Reserved                    | `00`                                                    |
-|                     18 |                4 | Plaintext length            | 1 through 10,485,760                                    |
-|                     22 |                4 | Ciphertext-and-tag length   | plaintext length + 16                                   |
-|                     26 |               65 | Mobile ephemeral public key | Uncompressed SEC1 P-256; first byte `04`                |
-|                     91 |               32 | HKDF salt                   | Random                                                  |
-|                    123 |               12 | AES-GCM IV                  | Random                                                  |
-|                    135 | plaintext length | Ciphertext                  | AES-GCM output excluding trailing tag                   |
-| 135 + plaintext length |               16 | Authentication tag          | AES-GCM 128-bit tag                                     |
+|                 Offset |             Size | Field                       | Version-1 value/rule                                                  |
+| ---------------------: | ---------------: | --------------------------- | --------------------------------------------------------------------- |
+|                      0 |                8 | Magic                       | Hex `50 43 45 4e 56 30 31 00`, ASCII `PCENV01` plus NUL               |
+|                      8 |                1 | Protocol version            | `01`                                                                  |
+|                      9 |                1 | File kind                   | `01` PDF, `02` JPEG, `03` PNG, `04` HWPX, `05` HWP, `06` print bundle |
+|                     10 |                2 | Flags                       | `0000`; reject every non-zero bit                                     |
+|                     12 |                2 | Ephemeral public-key length | `0041` (65)                                                           |
+|                     14 |                1 | Salt length                 | `20` (32)                                                             |
+|                     15 |                1 | IV length                   | `0c` (12)                                                             |
+|                     16 |                1 | Tag length                  | `10` (16)                                                             |
+|                     17 |                1 | Reserved                    | `00`                                                                  |
+|                     18 |                4 | Plaintext length            | 1 through 10,485,760                                                  |
+|                     22 |                4 | Ciphertext-and-tag length   | plaintext length + 16                                                 |
+|                     26 |               65 | Mobile ephemeral public key | Uncompressed SEC1 P-256; first byte `04`                              |
+|                     91 |               32 | HKDF salt                   | Random                                                                |
+|                    123 |               12 | AES-GCM IV                  | Random                                                                |
+|                    135 | plaintext length | Ciphertext                  | AES-GCM output excluding trailing tag                                 |
+| 135 + plaintext length |               16 | Authentication tag          | AES-GCM 128-bit tag                                                   |
 
 Parsers calculate lengths with checked arithmetic, enforce the maximum before allocation, and
 require:
