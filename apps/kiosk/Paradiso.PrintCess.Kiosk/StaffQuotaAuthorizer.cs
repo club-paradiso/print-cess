@@ -12,11 +12,12 @@ internal interface IStaffQuotaAuthorizer
 internal sealed class StaffQuotaAuthorizer : IStaffQuotaAuthorizer
 {
     private readonly IAdminAuthenticator _authenticator;
-    private readonly AdminAuthenticationThrottle _throttle = new();
+    private readonly AdminAuthenticationThrottle _throttle;
 
-    public StaffQuotaAuthorizer(IAdminAuthenticator authenticator)
+    public StaffQuotaAuthorizer(IAdminAuthenticator authenticator, AdminAuthenticationThrottle throttle)
     {
         _authenticator = authenticator;
+        _throttle = throttle;
     }
 
     public async Task<bool> AuthorizeAsync(int renderedPageCount, CancellationToken cancellationToken)

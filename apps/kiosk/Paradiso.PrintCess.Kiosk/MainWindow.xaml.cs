@@ -14,7 +14,7 @@ public partial class MainWindow : Window
 {
     private readonly MainViewModel _viewModel;
     private readonly IAdminAuthenticator _adminAuthenticator;
-    private readonly AdminAuthenticationThrottle _adminAuthenticationThrottle = new();
+    private readonly AdminAuthenticationThrottle _adminAuthenticationThrottle;
     private readonly PrintRecoveryReport _recoveryReport;
     private readonly IKioskAdminRuntime? _runtime;
     private readonly IPrintSubmissionJournal? _journal;
@@ -22,6 +22,7 @@ public partial class MainWindow : Window
     public MainWindow(
         MainViewModel viewModel,
         IAdminAuthenticator adminAuthenticator,
+        AdminAuthenticationThrottle adminAuthenticationThrottle,
         PrintRecoveryReport recoveryReport,
         IKioskAdminRuntime? runtime,
         IPrintSubmissionJournal? journal)
@@ -29,6 +30,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _viewModel = viewModel;
         _adminAuthenticator = adminAuthenticator;
+        _adminAuthenticationThrottle = adminAuthenticationThrottle;
         _recoveryReport = recoveryReport;
         _runtime = runtime;
         _journal = journal;
