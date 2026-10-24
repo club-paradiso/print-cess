@@ -1,5 +1,6 @@
 import type { SupportedLocale } from "@print-cess/i18n";
 
+import { TESSERACT_CORE_PACKAGE, TESSERACT_PACKAGE } from "./cdn-assets";
 import type { PdfOcrWord } from "./scan-pdf";
 
 export type OcrProgress = {
@@ -53,10 +54,9 @@ declare global {
   }
 }
 
-const TESSERACT_VERSION = "7.0.0";
-const TESSERACT_SCRIPT = `https://cdn.jsdelivr.net/npm/tesseract.js@${TESSERACT_VERSION}/dist/tesseract.min.js`;
-const TESSERACT_WORKER = `https://cdn.jsdelivr.net/npm/tesseract.js@${TESSERACT_VERSION}/dist/worker.min.js`;
-const TESSERACT_CORE = `https://cdn.jsdelivr.net/npm/tesseract.js-core@${TESSERACT_VERSION}`;
+const TESSERACT_SCRIPT = `${TESSERACT_PACKAGE}dist/tesseract.min.js`;
+const TESSERACT_WORKER = `${TESSERACT_PACKAGE}dist/worker.min.js`;
+const TESSERACT_CORE = TESSERACT_CORE_PACKAGE.slice(0, -1);
 const TESSDATA_FAST = "https://tessdata.projectnaptha.com/4.0.0_fast";
 
 const PRIMARY_OCR_LANGUAGE: Record<SupportedLocale, string> = {
