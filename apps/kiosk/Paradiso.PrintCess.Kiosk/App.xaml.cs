@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Windows;
 using Paradiso.PrintCess.Core.Documents;
 using Paradiso.PrintCess.Core.Printing;
+using Paradiso.PrintCess.Core.Security;
 using Paradiso.PrintCess.Infrastructure.Admin;
 using Paradiso.PrintCess.Infrastructure.Http;
 using Paradiso.PrintCess.Infrastructure.Printing;
@@ -37,6 +38,9 @@ public partial class App : Application
         }
         var authenticator = new Pbkdf2AdminAuthenticator(
             Environment.GetEnvironmentVariable("PRINT_CESS_ADMIN_PASSWORD_HASH"));
+        var adminThrottle = new AdminAuthenticationThrottle(
+            store: new FileAdminThrottleStore(
+                Path.Combine(localData, "Paradiso", "PrintCess", "admin-throttle.json")));
         var simulatorRequested = string.Equals(
             Environment.GetEnvironmentVariable("PRINT_CESS_USE_MOCK_PRINT_ENGINE"),
             "true",
@@ -47,10 +51,10 @@ public partial class App : Application
             StringComparison.Ordinal);
         var viewModel = new MainViewModel(simulatorRequested && simulatorEnvironment);
         var runtime = recovery.Succeeded && journal is not null
-            ? TryCreateRuntime(viewModel, journal, localData, new StaffQuotaAuthorizer(authenticator))
+            ? TryCreateRuntime(viewModel, journal, localData, new StaffQuotaAuthorizer(authenticator, adminThrottle))
             : null;
 
-        var window = new MainWindow(viewModel, authenticator, recovery, runtime, journal)
+        var window = new MainWindow(viewModel, authenticator, adminThrottle, recovery, runtime, journal)
         {
             DataContext = viewModel,
         };
