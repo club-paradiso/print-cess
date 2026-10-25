@@ -3,6 +3,7 @@ import { z } from "zod";
 import { MAX_DROP_TOTAL_BYTES } from "@print-cess/protocol";
 
 import { isDemoRouteEnabled } from "./demo";
+import { TRUSTED_PROXY_HOPS_VARIABLE, trustedProxyHops } from "./request-identity";
 
 export const SESSION_PROVIDERS = ["upstash-redis", "railway-redis", "railway-postgres"] as const;
 export const BLOB_PROVIDERS = ["vercel-blob", "railway-s3"] as const;
@@ -97,6 +98,13 @@ export function loadConfig(environment: NodeJS.ProcessEnv = process.env): Server
     for (const origin of config.allowedOrigins) assertExactHttpsOrigin(origin, "ALLOWED_ORIGINS");
     requireSecret(environment, "KIOSK_REGISTRATION_SECRET", 32);
     requireSecret(environment, "ADMIN_DIAGNOSTICS_SECRET", 32);
+    if (environment.VERCEL !== "1" && trustedProxyHops(environment) === null) {
+      throw new Error(
+        `Production outside Vercel must set ${TRUSTED_PROXY_HOPS_VARIABLE} to the number of proxies in front of the app`,
+      );
+    }
+  } else {
+    trustedProxyHops(environment);
   }
 
   if (external) {

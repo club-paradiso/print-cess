@@ -181,6 +181,9 @@ Set machine/account-protected variables or an approved configuration store:
   unset to use a valid registered `FilePathCheckerModuleExample`; set it to another exact registered
   value name to override; set it to an intentionally unregistered sentinel such as `disabled` to
   suppress HWP/HWPX capability advertisement;
+- `PRINT_CESS_HANCOM_RENDER_TIMEOUT_SECONDS`: optional time limit for one Hancom render, in whole
+  seconds from 10 to 600 (default 60). When it passes, the kiosk stops only the `Hwp.exe` process
+  that render started, deletes the job folder, and fails the document as one it cannot open;
 - `PRINT_CESS_ADMIN_PASSWORD_HASH`: salted modern hash, never a plaintext/hard-coded password;
 - `PRINT_CESS_ADMIN_API_SECRET`: independent random server administrator secret (at least 32
   characters) for `/api/admin/health` and the bounded `/api/cleanup` sweep; protect it separately

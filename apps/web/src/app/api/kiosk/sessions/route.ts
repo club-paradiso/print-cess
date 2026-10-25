@@ -7,6 +7,7 @@ import { ServiceError } from "@/server/errors";
 import { assertAllowedOrigin, errorResponse, json, readJson } from "@/server/http";
 import { enforceRateLimit } from "@/server/rate-limit";
 import { createPrintSession, getRuntime, sweepDueOrphans } from "@/server/runtime";
+import { clientAddress } from "@/server/request-identity";
 
 export const runtime = "nodejs";
 
@@ -27,11 +28,7 @@ export async function POST(request: Request) {
       assertAllowedOrigin(request, server.config);
     }
 
-    enforceRateLimit(
-      `browser-kiosk-create:${request.headers.get("x-forwarded-for")?.split(",")[0] ?? "local"}`,
-      20,
-      60_000,
-    );
+    enforceRateLimit(`browser-kiosk-create:${clientAddress(request)}`, 20, 60_000);
 
     const input = {
       ...(await readJson(request, createSessionRequestSchema)),

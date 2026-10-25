@@ -1,3 +1,5 @@
+import { randomInt } from "node:crypto";
+
 import {
   createPairingRequestSchema,
   PAIRING_CODE_LENGTH,
@@ -49,7 +51,7 @@ export async function POST(request: Request) {
 function drawCandidates(): string[] {
   const drawn = new Set<string>();
   while (drawn.size < CLAIM_ATTEMPTS) {
-    const value = crypto.getRandomValues(new Uint32Array(1))[0]! % PAIRING_CODE_SPACE;
+    const value = randomInt(PAIRING_CODE_SPACE);
     drawn.add(String(value).padStart(PAIRING_CODE_LENGTH, "0"));
   }
   return [...drawn];

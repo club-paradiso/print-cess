@@ -9,6 +9,10 @@ import {
 
 const STORAGE = "https://store1.private.blob.vercel-storage.com";
 
+function isStorage(url: string): boolean {
+  return URL.canParse(url) && new URL(url).origin === STORAGE;
+}
+
 type Seen = { method: string; url: string };
 
 function stubNetwork(storageBlocked: boolean): Seen[] {
@@ -16,7 +20,7 @@ function stubNetwork(storageBlocked: boolean): Seen[] {
   vi.stubGlobal("fetch", async (input: string, init: RequestInit = {}) => {
     const method = init.method ?? "GET";
     seen.push({ method, url: input });
-    if (input.startsWith(STORAGE)) {
+    if (isStorage(input)) {
       if (storageBlocked) throw new TypeError("Failed to fetch");
       return new Response(null, { status: 200 });
     }
@@ -73,7 +77,7 @@ describe("storage route on managed networks", () => {
     await sendDrop(prepareSelection(files(2)));
     const puts = seen.filter((request) => request.method === "PUT");
     expect(puts).toHaveLength(2);
-    expect(puts.every((request) => request.url.startsWith(STORAGE))).toBe(true);
+    expect(puts.every((request) => isStorage(request.url))).toBe(true);
   });
 
   it("falls back to the same-origin relay when the storage host is blocked", async () => {
@@ -81,7 +85,7 @@ describe("storage route on managed networks", () => {
     await sendDrop(prepareSelection(files(1)));
     await sendDrop(prepareSelection(files(1)));
     const puts = seen.filter((request) => request.method === "PUT");
-    expect(puts.map((request) => request.url.startsWith(STORAGE))).toEqual([true, false, false]);
+    expect(puts.map((request) => isStorage(request.url))).toEqual([true, false, false]);
     expect(puts[1]?.url).toBe("/relay/blob/drops/x/0?vercel-blob-signature=s0");
   });
 
@@ -91,6 +95,6 @@ describe("storage route on managed networks", () => {
     await sendDrop(prepareSelection(files(3)));
     const puts = seen.filter((request) => request.method === "PUT");
     expect(puts).toHaveLength(3);
-    expect(puts.some((request) => request.url.startsWith(STORAGE))).toBe(false);
+    expect(puts.some((request) => isStorage(request.url))).toBe(false);
   });
 });

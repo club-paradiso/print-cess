@@ -8,6 +8,7 @@ import { enforceRateLimit } from "@/server/rate-limit";
 import { ServiceError } from "@/server/errors";
 import { secretMatches } from "@/server/auth";
 import { isValidVisitorOperatorCookie, VISITOR_OPERATOR_COOKIE } from "@/server/visitor-operator";
+import { clientAddress } from "@/server/request-identity";
 
 export const runtime = "nodejs";
 
@@ -15,11 +16,7 @@ export async function POST(request: Request) {
   try {
     const server = getRuntime();
     assertAllowedOrigin(request, server.config);
-    enforceRateLimit(
-      `visitor-create:${request.headers.get("x-forwarded-for")?.split(",")[0] ?? "local"}`,
-      20,
-      60_000,
-    );
+    enforceRateLimit(`visitor-create:${clientAddress(request)}`, 20, 60_000);
     if (process.env.NODE_ENV === "production") {
       const expected = process.env.KIOSK_REGISTRATION_SECRET;
       const supplied = request.headers.get("x-kiosk-registration-secret");

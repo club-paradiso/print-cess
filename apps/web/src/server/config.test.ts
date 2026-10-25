@@ -4,6 +4,7 @@ import { loadConfig } from "./config";
 
 const productionEnvironment: NodeJS.ProcessEnv = {
   NODE_ENV: "production",
+  VERCEL: "1",
   PRINT_CESS_ADAPTER_MODE: "external",
   PUBLIC_BASE_URL: "https://print.example.test",
   ALLOWED_ORIGINS: "https://print.example.test",
@@ -18,6 +19,21 @@ const productionEnvironment: NodeJS.ProcessEnv = {
 };
 
 describe("loadConfig", () => {
+  it("refuses production outside Vercel without a trusted proxy setting", () => {
+    const elsewhere = { ...productionEnvironment };
+    delete elsewhere.VERCEL;
+    expect(() => loadConfig(elsewhere)).toThrow(/PRINT_CESS_TRUSTED_PROXY_HOPS/u);
+    expect(loadConfig({ ...elsewhere, PRINT_CESS_TRUSTED_PROXY_HOPS: "1" })).toMatchObject({
+      mode: "external",
+    });
+  });
+
+  it("rejects an invalid trusted proxy setting in any environment", () => {
+    expect(() =>
+      loadConfig({ NODE_ENV: "development", PRINT_CESS_TRUSTED_PROXY_HOPS: "0" }),
+    ).toThrow(/PRINT_CESS_TRUSTED_PROXY_HOPS/u);
+  });
+
   it("accepts a complete HTTPS production configuration", () => {
     expect(loadConfig(productionEnvironment)).toMatchObject({
       mode: "external",
@@ -108,6 +124,7 @@ describe("loadConfig", () => {
 
 const railwayEnvironment: NodeJS.ProcessEnv = {
   NODE_ENV: "production",
+  PRINT_CESS_TRUSTED_PROXY_HOPS: "1",
   PRINT_CESS_ADAPTER_MODE: "external",
   PUBLIC_BASE_URL: "https://print.example.test",
   ALLOWED_ORIGINS: "https://print.example.test",
