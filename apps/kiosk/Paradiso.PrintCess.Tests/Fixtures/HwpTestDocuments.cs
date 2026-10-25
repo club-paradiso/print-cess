@@ -8,22 +8,39 @@ internal static class HwpTestDocuments
     public static byte[] Valid(
         uint properties = 0,
         bool includeScriptStream = false,
+        string scriptStreamName = "Scripts") =>
+        Builder(properties, includeScriptStream, scriptStreamName).Build().Bytes;
+
+    /// <summary>A 256-byte HWP 5.x FileHeader stream with the given property flags.</summary>
+    public static byte[] FileHeader(uint properties)
+    {
+        var header = new byte[256];
+        Encoding.ASCII.GetBytes("HWP Document File").CopyTo(header, 0);
+        BinaryPrimitives.WriteUInt32LittleEndian(header.AsSpan(32, 4), 0x05010100);
+        BinaryPrimitives.WriteUInt32LittleEndian(header.AsSpan(36, 4), properties);
+        return header;
+    }
+
+    /// <summary>
+    /// Root entries in the order FileHeader (id 1), DocInfo (id 2), BodyText
+    /// storage (id 3) with Section0 (id 4), then the optional script storage.
+    /// </summary>
+    public static CompoundFileBuilder Builder(
+        uint properties = 0,
+        bool includeScriptStream = false,
         string scriptStreamName = "Scripts")
     {
-        var bytes = new byte[2048];
-        new byte[] { 0xd0, 0xcf, 0x11, 0xe0, 0xa1, 0xb1, 0x1a, 0xe1 }.CopyTo(bytes, 0);
-        BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan(0x1c, 2), 0xfffe);
-        BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan(0x1e, 2), 9);
-        BinaryPrimitives.WriteUInt16LittleEndian(bytes.AsSpan(0x20, 2), 6);
-        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(0x38, 4), 4096);
-        Encoding.Unicode.GetBytes("FileHeader").CopyTo(bytes, 512);
-        Encoding.Unicode.GetBytes("DocInfo").CopyTo(bytes, 640);
-        Encoding.ASCII.GetBytes("HWP Document File").CopyTo(bytes, 1024);
-        BinaryPrimitives.WriteUInt32LittleEndian(bytes.AsSpan(1060, 4), properties);
+        var builder = new CompoundFileBuilder();
+        builder.AddStream("FileHeader", FileHeader(properties));
+        builder.AddStream("DocInfo", new byte[300]);
+        var body = builder.AddStorage("BodyText");
+        builder.AddStream("Section0", new byte[200], body);
         if (includeScriptStream)
         {
-            Encoding.Unicode.GetBytes(scriptStreamName).CopyTo(bytes, 768);
+            var scripts = builder.AddStorage(scriptStreamName);
+            builder.AddStream("Body", new byte[16], scripts);
         }
-        return bytes;
+
+        return builder;
     }
 }

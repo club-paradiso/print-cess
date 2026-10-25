@@ -6,6 +6,7 @@ import { assertAllowedOrigin, errorResponse, json, readJson } from "@/server/htt
 import { enforceRateLimit } from "@/server/rate-limit";
 import { getRuntime } from "@/server/runtime";
 import { issueVisitorOperatorCookie, VISITOR_OPERATOR_COOKIE } from "@/server/visitor-operator";
+import { clientAddress } from "@/server/request-identity";
 
 export const runtime = "nodejs";
 
@@ -13,11 +14,7 @@ export async function POST(request: Request) {
   try {
     const server = getRuntime();
     assertAllowedOrigin(request, server.config);
-    enforceRateLimit(
-      `visitor-unlock:${request.headers.get("x-forwarded-for")?.split(",")[0] ?? "local"}`,
-      5,
-      300_000,
-    );
+    enforceRateLimit(`visitor-unlock:${clientAddress(request)}`, 5, 300_000);
     const body = await readJson(
       request,
       z.object({ registrationSecret: z.string().min(1).max(256) }),

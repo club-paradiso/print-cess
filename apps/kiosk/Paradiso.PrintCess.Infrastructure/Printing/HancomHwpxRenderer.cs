@@ -1,4 +1,6 @@
 #if WINDOWS
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -39,17 +41,67 @@ internal static class HancomHwpxRenderer
                 $"Register '{DefaultSecurityModuleName}' or set {SecurityModuleEnvironmentVariable} to the exact registered value name.");
         }
 
-        var directory = Path.Combine(HancomWorkspace.WorkRoot, Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(directory);
+        // Hancom opens the file with forceopen, so the bytes are inspected
+        // again here and nothing that fails inspection reaches it.
+        try
+        {
+            PortableDocumentValidator.EnsureHangulDocumentPassesInspection(content, kind);
+        }
+        catch (DocumentValidationException exception)
+        {
+            throw new InvalidDataException("The Hangul document did not pass inspection.", exception);
+        }
+
+        string directory;
+        try
+        {
+            directory = HancomPathPolicy.CreateJobDirectory(HancomWorkspace.WorkRoot);
+        }
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+        {
+            throw new InvalidDataException("The Hangul work folder could not be prepared.", exception);
+        }
+
+        var timeout = HangulRenderWatchdog.ResolveTimeout(
+            Environment.GetEnvironmentVariable(HangulRenderWatchdog.TimeoutEnvironmentVariable));
+        using var hancomProcess = OwnedHancomProcess.CaptureBaseline();
+        try
+        {
+            var pdf = HangulRenderWatchdog.Run(
+                () => RenderInJobDirectory(content, kind, moduleName, directory, hancomProcess, cancellationToken),
+                timeout,
+                hancomProcess.TryTerminate,
+                cancellationToken);
+            return Task.FromResult(pdf);
+        }
+        finally
+        {
+            // The worker cleans up after itself; this repeats it for a render
+            // that was stopped and did not get that far.
+            DeleteJobDirectory(directory);
+        }
+    }
+
+    private static byte[] RenderInJobDirectory(
+        byte[] content,
+        DocumentKind kind,
+        string moduleName,
+        string directory,
+        OwnedHancomProcess hancomProcess,
+        CancellationToken cancellationToken)
+    {
         var extension = kind == DocumentKind.Hwp ? "hwp" : "hwpx";
-        var inputPath = Path.Combine(directory, $"document.{extension}");
-        var outputPath = Path.Combine(directory, "document.pdf");
+        var inputPath = HancomPathPolicy.EnsureAllowed(directory, Path.Combine(directory, $"document.{extension}"));
+        var outputPath = HancomPathPolicy.EnsureAllowed(directory, Path.Combine(directory, "document.pdf"));
         object? automation = null;
 
         try
         {
             cancellationToken.ThrowIfCancellationRequested();
-            File.WriteAllBytes(inputPath, content);
+            using (var input = new FileStream(inputPath, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                input.Write(content);
+            }
 
             var automationType = GetAutomationType();
             if (automationType is null)
@@ -59,6 +111,7 @@ internal static class HancomHwpxRenderer
 
             automation = Activator.CreateInstance(automationType) ??
                          throw new InvalidDataException("Hancom Office automation could not be started.");
+            hancomProcess.Identify();
 
             var registered = Invoke(automation, "RegisterModule", "FilePathCheckDLL", moduleName);
             if (registered is not bool registeredResult || !registeredResult)
@@ -68,6 +121,7 @@ internal static class HancomHwpxRenderer
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            HancomPathPolicy.EnsureAllowed(directory, inputPath);
             // Let Hancom detect the real document format. This is more robust than forcing
             // HWP/HWPX from the extension and is the vendor-recommended behavior when the
             // exact underlying format is not guaranteed by the filename alone.
@@ -83,6 +137,12 @@ internal static class HancomHwpxRenderer
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+            if (File.Exists(outputPath) || Directory.Exists(outputPath))
+            {
+                throw new InvalidDataException("The Hangul output path is already in use.");
+            }
+
+            HancomPathPolicy.EnsureAllowed(directory, outputPath);
             var saved = Invoke(automation, "SaveAs", outputPath, "PDF", string.Empty);
             if (saved is bool savedResult && !savedResult)
             {
@@ -94,6 +154,7 @@ internal static class HancomHwpxRenderer
                 throw new InvalidDataException("Hancom Office did not create a PDF output file.");
             }
 
+            HancomPathPolicy.EnsureAllowed(directory, outputPath);
             var info = new FileInfo(outputPath);
             if (info.Length is < 1 or > MaximumRenderedPdfBytes)
             {
@@ -101,7 +162,7 @@ internal static class HancomHwpxRenderer
             }
 
             cancellationToken.ThrowIfCancellationRequested();
-            return Task.FromResult(File.ReadAllBytes(outputPath));
+            return File.ReadAllBytes(outputPath);
         }
         catch (Exception exception) when (exception is COMException or TargetInvocationException or
                                           MissingMethodException or UnauthorizedAccessException or
@@ -121,19 +182,27 @@ internal static class HancomHwpxRenderer
                 }
             }
 
-            SecureDelete(inputPath);
-            SecureDelete(outputPath);
-            try
+            DeleteJobDirectory(directory);
+        }
+    }
+
+    private static void DeleteJobDirectory(string directory)
+    {
+        foreach (var name in new[] { "document.hwp", "document.hwpx", "document.pdf" })
+        {
+            SecureDelete(Path.Combine(directory, name));
+        }
+
+        try
+        {
+            if (Directory.Exists(directory))
             {
-                if (Directory.Exists(directory))
-                {
-                    Directory.Delete(directory, recursive: true);
-                }
+                Directory.Delete(directory, recursive: true);
             }
-            catch
-            {
-                // HancomWorkspace.PurgeAbandoned removes what is left on the next start.
-            }
+        }
+        catch
+        {
+            // HancomWorkspace.PurgeAbandoned removes what is left on the next start.
         }
     }
 
@@ -207,12 +276,21 @@ internal static class HancomHwpxRenderer
     {
         try
         {
-            if (!File.Exists(path))
+            var file = new FileInfo(path);
+            if (file.LinkTarget is not null ||
+                ((int)file.Attributes != -1 && (file.Attributes & FileAttributes.ReparsePoint) != 0))
+            {
+                // Remove the link itself; never write through it.
+                File.Delete(path);
+                return;
+            }
+
+            if (!file.Exists)
             {
                 return;
             }
 
-            var length = new FileInfo(path).Length;
+            var length = file.Length;
             if (length is > 0 and <= MaximumRenderedPdfBytes)
             {
                 using var stream = new FileStream(path, FileMode.Open, FileAccess.Write, FileShare.None);
@@ -231,6 +309,136 @@ internal static class HancomHwpxRenderer
         catch
         {
             // Best effort only; encrypted transfer storage remains independently short-lived.
+        }
+    }
+
+    /// <summary>
+    /// Tracks the Hwp.exe process that this render's automation object
+    /// started. The kiosk records the Hancom processes already running before
+    /// it creates the automation object; afterwards, the single new process in
+    /// the kiosk's session is the one it owns. The process handle is kept open
+    /// from then on, so stopping it can never reach a different process that
+    /// later reuses the id.
+    /// </summary>
+    private sealed class OwnedHancomProcess : IDisposable
+    {
+        private const string HancomProcessName = "Hwp";
+
+        private readonly object _gate = new();
+        private readonly IReadOnlyCollection<HancomProcessSnapshot> _before;
+        private readonly DateTime _startedUtc;
+        private readonly int _sessionId;
+        private Process? _owned;
+        private DateTime _ownedStartUtc;
+        private bool _disposed;
+
+        private OwnedHancomProcess(IReadOnlyCollection<HancomProcessSnapshot> before, DateTime startedUtc, int sessionId)
+        {
+            _before = before;
+            _startedUtc = startedUtc;
+            _sessionId = sessionId;
+        }
+
+        public static OwnedHancomProcess CaptureBaseline()
+        {
+            using var current = Process.GetCurrentProcess();
+            var startedUtc = DateTime.UtcNow;
+            return new OwnedHancomProcess(Snapshot(), startedUtc, current.SessionId);
+        }
+
+        /// <summary>Records the owned process once it can be told apart; safe to call repeatedly.</summary>
+        public void Identify()
+        {
+            lock (_gate)
+            {
+                if (_disposed || _owned is not null)
+                {
+                    return;
+                }
+
+                var processId = HancomProcessOwnership.SelectOwned(_before, Snapshot(), _sessionId, _startedUtc);
+                if (processId is null)
+                {
+                    return;
+                }
+
+                try
+                {
+                    var process = Process.GetProcessById(processId.Value);
+                    // Reading the start time opens and keeps the process handle.
+                    _ownedStartUtc = process.StartTime.ToUniversalTime();
+                    _owned = process;
+                }
+                catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or Win32Exception)
+                {
+                    // The process already exited or cannot be opened.
+                }
+            }
+        }
+
+        /// <summary>Stops the owned Hancom process and its children. Returns false when none is known.</summary>
+        public bool TryTerminate()
+        {
+            lock (_gate)
+            {
+                Identify();
+                if (_owned is null)
+                {
+                    return false;
+                }
+
+                try
+                {
+                    if (_owned.HasExited ||
+                        _owned.StartTime.ToUniversalTime() != _ownedStartUtc ||
+                        !string.Equals(_owned.ProcessName, HancomProcessName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+
+                    _owned.Kill(entireProcessTree: true);
+                    _owned.WaitForExit(5_000);
+                    return true;
+                }
+                catch (Exception exception) when (exception is InvalidOperationException or Win32Exception or NotSupportedException)
+                {
+                    return false;
+                }
+            }
+        }
+
+        public void Dispose()
+        {
+            lock (_gate)
+            {
+                _disposed = true;
+                _owned?.Dispose();
+                _owned = null;
+            }
+        }
+
+        private static List<HancomProcessSnapshot> Snapshot()
+        {
+            var snapshots = new List<HancomProcessSnapshot>();
+            foreach (var process in Process.GetProcessesByName(HancomProcessName))
+            {
+                using (process)
+                {
+                    try
+                    {
+                        snapshots.Add(new HancomProcessSnapshot(
+                            process.Id,
+                            process.SessionId,
+                            process.StartTime.ToUniversalTime()));
+                    }
+                    catch (Exception exception) when (exception is InvalidOperationException or Win32Exception)
+                    {
+                        // Exited meanwhile, or not ours to inspect.
+                    }
+                }
+            }
+
+            return snapshots;
         }
     }
 }

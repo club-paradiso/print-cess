@@ -163,6 +163,38 @@ public sealed class PortableDocumentValidator : IDocumentValidator
         return new ValidatedDocument(detectedKind, content.ToArray(), idempotencyKey, properties);
     }
 
+    /// <summary>
+    /// Runs the structural inspection for a Hangul document again. The renderer
+    /// calls this immediately before opening the bytes in Hancom Office, so only
+    /// content that passes inspection is ever opened.
+    /// </summary>
+    public static void EnsureHangulDocumentPassesInspection(ReadOnlySpan<byte> content, DocumentKind kind)
+    {
+        if (kind is not (DocumentKind.Hwp or DocumentKind.Hwpx))
+        {
+            throw new DocumentValidationException(DocumentValidationError.TypeMismatch);
+        }
+
+        if (content.IsEmpty)
+        {
+            throw new DocumentValidationException(DocumentValidationError.Empty);
+        }
+
+        if (content.Length > BinaryEnvelope.MaxPlaintextBytes)
+        {
+            throw new DocumentValidationException(DocumentValidationError.TooLarge);
+        }
+
+        if (DetectKind(content) != kind)
+        {
+            throw new DocumentValidationException(DocumentValidationError.TypeMismatch);
+        }
+
+        _ = kind == DocumentKind.Hwp
+            ? HwpDocumentInspector.Validate(content)
+            : HwpxDocumentInspector.Validate(content);
+    }
+
     public static DocumentKind DetectKind(ReadOnlySpan<byte> content)
     {
         if (content.StartsWith(PdfMagic))

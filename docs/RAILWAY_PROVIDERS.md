@@ -129,7 +129,12 @@ one path never loosens another:
 
 ## Configuration
 
-See `.env.example`. For the full Railway stack in external mode:
+See `.env.example`. If the web app itself runs outside Vercel, also set
+`PRINT_CESS_TRUSTED_PROXY_HOPS` to the number of proxies in front of it that append to
+`X-Forwarded-For`. Production refuses to start without it, because
+per-address limits need to know which address the proxy wrote.
+
+For the full Railway stack in external mode:
 
 ```
 PRINT_CESS_ADAPTER_MODE=external
