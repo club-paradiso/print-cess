@@ -99,7 +99,7 @@ Observed on a 390×844 phone, then changed:
 - **Waiting has visible stages**: 준비 → 보내기 → 인쇄 시작, each marked done, current or still to
   come in words and a check mark as well as colour.
 - **The end says what next time looks like**: "더 인쇄하려면 큰 화면의 새 QR 코드를 찍으세요."
-- **Errors have a way out**: "처음 화면으로" links to `/start`, where the in-page QR scanner lives.
+- **Errors have a way out**: "처음 화면으로" links to `/`, the visitor's home, where the in-page QR scanner lives.
 
 All new strings live in `print-batch-copy.ts` for all thirteen locales; Korean and English were
 edited, the other eleven were written for meaning and need native review like the rest.

@@ -41,7 +41,7 @@ It does three things:
 
 For counters, `/visitor` shows a QR code, the print progress and a countdown. A managed office PC
 takes part through an ordinary browser, without installing software or working around endpoint
-controls, and `/start#environment` checks that browser.
+controls, and `/#environment` checks that browser.
 
 ## How it protects documents
 
@@ -92,7 +92,8 @@ Then open:
 - <http://localhost:3000/kiosk> for the printer screen. Scan its QR code with a phone on the same
   network, or open the link it shows in another browser tab.
 - <http://localhost:3000/send> and <http://localhost:3000/receive> to move a file between two tabs.
-- <http://localhost:3000/start#environment> for the managed-PC browser checks.
+- <http://localhost:3000/> for the visitor's home, and <http://localhost:3000/#environment> for the
+  managed-PC browser checks.
 
 Local mode keeps everything on your machine and stores only ciphertext, in a development folder
 inside the app. Hosted deployments refuse to start until real HTTPS origins and provider credentials are

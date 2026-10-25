@@ -691,7 +691,7 @@ export function BatchMobileFlow({
           icon={errorKey === "printOutcomeUnknown" ? "info" : "error"}
           title={text(errorKey)}
           body={errorKey === "printOutcomeUnknown" ? text("printOutcomeUnknownBody") : ""}
-          link={{ href: "/start", label: copy.startOver }}
+          link={{ href: "/", label: copy.startOver }}
         />
       ) : null}
       <HelpSheet

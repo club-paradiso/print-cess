@@ -2,7 +2,7 @@
 
 Print-cess can be used from a managed government or public-sector Windows workstation through the normal web application. The workstation flow is intentionally browser-only: it does not require a desktop installation, browser extension, local administrator rights, USB access, ActiveX, or a dedicated kiosk runtime.
 
-The main entry point is `/`, which shows the shared print screen plus direct Send, Receive, and Scan actions. Legacy `/workstation` bookmarks redirect to `/`, not to the help screen; the public display no longer links back to `/workstation`, avoiding a navigation loop. `/start` remains the optional visitor guidance and environment diagnostics page. If the browser kiosk is disabled in production, `/` already redirects to `/start`. Printer-specific kiosk sessions remain isolated at `/kiosk`.
+The main entry point is `/`, the visitor's home: printing guidance, direct Send, Receive, and Scan actions, and the environment diagnostics at `/#environment`. Legacy `/workstation` bookmarks and the former `/start` address both redirect to `/`. The shared print screen lives at `/kiosk`; `/` shows it only when the address carries a display switch (`?printing=` or `?sound=`), so no device is ever told apart by screen size or browser. If the browser kiosk is disabled in production, `/` stays the visitor's home and `/kiosk` returns 404, so there is no redirect loop.
 
 ## Supported operating model
 
@@ -11,9 +11,9 @@ Two directions are supported:
 1. Phone to work computer: create a transfer on `/send` from the phone, then enter the four digits and shape it shows on `/receive` from the managed computer, or paste the transfer link there. Neither needs a camera.
 2. Work computer to phone: create a transfer on `/send` from the managed computer, then open it on the phone by QR code, the four digits and shape, or the transfer link.
 
-The main screen at `/` exposes Send, Receive, and Scan directly alongside the printing QR; it does not expose a redundant Workstation menu item. On `/start`, the optional environment diagnostics remain available for any device.
+The home at `/` exposes Send, Receive, and Scan directly; it does not expose a redundant Workstation menu item. Its optional environment diagnostics at `/#environment` are available for any device.
 
-The shared start page provides an optional environment check before the user starts. The required capabilities are:
+The home page provides an optional environment check before the user starts. The required capabilities are:
 
 - HTTPS secure context;
 - standards-compliant Web Crypto;
@@ -70,7 +70,7 @@ A green application CI build is not proof that a specific managed image is usabl
 
 Minimum acceptance evidence should include:
 
-- `/start` loads over HTTPS, its environment check opens at `/start#environment`, and a legacy `/workstation` bookmark redirects to `/`;
+- `/` loads over HTTPS, its environment check opens at `/#environment`, and legacy `/workstation` and `/start` bookmarks redirect to `/`;
 - the readiness panel reports HTTPS, Web Crypto, File API support, and a reachable Print-cess server;
 - the browser's network log shows part uploads and downloads going to `/relay/blob/...` on the Print-cess origin, with no request to the storage host;
 - a synthetic non-sensitive file can be sent from phone to workstation;
