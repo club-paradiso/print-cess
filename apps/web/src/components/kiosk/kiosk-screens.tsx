@@ -6,7 +6,6 @@ import {
   ArrowDownToLine,
   Camera,
   CheckCircle2,
-  CircleHelp,
   Download,
   FileCheck2,
   FileSearch,
@@ -92,13 +91,6 @@ const SERVICES: {
     korean: "문서 스캔",
     english: "Scan a document",
     icon: ScanLine,
-  },
-  {
-    href: "/start",
-    key: "homeStepsLabel",
-    korean: "이용 안내",
-    english: "How it works",
-    icon: CircleHelp,
   },
 ];
 

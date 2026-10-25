@@ -923,6 +923,9 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+  .kiosk-services li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
   .kiosk-services a {
     width: 100%;
     box-sizing: border-box;
