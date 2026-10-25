@@ -35,7 +35,7 @@ Every observation must record both of these fields:
 
 The scorer fails if either invariant is violated.
 
-Do not use live immigration records, passports, IDs, certificates, financial records, medical records, or any other real personal document as a public benchmark fixture. Use purpose-made test sheets or documents containing synthetic data only.
+Do not use real passports, IDs, certificates, financial records, medical records, or any other real personal document as a public benchmark fixture. Use purpose-made test sheets or documents containing synthetic data only.
 
 ## Real-device collection protocol
 

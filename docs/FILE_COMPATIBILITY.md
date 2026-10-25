@@ -156,16 +156,14 @@ say. This distinction is the point of the module: a file written through a
 handle the visitor chose is **saved**, and a blob handed to the download
 machinery has **started a download** and nothing more.
 
-Normal `/receive` Save and Save all actions use a browser download, staged in
-private origin storage where available (or memory otherwise), and report
-`downloadStarted`. Explicit direct folder saves report `saved` only after
-writing and closing the file. A direct file picker remains available to internal
-callers with `preferFilePicker: true`, but the default receive UI does not call it.
-The system share sheet separately reports delivery to another app.
-
-Normal "Save" and "Save all" on `/receive` use ordinary browser downloads,
-including on Chromium desktop. The user may separately select "Save all to folder"
-if they knowingly want to grant write permission to a chosen directory.
+The normal "Save" and "Save all" actions on `/receive` use an ordinary browser
+download, including on Chromium desktop. The download is staged in private origin
+storage where available (or memory otherwise) and reports `downloadStarted`. A
+user who knowingly wants to grant write permission to a chosen directory can
+select "Save all to folder" instead; a direct folder save reports `saved` only
+after writing and closing the file. A direct file picker remains available to
+internal callers with `preferFilePicker: true`, but the default receive UI does
+not call it. The system share sheet separately reports delivery to another app.
 
 For direct-write modes, permission is obtained inside the user activation. By
 the time a multi-gigabyte file finishes arriving, the activation that would

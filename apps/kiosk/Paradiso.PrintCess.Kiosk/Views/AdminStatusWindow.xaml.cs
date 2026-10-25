@@ -147,7 +147,7 @@ public partial class AdminStatusWindow : Window
 
         if (MessageBox.Show(
                 this,
-                $"승인된 프린터를 ‘{selectedPrinter}’(으)로 바꿀까요? 대기 중인 QR 세션은 폐기하고 새 QR로 교체합니다.",
+                $"승인된 프린터를 ‘{selectedPrinter}’(으)로 바꿀까요? 대기 중인 QR 세션은 폐기하고 새 QR 코드로 교체합니다.",
                 "프린터 선택 변경",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning) != MessageBoxResult.Yes)
@@ -163,7 +163,7 @@ public partial class AdminStatusWindow : Window
         {
             var result = await _runtime.SelectPrinterAsync(selectedPrinter, timeout.Token);
             ActionStatus.Text = result.CleanupConfirmed
-                ? $"프린터를 ‘{result.PrinterName}’(으)로 변경했고 새 QR 세션을 준비했습니다."
+                ? $"프린터를 ‘{result.PrinterName}’(으)로 변경했고 새 QR 코드 세션을 준비했습니다."
                 : $"프린터를 ‘{result.PrinterName}’(으)로 변경했습니다. 이전 세션 정리는 서버 TTL과 지연 작업으로 계속됩니다.";
         }
         catch (OperationCanceledException)

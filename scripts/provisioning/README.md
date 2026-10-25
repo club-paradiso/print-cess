@@ -98,9 +98,9 @@ with `CLEANUP_ENDPOINT` set to the Preview `/api/cleanup` and the same
 ### 6. Clean up
 
 Delete `preview-values.json` and `railway-values.json` once the variables are
-set. They are credentials at rest. Never commit them — the repository's
-`.gitignore` should be checked before writing them inside the working tree;
-prefer a path outside the repository.
+set. They are credentials at rest. Never commit them. If you write them inside
+the working tree, check the repository's `.gitignore` first; a path outside the
+repository is better.
 
 ## Security notes
 

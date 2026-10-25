@@ -177,7 +177,7 @@ export function KioskWaitingScreen({
         {status === "preparing" ? (
           <p className="kiosk-availability" aria-live="polite">
             <span className="kiosk-availability__dot" />
-            {locale === "ko" ? "QR코드를 준비하고 있어요" : translate(locale, "kioskScanTitle")}
+            {locale === "ko" ? "QR 코드를 준비하고 있어요" : translate(locale, "kioskScanTitle")}
           </p>
         ) : null}
         {services ? (
@@ -218,7 +218,7 @@ export function KioskWaitingScreen({
               <>
                 <span>휴대전화 카메라로</span>
                 <span>
-                  <em>QR코드</em>를 비추세요
+                  <em>QR 코드</em>를 비추세요
                 </span>
               </>
             ) : (
@@ -255,7 +255,7 @@ export function KioskWaitingScreen({
               </span>
               <div>
                 <strong>
-                  {locale === "ko" ? "QR코드 비추기" : translate(locale, "homePrintStepScan")}
+                  {locale === "ko" ? "QR 코드 비추기" : translate(locale, "homePrintStepScan")}
                 </strong>
                 <small>
                   {locale === "ko"
@@ -333,10 +333,10 @@ export function KioskWaitingScreen({
             <span>
               <strong>
                 {locale === "ko"
-                  ? "QR코드를 카메라로 비추세요"
+                  ? "QR 코드를 카메라로 비추세요"
                   : translate(locale, "kioskScanTitle")}
               </strong>
-              <small>사진을 찍을 필요는 없습니다 · No photo needed</small>
+              <small>사진은 찍지 않아도 돼요 · No need to take a photo</small>
             </span>
           </p>
           <div className="kiosk-qr__stage">
@@ -360,7 +360,7 @@ export function KioskWaitingScreen({
               style={{ "--kiosk-qr-progress": qrProgress } as CSSProperties}
             />
             <span className="kiosk-countdown">
-              새 QR코드로 바뀌기까지 <b>{formatTime(remaining)}</b>
+              새 QR 코드로 바뀌기까지 <b>{formatTime(remaining)}</b>
             </span>
           </div>
         </section>
@@ -468,7 +468,7 @@ function connectedCopy(status: KioskStatus): {
   if (status === "printing") {
     return {
       headline: "선택한 파일을 인쇄하고 있어요",
-      english: "Printing your selected files",
+      english: "Printing your files",
       hint: "프린터 앞에서 종이를 기다려 주세요",
     };
   }
@@ -662,7 +662,7 @@ export function CompletedScreen({
         />
         <span className="kiosk-result__reset">
           <LockKeyhole aria-hidden="true" />
-          <span>보내신 파일은 모두 지웠어요 · {remaining}초 후 새 QR코드</span>
+          <span>보내신 파일은 모두 지웠어요 · {remaining}초 후 새 QR 코드</span>
         </span>
       </div>
     </main>
@@ -735,7 +735,7 @@ export function UnavailableScreen({
 export function statusLabel(status: KioskStatus): string {
   return {
     preparing: "준비 중",
-    waiting: "QR코드를 비춰 주세요",
+    waiting: "QR 코드를 비춰 주세요",
     claimed: "휴대전화가 연결됐어요",
     uploading: "파일을 받고 있어요",
     uploaded: "파일을 받았어요",

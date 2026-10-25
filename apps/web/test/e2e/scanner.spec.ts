@@ -61,7 +61,7 @@ test("searchable PDF runs local OCR and completes without sending the page to an
     const worker = {
       recognize: async () => ({
         data: {
-          text: "HELLO IMMIGRATION 한국어",
+          text: "HELLO PRINT 한국어",
           confidence: 96,
           blocks: [
             {
@@ -76,7 +76,7 @@ test("searchable PDF runs local OCR and completes without sending the page to an
                           bbox: { x0: 180, y0: 245, x1: 330, y1: 285 },
                         },
                         {
-                          text: "IMMIGRATION",
+                          text: "PRINT",
                           confidence: 95,
                           bbox: { x0: 345, y0: 245, x1: 610, y1: 285 },
                         },
@@ -135,6 +135,6 @@ test("smart camera falls back cleanly when browser camera permission is unavaila
   await page.getByTestId("scan-smart-camera").click();
   const dialog = page.getByRole("dialog", { name: "Smart camera" });
   await expect(dialog).toBeVisible();
-  await expect(dialog.getByRole("paragraph")).toHaveText("Camera access is unavailable.");
+  await expect(dialog.getByRole("paragraph")).toHaveText("The camera is not available.");
   await expect(dialog.getByRole("button", { name: "Use the device camera instead" })).toBeVisible();
 });

@@ -153,8 +153,7 @@ session ID; wrong kiosk fingerprint; wrong kiosk key; invalid SEC1 prefix; non-z
 reserved byte; length overflow/truncation/trailing bytes; and unsupported protocol/file-kind codes.
 
 The vector description states that its weak private scalars are deterministic test-only values and
-must never be used in Production. It contains no real person, booking, travel, passport, or
-immigration data.
+must never be used in Production. It contains no real person, booking, travel, or passport data.
 
 ## Residual cryptographic risks
 

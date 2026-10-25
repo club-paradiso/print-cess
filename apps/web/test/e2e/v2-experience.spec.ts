@@ -259,7 +259,9 @@ test("@viewport the camera stays off while the decoder is still downloading, and
   await installFakeCamera(page);
   await page.goto("/receive");
   await page.getByRole("button", { name: "Scan the QR code" }).click();
-  await expect(page.getByRole("heading", { name: "Point at the other phone" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Point your camera at the other phone" }),
+  ).toBeVisible();
   // A stalled download cannot be cancelled, so the camera must not be on yet.
   const openStreams = () =>
     page.evaluate(

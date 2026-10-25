@@ -6,7 +6,6 @@ The production implementation is the source of truth for behavior and accessibil
 - Service CTA route: `/`
 - Figma file: `Print-cess by Club Paradiso — Royal Promo`
 - Figma URL: <https://www.figma.com/design/tqEGayhvXtIhAC1WQ89fps>
-- File key: `tqEGayhvXtIhAC1WQ89fps`
 
 ## Pages and top-level nodes
 

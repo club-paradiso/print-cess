@@ -11,12 +11,12 @@ process real documents.
 Do not open a public issue for a suspected vulnerability, exposed credential, personal document, or
 signed URL. Use the repository's GitHub **Security > Advisories > Report a vulnerability** flow.
 Include affected commit/version, impact, safe reproduction steps using synthetic data, and any
-suggested mitigation. Do not attach a real travel, identity, or immigration document.
+suggested mitigation. Do not attach a real travel or identity document.
 
 The maintainers target acknowledgement within three business days and an initial severity/next-step
 update within seven business days. Timing can change for coordinated disclosure or institutional
-incident response. If a live credential is exposed, revoke it immediately; never wait for code
-remediation.
+incident response. If a live credential is exposed, revoke it immediately; never wait for a code
+fix.
 
 ## Security invariants
 
@@ -27,7 +27,7 @@ remediation.
 - Original filenames and document identifiers never enter Blob pathnames, session state, logs, or
   metrics.
 - All success, failure, cancellation, expiry, and restart paths converge on cleanup.
-- Unknown print submission state is a failure with no automatic retry.
+- An unknown print submission state counts as a failure and is never retried automatically.
 
 ## Tokens and sessions
 
@@ -39,8 +39,8 @@ remediation.
   session URL into page text, a DOM attribute, a log line, or a test hook that ships to Production.
 - When a visit ends, empty every store the origin can reach and answer with `Clear-Site-Data` for
   cache, cookies, and storage. Never include `executionContexts`: reloading a spent session replaces
-  the visitor's confirmation with an error. Claim only what this reaches — not browser history, and
-  not the browser process. See `docs/PRIVACY.md`.
+  the visitor's confirmation with an error. Claim only what this actually clears: it does not reach
+  browser history or the browser process. See `docs/PRIVACY.md`.
 - Store only domain-separated SHA-256 token hashes. Protocol version 1 hashes the canonical
   32-byte token after
   `UTF8("print-cess-by-paradiso:token-hash:<role>:v1") || 00`, where role is upload, kiosk, or
@@ -66,12 +66,14 @@ beyond the stated threat model.
 
 ## File handling
 
-- Accept validated PDF, JPEG, PNG, HWP, HWPX, or authenticated print bundles; 10 MiB per document and 32 MiB per bundle. The kiosk enforces an absolute 50-page ceiling after rendering.
+- Accept validated PDF, JPEG, PNG, or authenticated print bundles, plus HWP and HWPX only when the kiosk reports an available Hancom renderer; 10 MiB per document and 32 MiB per bundle. The kiosk enforces an absolute 50-page ceiling after rendering.
 - Mobile validation improves feedback. Kiosk validation is mandatory after authenticated
   decryption and checks magic bytes, actual type, bounded size, file-kind match, parse/decode
   success, page count, PDF encryption/actions, and image dimensions/resource budget.
-- Reject HWP, Office formats, archives, HTML, SVG, executables, locked/damaged PDF, malformed
-  images, disguised extensions, and unsupported image encodings.
+- Reject HWP and HWPX when the kiosk has no Hancom renderer; encrypted, DRM-protected,
+  distribution-only, or script- or macro-bearing HWP/HWPX; Office formats, archives, HTML, SVG,
+  executables, locked/damaged PDF, malformed images, disguised extensions, and unsupported image
+  encodings.
 - Size the image budget so that current phone-camera output — 48 MP stills and panoramas longer
   than 12,000 pixels on one edge — is accepted, and separate a decompression bomb from a real
   photograph by requiring a minimum pixel density per compressed byte rather than by lowering the
@@ -137,9 +139,11 @@ No production credentials were present or used during the initial implementation
 - Commit `pnpm-lock.yaml` and NuGet lock data where supported; use frozen/locked restore in CI.
 - Pin direct dependency versions. Dependabot covers npm/pnpm, NuGet, and GitHub Actions weekly.
 - CI runs pnpm audit, a NuGet vulnerable-package check, and a secret-scanning helper. The workflow
-  defines CodeQL for JavaScript/TypeScript and C#, gated by `ENABLE_CODEQL=true`. GitHub returned
-  403/422 because this private personal repository lacks native code/secret scanning entitlement;
-  upgrade or move it before enabling those jobs and push protection.
+  defines CodeQL for JavaScript/TypeScript and C#, gated by `ENABLE_CODEQL=true`. While the
+  repository was private, GitHub returned 403/422 for native code and secret scanning. Since it
+  became public on 2026-10-24, native secret scanning and push protection are enabled,
+  `ENABLE_CODEQL` is `true`, and both CodeQL jobs upload analyses from `security.yml`. A running
+  scan is not a clean result: open code-scanning alerts must be triaged before release.
 - Review package provenance, maintainer activity, security history, transitive graph, and license
   before adding a parser, renderer, crypto package, Action, or native binary.
 - Raise the floor on a vulnerable transitive dependency with a ranged `overrides` entry in

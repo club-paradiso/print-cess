@@ -17,9 +17,10 @@ must be replaced by an approved institutional release role before Production.
 
 ## Protected environment contract
 
-`windows-signing` exists with a `v*` tag-only deployment policy. Required-reviewer rules are not
-available for this private personal repository under its current plan, so institutional ownership
-or an eligible plan is still required before configuring signing material. Then configure:
+`windows-signing` exists with a `v*` tag-only deployment policy. Required-reviewer rules became
+available when the repository went public on 2026-10-24, but none is configured, and the sole
+maintainer cannot serve as an independent reviewer. An independent institutional reviewer is still
+required before configuring signing material. Then configure:
 
 - secret `WINDOWS_SIGNING_CERT_BASE64`: base64 of the approved code-signing PFX;
 - secret `WINDOWS_SIGNING_CERT_PASSWORD`: independent PFX password;
@@ -56,5 +57,5 @@ current macOS work.
 Implementation references: Microsoft [SignTool](https://learn.microsoft.com/en-us/windows/win32/seccrypto/signtool)
 documents the Authenticode policy, `/tr` then `/td SHA256` RFC 3161 timestamp parameters, and `/tw`
 timestamp warning; Microsoft also documents the [.NET 8 Source Link informational-version
-behavior](https://learn.microsoft.com/en-us/dotnet/core/compatibility/sdk/8.0/source-link) that the
-release-specific project properties disable before inserting the exact approved commit once.
+behavior](https://learn.microsoft.com/en-us/dotnet/core/compatibility/sdk/8.0/source-link), which the
+release-specific project properties disable so that the exact approved commit is inserted only once.

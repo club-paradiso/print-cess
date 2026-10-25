@@ -67,7 +67,7 @@ test("hands a file from one phone to another and back to disk", async ({ browser
     await expect(receiving.getByText(/Download started|내려받기를 시작했어요/u)).toBeVisible();
     await expect(receiving.getByText(/handed over|건네줬어요/u)).toBeVisible();
 
-    await expect(sending.getByText(/has taken the files|받아 갔어요/u)).toBeVisible({
+    await expect(sending.getByText(/has received the files|받아 갔어요/u)).toBeVisible({
       timeout: 60_000,
     });
   } finally {
@@ -169,7 +169,7 @@ test("saves one of several files without fetching the rest", async ({ browser })
     await expect(rows.nth(1).getByText(/Download started|내려받기를 시작했어요/u)).toBeVisible({
       timeout: 60_000,
     });
-    await expect(rows.nth(0).getByText(/Not saved yet|아직 저장 안 했어요/u)).toBeVisible();
+    await expect(rows.nth(0).getByText(/Not saved yet|아직 저장하지 않았어요/u)).toBeVisible();
     expect(downloads).toEqual(["third.txt"]);
   } finally {
     await sender.close();

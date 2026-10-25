@@ -17,10 +17,10 @@
 
 ---
 
-Print-cess was built for places where people need one page printed and have nothing but a phone:
-a government counter or an immigration office. A visitor scans a QR code on the screen
-next to the printer, picks a file, and gets one copy. They never sign up, install anything, or hand
-their phone to staff, and the file is deleted when the job is done.
+Print-cess is for places like a government service counter, where someone needs one page printed
+and has nothing but a phone. A visitor scans the QR code on the screen next to the printer, picks a
+file, and gets one copy. There is nothing to sign up for or install, they never hand their phone to
+staff, and the file is deleted once the job is done.
 
 It does three things:
 
@@ -39,9 +39,9 @@ It does three things:
   <img src="docs/assets/screenshots/receive.png" alt="Typing the four numbers to receive files" width="200" />
 </p>
 
-For counters, `/visitor` shows a QR code, the print progress and a countdown, and `/workstation`
-lets a managed office PC take part through an ordinary browser, without installing software or
-working around endpoint controls.
+For counters, `/visitor` shows a QR code, the print progress and a countdown. A managed office PC
+takes part through an ordinary browser, without installing software or working around endpoint
+controls, and `/start#environment` checks that browser.
 
 ## How it protects documents
 
@@ -92,7 +92,7 @@ Then open:
 - <http://localhost:3000/kiosk> for the printer screen. Scan its QR code with a phone on the same
   network, or open the link it shows in another browser tab.
 - <http://localhost:3000/send> and <http://localhost:3000/receive> to move a file between two tabs.
-- <http://localhost:3000/workstation> for the managed-PC entry and its browser checks.
+- <http://localhost:3000/start#environment> for the managed-PC browser checks.
 
 Local mode keeps everything on your machine and stores only ciphertext, in a development folder
 inside the app. Hosted deployments refuse to start until real HTTPS origins and provider credentials are

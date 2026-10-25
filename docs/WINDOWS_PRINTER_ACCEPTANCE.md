@@ -3,7 +3,7 @@
 Hosted `windows-latest` CI proves compilation, tests, and a self-contained publish only. It cannot
 approve the institution's Windows image, exact printer/driver, spooler retention, physical output,
 kiosk lockdown, audio, display, or recovery behavior. This gate must run on the target desktop at
-Jeju Immigration Office with synthetic documents only.
+the deploying institution with synthetic documents only.
 
 ## Evidence collector
 

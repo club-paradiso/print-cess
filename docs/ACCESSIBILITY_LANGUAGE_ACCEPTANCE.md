@@ -14,14 +14,14 @@ At minimum test the oldest and newest institution-supported combinations:
 - target Windows 10/11 image, display scaling, screen, speakers, keyboard, and kiosk policy;
 - cellular paths from at least two carriers while the desktop uses its production-like wired path.
 
-For every combination run the language picker in the header, the help sheet on each step, the photo
+For every combination, test the language picker in the header, the help sheet on each step, the photo
 picker, the file picker, PDF/JPG/PNG preview, approve, progress, completion, QR
 expiry/reuse, network loss, locked/damaged/oversize document, cancelled picker, refresh/back, and
 reduced-motion paths. Add the paths that only appear once a document is committed: a status poll
-that fails and recovers, and one that never recovers. On the shared kiosk display, watch one full rotation of the eleven-language
-scan instruction and confirm no line clips or reflows the layout.
-Record OS/browser version, viewport/scaling, assistive technology, commit/deployment, tester, UTC time,
-result, and sanitized issue link.
+that fails and recovers, and one that never recovers. On the shared kiosk display, watch one full
+rotation of the eleven-language scan instruction and confirm no line clips or reflows the layout.
+Record OS/browser version, viewport/scaling, assistive technology, commit/deployment, tester, UTC
+time, result, and sanitized issue link.
 
 Every screen in the service is opened on the visitor's own phone, so every one of them resolves the
 language from the request's `Accept-Language` header and renders in it directly, with the picker
@@ -120,8 +120,8 @@ possible and that only a reader of the language can catch:
 **What this pass cannot establish.** Whether the copy sounds like a person rather than a translation;
 whether the register suits a public counter in that language; whether an instruction is
 understandable to someone reading slowly under stress; whether a word carries an unintended
-connotation. Those require a qualified speaker, and R-17 stays
-open until thirteen of them have signed.
+connotation. Those require a qualified speaker, and R-17 stays open until thirteen of them have
+signed.
 
 ## Approval record
 

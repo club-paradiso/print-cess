@@ -11,7 +11,7 @@ test("the root URL opens the shared display", async ({ page }) => {
   await page.goto("/");
 
   await expect(
-    page.getByRole("heading", { name: /휴대전화 카메라로\s*QR코드를 비추세요/u }),
+    page.getByRole("heading", { name: /휴대전화 카메라로\s*QR 코드를 비추세요/u }),
   ).toBeVisible();
   await expect(page.locator(".kiosk-qr")).toBeVisible();
 
@@ -46,16 +46,16 @@ test("shows three simple QR steps without network jargon", async ({ page }) => {
   await page.goto("/kiosk");
 
   await expect(
-    page.getByRole("heading", { name: /휴대전화 카메라로\s*QR코드를 비추세요/u }),
+    page.getByRole("heading", { name: /휴대전화 카메라로\s*QR 코드를 비추세요/u }),
   ).toBeVisible();
-  await expect(page.getByText("QR코드를 카메라로 비추세요")).toBeVisible();
+  await expect(page.getByText("QR 코드를 카메라로 비추세요")).toBeVisible();
   const steps = page.getByRole("list", { name: "인쇄하는 방법" }).getByRole("listitem");
   await expect(steps).toHaveCount(3);
-  await expect(steps.nth(0)).toContainText("QR코드 비추기");
+  await expect(steps.nth(0)).toContainText("QR 코드 비추기");
   await expect(steps.nth(0)).toContainText("휴대전화에 뜨는 링크를 누르세요");
   await expect(steps.nth(1)).toContainText("휴대전화에서 파일 고르기");
   await expect(steps.nth(2)).toContainText("프린터에서 종이 받기");
-  await expect(page.getByText("사진을 찍을 필요는 없습니다", { exact: false })).toBeVisible();
+  await expect(page.getByText("사진은 찍지 않아도 돼요", { exact: false })).toBeVisible();
   await expect(page.getByText("Wi-Fi는 필요하지 않습니다.")).toHaveCount(0);
   await expect(page.getByText("휴대전화 모바일 데이터를 사용하세요")).toHaveCount(0);
 });
@@ -129,6 +129,6 @@ test("shows the two-minute QR renewal window", async ({ page }) => {
   await page.goto("/kiosk");
 
   await expect(page.locator(".kiosk-countdown")).toHaveText(
-    /새 QR코드로 바뀌기까지 (?:02:00|01:5\d)/u,
+    /새 QR 코드로 바뀌기까지 (?:02:00|01:5\d)/u,
   );
 });

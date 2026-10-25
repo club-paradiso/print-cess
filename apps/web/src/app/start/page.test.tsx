@@ -148,11 +148,11 @@ describe("home page", () => {
     expect(copy).toContain("Print-cess 화면은 프린터 바로 옆에 있어요.");
     expect(copy).toContain("휴대전화 카메라로 찍으면 인쇄할 파일을 고르는 화면이 열려요.");
     expect(copy).toContain("이 표시가 있는 화면을 찾으세요.");
-    expect(copy).toContain("세 번이면 끝나요");
-    expect(copy).toContain("QR 찍기");
+    expect(copy).toContain("세 단계면 끝나요");
+    expect(copy).toContain("QR 코드 찍기");
     expect(copy).toContain("파일 고르기");
     expect(copy).toContain("종이 받기");
-    expect(copy).toContain("이런 것도 돼요");
+    expect(copy).toContain("이런 것도 할 수 있어요");
     expect(copy).toContain("공유");
     expect(copy).toContain("스캔");
     expect(copy).toContain("보낼 파일 고르기");
@@ -213,7 +213,7 @@ describe("home page", () => {
     expect(copy).toContain("Look for the screen with this mark.");
     expect(copy).not.toContain("Find the screen");
     const beacon = copy.indexOf("Look for the screen with this mark.");
-    const steps = ["Scan its QR code", "Pick your file", "Take your paper"].map((step) =>
+    const steps = ["Scan the screen's QR code", "Pick your file", "Take your paper"].map((step) =>
       copy.indexOf(step),
     );
     for (const step of steps) expect(step).toBeGreaterThan(beacon);

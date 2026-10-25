@@ -51,7 +51,7 @@ session and replacing the confirmation with an error.
 
 ### What this cannot do
 
-Two things are asked for often enough to write down plainly, because neither is possible from a web
+Two requests come up often enough to answer plainly here, because neither is possible from a web
 page and neither should be promised to a reviewer or a visitor:
 
 - **A page cannot quit the browser.** `window.close()` is the only close mechanism available to a
@@ -118,7 +118,7 @@ route, random object/session reference, ciphertext size, status/latency, and inf
 Their data location, access, backup, support, subprocessor, and retention practices are outside
 complete application control.
 
-Before use at the Jeju Immigration Office, the responsible institution must review and approve:
+Before use at any institution, the responsible institution must review and approve:
 
 - the legal basis, notices, controller/processor roles, and Korean privacy-law obligations;
 - Vercel and Upstash contracts/DPA, regions, subprocessors, support access, backups, and log
@@ -141,9 +141,9 @@ identifier or retain raw events long enough to reconstruct an individual's visit
 
 ## Development, Preview, and support
 
-Use only fixtures visibly marked synthetic and invalid. Do not upload a real travel document,
-passport page, reservation, immigration document, or personal screenshot to local development,
-Preview, CI, an issue, a PR, a log, or a support ticket. Screenshots must be checked for QR
+Use only fixtures visibly marked synthetic and invalid. Do not upload a real travel or identity
+document, passport page, reservation, or personal screenshot to local development, Preview, CI, an
+issue, a PR, a log, or a support ticket. Screenshots must be checked for QR
 fragments and signed URLs before sharing.
 
 Native-speaker review and privacy review must also examine translations: a technically accurate
@@ -155,8 +155,8 @@ Automated Playwright runs disable screenshots and traces because QR pixels and n
 contain short-lived bearer credentials. CI uploads only coverage and an HTML/assertion report for
 three days. Windows CI uses synthetic inputs and retains TRX plus a publish-smoke binary for seven
 days; it does not upload mock-print artifacts or document buffers. Web evidence and the publish-smoke
-binary are stored for `main` pushes and, for the Web job, any failure, so a green pull request leaves
-no evidence copy behind at all — fewer stored copies is the privacy-preferring direction as well as
-the cheaper one. Treat any unexpected URL,
-fragment, token, filename, document data, or provider response in evidence as an incident: stop
-sharing, delete the artifact, rotate affected credentials, and follow the approved response path.
+binary are stored for `main` pushes and, for the Web job, any failure, so a passing pull request
+leaves no copy of the evidence behind. Fewer stored copies is better for privacy as well as cheaper.
+Treat any unexpected URL, fragment, token, filename, document data, or provider response in
+evidence as an incident: stop sharing, delete the artifact, rotate affected credentials, and follow
+the approved response path.

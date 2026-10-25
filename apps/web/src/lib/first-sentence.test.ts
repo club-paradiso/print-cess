@@ -5,8 +5,8 @@ import { splitFirstSentence } from "./first-sentence";
 describe("splitFirstSentence", () => {
   it("separates what happened from what to do", () => {
     expect(
-      splitFirstSentence("QR코드 정보가 완전하지 않아요. 큰 화면의 QR코드를 다시 스캔하세요."),
-    ).toEqual(["QR코드 정보가 완전하지 않아요.", "큰 화면의 QR코드를 다시 스캔하세요."]);
+      splitFirstSentence("QR 코드 정보가 완전하지 않아요. 큰 화면의 QR 코드를 다시 스캔하세요."),
+    ).toEqual(["QR 코드 정보가 완전하지 않아요.", "큰 화면의 QR 코드를 다시 스캔하세요."]);
   });
 
   it("splits on full-width and Indic sentence marks", () => {

@@ -25,10 +25,10 @@ and Authenticode, device/accessibility/language review, and the incident/rollbac
 evidence in `PRODUCTION_BLOCKERS.md`; obtain risk-owner decisions; then request final go/no-go. A
 change after approval reopens every materially affected gate.
 
-The approver records must include decision, scope, conditions, expiry/review date, evidence links,
-and named owner. Never commit signatures, personal contact details, provider contracts, secrets, or
-sensitive infrastructure diagrams to this repository. No institutional approval has been granted by
-the implementation work itself.
+Each approval record must include the decision, scope, conditions, expiry/review date, evidence
+links, and named owner. Never commit signatures, personal contact details, provider contracts, secrets, or
+sensitive infrastructure diagrams to this repository. The implementation work itself grants no
+institutional approval.
 
 Before final go/no-go, assemble the sanitized private dossier defined in `READINESS_EVIDENCE.md` and
 run `pnpm validate:readiness-evidence --input <private-readiness-dossier.json>`. A passing result is

@@ -126,7 +126,7 @@ macOS host cannot establish WPF runtime correctness.
   installed-printer selection with a persisted choice, printer status, a synthetic test print,
   recovery acknowledgement, active-session discard, app restart, audio test, explicit
   server/Redis/Blob/QStash status, and a bounded authenticated orphan sweep. Server and Redis
-  status are live checks; external Blob/QStash status remains honestly `configured-unverified`
+  status are live checks; external Blob/QStash status is reported as `configured-unverified`
   because their providers expose no side-effect-free probe through this contract.
 - No approved Vercel, Blob, Redis, or QStash credentials were available, so signed URL enforcement,
   provider CORS, provider logging, region, expiry under clock skew, and cleanup delivery have not
@@ -151,10 +151,11 @@ macOS host cannot establish WPF runtime correctness.
   resolution, linear history, and admin enforcement. GitHub environments restrict Preview to
   `main`, Production to `main`, and signing/Release to `v*` tags. Active ruleset `19197379`
   restricts creation, update, and deletion of matching release tags to the repository owner
-  bypass; independent review and migration to an institutional release role remain open. GitHub
-  native secret scanning returned 422 and CodeQL setup returned 403 for this private personal
-  repository; keep `ENABLE_CODEQL` unset until the repository has the required security entitlement
-  and a successful validation run.
+  bypass; independent review and migration to an institutional release role remain open. While
+  the repository was private, GitHub native secret scanning returned 422 and CodeQL setup returned
+  HTTP 403. Update 2026-10-25: the repository has been public since 2026-10-24, native secret
+  scanning and push protection are enabled, and `ENABLE_CODEQL=true` runs both CodeQL jobs; open
+  code-scanning alerts still need triage.
 - Provider deletion semantics, backups, and infrastructure access-log retention require contractual
   review; application deletion cannot prove immediate physical erasure in provider backups.
 

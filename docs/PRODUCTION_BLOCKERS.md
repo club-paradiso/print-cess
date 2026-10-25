@@ -9,8 +9,9 @@ Every item below needs an accountable owner, dated evidence, and formal acceptan
 configuration file or green mock test does not close an institutional gate.
 
 The final sanitized private export must pass the completeness policy in `READINESS_EVIDENCE.md`.
-Current automated tests prove the validator, not the absent provider, hardware, reviewer, native
-GitHub-control, or institutional records; therefore they do not close any checkbox below.
+Current automated tests prove only that the validator works. The provider, hardware, reviewer,
+native GitHub-control, and institutional records do not exist yet, so the tests close no checkbox
+below.
 
 ## Governance and privacy
 
@@ -31,8 +32,8 @@ GitHub-control, or institutional records; therefore they do not close any checkb
 
 - [ ] **Production resources and credentials.** Vercel project access exists, but no approved Blob,
       Redis, QStash, registration, administrator, release, or signing credentials were available.
-      Provision separate
-      Preview/Production resources and rotation owners. Evidence the fail-closed startup contract:
+      Provision separate Preview/Production resources and rotation owners. Provide evidence for the
+      fail-closed startup contract:
       exact HTTPS origins, 32-character-or-longer registration/diagnostics secrets, HTTPS Redis,
       and 20-character-or-longer Blob/Redis/QStash values. The current build requires
       `BLOB_READ_WRITE_TOKEN`; OIDC-only operation is not implemented.
@@ -59,11 +60,12 @@ GitHub-control, or institutional records; therefore they do not close any checkb
       disabled. Active ruleset `19197379` restricts creation, update, and deletion of `v*` tags to
       the repository owner's bypass. Remaining: independent/CODEOWNER and environment
       reviewers, migration of that bypass to an institutional release role, signed-commit decision,
-      native secret scanning and push protection, and CodeQL. GitHub returned 422/403 because native
-      secret/code scanning is unavailable for this private personal repository; upgrade/move it
-      before setting `ENABLE_CODEQL=true`.
-- [ ] **CI evidence privacy.** Verify that Playwright screenshots/traces and raw `test-results` stay
-      disabled/excluded, only synthetic fixtures are used, Web evidence expires after three days,
+      and triage of open CodeQL alerts. Since the repository became public on 2026-10-24, native
+      secret scanning and push protection are enabled and `ENABLE_CODEQL=true` runs both CodeQL
+      jobs; while it was private, GitHub returned 422/403 for those features.
+- [ ] **CI evidence privacy.** The repository is public, so anyone can read workflow logs and
+      download artifacts until they expire. Verify that Playwright screenshots/traces and raw
+      `test-results` stay disabled/excluded, only synthetic fixtures are used, Web evidence expires after three days,
       Windows TRX/publish-smoke evidence expires after seven days, and incident deletion/rotation is
       exercised for an artifact containing a credential or personal data.
 - [ ] **Supply-chain approval.** Review npm/NuGet/Actions licenses and provenance, particularly
@@ -88,9 +90,9 @@ GitHub-control, or institutional records; therefore they do not close any checkb
       of support is **2026-11-10**. Select, implement, and retest a supported target before that date.
       Self-contained publish does not make unsupported runtime bits safe.
 - [ ] **Signed installer/update chain.** The workflow now requires a protected Authenticode
-      sign/verify job before creating a Release candidate. It fail-closes on the exact approved
-      certificate thumbprint, timestamp presence, tag/commit-bound executable version, and emits a
-      hashed evidence manifest for target-device comparison. Obtain an approved certificate,
+      sign/verify job before creating a Release candidate. It fails closed unless the exact approved
+      certificate thumbprint, a timestamp, and the tag/commit-bound executable version are present,
+      and it emits a hashed evidence manifest for target-device comparison. Obtain an approved certificate,
       configure reviewed `windows-signing`, choose installer/update distribution, timestamp and
       malware-scan builds, verify the manifest chain on target Windows, and prove rollback.
 - [ ] **Exact printer/driver validation.** Printer model, firmware, connection, driver, queue name,
@@ -122,8 +124,8 @@ GitHub-control, or institutional records; therefore they do not close any checkb
 ## Content, accessibility, and operations
 
 - [ ] **Native-speaker review.** English, Korean, Simplified Chinese, Indonesian, Filipino,
-      Vietnamese, Thai, Nepali, Khmer, Arabic, Russian, Mongolian, and Ukrainian copy is
-      placeholders until reviewed for accuracy and safe instruction.
+      Vietnamese, Thai, Nepali, Khmer, Arabic, Russian, Mongolian, and Ukrainian copy remains a
+      placeholder until it is reviewed for accuracy and safe instructions.
 - [ ] **Accessibility and low-literacy acceptance.** Test screen readers, focus/keyboard, contrast,
       reduced motion, touch targets, QR comprehension, and 30-second reminder on
       representative iPhone/Android and kiosk hardware.

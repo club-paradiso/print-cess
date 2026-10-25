@@ -36,15 +36,15 @@ The WPF runtime creates a fresh ephemeral P-256 key and server session, renders 
 
 After authenticated access, the admin screen exposes safe runtime status; approved installed-printer
 selection and persisted choice; a synthetic test page; recovery acknowledgement; current-session
-discard; restart; and audio test. A printer change first cancels/cleans a waiting session and rotates
-to a fresh QR, and is blocked once encrypted content has been consumed.
+discard; restart; and audio test. A printer change first cancels and cleans up a waiting session and
+rotates to a fresh QR, and is blocked once encrypted content has been consumed.
 
 The screen calls the authenticated `/api/admin/health` endpoint and displays server, Redis/session
 store, Blob, and QStash/cleanup separately. Server and Redis `ready` values are live endpoint/read
 checks. External Blob and QStash `configured-unverified` values only confirm server configuration;
 they are deliberately not presented as provider reachability because a side-effect-free provider
 probe is unavailable. The bounded orphan-sweep button calls `/api/cleanup` for at most 25 due
-records per operator action; the server additionally rejects limits above 100. Neither response
+records per operator action; the server additionally rejects limits above 100. Neither the response
 nor the UI includes document identifiers, filenames, tokens, keys, or signed URLs.
 
 ## Commands

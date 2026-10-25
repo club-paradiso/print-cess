@@ -126,8 +126,7 @@ Keep the three geometrically synchronized. There is deliberately no web app mani
 home-screen icon: a visit is meant to end with the browser's site data cleared, and an installed
 app would work against that.
 
-Do not use the Ministry of Justice, Jeju Immigration Office, another public agency, airline, or
-travel-service logo without written permission.
+Do not use the logo of any public agency, airline, or travel service without written permission.
 
 ## Layout and motion
 
