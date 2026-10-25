@@ -193,7 +193,7 @@ export function KioskWaitingScreen({
 
       <div className="kiosk-layout">
         <section className="kiosk-instructions" aria-labelledby="kiosk-title">
-          {/* The same Beacon the visitor's guide (/start) shows, so somebody
+          {/* The same Beacon the visitor's home (/) shows, so somebody
               told to "look for the screen with this mark" can match it. It
               carries no words of its own: a label like "Start printing here"
               read as a button to press, and the headline below already says

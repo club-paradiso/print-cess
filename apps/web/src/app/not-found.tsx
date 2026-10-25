@@ -21,7 +21,7 @@ export default async function NotFound() {
         </StatusIcon>
         <h1>{text("notFoundTitle")}</h1>
         <p>{text("notFoundBody")}</p>
-        <Link className="pc-button pc-button--secondary" href="/start">
+        <Link className="pc-button pc-button--secondary" href="/">
           <ArrowLeft aria-hidden="true" /> {text("notFoundHome")}
         </Link>
       </section>

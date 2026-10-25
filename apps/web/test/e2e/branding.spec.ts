@@ -7,8 +7,39 @@ test("uses the Club Paradiso service name", async ({ page }) => {
   await expect(page.getByLabel("Print-cess by Club Paradiso")).toBeVisible();
 });
 
-test("the root URL opens the shared display", async ({ page }) => {
-  await page.goto("/");
+test("the root URL is the visitor's home, never the shared display", async ({ browser }) => {
+  // A phone, a laptop and a large landscape screen all get the same page: the
+  // root decides by address alone, not by screen size or browser.
+  for (const viewport of [
+    { width: 390, height: 844 },
+    { width: 1366, height: 768 },
+    { width: 1920, height: 1080 },
+  ]) {
+    const context = await browser.newContext({ viewport, locale: "en-US" });
+    const page = await context.newPage();
+    await page.goto("/");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
+    await expect(page.getByRole("button", { name: "Scan QR code" }).first()).toBeVisible();
+    await expect(page.locator(".kiosk-qr")).toHaveCount(0);
+    await context.close();
+  }
+});
+
+test("the old guide address and its workstation check land on the home", async ({ page }) => {
+  await page.goto("/start");
+  await expect(page).toHaveURL("/");
+  await expect(page.locator(".kiosk-qr")).toHaveCount(0);
+
+  await page.goto("/start#environment");
+  await expect(page).toHaveURL("/#environment");
+  await expect(page.locator("#environment")).toBeVisible();
+
+  await page.goto("/start?lang=en");
+  await expect(page).toHaveURL("/?lang=en");
+});
+
+test("the display switches on the root URL still open the shared display", async ({ page }) => {
+  await page.goto("/?sound=off");
 
   await expect(
     page.getByRole("heading", { name: /휴대전화 카메라로\s*QR 코드를 비추세요/u }),
@@ -30,9 +61,9 @@ test("the root URL opens the shared display", async ({ page }) => {
 
 test("the legacy workstation URL lands on the real home without looping", async ({ page }) => {
   await page.goto("/workstation");
-  await expect(page).toHaveURL(/\/$/u);
-  await expect(page.locator(".kiosk-qr")).toBeVisible();
-  await expect(page.getByRole("navigation", { name: /다른 기능/u })).toBeVisible();
+  await expect(page).toHaveURL("/");
+  await expect(page.locator(".kiosk-qr")).toHaveCount(0);
+  await expect(page.locator("#environment")).toBeAttached();
 });
 
 test("the station URL keeps the screen to the QR code alone", async ({ page }) => {

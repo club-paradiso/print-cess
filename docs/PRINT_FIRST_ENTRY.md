@@ -152,12 +152,21 @@ line of text after it, no FAQ and no accordions.
 
 ## Kiosk display
 
-Since 2026-10-13 the root URL `/` opens the shared display itself (the same screen and
-`?printing=auto` / `?sound=off` switches as `/kiosk`), so a station can simply be pointed at the
-domain. The visitor's guide described in the sections above moved to `/start`, and every "home"
-link (the header name, the 404 page and the workstation page) now points
-there. When the browser kiosk is switched off in Production, `/` redirects to `/start` instead of
-returning 404.
+Since 2026-10-26 the root URL `/` is the visitor's home described in the sections above, and the
+former `/start` address redirects there (307, so it can be undone; the query string and any
+`#environment` fragment carry over). Every "home" link (the header name, the 404 page, the error
+screen's "처음 화면으로" and the workstation page) points to `/`.
+
+The shared display lives at `/kiosk`, which is what the station launcher opens. `/` shows the
+display, with links to the other features, only when its address carries one of the display's own
+switches, `?printing=` or `?sound=`. The choice is made from the address alone, never from screen
+size or the browser, so a phone cannot be shown the display by mistake: the codes phones scan open
+`/s/...`, and nobody types a display switch into a phone. A station pointed at the bare domain with
+no switch now gets the visitor's home, so stations belong at `/kiosk` (or `/?printing=auto`).
+
+From 2026-10-13 to 2026-10-26 the root URL opened the display itself and the visitor's guide lived
+at `/start`. When the browser kiosk is switched off in Production, `/` stays the visitor's home and
+`/kiosk` returns 404, which removes the old `/` to `/start` redirect and any chance of a loop.
 
 `/kiosk` (and `/demo/kiosk`, which shares its screens through
 `apps/web/src/components/kiosk/kiosk-screens.tsx`) is the primary screen of the service, so it was
