@@ -77,8 +77,10 @@ jobs:
       - name: Set up .NET 8
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: 8.0.x
-          dotnet-quality: ga
+          # Pinned to the SDK the windows-2025 image already carries. "8.0.x"
+          # resolved to 8.0.427 on 2026-10-26, which Microsoft listed before
+          # its installer could be downloaded (HTTP 409), failing every job.
+          dotnet-version: 8.0.426
 
       - name: Restore
         run: dotnet restore apps/kiosk/Paradiso.PrintCess.sln --locked-mode
