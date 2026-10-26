@@ -17,8 +17,19 @@ export const KIOSK_PIN_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 export const PHONE_GUIDE_PATH = "/start?from=kiosk";
 export const KIOSK_VIEW_ONCE_PATH = "/?view=kiosk";
 
-/** The same test the client applies when the user agent hides a phone. */
-export const PHONE_MEDIA_QUERY = "(max-width: 767px) and (pointer: coarse)";
+/**
+ * The client's second look, for a phone that hides behind a desktop user
+ * agent. It goes by the screen's shorter side, so the answer does not change
+ * when the device is turned: phones stay under 600 CSS pixels on that side,
+ * while the smallest tablets (an iPad mini is 744) are well above it. A
+ * viewport width would send a portrait tablet away and keep a landscape phone.
+ */
+export const PHONE_SHORT_SIDE_MAX = 600;
+export const COARSE_POINTER_QUERY = "(pointer: coarse)";
+
+export function isPhoneScreen(screen: { width: number; height: number }, coarse: boolean): boolean {
+  return coarse && Math.min(screen.width, screen.height) < PHONE_SHORT_SIDE_MAX;
+}
 
 /**
  * Whether a request comes from a phone, judged from its headers alone.

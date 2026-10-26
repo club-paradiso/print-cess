@@ -67,8 +67,11 @@ test("a touch station pinned with ?kiosk=1 keeps the kiosk until unpinned", asyn
 test("a phone hiding behind a desktop user agent is caught by its screen", async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 844 },
+    screen: { width: 390, height: 844 },
     hasTouch: true,
-    isMobile: true,
+    // Safari with a desktop user agent sends no mobile client hint, and
+    // Chromium would send one for `isMobile`, so leave it off.
+    isMobile: false,
     locale: "en-US",
     userAgent:
       "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
@@ -76,6 +79,28 @@ test("a phone hiding behind a desktop user agent is caught by its screen", async
   const page = await context.newPage();
   await page.goto("/");
   await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+  await context.close();
+});
+
+test("an iPad mini in portrait (desktop user agent, touch) keeps the kiosk", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 744, height: 1133 },
+    screen: { width: 744, height: 1133 },
+    hasTouch: true,
+    // Safari with a desktop user agent sends no mobile client hint, and
+    // Chromium would send one for `isMobile`, so leave it off.
+    isMobile: false,
+    locale: "en-US",
+    userAgent:
+      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15",
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.locator(".kiosk-qr")).toBeVisible();
+  await page.waitForTimeout(1000);
+  await expect(page).toHaveURL(/\/$/u);
   await context.close();
 });
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { decideRoot, hasKioskPin, isPhoneRequest } from "./phone-at-kiosk";
+import { decideRoot, hasKioskPin, isPhoneRequest, isPhoneScreen } from "./phone-at-kiosk";
 
 const IPHONE =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
@@ -86,5 +86,21 @@ describe("decideRoot", () => {
     expect(decideRoot({ searchParams: params("view=kiosk"), headers: phone })).toEqual({
       kind: "kiosk",
     });
+  });
+});
+
+describe("isPhoneScreen", () => {
+  it("treats a phone as a phone in either orientation", () => {
+    expect(isPhoneScreen({ width: 393, height: 852 }, true)).toBe(true);
+    expect(isPhoneScreen({ width: 852, height: 393 }, true)).toBe(true);
+  });
+
+  it("keeps tablets, including an iPad mini in portrait, on the kiosk", () => {
+    expect(isPhoneScreen({ width: 744, height: 1133 }, true)).toBe(false);
+    expect(isPhoneScreen({ width: 800, height: 1280 }, true)).toBe(false);
+  });
+
+  it("never redirects a mouse-driven screen, however small", () => {
+    expect(isPhoneScreen({ width: 390, height: 844 }, false)).toBe(false);
   });
 });
