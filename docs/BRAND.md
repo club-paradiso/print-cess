@@ -25,13 +25,13 @@ next action.
 
 The palette comes from the Print-cess mark. Five brand colours, each with one job:
 
-| Name         | Value     | Job                                                            |
-| ------------ | --------- | -------------------------------------------------------------- |
-| Royal Indigo | `#4f46e5` | The one primary action per screen, work in progress, the mark  |
-| Ink Navy     | `#1e1b4b` | Headings and strong text, QR modules, the camera viewfinder    |
-| Paper White  | `#f8fafc` | Page background everywhere                                     |
-| Soft Lilac   | `#e9e5ff` | Selected and informational surfaces, icon tiles                |
-| Mint Teal    | `#14b8a6` | Success and "safe" only: printed, saved, deleted, ready to use |
+| Name        | Value     | Job                                                            |
+| ----------- | --------- | -------------------------------------------------------------- |
+| Crimson     | `#cc383a` | The one primary action per screen, work in progress, the mark  |
+| Ink Navy    | `#1e1b4b` | Headings and strong text, QR modules, the camera viewfinder    |
+| Paper White | `#f8fafc` | Page background everywhere                                     |
+| Soft Blush  | `#fde4e4` | Selected and informational surfaces, icon tiles                |
+| Mint Teal   | `#14b8a6` | Success and "safe" only: printed, saved, deleted, ready to use |
 
 Mint Teal is 2.5:1 on white, so it is a fill and an accent and never the colour of text; success
 text uses its deeper step `#0f766e` (5.5:1). Success is never the colour of a primary button.
@@ -41,7 +41,7 @@ destructive actions. Nothing else gets a colour.
 ### Tokens
 
 `packages/ui/src/styles.css` is the single source. It has two layers: the palette
-(`--pc-indigo-600`, `--pc-navy-900`, …) and a semantic layer that components read. Components and
+(`--pc-crimson-600`, `--pc-navy-900`, …) and a semantic layer that components read. Components and
 app styles use only the semantic layer, never a raw hue or hex:
 
 | Group   | Tokens                                                                                                                                                     |
@@ -51,7 +51,7 @@ app styles use only the semantic layer, never a raw hue or hex:
 | Line    | `--pc-border`, `--pc-border-strong`                                                                                                                        |
 | Action  | `--pc-brand`, `--pc-brand-hover`, `--pc-brand-active`, `--pc-selected`, `--pc-disabled-*`                                                                  |
 | State   | `--pc-success*`, `--pc-warning*`, `--pc-destructive*`, `--pc-upload-active`, `--pc-transfer-active`, `--pc-printing`, `--pc-completed`                     |
-| Focus   | `--pc-focus-ring` (indigo, 3px, 3px offset), `--pc-focus-ring-on-inverse`                                                                                  |
+| Focus   | `--pc-focus-ring` (crimson, 3px, 3px offset), `--pc-focus-ring-on-inverse`                                                                                 |
 | Shape   | `--pc-radius-sm` 10, `-md` 14, `-lg` 20, `-xl` 28, `-pill`                                                                                                 |
 | Depth   | `--pc-shadow-sm`, `--pc-shadow-md`, `--pc-shadow-lg`, `--pc-scrim`                                                                                         |
 | Type    | `--pc-font-sans`, `--pc-font-mono`, `--pc-text-display` … `--pc-text-helper`                                                                               |
@@ -99,7 +99,7 @@ the sheet coming out carries a four-corner scan frame; a mint status light sits 
 crown is the name's only princess reference and must read as paper before it reads as a tiara.
 Do not add castles, characters, glitter, or more crowns elsewhere in the interface.
 
-The wordmark sets “Print-” in Ink Navy and “cess” in Royal Indigo, heavy and tightly tracked, with
+The wordmark sets “Print-” in Ink Navy and “cess” in Crimson, heavy and tightly tracked, with
 “by Club Paradiso” as a quieter endorsement. On a phone header the endorsement stacks under the
 name so the lockup stays narrow. The hyphen is part of the name and never a line break. The whole
 group has the accessible name “Print-cess by Club Paradiso”; the split colours and the icon are
@@ -108,14 +108,14 @@ recoloured mid-word. Technical identifiers (`print-cess`, `@print-cess/*`) are u
 
 Assets:
 
-- `packages/ui/src/index.tsx` — the React mark, flat on the page (Royal Indigo body, lilac crown).
-- `apps/web/src/app/icon.svg` — the app icon and favicon: the mark reversed out of an indigo tile,
+- `packages/ui/src/index.tsx` — the React mark, flat on the page (Crimson body, blush crown).
+- `apps/web/src/app/icon.svg` — the app icon and favicon: the mark reversed out of an crimson tile,
   simplified so it survives 16 px (one central QR module instead of four).
 - `docs/assets/print-cess-mark.svg` — the same tile for documentation and repository surfaces.
 
 ### The Beacon
 
-The Beacon is the wayfinding tile: the mark on a white sheet inside a solid Royal Indigo rounded
+The Beacon is the wayfinding tile: the mark on a white sheet inside a solid Crimson rounded
 square, wrapped in white scan-frame corners (`Beacon` in `packages/ui`). It appears on the home
 page's Print section and in the header of the shared display, so a visitor can match one to the
 other. Keep it flat (no gradient, shadow or motion), keep it clear of the QR code and its quiet

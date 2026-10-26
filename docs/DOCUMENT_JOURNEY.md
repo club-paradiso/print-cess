@@ -220,7 +220,7 @@ The same checklists, applied to `/receive`:
 
 | Change                                                                                                  | Rule                                     |
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| The four digits are four large boxes; the next one to fill is outlined in indigo                        | Show where the user is (state clarity)   |
+| The four digits are four large boxes; the next one to fill is outlined in crimson                       | Show where the user is (state clarity)   |
 | A keypad key gives way under the finger (scale 0.96; off under reduced motion)                          | Press feedback                           |
 | Size and time left sit above the file list, not under it                                                | Decision facts first                     |
 | "아직 저장하지 않았어요" only appears once at least one file has moved                                  | Rows speak only when they have news      |
@@ -294,7 +294,7 @@ the only channel, and it never blocks anything.
 - **Arrival.** The document token on the kiosk fades and rises 14px into place
   over 420ms when a phone connects. It is the only "materialization" in the
   product, and it is short enough not to be a wait.
-- **Alive.** A receiver waiting on a sender sees a slow indigo pulse. It says the
+- **Alive.** A receiver waiting on a sender sees a slow crimson pulse. It says the
   line is open; it does not pretend to be a percentage nobody can measure.
 - **Hand-off.** While the phone sends a document, a sheet slides into the
   printer from the mark; while the kiosk prints, a sheet slides out of it. It
@@ -320,15 +320,15 @@ third channel.
 
 | State        | Hue (token)                                  | The word                  |
 | ------------ | -------------------------------------------- | ------------------------- |
-| Ready        | Royal Indigo (`--pc-brand`)                  | Ready / Connected         |
-| Sending      | Royal Indigo (`--pc-transfer-active`)        | Sending / Saving          |
-| Receiving    | Royal Indigo (`--pc-transfer-active`)        | Saving                    |
-| Checking     | Royal Indigo (`--pc-printing`)               | Checking / Printing       |
+| Ready        | Crimson (`--pc-brand`)                       | Ready / Connected         |
+| Sending      | Crimson (`--pc-transfer-active`)             | Sending / Saving          |
+| Receiving    | Crimson (`--pc-transfer-active`)             | Saving                    |
+| Checking     | Crimson (`--pc-printing`)                    | Checking / Printing       |
 | Success      | Mint Teal (`--pc-success`, `--pc-completed`) | Saved / Printed / Deleted |
 | Needs a look | Amber (`--pc-warning`)                       | Reconnecting / Limited    |
 | Error        | Red (`--pc-destructive`)                     | The reason                |
 
-Work in flight used to be warm amber. It is the brand's indigo now, because
+Work in flight used to be warm amber. It is the brand's crimson now, because
 amber is reserved for the one state that asks the visitor to look twice (a
 lost connection, a limited browser); an in-flight transfer is not a warning.
 

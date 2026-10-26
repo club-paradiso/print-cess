@@ -1,17 +1,17 @@
 /*
  * Print-cess design tokens.
  *
- * Two layers. The palette is the brand, taken from the Print-cess mark: Royal
- * Indigo, Ink Navy, Paper White, Soft Lilac, and Mint Teal. Components never
+ * Two layers. The palette is the brand, taken from the Print-cess mark: Crimson,
+ * Ink Navy, Paper White, Soft Blush, and Mint Teal. Components never
  * read the palette directly; they read the semantic layer below it, which says
  * what a colour is for. Re-tuning a hue happens once, in the palette, and a
  * change of meaning happens once, in the semantic layer.
  *
  * Every text pairing below is measured, not assumed (WCAG 2.2 AA):
- *   text-primary   on background  15.3:1   brand          on surface     6.3:1
- *   text-secondary on surface     10.8:1   text-brand     on brand-soft  6.4:1
+ *   text-primary   on background  15.3:1   brand          on surface     5.0:1
+ *   text-secondary on surface     10.8:1   text-brand     on brand-soft  5.7:1
  *   text-muted     on background   6.2:1   success        on success-bg  5.0:1
- *   on-brand       on brand        6.3:1   destructive    on danger-bg   6.0:1
+ *   on-brand       on brand        5.0:1   destructive    on danger-bg   6.0:1
  *   border-strong  on surface      3.4:1   warning        on warning-bg  4.8:1
  * Mint Teal itself (#14b8a6) is 2.5:1 on white, so it is a fill and an accent,
  * never the colour of text; success text uses its deeper step.
@@ -23,14 +23,14 @@
  */
 :root {
   /* Palette ---------------------------------------------------------------- */
-  --pc-indigo-50: #f5f3ff;
-  --pc-indigo-100: #e9e5ff; /* Soft Lilac */
-  --pc-indigo-200: #d6d0fe;
-  --pc-indigo-300: #b4abf5;
-  --pc-indigo-400: #7c73ec;
-  --pc-indigo-600: #4f46e5; /* Royal Indigo */
-  --pc-indigo-700: #4338ca;
-  --pc-indigo-800: #3730a3;
+  --pc-crimson-50: #fef3f3;
+  --pc-crimson-100: #fde4e4; /* Soft Blush */
+  --pc-crimson-200: #f9c6c7;
+  --pc-crimson-300: #f0999b;
+  --pc-crimson-400: #e2686a;
+  --pc-crimson-600: #cc383a; /* Print-cess Crimson */
+  --pc-crimson-700: #a82b2d;
+  --pc-crimson-800: #8a2224;
   --pc-navy-950: #0d0b26;
   --pc-navy-900: #1e1b4b; /* Ink Navy */
   --pc-navy-700: #3b3a5c;
@@ -57,8 +57,8 @@
   --pc-surface: var(--pc-white);
   --pc-surface-raised: var(--pc-white);
   --pc-surface-sunken: var(--pc-navy-100);
-  --pc-surface-brand: var(--pc-indigo-100);
-  --pc-surface-brand-subtle: var(--pc-indigo-50);
+  --pc-surface-brand: var(--pc-crimson-100);
+  --pc-surface-brand-subtle: var(--pc-crimson-50);
   /* The camera viewfinder is the only dark surface in the product. */
   --pc-surface-inverse: var(--pc-navy-900);
   --pc-surface-inverse-deep: var(--pc-navy-950);
@@ -67,7 +67,7 @@
   --pc-text-primary: var(--pc-navy-900);
   --pc-text-secondary: var(--pc-navy-700);
   --pc-text-muted: var(--pc-navy-500);
-  --pc-text-brand: var(--pc-indigo-700);
+  --pc-text-brand: var(--pc-crimson-700);
   --pc-text-on-brand: var(--pc-white);
   --pc-text-on-inverse: var(--pc-white);
   --pc-text-on-inverse-muted: #c9c7e3;
@@ -77,11 +77,11 @@
   --pc-border-strong: var(--pc-navy-400);
 
   /* Action --------------------------------------------------------------- */
-  --pc-brand: var(--pc-indigo-600);
-  --pc-brand-hover: var(--pc-indigo-700);
-  --pc-brand-active: var(--pc-indigo-800);
-  --pc-brand-muted: var(--pc-indigo-300);
-  --pc-brand-tint: var(--pc-indigo-400);
+  --pc-brand: var(--pc-crimson-600);
+  --pc-brand-hover: var(--pc-crimson-700);
+  --pc-brand-active: var(--pc-crimson-800);
+  --pc-brand-muted: var(--pc-crimson-300);
+  --pc-brand-tint: var(--pc-crimson-400);
   --pc-selected: var(--pc-surface-brand);
   --pc-disabled-surface: var(--pc-navy-100);
   --pc-disabled-text: var(--pc-navy-500);
@@ -105,10 +105,10 @@
   --pc-completed: var(--pc-success-accent);
   --pc-detect-on-inverse: var(--pc-mint-300);
 
-  /* Focus. Indigo on white is 6.3:1 and the 3px gap keeps it apart from an
-     indigo control, so the ring is visible on every light surface. -------- */
-  --pc-focus-ring: var(--pc-indigo-600);
-  --pc-focus-ring-on-inverse: var(--pc-indigo-200);
+  /* Focus. Crimson on white is 5.0:1 and the 3px gap keeps it apart from an
+     crimson control, so the ring is visible on every light surface. -------- */
+  --pc-focus-ring: var(--pc-crimson-600);
+  --pc-focus-ring-on-inverse: var(--pc-crimson-200);
 
   /* Type ----------------------------------------------------------------- */
   --pc-font-sans:
@@ -278,7 +278,7 @@ summary:focus-visible,
 }
 
 /* --- Buttons --------------------------------------------------------------
-   One primary per screen, solid indigo. Secondary is a white control with a
+   One primary per screen, solid crimson. Secondary is a white control with a
    visible edge. Tertiary is a text action. Destructive is only ever red. */
 
 .pc-button {
@@ -365,7 +365,7 @@ summary:focus-visible,
 }
 
 /* --- Step indicator ------------------------------------------------------
-   A segmented bar: finished and current segments are indigo, the rest wait. */
+   A segmented bar: finished and current segments are crimson, the rest wait. */
 
 .pc-progress {
   display: grid;
@@ -503,7 +503,7 @@ summary:focus-visible,
 }
 
 /* --- Beacon ----------------------------------------------------------------
-   Solid Royal Indigo with a white sheet holding the mark, drawn in the same
+   Solid Crimson with a white sheet holding the mark, drawn in the same
    scan-frame corners as the QR code. No gradient, no shadow, no motion: it is
    recognised by shape and colour from across a room. The same tile is shown on
    the phone and on the shared display, so keep both on this one rule. */

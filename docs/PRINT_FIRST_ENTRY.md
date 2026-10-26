@@ -73,10 +73,10 @@ promise beyond what the system does.
 
 One marker, shown in two places: on the phone's home page and on the shared display.
 
-- **Look:** the Print-cess mark on a white sheet, inside a solid Royal Indigo rounded tile, wrapped
+- **Look:** the Print-cess mark on a white sheet, inside a solid Crimson rounded tile, wrapped
   in the mark's own four scan-frame corners. No gradient, no shadow, no animation.
 - **Why this shape:** it reuses existing brand parts (the printer mark, the scan frame, Royal
-  Indigo, the white sheet). A visitor matches indigo tile plus corner brackets to the same tile on
+  Crimson, the white sheet). A visitor matches crimson tile plus corner brackets to the same tile on
   the display, so finding the display is a recognition task, not a reading one.
 - **Where:** `Beacon` in `packages/ui` (`pc-beacon` in `packages/ui/src/styles.css`). Home:
   `print-entry__beacon`, with "Look for the screen with this mark." Display: `kiosk-beacon` above
@@ -175,7 +175,7 @@ redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 - **Waiting.** Left: the Beacon (unlabelled), one headline
   ("휴대전화 카메라로 QR 코드를 비추세요"), English beneath it, the rotating language line, and the
   whole visit as three steps (point the camera, choose files on the phone, take the paper), with
-  the first drawn as current. Right: the QR code on a solid Royal Indigo panel, the largest block
+  the first drawn as current. Right: the QR code on a solid Crimson panel, the largest block
   of colour on the screen, with "사진은 찍지 않아도 돼요" above the code and an emptying bar plus
   the countdown below it. A footer carries the small print (deletion, no sign-up, file types,
   languages). The old green "사용할 수 있어요" banner is gone; a small header pill appears only
@@ -187,7 +187,7 @@ redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 - **Phone connected.** A stage-specific headline and one-line hint (choose files on the phone /
   receiving / wait at the printer) above a four-station tracker (connected, arriving, checking,
   printing) that marks each station with a word and an icon as well as colour.
-- **Done.** "프린터에서 종이를 가져가세요" on the indigo panel is the loudest thing on the screen; the
+- **Done.** "프린터에서 종이를 가져가세요" on the crimson panel is the loudest thing on the screen; the
   staff download stays the quietest control, and an emptying bar shows when the next QR appears.
 - **Unavailable.** The display retries on its own after 30 seconds, because a shared screen is
   usually unattended; the button stays for anyone who does not want to wait.
