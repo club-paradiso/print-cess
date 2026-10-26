@@ -237,6 +237,9 @@ summary:focus-visible,
   gap: 9px;
 }
 .pc-wordmark strong {
+  /* Pathway Extreme, supplied by the app through next/font as --pc-font-logo.
+     Where the app does not supply it the wordmark keeps the body face. */
+  font-family: var(--pc-font-logo, var(--pc-font-sans));
   /* The hyphen is part of the name, not a place to break it. */
   white-space: nowrap;
   font-size: 30px;
