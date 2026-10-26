@@ -161,7 +161,7 @@ test("the finished screen fits a 1080p kiosk at 150% Windows scaling", async ({
     timeout: 60_000,
   });
 
-  const countdown = page.getByText(/초 후 새 QR 코드$/u);
+  const countdown = page.getByText(/초 뒤 새 QR 코드가 나와요$/u);
   await expect(countdown).toBeVisible();
   const box = await countdown.boundingBox();
   expect(box!.y + box!.height).toBeLessThanOrEqual(720);
