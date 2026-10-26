@@ -4,6 +4,7 @@ import {
   Building2,
   Camera,
   FileText,
+  Info,
   LaptopMinimal,
   LockKeyhole,
   Monitor,
@@ -21,6 +22,7 @@ import { EnvironmentStatus } from "@/components/home/environment-status";
 import { sessionOriginFrom } from "@/lib/print-qr";
 import { requestLocale } from "@/lib/request-locale";
 import { isBrowserKioskEnabled } from "@/server/demo";
+import { KIOSK_VIEW_ONCE_PATH } from "@/lib/phone-at-kiosk";
 
 function keepNameTogether(sentence: string): ReactNode {
   const parts = sentence.split("Print-cess");
@@ -36,8 +38,13 @@ function keepNameTogether(sentence: string): ReactNode {
   );
 }
 
-export default async function HomePage() {
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ from?: string | string[] }>;
+} = {}) {
   const locale = await requestLocale();
+  const { from } = (await searchParams) ?? {};
   const text = (key: string) => translate(locale, key);
   const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
 
@@ -69,6 +76,19 @@ export default async function HomePage() {
         <Wordmark />
         <HomeLanguagePicker locale={locale} />
       </header>
+
+      {/* A phone that opened the big screen's address was sent here by the
+          proxy. Say why in one line, so the change of page is not a surprise,
+          and leave a way back for someone who only wanted to look. */}
+      {from === "kiosk" ? (
+        <div className="home-from-kiosk" role="status">
+          <Info aria-hidden="true" />
+          <p>{text("homeFromKioskNote")}</p>
+          <a className="home-link" href={KIOSK_VIEW_ONCE_PATH}>
+            {text("homeFromKioskShowAnyway")}
+          </a>
+        </div>
+      ) : null}
 
       {/* Print comes first and takes most of the first screen. A visitor who
           arrives here has almost always come to print, and the one thing they

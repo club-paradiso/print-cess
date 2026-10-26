@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 
-import { blobConnectOrigins, buildContentSecurityPolicy } from "./proxy";
+import { NextRequest } from "next/server";
+import { afterEach, vi } from "vitest";
+
+import { blobConnectOrigins, buildContentSecurityPolicy, proxy } from "./proxy";
 
 function env(values: Record<string, string> = {}): NodeJS.ProcessEnv {
   return values as NodeJS.ProcessEnv;
@@ -124,5 +127,45 @@ describe("Content Security Policy", () => {
     );
 
     expect(policy).not.toContain("storage.example.test");
+  });
+});
+
+describe("phones at the kiosk address", () => {
+  const IPHONE =
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
+  const WINDOWS =
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
+
+  function request(path: string, agent: string, cookie?: string) {
+    return new NextRequest(`https://print-cess.test${path}`, {
+      headers: { "user-agent": agent, ...(cookie ? { cookie } : {}) },
+    });
+  }
+
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("redirects a phone from / to the visitor guide", () => {
+    const response = proxy(request("/", IPHONE));
+    expect(response.status).toBe(307);
+    expect(response.headers.get("location")).toBe("https://print-cess.test/start?from=kiosk");
+  });
+
+  it("leaves a PC, a pinned station and other paths alone", () => {
+    expect(proxy(request("/", WINDOWS)).headers.get("location")).toBeNull();
+    expect(proxy(request("/", IPHONE, "pc_kiosk=1")).headers.get("location")).toBeNull();
+    expect(proxy(request("/send", IPHONE)).headers.get("location")).toBeNull();
+    expect(proxy(request("/?view=kiosk", IPHONE)).headers.get("location")).toBeNull();
+  });
+
+  it("pins a station with ?kiosk=1", () => {
+    const cookie = proxy(request("/?kiosk=1", WINDOWS)).headers.get("set-cookie") ?? "";
+    expect(cookie).toContain("pc_kiosk=1");
+    expect(cookie.toLowerCase()).toContain("httponly");
+  });
+
+  it("does not redirect when the root is not the kiosk in production", () => {
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("ENABLE_BROWSER_KIOSK", "false");
+    expect(proxy(request("/", IPHONE)).headers.get("location")).toBeNull();
   });
 });
