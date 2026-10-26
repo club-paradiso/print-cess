@@ -314,7 +314,7 @@ export function VisitorPrintFlow({ copy }: { copy: VisitorCopy }) {
           <button type="submit" disabled={authBusy || !operatorSecret}>
             {authBusy ? "인증 중…" : "직원 인증 / Unlock visitor printing"}
           </button>
-          {authFailed && <p role="alert">직원 인증에 실패했습니다. 인증키를 확인하세요.</p>}
+          {authFailed && <p role="alert">직원 인증에 실패했어요. 인증키를 확인하세요.</p>}
         </form>
       )}
       <div className="visitor-flow__main">

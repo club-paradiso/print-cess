@@ -391,27 +391,27 @@ const ko = {
 
   notFoundTitle: "페이지를 찾을 수 없어요",
   notFoundBody:
-    "주소가 잘못됐거나 오래됐을 수 있어요. 인쇄하려면 큰 화면의 QR 코드를 다시 스캔하세요.",
+    "주소가 잘못됐거나 오래됐을 수 있어요. 인쇄하려면 큰 화면의 QR 코드를 다시 찍으세요.",
   notFoundHome: "처음으로",
   selectLanguage: "언어를 선택하세요",
   step: "{{total}}단계 중 {{current}}단계",
 
   guideTitle: "인쇄 방법",
-  guideScanTitle: "1. QR 코드 스캔하기",
-  guideScanBody: "휴대전화 카메라로 이미 스캔했으니 이 단계는 끝났어요.",
+  guideScanTitle: "1. QR 코드 찍기",
+  guideScanBody: "QR 코드는 이미 찍었으니 이 단계는 끝났어요.",
   guideChooseTitle: "2. 문서 하나 고르기",
-  guideChooseBody: "갤러리에서 사진 한 장을 고르거나, 휴대전화에 저장한 PDF 하나를 고르세요.",
+  guideChooseBody: "갤러리의 사진 한 장이나 휴대전화에 저장한 PDF 하나를 고르세요.",
   guideCheckTitle: "3. 확인하고 인쇄하기",
   guideCheckBody: "휴대전화 화면에서 미리보기를 확인한 뒤 인쇄 버튼을 누르세요.",
   guideCollectTitle: "4. 출력물 가져가기",
-  guideCollectBody: "프린터는 큰 화면 옆에 있어요. 거기에서 종이를 가져가세요.",
+  guideCollectBody: "큰 화면 옆 프린터에서 종이를 가져가세요.",
 
   chooseFile: "인쇄할 문서를 하나 고르세요",
   fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 50페이지 이하",
   guideChooseBodyHwpx: "사진, PDF, HWPX 파일 중 하나를 고르세요.",
   fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하 · 최대 50페이지",
   documentNeedsPdf:
-    "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 변환하려고 문서를 다른 회사에 보내는 일은 없어요.",
+    "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 변환하려고 문서를 외부 회사로 보내지는 않아요.",
   imageConversionUnsupported:
     "이 휴대전화에서는 이 사진을 열 수 없어요. 사진 앱에서 JPG로 저장하거나 화면을 캡처한 뒤 다시 고르세요.",
   hwpxUnavailable: "이 프린터는 HWPX 파일을 열 수 없어요. 문서를 PDF로 저장한 뒤 다시 고르세요.",
@@ -443,18 +443,18 @@ const ko = {
   pdfPreview: "PDF 미리보기",
   firstPagePreview: "첫 페이지 미리보기",
 
-  invalidQr: "QR 코드 링크가 온전하지 않아요. 큰 화면의 QR 코드를 다시 스캔하세요.",
-  expiredQr: "QR 코드 유효 시간이 지났어요. 큰 화면의 새 QR 코드를 스캔하세요.",
-  usedQr: "다른 사람이 사용 중인 QR 코드예요. 큰 화면의 새 QR 코드를 스캔하세요.",
+  invalidQr: "QR 코드 링크가 온전하지 않아요. 큰 화면의 QR 코드를 다시 찍으세요.",
+  expiredQr: "QR 코드를 쓸 수 있는 시간이 지났어요. 큰 화면의 새 QR 코드를 찍으세요.",
+  usedQr: "다른 사람이 쓰고 있는 QR 코드예요. 큰 화면의 새 QR 코드를 찍으세요.",
   unsupportedType:
     "사진이나 PDF를 고르세요. HWP, 워드, 엑셀, 파워포인트 파일은 먼저 PDF로 저장한 뒤 고르세요.",
   tooLarge: "파일이 너무 커요. 사진은 20MB, PDF는 10MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
   tooManyPages: "문서가 50페이지보다 많아요. 필요한 페이지만 저장하세요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
   damagedFile:
-    "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 선택하세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
-  fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 스캔하세요.",
-  networkError: "연결이 끊겼어요. 모바일 데이터를 확인한 뒤 QR 코드를 다시 스캔하세요.",
+    "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 고르세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
+  fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 찍으세요.",
+  networkError: "연결이 끊겼어요. 인터넷 연결을 확인한 뒤 QR 코드를 다시 찍으세요.",
 
   chooseLocation: "인쇄할 문서가 어디에 있나요?",
   locationKakao: "카카오톡에 있어요",
@@ -464,7 +464,7 @@ const ko = {
     "카카오톡에서 파일을 열고 공유를 누른 뒤 휴대전화에 저장하세요. 그다음 이 화면으로 돌아오세요.",
   emailGuide: "휴대전화에서 이메일 첨부 파일을 열어 저장하세요. 그다음 이 화면으로 돌아오세요.",
   missingTitle: "이곳에서는 문서를 찾거나 새로 만들 수 없어요.",
-  missingBody: "예약한 분이나 항공사, 여행사에 연락해서 휴대전화로 문서를 받으세요.",
+  missingBody: "예약해 준 사람이나 항공사, 여행사에 연락해 문서를 휴대전화로 받으세요.",
 
   helpOpen: "도움이 필요해요",
   helpTitle: "지금 무엇을 하면 되나요?",
@@ -476,10 +476,10 @@ const ko = {
   helpProgress:
     "지금은 아무것도 누르지 않아도 돼요. 이 화면을 열어 둔 채 기다리세요. 곧 종이가 나와요.",
   helpDone: "큰 화면 옆 프린터에 종이가 나와 있어요. 종이를 가져가세요.",
-  helpError: "큰 화면으로 가서 QR 코드를 다시 스캔한 뒤 처음부터 다시 하세요.",
+  helpError: "큰 화면의 QR 코드를 다시 찍고 처음부터 다시 하세요.",
   helpAskStaff: "그래도 어려우면 프린터 옆 직원에게 도움을 요청하세요.",
 
-  kioskScanTitle: "휴대전화 카메라로 이 QR 코드를 스캔하세요",
+  kioskScanTitle: "휴대전화 카메라로 이 QR 코드를 비추세요",
 
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
@@ -503,15 +503,15 @@ const ko = {
   pairWaitingReceiver: "업로드가 끝날 때까지 이 화면을 열어 두세요.",
   pairPickShape: "받는 휴대전화에 알려 줄 도형을 고르세요",
   pairPickShapeHint:
-    "받는 사람이 네 자리 숫자를 입력하고 같은 도형을 고르면 돼요. 이 방법을 쓰면 서비스가 3분 동안 열쇠를 보관해요.",
+    "받는 사람이 네 자리 숫자를 입력하고 같은 도형을 고르면 돼요. 이 방법을 쓰면 Print-cess가 잠금 열쇠를 3분 동안 맡아 둬요.",
   pairWrongShape: "상대방 화면의 도형과 달라요. 다시 확인하거나 새 숫자로 시작하세요.",
   pairHandedOver: "준비됐어요. 이 화면을 닫아도 돼요. 상대방은 3분 안에 받으면 돼요.",
   pairEnterShortCode: "네 자리 숫자를 입력하세요",
   pairEnterShortCodeHint: "보내는 사람의 네 자리 숫자를 입력한 뒤 도형을 고르세요.",
-  pairShowShape: "보내는 사람이 고른 도형을 선택하세요",
+  pairShowShape: "보내는 사람이 고른 도형을 고르세요",
   pairShowShapeHint: "두 번까지 고를 수 있어요. 두 번 다 틀리면 이 숫자는 취소돼요.",
   pairAwaitingConfirm: "상대방이 도형을 고르길 기다리고 있어요",
-  pairCodeUnknown: "숫자와 도형이 맞지 않아요. 새 숫자를 받거나 QR 코드나 링크로 받으세요.",
+  pairCodeUnknown: "숫자와 도형이 맞지 않아요. 새 숫자를 받거나, QR 코드나 링크로 받아 보세요.",
   pairCodeBusy: "이미 다른 사람이 받고 있어요. 보내는 사람에게 새 숫자를 요청하세요.",
   shapeCircle: "동그라미",
   shapeTriangle: "세모",
@@ -536,15 +536,15 @@ const ko = {
   dropReceiveAnother: "다른 파일 받기",
   dropMemoryNotice:
     "이 브라우저는 저장하는 동안 파일 전체를 메모리에 올려요. 아주 큰 파일은 최신 크롬이나 사파리에서 받으면 더 안정적이에요.",
-  dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 전송 시간이 끝나면 지워져요.",
+  dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 받을 수 있는 시간이 지나면 지워져요.",
   dropNoFiles: "파일을 하나 이상 고르세요.",
   dropTooManyFiles: "한 번에 20개까지 보낼 수 있어요. 나머지는 나눠서 보내세요.",
   dropTooLarge: "한 번에 보내기엔 너무 커요. 두 번에 나눠 보내세요.",
   dropFileUnreadable: "이 파일을 읽지 못했어요. 휴대전화에서 다시 고르세요.",
-  dropNetworkError: "연결이 끊겼어요. 신호를 확인한 뒤 다시 시도하세요.",
+  dropNetworkError: "연결이 끊겼어요. 인터넷 연결을 확인한 뒤 다시 해 보세요.",
   dropCodeNotFound: "이 코드로 열리는 파일이 없어요. 열두 글자를 확인하고 다시 입력하세요.",
   dropExpired: "이 전송은 이미 사라졌어요. 다시 보내 달라고 하세요.",
-  dropTooManyTries: "너무 여러 번 시도했어요. 잠시 뒤에 다시 시도하세요.",
+  dropTooManyTries: "너무 여러 번 시도했어요. 잠시 뒤에 다시 해 보세요.",
   dropDamaged: "파일이 온전히 도착하지 않았어요. 다시 보내 달라고 하세요.",
   dropCancelled: "보내기를 취소했어요. 보내던 파일은 모두 지웠어요.",
 
@@ -619,7 +619,7 @@ const ko = {
   quotaHardMaxLabel: "Print-cess 최대 출력량",
   quotaAtLimit: "무료 출력 한도에 딱 맞췄어요.",
   quotaUnverified:
-    "한글 문서는 키오스크에서 페이지 수를 세기 때문에, 최종 장수도 키오스크에서 확정돼요.",
+    "한글 문서는 키오스크에서 쪽수를 확인해요. 그래서 최종 장수도 키오스크에서 정해져요.",
 
   // V2 product structure: Print, Share, Scan.
   homePrintTitle: "인쇄",
@@ -661,7 +661,8 @@ const ko = {
   homeScanBody: "종이 문서를 이 휴대전화에서 PDF로 만들고, 저장하거나 보내요.",
   homeScanCta: "문서 스캔하기",
   homeWorkplaceTitle: "기관·공용 PC에서 쓰기",
-  homeWorkplaceBody: "설치 없이 브라우저에서, 기관 보안 정책을 지키며 쓸 수 있어요.",
+  homeWorkplaceBody:
+    "프로그램을 설치하지 않고 브라우저에서 바로 써요. 기관 보안 정책도 그대로 지켜요.",
   homeWorkstationCta: "업무용 PC",
   homeKioskCta: "이 기기를 Print-cess 화면으로 쓰기",
   shareTitle: "공유",

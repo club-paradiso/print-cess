@@ -206,7 +206,7 @@ p {
   align-self: stretch;
   border-radius: 6px;
   background: var(--pc-white);
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
 }
 .print-entry__screen-code svg {
   width: 60%;
@@ -372,10 +372,21 @@ p {
   display: grid;
   gap: 14px;
 }
+/* Side by side, the two sheets share their rows (glyph, title, body,
+   actions), so both buttons start on the same line however long either
+   description runs in a given language. */
 @media (min-width: 640px) {
   .home-capabilities {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+    grid-template-rows: repeat(4, auto);
+    gap: 0 20px;
+  }
+  .home-capabilities > .home-sheet {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    align-items: start;
+    row-gap: 10px;
   }
 }
 
@@ -442,32 +453,39 @@ p {
 }
 .home-sheet__actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   width: 100%;
-  margin-top: auto;
   padding-top: 12px;
 }
 
-/* A link that looks like the button it is. */
+/* A link that looks like the button it is. Both sheets use the same shape:
+   the label on the leading edge, the arrow on the trailing one. */
 .home-cta {
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 60px;
   text-decoration: none;
 }
 .home-cta__arrow {
   margin-inline-start: auto;
+  transition: transform var(--pc-duration-fast) var(--pc-ease-out);
+}
+.home-cta:hover .home-cta__arrow {
+  transform: translateX(3px);
 }
 [dir="rtl"] .home-cta__arrow {
   transform: scaleX(-1);
 }
-.home-sheet--share .home-cta {
-  gap: 12px;
+[dir="rtl"] .home-cta:hover .home-cta__arrow {
+  transform: scaleX(-1) translateX(3px);
 }
 .home-link {
   display: inline-flex;
   align-items: center;
   min-height: 48px;
-  padding: 8px 6px;
+  padding: 8px 2px;
   color: var(--pc-text-brand);
   font-size: 17px;
   font-weight: 700;
@@ -476,8 +494,8 @@ p {
   text-underline-offset: 4px;
 }
 
-/* What holds for every tool on the page, on the one dark band. Mint is a
-   fill here, never the colour of text. */
+/* What holds for every tool on the page, on the one dark band: warm ink with
+   a blush tile, so the band stays in the brand's family. */
 .home-trust {
   display: grid;
   gap: 18px;
@@ -505,8 +523,8 @@ p {
   width: 44px;
   height: 44px;
   border-radius: var(--pc-radius-sm);
-  background: var(--pc-success-accent);
-  color: var(--pc-navy-900);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
 }
 .home-trust__icon svg {
   width: 22px;
@@ -1076,7 +1094,7 @@ ol.mobile-selected li::before {
   color: var(--pc-text-primary);
 }
 .print-sheet::backdrop {
-  background: color-mix(in srgb, var(--pc-navy-950) 60%, transparent);
+  background: color-mix(in srgb, var(--pc-ink-950) 60%, transparent);
 }
 @media (min-width: 640px) {
   .print-sheet {
@@ -1220,7 +1238,7 @@ ol.mobile-selected li::before {
   width: 100%;
   overflow: hidden;
   border-radius: var(--pc-radius-md);
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
 }
 .print-viewfinder[hidden] {
   display: none;

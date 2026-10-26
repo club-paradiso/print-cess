@@ -118,7 +118,7 @@ export function DestructiveButton({
 /**
  * Where the visitor is in a short flow. With `steps`, each segment carries its
  * name, so the phone shows the same three words as the home page and the big
- * screen: a finished step in mint with a tick, the current one in crimson.
+ * screen: a finished step in sage with a tick, the current one in crimson.
  */
 export function ProgressSteps({
   current,
