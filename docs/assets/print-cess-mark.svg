@@ -17,8 +17,8 @@
     d="M20.5 29V16.5l5.8 4.8 5.7-5.8 5.7 5.8 5.8-4.8V29Z"
   />
   <rect x="10" y="26.5" width="44" height="21" rx="6.5" fill="#fde4e4" />
-  <rect x="18" y="26.5" width="28" height="3.2" rx="1.6" fill="#1e1b4b" />
-  <rect x="17" y="39" width="30" height="3.6" rx="1.8" fill="#1e1b4b" />
+  <rect x="18" y="26.5" width="28" height="3.2" rx="1.6" fill="#2b1f21" />
+  <rect x="17" y="39" width="30" height="3.6" rx="1.8" fill="#2b1f21" />
   <path
     fill="#ffffff"
     d="M19.5 40.8h25V53a2.2 2.2 0 0 1-2.2 2.2H21.7a2.2 2.2 0 0 1-2.2-2.2Z"
@@ -32,5 +32,5 @@
     d="M24 47.4v-2.4h2.4M40 47.4v-2.4h-2.4M24 49.6V52h2.4M40 49.6V52h-2.4"
   />
   <path fill="#cc383a" d="M29.2 46.2h5.6v4.6h-5.6z" />
-  <circle cx="47.6" cy="32.6" r="2.3" fill="#14b8a6" />
+  <circle cx="47.6" cy="32.6" r="2.3" fill="#6a9a5b" />
 </svg>

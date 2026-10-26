@@ -208,7 +208,7 @@ Reviewed on 2026-10-13 for words a first-time visitor could misread. Each change
 | [인쇄하기]를 누르세요                  | 휴대전화의 인쇄 버튼을 누르세요                        | The phone's button reads "파일 N개 인쇄", not "인쇄하기"                                |
 | 작업 만료까지                          | 남은 시간                                              | "작업 만료" is system jargon                                                            |
 | 선택한 파일 N개를 처리했습니다         | 파일 N개를 프린터로 보냈어요 (or 인쇄할 준비를 했어요) | "처리" says nothing about where the paper is                                            |
-| 서버에 보관된 파일은 삭제됐습니다      | 보내신 파일은 모두 지웠어요                            | Visitors do not know or need "서버"                                                     |
+| 서버에 보관된 파일은 삭제됐습니다      | 보낸 파일은 모두 지웠어요                              | Visitors do not know or need "서버"                                                     |
 | 새 QR 코드 만들기 (failure screen)     | 다시 시도하기                                          | The visitor's goal is to retry, not to make a code                                      |
 | 보내신 파일은 삭제됐습니다 (failure)   | (removed)                                              | Often nothing had been sent yet, so it raised a question it did not answer              |
 

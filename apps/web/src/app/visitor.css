@@ -7,6 +7,7 @@
 
 .visitor-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -334,5 +335,24 @@
   .visitor-qr-card img,
   .visitor-qr-card__placeholder {
     width: min(320px, 100%);
+  }
+}
+
+/* On a phone the back link stays on the wordmark's row: a smaller pill, a
+   tighter gap. It still wraps under the wordmark before it would overflow. */
+@media (max-width: 480px) {
+  .visitor-header {
+    gap: 12px;
+    padding-bottom: 20px;
+  }
+  .visitor-back {
+    gap: 6px;
+    min-height: 44px;
+    padding: 8px 12px;
+    font-size: 15px;
+  }
+  .visitor-back svg {
+    width: 18px;
+    height: 18px;
   }
 }

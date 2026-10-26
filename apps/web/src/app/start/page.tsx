@@ -8,7 +8,6 @@ import {
   LockKeyhole,
   Monitor,
   QrCode,
-  ScanLine,
   Smartphone,
   UserX,
 } from "lucide-react";
@@ -157,8 +156,8 @@ export default async function HomePage() {
             <p>{text("homeScanBody")}</p>
             <div className="home-sheet__actions">
               <a className="pc-button pc-button--secondary home-cta" href="/scan">
-                <ScanLine aria-hidden="true" />
                 {text("homeScanCta")}
+                <ArrowRight className="home-cta__arrow" aria-hidden="true" />
               </a>
             </div>
           </section>
