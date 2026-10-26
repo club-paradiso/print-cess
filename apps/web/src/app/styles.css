@@ -321,7 +321,7 @@ p {
 }
 /* The perforation between steps. */
 .home-step + .home-step {
-  border-top: 2px dashed var(--pc-indigo-200);
+  border-top: 2px dashed var(--pc-crimson-200);
 }
 .home-step__head {
   display: flex;
@@ -364,7 +364,7 @@ p {
   }
   .home-step + .home-step {
     border-top: 0;
-    border-inline-start: 2px dashed var(--pc-indigo-200);
+    border-inline-start: 2px dashed var(--pc-crimson-200);
   }
 }
 
@@ -394,7 +394,7 @@ p {
   background: var(--pc-surface);
 }
 /* The turned-down corner: the page's own background cut out of the sheet, and
-   the fold itself in lilac. Two flat triangles, no gradient. */
+   the fold itself in blush. Two flat triangles, no gradient. */
 .home-sheet::before,
 .home-sheet::after {
   content: "";
@@ -963,7 +963,7 @@ ol.mobile-selected li::before {
   padding: 6px 12px;
   border-radius: var(--pc-radius-pill);
   background: var(--pc-surface-brand);
-  color: var(--pc-indigo-800);
+  color: var(--pc-crimson-800);
   font-size: 15px;
   font-weight: 750;
   line-height: 1.3;
