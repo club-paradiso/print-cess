@@ -12,7 +12,7 @@ vi.mock("next/headers", () => ({
     ),
 }));
 
-import { VisitorHome as HomePage } from "./visitor-home";
+import HomePage from "./page";
 
 function textOf(node: unknown): string {
   if (typeof node === "string") return node;

@@ -21,7 +21,7 @@ export function AppTopbar({
   return (
     <>
       <div className="mobile-topbar">
-        <Link className="app-topbar__home" href="/">
+        <Link className="app-topbar__home" href="/start">
           <Wordmark compact />
         </Link>
         <LanguagePicker locale={locale} onChange={onLocaleChange} label={languageLabel} />
