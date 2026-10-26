@@ -109,7 +109,7 @@ recoloured mid-word. Technical identifiers (`print-cess`, `@print-cess/*`) are u
 Assets:
 
 - `packages/ui/src/index.tsx` — the React mark, flat on the page (Crimson body, blush crown).
-- `apps/web/src/app/icon.svg` — the app icon and favicon: the mark reversed out of an crimson tile,
+- `apps/web/src/app/icon.svg` — the app icon and favicon: the mark reversed out of a crimson tile,
   simplified so it survives 16 px (one central QR module instead of four).
 - `docs/assets/print-cess-mark.svg` — the same tile for documentation and repository surfaces.
 
