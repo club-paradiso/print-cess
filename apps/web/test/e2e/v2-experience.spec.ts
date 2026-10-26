@@ -34,7 +34,7 @@ async function expectAccessible(page: Page): Promise<void> {
 test("@viewport the home leads with Print and keeps Share, Scan and workplaces below it", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/start");
 
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
   await expect(page.getByRole("heading", { level: 2 })).toHaveText([
@@ -84,7 +84,7 @@ test("@viewport the home leads with Print and keeps Share, Scan and workplaces b
 test("@viewport the rescue sheet shows the three things to find and keeps the scan button", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "I can't find the screen" }).click();
 
   const sheet = page.getByRole("dialog", { name: "Finding the screen" });
@@ -134,7 +134,7 @@ async function installFakeScanner(page: Page): Promise<void> {
 
 test("scanning from the home page opens a real Print-cess session code", async ({ page }) => {
   await installFakeScanner(page);
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "Scan QR code" }).click();
   await expect(
     page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
@@ -152,7 +152,7 @@ test("scanning from the home page opens a real Print-cess session code", async (
 
 test("scanning a QR code that is not a Print-cess session goes nowhere", async ({ page }) => {
   await installFakeScanner(page);
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   for (const foreign of [
@@ -164,7 +164,7 @@ test("scanning a QR code that is not a Print-cess session goes nowhere", async (
       (window as unknown as { __qr: string }).__qr = value;
     }, foreign);
     await expect(page.getByText("That QR code isn't for printing here.")).toBeVisible();
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL(/\/start$/u);
   }
 });
 
@@ -208,7 +208,7 @@ test("@viewport a browser without BarcodeDetector scans through the jsQR fallbac
     const scope = window as unknown as { __qr?: string; jsQR: unknown };
     scope.jsQR = () => (scope.__qr ? { data: scope.__qr } : null);
   });
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "Scan QR code" }).click();
   await expect(
     page.getByRole("dialog", { name: "Point at the QR code on the screen" }),
@@ -232,7 +232,7 @@ test("@viewport a browser that cannot scan says so and points to the phone's cam
   // case left where this page cannot read a QR code.
   await installFakeCamera(page);
   await page.route("**/npm/jsqr@*/**", (route) => route.abort());
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/can't scan QR codes here/u)).toBeVisible();
@@ -293,7 +293,7 @@ test("a refused camera permission is explained instead of left blank", async ({ 
     navigator.mediaDevices.getUserMedia = () =>
       Promise.reject(new DOMException("denied", "NotAllowedError"));
   });
-  await page.goto("/");
+  await page.goto("/start");
   await page.getByRole("button", { name: "Scan QR code" }).click();
 
   await expect(page.getByText(/The camera is blocked/u)).toBeVisible();
@@ -312,7 +312,7 @@ test("@viewport on a small phone in Korean, scanning needs no scrolling", async 
       viewport,
     });
     const page = await context.newPage();
-    await page.goto("/");
+    await page.goto("/start");
 
     // The kiosk link is for whoever runs a station and lives in the workplace
     // links at the foot of the page (docs/PRINT_FIRST_ENTRY.md); only the
@@ -336,7 +336,7 @@ test("@viewport the home reads right to left in Arabic without overflowing", asy
     viewport: { width: 320, height: 720 },
   });
   const page = await context.newPage();
-  await page.goto("/");
+  await page.goto("/start");
 
   await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("جئت للطباعة؟");
@@ -365,12 +365,10 @@ test("@viewport sending and receiving are two sides of one Share capability", as
   await page.getByRole("link", { name: "Send files" }).click();
   await expect(page).toHaveURL(/\/send$/u);
 
-  // The name in the header always leads to the visitor's home at the root,
-  // never to the shared display.
+  // The name in the header always leads to the visitor's guide, never to the
+  // shared display at the root.
   await page.getByRole("link", { name: "Print-cess by Club Paradiso" }).click();
-  await expect(page).toHaveURL("/");
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Here to print?");
-  await expect(page.locator(".kiosk-qr")).toHaveCount(0);
+  await expect(page).toHaveURL(/\/start$/u);
 });
 
 test("a failed code offers to try again rather than an input that no longer exists", async ({

@@ -29,13 +29,6 @@ const config: NextConfig = {
     "@print-cess/protocol",
     "@print-cess/ui",
   ],
-  async redirects() {
-    // The visitor's home moved from /start to /. Temporary (307), not 308, so
-    // browsers do not cache it forever and the move can be undone. The query
-    // string passes through, and browsers keep a #fragment such as
-    // #environment across the redirect.
-    return [{ source: "/start", destination: "/", permanent: false }];
-  },
   async rewrites() {
     return { beforeFiles: blobRelayRewrites(), afterFiles: [], fallback: [] };
   },

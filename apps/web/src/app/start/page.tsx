@@ -37,12 +37,7 @@ function keepNameTogether(sentence: string): ReactNode {
   );
 }
 
-/**
- * The visitor's home at `/`: what to look for, the in-page QR scanner, the
- * other tools, and the workstation check at `#environment`. It used to live at
- * `/start`, which now redirects here (next.config.ts).
- */
-export async function VisitorHome() {
+export default async function HomePage() {
   const locale = await requestLocale();
   const text = (key: string) => translate(locale, key);
   const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();

@@ -6,20 +6,12 @@ vi.mock("next/navigation", () => ({ notFound, redirect }));
 vi.mock("@/components/kiosk/batch-kiosk-simulator", () => ({
   BatchKioskSimulator: () => null,
 }));
-vi.mock("@/components/home/visitor-home", () => ({
-  VisitorHome: () => null,
-}));
 
 vi.mock("next/headers", () => ({
   headers: () => Promise.resolve(new Headers({ "accept-language": "ko-KR,ko;q=0.9" })),
 }));
 
-import { BatchKioskSimulator } from "@/components/kiosk/batch-kiosk-simulator";
-import { VisitorHome } from "@/components/home/visitor-home";
 import RootPage from "./page";
-
-type Params = { printing?: string | string[]; sound?: string | string[] };
-const render = (params: Params) => RootPage({ searchParams: Promise.resolve(params) });
 
 describe("root page", () => {
   afterEach(() => {
@@ -28,61 +20,30 @@ describe("root page", () => {
     redirect.mockReset();
   });
 
-  it("is the visitor's home when the address asks for nothing else", async () => {
-    vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("ENABLE_BROWSER_KIOSK", "true");
-
-    const page = await render({});
-
-    expect(page.type).toBe(VisitorHome);
-    expect(redirect).not.toHaveBeenCalled();
-    expect(notFound).not.toHaveBeenCalled();
-  });
-
-  it("ignores query parameters that are not display switches", async () => {
+  it("shows the browser kiosk with links to the other features, and its URL switches", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("ENABLE_BROWSER_KIOSK", "true");
 
     const page = await RootPage({
-      searchParams: Promise.resolve({ utm_source: "qr", lang: "en" } as Params),
+      searchParams: Promise.resolve({ printing: "auto", sound: "off" }),
     });
 
-    expect(page.type).toBe(VisitorHome);
+    expect(redirect).not.toHaveBeenCalled();
+    expect(page.props).toEqual({
+      automaticPrinting: true,
+      sound: false,
+      services: true,
+      initialLocale: "ko",
+    });
   });
 
-  it.each([
-    [{ printing: "auto" }, true, true],
-    [{ sound: "off" }, false, false],
-    [{ printing: "auto", sound: "off" }, true, false],
-    [{ printing: "manual" }, false, true],
-  ] as const)(
-    "shows the shared display, with its other features, for %o",
-    async (params, automaticPrinting, sound) => {
-      vi.stubEnv("NODE_ENV", "production");
-      vi.stubEnv("ENABLE_BROWSER_KIOSK", "true");
-
-      const page = await render(params);
-
-      expect(page.type).toBe(BatchKioskSimulator);
-      expect(page.props).toEqual({
-        automaticPrinting,
-        sound,
-        services: true,
-        initialLocale: "ko",
-      });
-    },
-  );
-
-  it("stays the visitor's home, with no redirect loop, when the browser kiosk is switched off", async () => {
+  it("sends visitors to the guide when the browser kiosk is switched off", async () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("ENABLE_BROWSER_KIOSK", "false");
     vi.stubEnv("ENABLE_DEMO_ROUTES", "false");
 
-    for (const params of [{}, { printing: "auto" }, { sound: "off" }]) {
-      const page = await render(params);
-      expect(page.type).toBe(VisitorHome);
-    }
-    expect(redirect).not.toHaveBeenCalled();
-    expect(notFound).not.toHaveBeenCalled();
+    await RootPage({ searchParams: Promise.resolve({}) });
+
+    expect(redirect).toHaveBeenCalledWith("/start");
   });
 });
