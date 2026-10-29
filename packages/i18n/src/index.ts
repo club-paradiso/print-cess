@@ -139,7 +139,7 @@ const en = {
   closedTitle: "Printing is finished",
   closedBody: "You can close this page now.",
   keepPageOpen: "Do not close this page.",
-  preparingSession: "Getting ready…",
+  preparingSession: "Connecting securely…",
 
   documentPreview: "Document preview",
   selectedDocumentPreview: "Preview of the file you picked",
@@ -244,8 +244,7 @@ const en = {
   dropFilesHint: "Save them to your phone before the transfer disappears.",
   dropSaveAll: "Save to my phone",
   dropReceiveAnother: "Receive other files",
-  dropMemoryNotice:
-    "This browser holds a whole file in memory while it saves. For very large files, an up-to-date Chrome or Safari works better.",
+  dropMemoryNotice: "For very large files, an up-to-date Chrome or Safari saves more reliably.",
   dropPrivacyNote:
     "Files are locked on this phone before they leave, and erased when the transfer expires.",
   dropNoFiles: "Pick at least one file first.",
@@ -375,7 +374,8 @@ const en = {
   homeScanBody: "Turn paper into a PDF on this phone, then save it or send it on.",
   homeScanCta: "Scan a document",
   homeWorkplaceTitle: "At work or on a public computer",
-  homeWorkplaceBody: "Runs in the browser, inside your organisation's security policy.",
+  homeWorkplaceBody:
+    "No install needed. It runs in the browser, within your organisation's security policy.",
   homeWorkstationCta: "Work computer",
   homeKioskCta: "Use this device as the print screen",
   shareTitle: "Share",
@@ -537,8 +537,7 @@ const ko = {
   dropFilesHint: "파일이 사라지기 전에 휴대전화에 저장하세요.",
   dropSaveAll: "휴대전화에 저장하기",
   dropReceiveAnother: "다른 파일 받기",
-  dropMemoryNotice:
-    "이 브라우저는 저장하는 동안 파일 전체를 메모리에 올려요. 아주 큰 파일은 최신 크롬이나 사파리에서 받으면 더 안정적이에요.",
+  dropMemoryNotice: "아주 큰 파일은 최신 크롬이나 사파리에서 받는 게 더 안정적이에요.",
   dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 받을 수 있는 시간이 지나면 지워져요.",
   dropNoFiles: "파일을 하나 이상 고르세요.",
   dropTooManyFiles: "한 번에 20개까지 보낼 수 있어요. 나머지는 나눠서 보내세요.",
@@ -726,7 +725,7 @@ const zhCN = {
   closedTitle: "打印完成了",
   closedBody: "现在可以关闭这个页面了。",
   keepPageOpen: "不要关掉这个页面。",
-  preparingSession: "正在准备…",
+  preparingSession: "正在安全连接…",
 
   documentPreview: "文件预览",
   selectedDocumentPreview: "你选的文件预览",
@@ -818,8 +817,7 @@ const zhCN = {
   dropFilesHint: "在传输消失之前保存到手机里。",
   dropSaveAll: "保存到手机",
   dropReceiveAnother: "接收其他文件",
-  dropMemoryNotice:
-    "这个浏览器在保存时会把整个文件放进内存。文件很大时，用最新版 Chrome 或 Safari 更稳定。",
+  dropMemoryNotice: "文件很大时，用最新版 Chrome 或 Safari 保存更稳定。",
   dropPrivacyNote: "文件在这部手机上锁住后才发出，传送到期后就删掉。",
   dropNoFiles: "请先选择至少一个文件。",
   dropTooManyFiles: "一次最多 20 个文件。先选少一些，剩下的分批发送。",
@@ -939,7 +937,7 @@ const zhCN = {
   homeScanBody: "在这部手机上把纸质文件变成 PDF，然后保存或发送。",
   homeScanCta: "扫描文档",
   homeWorkplaceTitle: "在单位或公用电脑上使用",
-  homeWorkplaceBody: "在浏览器中运行，遵守所在机构的安全策略。",
+  homeWorkplaceBody: "无需安装。在浏览器中运行，遵守所在机构的安全策略。",
   homeWorkstationCta: "办公电脑",
   homeKioskCta: "将此设备用作打印屏幕",
   shareTitle: "分享",
@@ -1002,7 +1000,7 @@ const id = {
   closedTitle: "Pencetakan selesai",
   closedBody: "Anda boleh menutup halaman ini sekarang.",
   keepPageOpen: "Jangan tutup halaman ini.",
-  preparingSession: "Sedang bersiap…",
+  preparingSession: "Menghubungkan dengan aman…",
 
   documentPreview: "Pratinjau dokumen",
   selectedDocumentPreview: "Pratinjau berkas yang Anda pilih",
@@ -1104,8 +1102,7 @@ const id = {
   dropFilesHint: "Simpan ke ponsel sebelum transfernya hilang.",
   dropSaveAll: "Simpan ke ponsel",
   dropReceiveAnother: "Terima file lain",
-  dropMemoryNotice:
-    "Peramban ini menahan seluruh file di memori saat menyimpan. Untuk file sangat besar, Chrome atau Safari terbaru lebih stabil.",
+  dropMemoryNotice: "Untuk file sangat besar, Chrome atau Safari terbaru menyimpan lebih andal.",
   dropPrivacyNote:
     "File dikunci di ponsel ini sebelum dikirim, dan dihapus saat transfer berakhir.",
   dropNoFiles: "Pilih dulu minimal satu file.",
@@ -1235,7 +1232,8 @@ const id = {
   homeScanBody: "Ubah kertas menjadi PDF di ponsel ini, lalu simpan atau kirimkan.",
   homeScanCta: "Pindai dokumen",
   homeWorkplaceTitle: "Di kantor atau komputer umum",
-  homeWorkplaceBody: "Berjalan di browser, sesuai kebijakan keamanan instansi Anda.",
+  homeWorkplaceBody:
+    "Tanpa perlu instal. Berjalan di browser, sesuai kebijakan keamanan instansi Anda.",
   homeWorkstationCta: "Komputer kerja",
   homeKioskCta: "Gunakan perangkat ini sebagai layar cetak",
   shareTitle: "Bagikan",
@@ -1299,7 +1297,7 @@ const fil = {
   closedTitle: "Tapos na ang pag-print",
   closedBody: "Puwede mo nang isara ang pahinang ito.",
   keepPageOpen: "Huwag isara ang pahinang ito.",
-  preparingSession: "Naghahanda…",
+  preparingSession: "Kumokonekta nang ligtas…",
 
   documentPreview: "Preview ng dokumento",
   selectedDocumentPreview: "Preview ng file na pinili mo",
@@ -1406,8 +1404,7 @@ const fil = {
   dropFilesHint: "I-save sa telepono bago mawala ang transfer.",
   dropSaveAll: "I-save sa telepono",
   dropReceiveAnother: "Tumanggap ng iba",
-  dropMemoryNotice:
-    "Hawak ng browser na ito ang buong file sa memory habang nagse-save. Sa napakalaking file, mas matatag ang bagong Chrome o Safari.",
+  dropMemoryNotice: "Sa napakalaking file, mas maaasahan ang bagong Chrome o Safari sa pag-save.",
   dropPrivacyNote:
     "Naka-lock ang mga file sa phone na ito bago ipadala, at nabubura kapag nag-expire ang transfer.",
   dropNoFiles: "Pumili muna ng kahit isang file.",
@@ -1540,7 +1537,8 @@ const fil = {
   homeScanBody: "Gawing PDF ang papel sa phone na ito, saka i-save o ipadala.",
   homeScanCta: "Mag-scan ng dokumento",
   homeWorkplaceTitle: "Sa trabaho o pampublikong computer",
-  homeWorkplaceBody: "Gumagana sa browser, sa loob ng security policy ng inyong opisina.",
+  homeWorkplaceBody:
+    "Hindi kailangang mag-install. Gumagana sa browser, sa loob ng security policy ng inyong opisina.",
   homeWorkstationCta: "Computer sa trabaho",
   homeKioskCta: "Gamitin ang device na ito bilang print screen",
   shareTitle: "Share",
@@ -1601,7 +1599,7 @@ const vi = {
   closedTitle: "Đã in xong",
   closedBody: "Bây giờ bạn có thể đóng trang này.",
   keepPageOpen: "Đừng đóng trang này.",
-  preparingSession: "Đang chuẩn bị…",
+  preparingSession: "Đang kết nối an toàn…",
 
   documentPreview: "Xem trước tài liệu",
   selectedDocumentPreview: "Xem trước tệp bạn đã chọn",
@@ -1699,8 +1697,7 @@ const vi = {
   dropFilesHint: "Lưu vào điện thoại trước khi lượt gửi biến mất.",
   dropSaveAll: "Lưu vào điện thoại",
   dropReceiveAnother: "Nhận tệp khác",
-  dropMemoryNotice:
-    "Trình duyệt này giữ cả tệp trong bộ nhớ khi lưu. Với tệp rất lớn, Chrome hoặc Safari mới sẽ ổn định hơn.",
+  dropMemoryNotice: "Với tệp rất lớn, Chrome hoặc Safari mới lưu ổn định hơn.",
   dropPrivacyNote:
     "Tệp được khóa trên điện thoại này trước khi gửi và bị xóa khi lượt chuyển hết hạn.",
   dropNoFiles: "Hãy chọn ít nhất một tệp.",
@@ -1827,7 +1824,8 @@ const vi = {
   homeScanBody: "Biến giấy thành PDF ngay trên điện thoại này, rồi lưu hoặc gửi đi.",
   homeScanCta: "Quét tài liệu",
   homeWorkplaceTitle: "Ở cơ quan hoặc máy tính công cộng",
-  homeWorkplaceBody: "Chạy trong trình duyệt, theo chính sách bảo mật của cơ quan bạn.",
+  homeWorkplaceBody:
+    "Không cần cài đặt. Chạy trong trình duyệt, theo chính sách bảo mật của cơ quan bạn.",
   homeWorkstationCta: "Máy tính cơ quan",
   homeKioskCta: "Dùng thiết bị này làm màn hình in",
   shareTitle: "Chia sẻ",
@@ -1887,7 +1885,7 @@ const th = {
   closedTitle: "พิมพ์เสร็จแล้ว",
   closedBody: "ตอนนี้ปิดหน้านี้ได้เลย",
   keepPageOpen: "อย่าปิดหน้านี้",
-  preparingSession: "กำลังเตรียม…",
+  preparingSession: "กำลังเชื่อมต่ออย่างปลอดภัย…",
 
   documentPreview: "ตัวอย่างเอกสาร",
   selectedDocumentPreview: "ตัวอย่างไฟล์ที่คุณเลือก",
@@ -1982,8 +1980,7 @@ const th = {
   dropFilesHint: "บันทึกลงเครื่องก่อนที่ไฟล์จะหายไป",
   dropSaveAll: "บันทึกลงเครื่อง",
   dropReceiveAnother: "รับไฟล์อื่น",
-  dropMemoryNotice:
-    "เบราว์เซอร์นี้เก็บทั้งไฟล์ไว้ในหน่วยความจำตอนบันทึก ถ้าไฟล์ใหญ่มาก ใช้ Chrome หรือ Safari รุ่นใหม่จะนิ่งกว่า",
+  dropMemoryNotice: "ถ้าไฟล์ใหญ่มาก ใช้ Chrome หรือ Safari รุ่นใหม่จะบันทึกได้นิ่งกว่า",
   dropPrivacyNote: "ไฟล์จะถูกล็อกบนโทรศัพท์เครื่องนี้ก่อนส่ง และถูกลบเมื่อการส่งหมดเวลา",
   dropNoFiles: "เลือกไฟล์อย่างน้อยหนึ่งไฟล์ก่อน",
   dropTooManyFiles: "ส่งได้ครั้งละไม่เกิน 20 ไฟล์ ที่เหลือส่งรอบถัดไปได้",
@@ -2109,7 +2106,7 @@ const th = {
   homeScanBody: "เปลี่ยนเอกสารกระดาษเป็น PDF บนโทรศัพท์เครื่องนี้ แล้วบันทึกหรือส่งต่อ",
   homeScanCta: "สแกนเอกสาร",
   homeWorkplaceTitle: "ที่ทำงานหรือคอมพิวเตอร์สาธารณะ",
-  homeWorkplaceBody: "ทำงานในเบราว์เซอร์ ภายใต้นโยบายความปลอดภัยขององค์กร",
+  homeWorkplaceBody: "ไม่ต้องติดตั้ง ทำงานในเบราว์เซอร์ ภายใต้นโยบายความปลอดภัยขององค์กร",
   homeWorkstationCta: "คอมพิวเตอร์ที่ทำงาน",
   homeKioskCta: "ใช้อุปกรณ์นี้เป็นหน้าจอพิมพ์",
   shareTitle: "แชร์",
@@ -2171,7 +2168,7 @@ const ne = {
   closedTitle: "प्रिन्ट सकियो",
   closedBody: "अब यो पृष्ठ बन्द गर्न सक्नुहुन्छ।",
   keepPageOpen: "यो पृष्ठ बन्द नगर्नुहोस्।",
-  preparingSession: "तयारी हुँदै छ…",
+  preparingSession: "सुरक्षित रूपमा जडान हुँदै छ…",
 
   documentPreview: "कागजात पूर्वावलोकन",
   selectedDocumentPreview: "तपाईंले छानेको फाइलको पूर्वावलोकन",
@@ -2269,8 +2266,7 @@ const ne = {
   dropFilesHint: "हराउनुअघि मोबाइलमा सुरक्षित गर्नुहोस्।",
   dropSaveAll: "मोबाइलमा सुरक्षित गर्नुहोस्",
   dropReceiveAnother: "अर्को फाइल लिनुहोस्",
-  dropMemoryNotice:
-    "यो ब्राउजरले सुरक्षित गर्दा पूरै फाइल मेमोरीमा राख्छ। धेरै ठूलो फाइलका लागि नयाँ Chrome वा Safari बढी भरपर्दो हुन्छ।",
+  dropMemoryNotice: "धेरै ठूलो फाइलका लागि नयाँ Chrome वा Safari बढी भरपर्दो हुन्छ।",
   dropPrivacyNote: "फाइलहरू पठाउनुअघि यही फोनमा लक हुन्छन्, र ट्रान्सफरको समय सकिएपछि मेटिन्छन्।",
   dropNoFiles: "पहिले कम्तीमा एउटा फाइल छान्नुहोस्।",
   dropTooManyFiles: "एकपटकमा 20 वटासम्म। बाँकी पछि पठाउन सकिन्छ।",
@@ -2400,7 +2396,7 @@ const ne = {
   homeScanBody: "यही फोनमा कागजलाई PDF बनाउनुहोस्, अनि सेभ गर्नुहोस् वा पठाउनुहोस्।",
   homeScanCta: "कागजात स्क्यान गर्नुहोस्",
   homeWorkplaceTitle: "कार्यालय वा सार्वजनिक कम्प्युटरमा",
-  homeWorkplaceBody: "ब्राउजरमै चल्छ, तपाईंको संस्थाको सुरक्षा नीतिभित्र।",
+  homeWorkplaceBody: "इन्स्टल गर्नु पर्दैन। ब्राउजरमै चल्छ, तपाईंको संस्थाको सुरक्षा नीतिभित्र।",
   homeWorkstationCta: "कार्य कम्प्युटर",
   homeKioskCta: "यो उपकरणलाई प्रिन्ट स्क्रिनका रूपमा प्रयोग गर्नुहोस्",
   shareTitle: "सेयर",
@@ -2462,7 +2458,7 @@ const km = {
   closedTitle: "ការបោះពុម្ពបានចប់",
   closedBody: "ឥឡូវនេះអ្នកអាចបិទទំព័រនេះបាន។",
   keepPageOpen: "សូមមិនបិទទំព័រនេះ។",
-  preparingSession: "កំពុងរៀបចំ…",
+  preparingSession: "កំពុងភ្ជាប់ដោយសុវត្ថិភាព…",
 
   documentPreview: "មើលឯកសារជាមុន",
   selectedDocumentPreview: "មើលឯកសារដែលអ្នកបានជ្រើស",
@@ -2558,8 +2554,7 @@ const km = {
   dropFilesHint: "រក្សាទុកក្នុងទូរស័ព្ទមុនពេលវាបាត់។",
   dropSaveAll: "រក្សាទុកក្នុងទូរស័ព្ទ",
   dropReceiveAnother: "ទទួលឯកសារផ្សេង",
-  dropMemoryNotice:
-    "កម្មវិធីរុករកនេះទុកឯកសារទាំងមូលក្នុងអង្គចងចាំពេលរក្សាទុក។ សម្រាប់ឯកសារធំ Chrome ឬ Safari ថ្មីមានស្ថេរភាពជាង។",
+  dropMemoryNotice: "សម្រាប់ឯកសារធំខ្លាំង Chrome ឬ Safari ថ្មីរក្សាទុកបានមានស្ថេរភាពជាង។",
   dropPrivacyNote: "ឯកសារត្រូវបានចាក់សោលើទូរសព្ទនេះមុនផ្ញើ ហើយត្រូវលុបពេលការផ្ទេរផុតកំណត់។",
   dropNoFiles: "ជ្រើសយ៉ាងតិចមួយឯកសារជាមុនសិន។",
   dropTooManyFiles: "ផ្ញើបានរហូតដល់ 20 ឯកសារក្នុងមួយលើក។ ផ្ញើផ្នែកនៅសល់នៅលើកក្រោយ។",
@@ -2686,7 +2681,8 @@ const km = {
   homeScanBody: "បម្លែងក្រដាសទៅជា PDF លើទូរសព្ទនេះ រួចរក្សាទុក ឬផ្ញើបន្ត។",
   homeScanCta: "ស្កេនឯកសារ",
   homeWorkplaceTitle: "នៅកន្លែងធ្វើការ ឬកុំព្យូទ័រសាធារណៈ",
-  homeWorkplaceBody: "ដំណើរការក្នុងកម្មវិធីរុករក ក្រោមគោលការណ៍សុវត្ថិភាពរបស់ស្ថាប័ន។",
+  homeWorkplaceBody:
+    "មិនចាំបាច់ដំឡើង។ ដំណើរការក្នុងកម្មវិធីរុករក ក្រោមគោលការណ៍សុវត្ថិភាពរបស់ស្ថាប័ន។",
   homeWorkstationCta: "កុំព្យូទ័រការងារ",
   homeKioskCta: "ប្រើឧបករណ៍នេះជាអេក្រង់បោះពុម្ព",
   shareTitle: "ចែករំលែក",
@@ -2748,7 +2744,7 @@ const ar = {
   closedTitle: "انتهت الطباعة",
   closedBody: "يمكنك إغلاق هذه الصفحة الآن.",
   keepPageOpen: "لا تغلق هذه الصفحة.",
-  preparingSession: "جارٍ التحضير…",
+  preparingSession: "جارٍ الاتصال بأمان…",
 
   documentPreview: "معاينة المستند",
   selectedDocumentPreview: "معاينة الملف الذي اخترته",
@@ -2845,8 +2841,7 @@ const ar = {
   dropFilesHint: "احفظها على هاتفك قبل أن يختفي الإرسال.",
   dropSaveAll: "احفظ على هاتفي",
   dropReceiveAnother: "استلم ملفات أخرى",
-  dropMemoryNotice:
-    "يحتفظ هذا المتصفح بالملف كاملًا في الذاكرة أثناء الحفظ. للملفات الكبيرة جدًا، Chrome أو Safari الحديث أفضل.",
+  dropMemoryNotice: "للملفات الكبيرة جدًا، الحفظ عبر Chrome أو Safari الحديث أكثر موثوقية.",
   dropPrivacyNote: "تُقفَل الملفات على هذا الهاتف قبل إرسالها، وتُمحى عند انتهاء مدة النقل.",
   dropNoFiles: "اختر ملفًا واحدًا على الأقل أولًا.",
   dropTooManyFiles: "أرسل حتى 20 ملفًا في المرة. أرسل الباقي بعد ذلك.",
@@ -2972,7 +2967,7 @@ const ar = {
   homeScanBody: "حوّل الورق إلى PDF على هذا الهاتف، ثم احفظه أو أرسله.",
   homeScanCta: "امسح مستندًا",
   homeWorkplaceTitle: "في العمل أو على حاسوب عام",
-  homeWorkplaceBody: "يعمل داخل المتصفح، ضمن سياسة الأمان في جهة عملك.",
+  homeWorkplaceBody: "لا يحتاج إلى تثبيت. يعمل داخل المتصفح، ضمن سياسة الأمان في جهة عملك.",
   homeWorkstationCta: "كمبيوتر العمل",
   homeKioskCta: "استخدم هذا الجهاز كشاشة للطباعة",
   shareTitle: "مشاركة",
@@ -3034,7 +3029,7 @@ const ru = {
   closedTitle: "Печать завершена",
   closedBody: "Теперь эту страницу можно закрыть.",
   keepPageOpen: "Не закрывайте эту страницу.",
-  preparingSession: "Готовимся…",
+  preparingSession: "Безопасное подключение…",
 
   documentPreview: "Предпросмотр документа",
   selectedDocumentPreview: "Предпросмотр выбранного файла",
@@ -3135,8 +3130,7 @@ const ru = {
   dropFilesHint: "Сохраните их на телефон, пока передача не исчезла.",
   dropSaveAll: "Сохранить на телефон",
   dropReceiveAnother: "Получить другие файлы",
-  dropMemoryNotice:
-    "Этот браузер держит файл целиком в памяти при сохранении. Для очень больших файлов надёжнее свежий Chrome или Safari.",
+  dropMemoryNotice: "Для очень больших файлов надёжнее сохранять через свежий Chrome или Safari.",
   dropPrivacyNote:
     "Файлы запираются на этом телефоне перед отправкой и стираются, когда срок передачи истекает.",
   dropNoFiles: "Сначала выберите хотя бы один файл.",
@@ -3266,7 +3260,8 @@ const ru = {
   homeScanBody: "Превратите бумагу в PDF на этом телефоне, затем сохраните или отправьте.",
   homeScanCta: "Сканировать документ",
   homeWorkplaceTitle: "На работе или на общем компьютере",
-  homeWorkplaceBody: "Работает в браузере и в рамках политики безопасности вашей организации.",
+  homeWorkplaceBody:
+    "Установка не нужна. Работает в браузере и в рамках политики безопасности вашей организации.",
   homeWorkstationCta: "Рабочий компьютер",
   homeKioskCta: "Использовать это устройство как экран печати",
   shareTitle: "Обмен",
@@ -3329,7 +3324,7 @@ const mn = {
   closedTitle: "Хэвлэлт дууслаа",
   closedBody: "Одоо энэ хуудсыг хааж болно.",
   keepPageOpen: "Энэ хуудсыг хааж болохгүй.",
-  preparingSession: "Бэлтгэж байна…",
+  preparingSession: "Аюулгүй холбогдож байна…",
 
   documentPreview: "Баримтын урьдчилсан харах",
   selectedDocumentPreview: "Сонгосон файлын урьдчилсан харах",
@@ -3433,8 +3428,7 @@ const mn = {
   dropFilesHint: "Алга болохоос нь өмнө утсандаа хадгална уу.",
   dropSaveAll: "Утсандаа хадгалах",
   dropReceiveAnother: "Өөр файл авах",
-  dropMemoryNotice:
-    "Энэ хөтөч хадгалах үедээ файлыг бүтнээр нь санах ойд барьдаг. Маш том файлыг шинэ Chrome эсвэл Safari дээр авбал тогтвортой.",
+  dropMemoryNotice: "Маш том файлыг шинэ Chrome эсвэл Safari дээр хадгалбал илүү тогтвортой.",
   dropPrivacyNote:
     "Файлууд илгээгдэхээсээ өмнө энэ утсан дээр түгжигдэж, шилжүүлгийн хугацаа дуусахад устна.",
   dropNoFiles: "Эхлээд дор хаяж нэг файл сонгоно уу.",
@@ -3564,7 +3558,8 @@ const mn = {
   homeScanBody: "Цаасан баримтыг энэ утсан дээр PDF болгоод хадгалах эсвэл илгээх.",
   homeScanCta: "Баримт скан хийх",
   homeWorkplaceTitle: "Ажил дээр эсвэл нийтийн компьютерт",
-  homeWorkplaceBody: "Хөтөч дотор, байгууллагынхаа аюулгүй байдлын бодлогын хүрээнд ажиллана.",
+  homeWorkplaceBody:
+    "Суулгах шаардлагагүй. Хөтөч дотор, байгууллагынхаа аюулгүй байдлын бодлогын хүрээнд ажиллана.",
   homeWorkstationCta: "Ажлын компьютер",
   homeKioskCta: "Энэ төхөөрөмжийг хэвлэх дэлгэц болгон ашиглах",
   shareTitle: "Хуваалцах",
@@ -3626,7 +3621,7 @@ const uk = {
   closedTitle: "Друк завершено",
   closedBody: "Тепер цю сторінку можна закрити.",
   keepPageOpen: "Не закривайте цю сторінку.",
-  preparingSession: "Готуємось…",
+  preparingSession: "Безпечне підключення…",
 
   documentPreview: "Попередній перегляд документа",
   selectedDocumentPreview: "Попередній перегляд вибраного файла",
@@ -3727,8 +3722,7 @@ const uk = {
   dropFilesHint: "Збережіть їх на телефон, поки передавання не зникло.",
   dropSaveAll: "Зберегти на телефон",
   dropReceiveAnother: "Отримати інші файли",
-  dropMemoryNotice:
-    "Цей браузер тримає файл цілком у пам’яті під час збереження. Для дуже великих файлів надійніший свіжий Chrome або Safari.",
+  dropMemoryNotice: "Для дуже великих файлів надійніше зберігати через свіжий Chrome або Safari.",
   dropPrivacyNote:
     "Файли замикаються на цьому телефоні перед надсиланням і стираються, коли строк передачі спливає.",
   dropNoFiles: "Спершу виберіть хоча б один файл.",
@@ -3858,7 +3852,8 @@ const uk = {
   homeScanBody: "Перетворіть папір на PDF на цьому телефоні, а потім збережіть або надішліть.",
   homeScanCta: "Сканувати документ",
   homeWorkplaceTitle: "На роботі або на спільному комп’ютері",
-  homeWorkplaceBody: "Працює в браузері в межах політики безпеки вашої організації.",
+  homeWorkplaceBody:
+    "Встановлення не потрібне. Працює в браузері в межах політики безпеки вашої організації.",
   homeWorkstationCta: "Робочий комп’ютер",
   homeKioskCta: "Використовувати цей пристрій як екран друку",
   shareTitle: "Обмін",

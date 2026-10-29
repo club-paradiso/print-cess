@@ -370,6 +370,44 @@ are out.
 
 ---
 
+## Copy pass, 2026-10-30
+
+A wording-only pass over the live screens, checked against the UX-writing
+principles that 24 companies' published guides agree on (answer the question
+the visitor is asking now, let a button predict its next step, cut noise rather
+than information, use the visitor's own words and one name per thing, state
+costs and limits before the choice, match tone to weight, and make every error
+say what to fix). The screens were already close; five findings were not:
+
+- **The boot screen said nothing.** "Getting ready…" named no event, while the
+  Korean said the phone was connecting securely — which is what claiming the
+  session is. Every locale now says the connecting, in the Korean's words.
+- **The workplace band hid its benefit.** Every locale except Korean said only
+  that the tools "run in the browser, within your organisation's security
+  policy". The Korean leads with "no install", so the others do now too: that
+  is the fact a person on a locked-down work computer is deciding on.
+- **The large-file notice explained the mechanism, not the consequence.**
+  "This browser holds a whole file in memory while it saves" is engineering
+  vocabulary. The notice now keeps only what the visitor can act on: for very
+  large files, an up-to-date Chrome or Safari saves more reliably.
+- **The device check spoke in system terms.** "Synthetic file", "the approved
+  Print-cess origin", "transfers are not marked ready" became "a test file",
+  "the approved Print-cess address", and what the result means for the person
+  reading it. Its summary now names the job — sending and receiving files —
+  instead of the bare "whether this device works".
+- **The visitor-counter page said "destroyed" where the rest of the product
+  says "erased".** One thing gets one name: the English visitor copy now uses
+  "erased" throughout, and a print that expires is "cancelled", not "voided".
+  The scan OCR strings lost their jargon the same way: no more "invisible
+  searchable layer", and a failed recognition now says the scanned pages are
+  still on the device rather than that the scan is "still safe".
+
+Deliberately untouched: "All done" as the completion heading (it is paired
+with "Take your paper from the printer" as its body, per the stage table
+above), the key-custody sentence inside the shape hand-off (its placement at
+the choice point is the design, recorded under Hand-off), and strings the
+2026-10-13 passes had already rewritten.
+
 ## What was deliberately not built
 
 - **A print link on the home page.** It would have nowhere honest to go. The two print buttons
