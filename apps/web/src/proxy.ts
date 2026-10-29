@@ -2,6 +2,13 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 import { CDN_SCRIPT_SOURCES } from "./lib/cdn-assets";
+import {
+  decideRoot,
+  KIOSK_PIN_COOKIE,
+  KIOSK_PIN_MAX_AGE_SECONDS,
+  PHONE_GUIDE_PATH,
+} from "./lib/phone-at-kiosk";
+import { isBrowserKioskEnabled } from "./server/demo";
 
 const OCR_ASSET_ORIGINS = ["https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com"];
 
@@ -59,7 +66,22 @@ export function buildContentSecurityPolicy(
   ].join("; ");
 }
 
+function kioskAtRoot(environment: NodeJS.ProcessEnv = process.env): boolean {
+  return environment.NODE_ENV !== "production" || isBrowserKioskEnabled(environment);
+}
+
 export function proxy(request: NextRequest) {
+  const decision =
+    request.nextUrl.pathname === "/" && kioskAtRoot()
+      ? decideRoot({ searchParams: request.nextUrl.searchParams, headers: request.headers })
+      : undefined;
+
+  if (decision?.kind === "phone-guide") {
+    const redirect = NextResponse.redirect(new URL(PHONE_GUIDE_PATH, request.url));
+    if (decision.pin === "clear") redirect.cookies.delete(KIOSK_PIN_COOKIE);
+    return redirect;
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
   const contentSecurityPolicy = buildContentSecurityPolicy(
     nonce,
@@ -74,6 +96,17 @@ export function proxy(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set("Content-Security-Policy", contentSecurityPolicy);
+  if (decision?.kind === "kiosk" && decision.pin === "set") {
+    response.cookies.set(KIOSK_PIN_COOKIE, "1", {
+      maxAge: KIOSK_PIN_MAX_AGE_SECONDS,
+      path: "/",
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+    });
+  } else if (decision?.kind === "kiosk" && decision.pin === "clear") {
+    response.cookies.delete(KIOSK_PIN_COOKIE);
+  }
 
   return response;
 }

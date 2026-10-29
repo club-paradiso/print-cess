@@ -1362,3 +1362,35 @@ ol.mobile-selected li::before {
     border-width: 3px;
   }
 }
+
+/* Shown on the guide when a phone opened the big screen's address. It names
+   the change of page in one calm line, above the first thing to do. */
+.home-from-kiosk {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border: 1px solid var(--pc-amber-300);
+  border-radius: 14px;
+  background: var(--pc-amber-50);
+  color: var(--pc-ink-900);
+}
+.home-from-kiosk > svg {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--pc-amber-700);
+}
+.home-from-kiosk p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.home-from-kiosk .home-link {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 44px;
+  font-size: 15px;
+}
