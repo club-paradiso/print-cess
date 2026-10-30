@@ -171,17 +171,18 @@
   padding: 14px 16px;
   border: 1px solid var(--pc-border);
   border-radius: var(--pc-radius-md);
-  background: var(--pc-surface);
-  opacity: 0.65;
+  /* Steps still to come sit on the sunken surface rather than fading out:
+     a faded step failed text contrast, and its words still need reading. */
+  background: var(--pc-surface-sunken);
 }
 
 .visitor-step--active {
-  border-inline-start: 5px solid var(--pc-primary);
-  opacity: 1;
+  border-inline-start: 5px solid var(--pc-brand);
+  background: var(--pc-surface);
 }
 
 .visitor-step--done {
-  opacity: 0.9;
+  background: var(--pc-surface);
 }
 
 .visitor-step__icon {
@@ -191,7 +192,7 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: var(--pc-surface-muted);
+  background: var(--pc-surface-sunken);
   color: var(--pc-text-primary);
 }
 
@@ -249,7 +250,7 @@
 
 .visitor-notice--ok {
   border-inline-start: 5px solid var(--pc-success);
-  background: var(--pc-surface-muted);
+  background: var(--pc-surface-sunken);
 }
 
 .visitor-notice--ok svg {
@@ -258,7 +259,7 @@
 
 .visitor-notice--warn {
   border-inline-start: 5px solid var(--pc-warning);
-  background: var(--pc-surface-muted);
+  background: var(--pc-surface-sunken);
 }
 
 .visitor-notice--warn svg {
@@ -286,8 +287,8 @@
   padding: 12px 22px;
   border: none;
   border-radius: var(--pc-radius-pill);
-  background: var(--pc-primary);
-  color: var(--pc-on-primary);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
   font-size: 17px;
   font-weight: 750;
   cursor: pointer;
@@ -327,6 +328,7 @@
 
 .visitor-security p {
   margin: 0;
+  max-width: 70ch;
   font-size: 16px;
   line-height: 1.6;
 }
