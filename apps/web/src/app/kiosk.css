@@ -39,8 +39,8 @@
   outline: 3px solid var(--pc-focus-ring);
   outline-offset: 3px;
 }
-.kiosk-header > .pc-wordmark svg,
-.kiosk-result > .pc-wordmark svg {
+.kiosk-header > .pc-wordmark .pc-mark,
+.kiosk-result > .pc-wordmark .pc-mark {
   width: clamp(40px, 4.6vh, 52px);
   height: clamp(40px, 4.6vh, 52px);
 }
@@ -716,7 +716,7 @@
 .kiosk-result__topbar .pc-wordmark {
   margin: 0;
 }
-.kiosk-result__topbar .pc-wordmark svg {
+.kiosk-result__topbar .pc-wordmark .pc-mark {
   width: clamp(40px, 4.6vh, 52px);
   height: clamp(40px, 4.6vh, 52px);
 }

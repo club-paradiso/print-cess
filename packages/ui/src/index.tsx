@@ -1,6 +1,10 @@
 import type { ButtonHTMLAttributes, CSSProperties, PropsWithChildren, ReactNode } from "react";
 import { Check } from "lucide-react";
 
+import { ClubParadisoLogo } from "./club-paradiso-logo";
+
+export { ClubParadisoLogo };
+
 /**
  * The Print-cess mark: a printer whose incoming sheet has a crown's edge and
  * whose outgoing sheet carries a scan frame. It must read as a printer first;
@@ -45,7 +49,8 @@ export function PrintcessMark({ className = "" }: { className?: string }) {
 /**
  * The lockup. "Print-" is set in ink and "cess" in the brand indigo, so the
  * name's two halves read the way the logo does; the accessible name is the
- * whole service name in one piece, never the split.
+ * whole service name in one piece, never the split. "Club Paradiso" is the
+ * club's own drawn wordmark, not set type.
  */
 export function Wordmark({ compact = false }: { compact?: boolean }) {
   return (
@@ -59,7 +64,9 @@ export function Wordmark({ compact = false }: { compact?: boolean }) {
         <strong>
           Print-<span className="pc-wordmark__accent">cess</span>
         </strong>{" "}
-        <small>by Club Paradiso</small>
+        <small>
+          by <ClubParadisoLogo />
+        </small>
       </span>
     </div>
   );

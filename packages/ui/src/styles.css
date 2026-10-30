@@ -254,6 +254,20 @@ summary:focus-visible,
   font-weight: 550;
   letter-spacing: -0.01em;
 }
+/* The club's drawn wordmark in its own blue at its own 73% tint, sized from
+   the endorsement's font size so every override of that size scales it too.
+   At 1em its capitals already stand taller than the type's, and it stays
+   within a few pixels of the width the words "Club Paradiso" took as type. */
+.pc-club-paradiso {
+  display: inline-block;
+  height: 1em;
+  width: auto;
+  aspect-ratio: 4097 / 598;
+  margin-inline-start: 0.1em;
+  vertical-align: baseline;
+  color: var(--pc-club-paradiso, #4e5fba);
+  opacity: 0.73;
+}
 .pc-wordmark--compact {
   gap: 8px;
 }
@@ -275,6 +289,10 @@ summary:focus-visible,
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0;
+}
+/* Under the name there is room to the name's width, and 12px script is faint. */
+.pc-wordmark--compact .pc-club-paradiso {
+  height: 1.3em;
 }
 
 /* --- Buttons --------------------------------------------------------------
