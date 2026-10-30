@@ -14,11 +14,11 @@ build. It must not imply an installation, certification or official operation.
 Two 10-second clips (a university library and an airport counter), generated with Gemini
 and supplied by the project owner. They are demonstration footage, not real places.
 
-| File                                         | Use                         |
-| -------------------------------------------- | --------------------------- |
-| `public/promo/{university,airport}-720.mp4`  | Landscape and wide screens  |
-| `public/promo/*-portrait.mp4`                | Screens taller than 4:5     |
-| `public/promo/*-poster{,-portrait}.webp`     | Still shown before and instead of the film |
+| File                                        | Use                                        |
+| ------------------------------------------- | ------------------------------------------ |
+| `public/promo/{university,airport}-720.mp4` | Landscape and wide screens                 |
+| `public/promo/*-portrait.mp4`               | Screens taller than 4:5                    |
+| `public/promo/*-poster{,-portrait}.webp`    | Still shown before and instead of the film |
 
 Encoding: H.264, 24 fps, no audio, `+faststart`. The portrait cut is a 9:16 crop that
 follows the subject (the crop offset changes at each scene cut). The airport clip showed a
