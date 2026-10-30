@@ -30,20 +30,21 @@ export const hero = {
   secondaryCta: "Print-cess 시작하기",
   statusLine: "개발·시연 단계예요. 실제 기관에 설치된 서비스가 아니에요.",
   statusLink: "개발 현황 보기",
-  scenePicker: "장면 고르기",
-  previewScene: "화면 예시",
-  previewNote: "화면 예시예요. 실제로 인쇄되지 않아요.",
-  motionReduce: "움직임 줄이기",
-  motionDefault: "움직임 기본값",
-  scenes: [
-    { id: "university", label: "대학교" },
-    { id: "airport", label: "공항" },
-  ],
   filmLabel: "대학교 도서관과 공항에서 프린터로 종이를 받는 장면",
   filmNote: "AI로 만든 시연 영상이에요. 실제 장소나 설치 사례가 아니에요.",
   pause: "영상 멈추기",
   play: "영상 재생",
-  stillNote: "움직임을 줄이는 설정이라 사진만 보여요.",
+  stillNote: "기기에서 움직임을 줄이는 설정이라 사진만 보여요.",
+} as const;
+
+export const statement = {
+  words: ["QR 찍고,", "고르고,", "받으면 끝."],
+  lead: "프린터 옆 화면의 QR 코드를 찍고, 휴대전화에서 파일을 고르고, 프린터에서 종이를 받아요. 그 사이에 가입도 설치도 없어요.",
+  facts: [
+    { value: "0", label: "가입하거나 로그인할 일" },
+    { value: "0", label: "새로 설치할 앱" },
+    { value: "1", label: "문서 하나는 한 번 인쇄하고 지워요" },
+  ],
 } as const;
 
 export const how = {

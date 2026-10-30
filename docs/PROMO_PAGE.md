@@ -46,8 +46,10 @@ printer manufacturer's logo from 5.96 s; it is removed with ffmpeg's `delogo` fi
 that shot (`delogo=x=276:y=388:w=60:h=64:enable='gte(t,5.9)'` on the 1280x720 frame) before
 the portrait crop. The posters come from the first shot of each clip, which has no logo.
 
-The film is muted and inline, loads after hydration, plays only while visible, and can be
-paused. Reduced motion, data saver and 2G keep the still until the visitor presses play. A
+The film is muted and inline, loads after hydration and plays only while visible. The two clips
+hand over through a 1.6 s crossfade and both drift slowly, so the loop reads as one unbroken
+take. There are no visible film controls, by decision; a pause button stays in the page for
+keyboard and screen-reader users (WCAG 2.2.2) and appears only while it has focus. Reduced motion, data saver and 2G keep the still until the visitor presses play. A
 failed load keeps the still.
 
 ## Support section

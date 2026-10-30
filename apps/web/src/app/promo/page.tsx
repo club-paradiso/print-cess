@@ -10,7 +10,19 @@ import { QR_COLORS } from "@/lib/qr-style";
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
 import { MoreTabs } from "./more-tabs";
-import { faq, footer, hero, how, more, nav, REPOSITORY_URL, support, trust } from "./promo-copy";
+import { StatementLine } from "./statement-line";
+import {
+  faq,
+  footer,
+  hero,
+  how,
+  more,
+  nav,
+  REPOSITORY_URL,
+  statement,
+  support,
+  trust,
+} from "./promo-copy";
 import styles from "./promo.module.css";
 import { SupportAction } from "./support-action";
 import { supportConfig } from "./support-config";
@@ -115,6 +127,21 @@ export default async function PromoPage() {
               {hero.statusLine} <a href="#trust">{hero.statusLink}</a>
             </p>
           </HeroFilm>
+        </section>
+
+        <section className={styles.statement} aria-labelledby="statement-title">
+          <div className={styles.container}>
+            <StatementLine id="statement-title" words={statement.words} />
+            <p className={styles.statementLead}>{statement.lead}</p>
+            <ul className={styles.facts}>
+              {statement.facts.map((fact) => (
+                <li key={fact.label}>
+                  <strong>{fact.value}</strong>
+                  <span>{fact.label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
         </section>
 
         <section id={how.id} className={styles.section} aria-labelledby="how-title">

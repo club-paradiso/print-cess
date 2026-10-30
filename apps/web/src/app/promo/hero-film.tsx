@@ -5,7 +5,6 @@ import { useCallback, useEffect, useRef, useState, type ReactNode } from "react"
 
 import { hero } from "./promo-copy";
 import styles from "./promo.module.css";
-import { Screen } from "./screens";
 
 /**
  * - `waiting`: nothing decided yet (also the server render): the still shows.
@@ -19,8 +18,8 @@ type FilmState = "waiting" | "still" | "playing" | "paused" | "failed";
 const SCENES = ["university", "airport"] as const;
 type Scene = (typeof SCENES)[number];
 
-/** How long the two films overlap while one fades into the other. */
-const CROSSFADE_SECONDS = 1;
+/** How long the two films overlap. Long enough that the hand-over reads as one take. */
+const CROSSFADE_SECONDS = 1.6;
 
 type NetworkInformation = { saveData?: boolean; effectiveType?: string };
 
@@ -74,18 +73,11 @@ export function HeroFilm({ children }: { children: ReactNode }) {
   const [state, setState] = useState<FilmState>("waiting");
   const [active, setActive] = useState<Scene>("university");
   const [ready, setReady] = useState<Record<Scene, boolean>>({ university: false, airport: false });
-  const [systemReduced, setSystemReduced] = useState(false);
-  const [userReduced, setUserReduced] = useState(false);
-  const [preview, setPreview] = useState(false);
-  const reducedMotion = systemReduced || userReduced;
+  const [reducedMotion, setReducedMotion] = useState(false);
   const activeRef = useRef<Scene>("university");
   const userPaused = useRef(false);
   const onScreen = useRef(true);
   const stateRef = useRef<FilmState>("waiting");
-  const pickers = useRef<Record<Scene, HTMLButtonElement | null>>({
-    university: null,
-    airport: null,
-  });
 
   const change = useCallback((next: FilmState) => {
     stateRef.current = next;
@@ -132,7 +124,7 @@ export function HeroFilm({ children }: { children: ReactNode }) {
   // Follow the visitor's reduced-motion setting, including a change mid-visit.
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setSystemReduced(query.matches);
+    const update = () => setReducedMotion(query.matches);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
@@ -202,10 +194,6 @@ export function HeroFilm({ children }: { children: ReactNode }) {
       };
       const onTime = () => {
         if (activeRef.current !== scene || !Number.isFinite(element.duration)) return;
-        pickers.current[scene]?.style.setProperty(
-          "--progress",
-          String(Math.min(1, element.currentTime / element.duration)),
-        );
         if (element.duration - element.currentTime <= CROSSFADE_SECONDS) {
           show(other);
           start(other);
@@ -281,8 +269,7 @@ export function HeroFilm({ children }: { children: ReactNode }) {
   }, [pauseAll, resume]);
 
   const toggle = () => {
-    if (preview) setPreview(false);
-    if (state === "playing" && !preview) {
+    if (state === "playing") {
       userPaused.current = true;
       pauseAll();
       change("paused");
@@ -293,30 +280,11 @@ export function HeroFilm({ children }: { children: ReactNode }) {
     resume();
   };
 
-  const pickPreview = () => {
-    setPreview(true);
-    pauseAll();
-  };
-
-  const pick = (scene: Scene) => {
-    setPreview(false);
-    userPaused.current = false;
-    for (const other of SCENES) {
-      if (other !== scene) {
-        videos.current[other]?.pause();
-        pickers.current[other]?.style.setProperty("--progress", "0");
-      }
-    }
-    show(scene);
-    if (stateRef.current === "still") change("paused");
-    start(scene);
-  };
-
   const showControl = state !== "failed" && state !== "waiting";
-  const playing = state === "playing" && !preview;
+  const playing = state === "playing";
 
   return (
-    <div ref={section} className={styles.heroStage} data-state={state} data-preview={preview}>
+    <div ref={section} className={styles.heroStage} data-state={state}>
       <div className={styles.film} aria-hidden="true">
         {SCENES.map((scene) => (
           <div key={scene} className={styles.scene} data-active={active === scene}>
@@ -342,76 +310,22 @@ export function HeroFilm({ children }: { children: ReactNode }) {
         <div className={styles.heroCopy} data-hero-copy>
           {children}
         </div>
-        {preview ? (
-          <div className={styles.heroDevice} aria-hidden="true">
-            <Screen id="choose" />
-          </div>
-        ) : null}
       </div>
 
-      <div className={styles.heroBottom}>
-        <div className={styles.picker} role="group" aria-label={hero.scenePicker}>
-          {hero.scenes.map(({ id, label }) => (
-            <button
-              key={id}
-              type="button"
-              ref={(element) => {
-                pickers.current[id] = element;
-              }}
-              className={styles.pickerButton}
-              aria-pressed={!preview && active === id}
-              onClick={() => pick(id)}
-            >
-              <span className={styles.pickerFill} aria-hidden="true" />
-              <span className={styles.pickerLabel}>{label}</span>
-            </button>
-          ))}
-          <button
-            type="button"
-            className={`${styles.pickerButton} ${styles.pickerPreview}`}
-            aria-pressed={preview}
-            onClick={pickPreview}
-          >
-            <span className={styles.pickerLabel}>{hero.previewScene}</span>
-          </button>
-        </div>
-        <div className={styles.filmControls}>
-          <p className={styles.credit}>
-            <span className="visually-hidden">{hero.filmLabel}. </span>
-            {preview
-              ? hero.previewNote
-              : state === "still" && reducedMotion
-                ? hero.stillNote
-                : hero.filmNote}
-          </p>
-          <button
-            type="button"
-            className={styles.controlButton}
-            aria-pressed={userReduced}
-            title={
-              systemReduced && !userReduced ? "기기 설정에서 움직임을 줄이고 있어요" : undefined
-            }
-            onClick={() => setUserReduced((value) => !value)}
-          >
-            {userReduced ? hero.motionDefault : hero.motionReduce}
-          </button>
-          {showControl ? (
-            <button
-              type="button"
-              className={styles.controlButton}
-              onClick={toggle}
-              aria-label={playing ? hero.pause : hero.play}
-            >
-              {playing ? (
-                <Pause aria-hidden="true" size={16} />
-              ) : (
-                <Play aria-hidden="true" size={16} />
-              )}
-              <span>{playing ? hero.pause : hero.play}</span>
-            </button>
-          ) : null}
-        </div>
-      </div>
+      <p className={styles.credit}>
+        <span className="visually-hidden">{hero.filmLabel}. </span>
+        {state === "still" && reducedMotion ? hero.stillNote : hero.filmNote}
+      </p>
+
+      {/* No visible film controls, by decision: the film is a quiet loop. This
+          one stays for keyboard and screen-reader users (WCAG 2.2.2) and only
+          appears while it has focus. */}
+      {showControl ? (
+        <button type="button" className={styles.focusPause} onClick={toggle}>
+          {playing ? <Pause aria-hidden="true" size={16} /> : <Play aria-hidden="true" size={16} />}
+          {playing ? hero.pause : hero.play}
+        </button>
+      ) : null}
     </div>
   );
 }

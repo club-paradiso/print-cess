@@ -232,13 +232,10 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  transition: opacity 1s ease;
+  transition: opacity 1.6s cubic-bezier(0.45, 0, 0.55, 1);
 }
 .scene[data-active="true"] {
   opacity: 1;
-}
-.heroStage[data-preview="true"] .scene {
-  opacity: 0;
 }
 .still,
 .video {
@@ -269,9 +266,6 @@
     linear-gradient(0deg, rgb(var(--ink-rgb) / 88%) 0%, rgb(var(--ink-rgb) / 0%) 40%),
     linear-gradient(180deg, rgb(var(--ink-rgb) / 70%) 0%, rgb(var(--ink-rgb) / 0%) 26%);
 }
-.heroStage[data-preview="true"] .shade {
-  background: rgb(var(--ink-rgb));
-}
 .heroBody {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -279,7 +273,7 @@
   gap: 48px;
   width: min(1200px, calc(100% - 2 * var(--gutter)));
   margin: 0 auto;
-  padding: 168px 0 56px;
+  padding: 168px 0 clamp(72px, 9vh, 112px);
 }
 @media (min-width: 1000px) {
   .heroBody {
@@ -361,105 +355,56 @@
 .hero :where(a, button):focus-visible {
   outline-color: var(--pc-focus-ring-on-inverse);
 }
-.heroDevice {
-  display: none;
-}
-@media (min-width: 1000px) {
-  .heroDevice {
-    display: block;
-    animation: rise 0.6s var(--ease) both;
-  }
-  .heroDevice .phone {
-    --phone-w: 280px;
-  }
+.credit {
+  position: absolute;
+  right: max(var(--gutter), calc((100% - 1200px) / 2));
+  bottom: 22px;
+  max-width: 360px;
+  color: rgb(255 255 255 / 72%);
+  font-size: 12px;
+  line-height: 1.45;
+  text-align: end;
 }
 
-.heroBottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px 24px;
-  width: min(1200px, calc(100% - 2 * var(--gutter)));
-  margin: 0 auto;
-  padding: 18px 0 max(24px, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--on-dark-hairline);
-}
-.picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.pickerButton,
-.controlButton {
-  position: relative;
+/* The one film control, for keyboard and screen-reader users. Out of sight
+   until it has focus, then a plain pill at the hero's foot. */
+.focusPause {
+  position: absolute;
+  left: max(var(--gutter), calc((100% - 1200px) / 2));
+  bottom: 18px;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 7px;
+  gap: 8px;
   min-height: 44px;
   padding: 0 16px;
-  border: 1px solid rgb(255 255 255 / 34%);
+  border: 1px solid rgb(255 255 255 / 40%);
   border-radius: var(--pc-radius-pill);
-  background: rgb(var(--ink-rgb) / 60%);
+  background: rgb(var(--ink-rgb) / 85%);
   color: #fff;
   font: inherit;
   font-size: 14px;
   font-weight: 700;
-  overflow: hidden;
   cursor: pointer;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease;
+  clip-path: inset(50%);
+  opacity: 0;
 }
-.pickerButton:hover,
-.controlButton:hover {
-  background: rgb(var(--ink-rgb) / 85%);
+.focusPause:focus-visible {
+  clip-path: none;
+  opacity: 1;
 }
-.pickerButton[aria-pressed="true"] {
-  background: #fff;
-  border-color: #fff;
-  color: var(--pc-navy-900);
+
+/* An unbroken take: both clips drift very slowly the whole time, so neither
+   the long crossfade nor a clip's own restart ever reads as a cut. */
+.scene {
+  animation: drift 24s ease-in-out infinite alternate;
 }
-.pickerFill {
-  position: absolute;
-  inset: auto 0 0 0;
-  height: 3px;
-  background: var(--pc-brand);
-  transform-origin: left;
-  transform: scaleX(var(--progress, 0));
-}
-.pickerButton:not([aria-pressed="true"]) .pickerFill {
-  display: none;
-}
-.pickerLabel {
-  position: relative;
-}
-.pickerPreview {
-  display: none;
-}
-@media (min-width: 1000px) {
-  .pickerPreview {
-    display: inline-flex;
+@keyframes drift {
+  from {
+    transform: scale(1.06) translate3d(-0.6%, 0, 0);
   }
-}
-.controlButton[aria-pressed="true"] {
-  border-color: #fff;
-}
-.filmControls {
-  display: flex;
-  flex: 1;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px 14px;
-}
-.credit {
-  max-width: 420px;
-  color: rgb(255 255 255 / 80%);
-  font-size: 12.5px;
-  line-height: 1.45;
-  text-align: end;
+  to {
+    transform: scale(1) translate3d(0.6%, 0, 0);
+  }
 }
 
 /* On a phone the film is a picture above the copy, not behind it: the copy
@@ -488,11 +433,12 @@
   .heroCopy h1 {
     margin: 12px 0 16px;
   }
-  .filmControls {
-    justify-content: flex-start;
-  }
   .credit {
-    flex-basis: 100%;
+    position: static;
+    width: min(1200px, calc(100% - 2 * var(--gutter)));
+    max-width: none;
+    margin: 0 auto;
+    padding: 0 0 28px;
     text-align: start;
   }
 }
@@ -664,6 +610,97 @@
 }
 .split .sectionHead {
   margin-bottom: 0;
+}
+
+/* --- Statement: the print line ------------------------------------- */
+.statement {
+  padding: var(--section-y) 0 calc(var(--section-y) * 0.55);
+  border-bottom: 1px solid var(--hairline);
+}
+.statementLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 0.28em;
+  font-size: clamp(2.7rem, 0.8rem + 7vw, 7rem);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+}
+.statementLine span {
+  padding-bottom: 0.08em;
+  background-image: linear-gradient(var(--pc-brand), var(--pc-brand));
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 0.07em;
+}
+.statementLine span:last-child {
+  color: var(--pc-text-brand);
+}
+.statementLine[data-fed="false"] span {
+  background-size: 0% 0.07em;
+}
+.statementLine[data-fed="true"] span {
+  transition: background-size 0.9s var(--ease);
+}
+.statementLine span:nth-child(2) {
+  transition-delay: 0.3s;
+}
+.statementLine span:nth-child(3) {
+  transition-delay: 0.6s;
+}
+.statementLead {
+  max-width: 34em;
+  margin-top: clamp(28px, 4vw, 44px) !important;
+  color: var(--pc-text-secondary);
+  font-size: var(--fs-lede);
+  line-height: 1.7;
+}
+.facts {
+  display: grid;
+  gap: 0;
+  margin: clamp(48px, 7vw, 96px) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--hairline-strong);
+}
+@media (min-width: 760px) {
+  .facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.facts li {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+@media (min-width: 760px) {
+  .facts li {
+    padding: 28px 28px 0 0;
+    border-bottom: 0;
+  }
+  .facts li + li {
+    padding-left: 28px;
+    border-left: 1px solid var(--hairline);
+  }
+}
+.facts strong {
+  font-size: clamp(3rem, 2rem + 3vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+  color: var(--pc-text-brand);
+}
+.facts span {
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.5;
+}
+:global(html[data-promo-motion="reduced"]) .statementLine span {
+  background-size: 100% 0.07em !important;
+  transition: none !important;
 }
 
 /* --- Journey ---------------------------------------------------------- */
@@ -1868,6 +1905,10 @@ details[open] > summary .faqToggle::after {
 
 /* --- Motion ----------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+  .statementLine span {
+    background-size: 100% 0.07em !important;
+    transition: none !important;
+  }
   .scene,
   .video,
   .chevron,
@@ -1880,16 +1921,16 @@ details[open] > summary .faqToggle::after {
   }
   .stageScreen,
   .tabPanel,
-  .heroDevice,
   .appDone,
-  .dialog[open] {
+  .dialog[open],
+  .scene {
     animation: none;
   }
 }
 /* One switch on the hero quiets every animation on the page. */
 :global(html[data-promo-motion="reduced"]) .stageScreen,
 :global(html[data-promo-motion="reduced"]) .tabPanel,
-:global(html[data-promo-motion="reduced"]) .heroDevice,
+:global(html[data-promo-motion="reduced"]) .scene,
 :global(html[data-promo-motion="reduced"]) .appDone {
   animation: none;
 }

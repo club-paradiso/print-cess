@@ -36,8 +36,13 @@ test("the hero explains Print-cess and plays two muted films", async ({ page }) 
     await expect(videos.nth(index)).toHaveJSProperty("autoplay", false);
   }
   await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
-  await page.getByRole("button", { name: "영상 멈추기" }).click();
-  await expect(page.getByRole("button", { name: "영상 재생" })).toBeVisible();
+  // No visible film controls; the one pause button appears on keyboard focus.
+  const pause = page.getByRole("button", { name: "영상 멈추기" });
+  await expect(pause).not.toBeInViewport({ ratio: 0.5 });
+  await pause.focus();
+  await expect(pause).toBeVisible();
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("button", { name: "영상 재생" })).toBeAttached();
 
   expect(errors.filter((text) => !/Failed to load resource/u.test(text))).toEqual([]);
 });
@@ -55,7 +60,9 @@ test("reduced motion keeps the still and loads no film until asked", async ({ br
   await page.waitForTimeout(1500);
   expect(requested).toEqual([]);
 
-  await page.getByRole("button", { name: "영상 재생" }).click();
+  const play = page.getByRole("button", { name: "영상 재생" });
+  await play.focus();
+  await page.keyboard.press("Enter");
   await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
   expect(requested.length).toBeGreaterThan(0);
   await context.close();
@@ -91,6 +98,14 @@ test("the walkthrough follows the step being read and never prints", async ({ pa
     .getByRole("heading", { level: 3, name: "프린터에서 종이 받기" })
     .evaluate((element) => element.scrollIntoView({ block: "center" }));
   await expect(page.locator("[data-visible='true']").getByText("3/3")).toBeVisible();
+});
+
+test("the statement band states the three steps and the facts", async ({ page }) => {
+  await page.goto("/promo");
+  await expect(
+    page.getByRole("heading", { level: 2, name: /QR 찍고,\s*고르고,\s*받으면 끝\./u }),
+  ).toBeAttached();
+  await expect(page.getByText("새로 설치할 앱")).toBeAttached();
 });
 
 test("the trust section says what it is and is not", async ({ page }) => {
@@ -129,37 +144,6 @@ test("the tabs show one feature at a time, each with a real link", async ({ page
   );
   await tabs.getByRole("tab", { name: "공유" }).press("ArrowRight");
   await expect(tabs.getByRole("tab", { name: "스캔" })).toHaveAttribute("aria-selected", "true");
-});
-
-test("the hero offers a screen preview and a motion switch", async ({ page }) => {
-  await page.goto("/promo");
-  const picker = page.getByRole("group", { name: "장면 고르기" });
-  await picker.getByRole("button", { name: "화면 예시" }).click();
-  await expect(picker.getByRole("button", { name: "화면 예시" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.getByText("화면 예시예요. 실제로 인쇄되지 않아요.")).toBeVisible();
-  await page.getByRole("button", { name: "움직임 줄이기" }).click();
-  await expect(page.getByRole("button", { name: "움직임 기본값" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await expect(page.locator("html")).toHaveAttribute("data-promo-motion", "reduced");
-});
-
-test("the scene picker switches the film", async ({ page }) => {
-  await page.goto("/promo");
-  const picker = page.getByRole("group", { name: "장면 고르기" });
-  await expect(picker.getByRole("button", { name: "대학교" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await picker.getByRole("button", { name: "공항" }).click();
-  await expect(picker.getByRole("button", { name: "공항" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
 });
 
 test("support stays closed until the owner configures a destination", async ({ page }) => {
