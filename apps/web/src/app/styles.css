@@ -206,7 +206,7 @@ p {
   align-self: stretch;
   border-radius: 6px;
   background: var(--pc-white);
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
 }
 .print-entry__screen-code svg {
   width: 60%;
@@ -321,7 +321,7 @@ p {
 }
 /* The perforation between steps. */
 .home-step + .home-step {
-  border-top: 2px dashed var(--pc-indigo-200);
+  border-top: 2px dashed var(--pc-crimson-200);
 }
 .home-step__head {
   display: flex;
@@ -364,7 +364,7 @@ p {
   }
   .home-step + .home-step {
     border-top: 0;
-    border-inline-start: 2px dashed var(--pc-indigo-200);
+    border-inline-start: 2px dashed var(--pc-crimson-200);
   }
 }
 
@@ -372,10 +372,21 @@ p {
   display: grid;
   gap: 14px;
 }
+/* Side by side, the two sheets share their rows (glyph, title, body,
+   actions), so both buttons start on the same line however long either
+   description runs in a given language. */
 @media (min-width: 640px) {
   .home-capabilities {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 20px;
+    grid-template-rows: repeat(4, auto);
+    gap: 0 20px;
+  }
+  .home-capabilities > .home-sheet {
+    display: grid;
+    grid-row: span 4;
+    grid-template-rows: subgrid;
+    align-items: start;
+    row-gap: 10px;
   }
 }
 
@@ -394,7 +405,7 @@ p {
   background: var(--pc-surface);
 }
 /* The turned-down corner: the page's own background cut out of the sheet, and
-   the fold itself in lilac. Two flat triangles, no gradient. */
+   the fold itself in blush. Two flat triangles, no gradient. */
 .home-sheet::before,
 .home-sheet::after {
   content: "";
@@ -442,32 +453,39 @@ p {
 }
 .home-sheet__actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 8px 20px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
   width: 100%;
-  margin-top: auto;
   padding-top: 12px;
 }
 
-/* A link that looks like the button it is. */
+/* A link that looks like the button it is. Both sheets use the same shape:
+   the label on the leading edge, the arrow on the trailing one. */
 .home-cta {
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 60px;
   text-decoration: none;
 }
 .home-cta__arrow {
   margin-inline-start: auto;
+  transition: transform var(--pc-duration-fast) var(--pc-ease-out);
+}
+.home-cta:hover .home-cta__arrow {
+  transform: translateX(3px);
 }
 [dir="rtl"] .home-cta__arrow {
   transform: scaleX(-1);
 }
-.home-sheet--share .home-cta {
-  gap: 12px;
+[dir="rtl"] .home-cta:hover .home-cta__arrow {
+  transform: scaleX(-1) translateX(3px);
 }
 .home-link {
   display: inline-flex;
   align-items: center;
   min-height: 48px;
-  padding: 8px 6px;
+  padding: 8px 2px;
   color: var(--pc-text-brand);
   font-size: 17px;
   font-weight: 700;
@@ -476,8 +494,8 @@ p {
   text-underline-offset: 4px;
 }
 
-/* What holds for every tool on the page, on the one dark band. Mint is a
-   fill here, never the colour of text. */
+/* What holds for every tool on the page, on the one dark band: warm ink with
+   a blush tile, so the band stays in the brand's family. */
 .home-trust {
   display: grid;
   gap: 18px;
@@ -505,8 +523,8 @@ p {
   width: 44px;
   height: 44px;
   border-radius: var(--pc-radius-sm);
-  background: var(--pc-success-accent);
-  color: var(--pc-navy-900);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
 }
 .home-trust__icon svg {
   width: 22px;
@@ -963,7 +981,7 @@ ol.mobile-selected li::before {
   padding: 6px 12px;
   border-radius: var(--pc-radius-pill);
   background: var(--pc-surface-brand);
-  color: var(--pc-indigo-800);
+  color: var(--pc-crimson-800);
   font-size: 15px;
   font-weight: 750;
   line-height: 1.3;
@@ -1076,7 +1094,7 @@ ol.mobile-selected li::before {
   color: var(--pc-text-primary);
 }
 .print-sheet::backdrop {
-  background: color-mix(in srgb, var(--pc-navy-950) 60%, transparent);
+  background: color-mix(in srgb, var(--pc-ink-950) 60%, transparent);
 }
 @media (min-width: 640px) {
   .print-sheet {
@@ -1220,7 +1238,7 @@ ol.mobile-selected li::before {
   width: 100%;
   overflow: hidden;
   border-radius: var(--pc-radius-md);
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
 }
 .print-viewfinder[hidden] {
   display: none;
@@ -1343,4 +1361,36 @@ ol.mobile-selected li::before {
   .mobile-progress-list .is-active {
     border-width: 3px;
   }
+}
+
+/* Shown on the guide when a phone opened the big screen's address. It names
+   the change of page in one calm line, above the first thing to do. */
+.home-from-kiosk {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border: 1px solid var(--pc-amber-300);
+  border-radius: 14px;
+  background: var(--pc-amber-50);
+  color: var(--pc-ink-900);
+}
+.home-from-kiosk > svg {
+  width: 22px;
+  height: 22px;
+  margin-top: 2px;
+  color: var(--pc-amber-700);
+}
+.home-from-kiosk p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.home-from-kiosk .home-link {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 44px;
+  font-size: 15px;
 }

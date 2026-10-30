@@ -43,7 +43,7 @@ export function PrintcessMark({ className = "" }: { className?: string }) {
 }
 
 /**
- * The lockup. "Print-" is set in ink and "cess" in the brand indigo, so the
+ * The lockup. "Print-" is set in ink and "cess" in the brand crimson, so the
  * name's two halves read the way the logo does; the accessible name is the
  * whole service name in one piece, never the split.
  */
@@ -118,7 +118,7 @@ export function DestructiveButton({
 /**
  * Where the visitor is in a short flow. With `steps`, each segment carries its
  * name, so the phone shows the same three words as the home page and the big
- * screen: a finished step in mint with a tick, the current one in indigo.
+ * screen: a finished step in sage with a tick, the current one in crimson.
  */
 export function ProgressSteps({
   current,
@@ -262,7 +262,7 @@ export function RouteGlyph({ from, to }: { from: ReactNode; to: ReactNode }) {
  * the same tile beside its QR code, so a visitor finds the display by matching
  * what they see, not by working out what "the screen" means.
  *
- * It is the mark on a white sheet inside Royal Indigo, wrapped in the mark's
+ * It is the mark on a white sheet inside Crimson, wrapped in the mark's
  * own scan-frame corners. Decorative on purpose: the words beside it carry the
  * meaning, and it is hidden from assistive technology.
  */

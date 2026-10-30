@@ -99,7 +99,7 @@ Observed on a 390×844 phone, then changed:
 - **Waiting has visible stages**: 준비 → 보내기 → 인쇄 시작, each marked done, current or still to
   come in words and a check mark as well as colour.
 - **The end says what next time looks like**: "더 인쇄하려면 큰 화면의 새 QR 코드를 찍으세요."
-- **Errors have a way out**: "처음 화면으로" links to `/start`, where the in-page QR scanner lives.
+- **Errors have a way out**: "처음 화면으로" links to `/`, the visitor's home, where the in-page QR scanner lives.
 
 All new strings live in `print-batch-copy.ts` for all thirteen locales; Korean and English were
 edited, the other eleven were written for meaning and need native review like the rest.
@@ -220,7 +220,7 @@ The same checklists, applied to `/receive`:
 
 | Change                                                                                                  | Rule                                     |
 | ------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
-| The four digits are four large boxes; the next one to fill is outlined in indigo                        | Show where the user is (state clarity)   |
+| The four digits are four large boxes; the next one to fill is outlined in crimson                       | Show where the user is (state clarity)   |
 | A keypad key gives way under the finger (scale 0.96; off under reduced motion)                          | Press feedback                           |
 | Size and time left sit above the file list, not under it                                                | Decision facts first                     |
 | "아직 저장하지 않았어요" only appears once at least one file has moved                                  | Rows speak only when they have news      |
@@ -294,7 +294,7 @@ the only channel, and it never blocks anything.
 - **Arrival.** The document token on the kiosk fades and rises 14px into place
   over 420ms when a phone connects. It is the only "materialization" in the
   product, and it is short enough not to be a wait.
-- **Alive.** A receiver waiting on a sender sees a slow indigo pulse. It says the
+- **Alive.** A receiver waiting on a sender sees a slow crimson pulse. It says the
   line is open; it does not pretend to be a percentage nobody can measure.
 - **Hand-off.** While the phone sends a document, a sheet slides into the
   printer from the mark; while the kiosk prints, a sheet slides out of it. It
@@ -320,15 +320,15 @@ third channel.
 
 | State        | Hue (token)                                  | The word                  |
 | ------------ | -------------------------------------------- | ------------------------- |
-| Ready        | Royal Indigo (`--pc-brand`)                  | Ready / Connected         |
-| Sending      | Royal Indigo (`--pc-transfer-active`)        | Sending / Saving          |
-| Receiving    | Royal Indigo (`--pc-transfer-active`)        | Saving                    |
-| Checking     | Royal Indigo (`--pc-printing`)               | Checking / Printing       |
+| Ready        | Crimson (`--pc-brand`)                       | Ready / Connected         |
+| Sending      | Crimson (`--pc-transfer-active`)             | Sending / Saving          |
+| Receiving    | Crimson (`--pc-transfer-active`)             | Saving                    |
+| Checking     | Crimson (`--pc-printing`)                    | Checking / Printing       |
 | Success      | Mint Teal (`--pc-success`, `--pc-completed`) | Saved / Printed / Deleted |
 | Needs a look | Amber (`--pc-warning`)                       | Reconnecting / Limited    |
 | Error        | Red (`--pc-destructive`)                     | The reason                |
 
-Work in flight used to be warm amber. It is the brand's indigo now, because
+Work in flight used to be warm amber. It is the brand's crimson now, because
 amber is reserved for the one state that asks the visitor to look twice (a
 lost connection, a limited browser); an in-flight transfer is not a warning.
 
@@ -369,6 +369,44 @@ are out.
   two phone viewports.
 
 ---
+
+## Copy pass, 2026-10-30
+
+A wording-only pass over the live screens, checked against the UX-writing
+principles that 24 companies' published guides agree on (answer the question
+the visitor is asking now, let a button predict its next step, cut noise rather
+than information, use the visitor's own words and one name per thing, state
+costs and limits before the choice, match tone to weight, and make every error
+say what to fix). The screens were already close; five findings were not:
+
+- **The boot screen said nothing.** "Getting ready…" named no event, while the
+  Korean said the phone was connecting securely — which is what claiming the
+  session is. Every locale now says the connecting, in the Korean's words.
+- **The workplace band hid its benefit.** Every locale except Korean said only
+  that the tools "run in the browser, within your organisation's security
+  policy". The Korean leads with "no install", so the others do now too: that
+  is the fact a person on a locked-down work computer is deciding on.
+- **The large-file notice explained the mechanism, not the consequence.**
+  "This browser holds a whole file in memory while it saves" is engineering
+  vocabulary. The notice now keeps only what the visitor can act on: for very
+  large files, an up-to-date Chrome or Safari saves more reliably.
+- **The device check spoke in system terms.** "Synthetic file", "the approved
+  Print-cess origin", "transfers are not marked ready" became "a test file",
+  "the approved Print-cess address", and what the result means for the person
+  reading it. Its summary now names the job — sending and receiving files —
+  instead of the bare "whether this device works".
+- **The visitor-counter page said "destroyed" where the rest of the product
+  says "erased".** One thing gets one name: the English visitor copy now uses
+  "erased" throughout, and a print that expires is "cancelled", not "voided".
+  The scan OCR strings lost their jargon the same way: no more "invisible
+  searchable layer", and a failed recognition now says the scanned pages are
+  still on the device rather than that the scan is "still safe".
+
+Deliberately untouched: "All done" as the completion heading (it is paired
+with "Take your paper from the printer" as its body, per the stage table
+above), the key-custody sentence inside the shape hand-off (its placement at
+the choice point is the design, recorded under Hand-off), and strings the
+2026-10-13 passes had already rewritten.
 
 ## What was deliberately not built
 

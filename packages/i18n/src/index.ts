@@ -139,7 +139,7 @@ const en = {
   closedTitle: "Printing is finished",
   closedBody: "You can close this page now.",
   keepPageOpen: "Do not close this page.",
-  preparingSession: "Getting ready…",
+  preparingSession: "Connecting securely…",
 
   documentPreview: "Document preview",
   selectedDocumentPreview: "Preview of the file you picked",
@@ -244,8 +244,7 @@ const en = {
   dropFilesHint: "Save them to your phone before the transfer disappears.",
   dropSaveAll: "Save to my phone",
   dropReceiveAnother: "Receive other files",
-  dropMemoryNotice:
-    "This browser holds a whole file in memory while it saves. For very large files, an up-to-date Chrome or Safari works better.",
+  dropMemoryNotice: "For very large files, an up-to-date Chrome or Safari saves more reliably.",
   dropPrivacyNote:
     "Files are locked on this phone before they leave, and erased when the transfer expires.",
   dropNoFiles: "Pick at least one file first.",
@@ -348,6 +347,9 @@ const en = {
   homeBeaconCaption: "Look for the screen with this mark.",
   homeScanQrCta: "Scan QR code",
   homeLostCta: "I can't find the screen",
+  homeFromKioskNote:
+    "You opened the address for the big screen beside the printer. On a phone, start here.",
+  homeFromKioskShowAnyway: "Show the big screen anyway",
   homePrintStepFind: "Find the screen",
   homeStepsLabel: "How printing works",
   homeLostTitle: "Finding the screen",
@@ -372,7 +374,8 @@ const en = {
   homeScanBody: "Turn paper into a PDF on this phone, then save it or send it on.",
   homeScanCta: "Scan a document",
   homeWorkplaceTitle: "At work or on a public computer",
-  homeWorkplaceBody: "Runs in the browser, inside your organisation's security policy.",
+  homeWorkplaceBody:
+    "No install needed. It runs in the browser, within your organisation's security policy.",
   homeWorkstationCta: "Work computer",
   homeKioskCta: "Use this device as the print screen",
   shareTitle: "Share",
@@ -391,27 +394,27 @@ const ko = {
 
   notFoundTitle: "페이지를 찾을 수 없어요",
   notFoundBody:
-    "주소가 잘못됐거나 오래됐을 수 있어요. 인쇄하려면 큰 화면의 QR 코드를 다시 스캔하세요.",
+    "주소가 잘못됐거나 오래됐을 수 있어요. 인쇄하려면 큰 화면의 QR 코드를 다시 찍으세요.",
   notFoundHome: "처음으로",
   selectLanguage: "언어를 선택하세요",
   step: "{{total}}단계 중 {{current}}단계",
 
   guideTitle: "인쇄 방법",
-  guideScanTitle: "1. QR 코드 스캔하기",
-  guideScanBody: "휴대전화 카메라로 이미 스캔했으니 이 단계는 끝났어요.",
+  guideScanTitle: "1. QR 코드 찍기",
+  guideScanBody: "QR 코드는 이미 찍었으니 이 단계는 끝났어요.",
   guideChooseTitle: "2. 문서 하나 고르기",
-  guideChooseBody: "갤러리에서 사진 한 장을 고르거나, 휴대전화에 저장한 PDF 하나를 고르세요.",
+  guideChooseBody: "갤러리의 사진 한 장이나 휴대전화에 저장한 PDF 하나를 고르세요.",
   guideCheckTitle: "3. 확인하고 인쇄하기",
   guideCheckBody: "휴대전화 화면에서 미리보기를 확인한 뒤 인쇄 버튼을 누르세요.",
   guideCollectTitle: "4. 출력물 가져가기",
-  guideCollectBody: "프린터는 큰 화면 옆에 있어요. 거기에서 종이를 가져가세요.",
+  guideCollectBody: "큰 화면 옆 프린터에서 종이를 가져가세요.",
 
   chooseFile: "인쇄할 문서를 하나 고르세요",
   fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 50페이지 이하",
   guideChooseBodyHwpx: "사진, PDF, HWPX 파일 중 하나를 고르세요.",
   fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하 · 최대 50페이지",
   documentNeedsPdf:
-    "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 변환하려고 문서를 다른 회사에 보내는 일은 없어요.",
+    "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 변환하려고 문서를 외부 회사로 보내지는 않아요.",
   imageConversionUnsupported:
     "이 휴대전화에서는 이 사진을 열 수 없어요. 사진 앱에서 JPG로 저장하거나 화면을 캡처한 뒤 다시 고르세요.",
   hwpxUnavailable: "이 프린터는 HWPX 파일을 열 수 없어요. 문서를 PDF로 저장한 뒤 다시 고르세요.",
@@ -443,18 +446,18 @@ const ko = {
   pdfPreview: "PDF 미리보기",
   firstPagePreview: "첫 페이지 미리보기",
 
-  invalidQr: "QR 코드 링크가 온전하지 않아요. 큰 화면의 QR 코드를 다시 스캔하세요.",
-  expiredQr: "QR 코드 유효 시간이 지났어요. 큰 화면의 새 QR 코드를 스캔하세요.",
-  usedQr: "다른 사람이 사용 중인 QR 코드예요. 큰 화면의 새 QR 코드를 스캔하세요.",
+  invalidQr: "QR 코드 링크가 온전하지 않아요. 큰 화면의 QR 코드를 다시 찍으세요.",
+  expiredQr: "QR 코드를 쓸 수 있는 시간이 지났어요. 큰 화면의 새 QR 코드를 찍으세요.",
+  usedQr: "다른 사람이 쓰고 있는 QR 코드예요. 큰 화면의 새 QR 코드를 찍으세요.",
   unsupportedType:
     "사진이나 PDF를 고르세요. HWP, 워드, 엑셀, 파워포인트 파일은 먼저 PDF로 저장한 뒤 고르세요.",
   tooLarge: "파일이 너무 커요. 사진은 20MB, PDF는 10MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
   tooManyPages: "문서가 50페이지보다 많아요. 필요한 페이지만 저장하세요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
   damagedFile:
-    "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 선택하세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
-  fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 스캔하세요.",
-  networkError: "연결이 끊겼어요. 모바일 데이터를 확인한 뒤 QR 코드를 다시 스캔하세요.",
+    "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 고르세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
+  fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 찍으세요.",
+  networkError: "연결이 끊겼어요. 인터넷 연결을 확인한 뒤 QR 코드를 다시 찍으세요.",
 
   chooseLocation: "인쇄할 문서가 어디에 있나요?",
   locationKakao: "카카오톡에 있어요",
@@ -464,7 +467,7 @@ const ko = {
     "카카오톡에서 파일을 열고 공유를 누른 뒤 휴대전화에 저장하세요. 그다음 이 화면으로 돌아오세요.",
   emailGuide: "휴대전화에서 이메일 첨부 파일을 열어 저장하세요. 그다음 이 화면으로 돌아오세요.",
   missingTitle: "이곳에서는 문서를 찾거나 새로 만들 수 없어요.",
-  missingBody: "예약한 분이나 항공사, 여행사에 연락해서 휴대전화로 문서를 받으세요.",
+  missingBody: "예약해 준 사람이나 항공사, 여행사에 연락해 문서를 휴대전화로 받으세요.",
 
   helpOpen: "도움이 필요해요",
   helpTitle: "지금 무엇을 하면 되나요?",
@@ -476,10 +479,10 @@ const ko = {
   helpProgress:
     "지금은 아무것도 누르지 않아도 돼요. 이 화면을 열어 둔 채 기다리세요. 곧 종이가 나와요.",
   helpDone: "큰 화면 옆 프린터에 종이가 나와 있어요. 종이를 가져가세요.",
-  helpError: "큰 화면으로 가서 QR 코드를 다시 스캔한 뒤 처음부터 다시 하세요.",
+  helpError: "큰 화면의 QR 코드를 다시 찍고 처음부터 다시 하세요.",
   helpAskStaff: "그래도 어려우면 프린터 옆 직원에게 도움을 요청하세요.",
 
-  kioskScanTitle: "휴대전화 카메라로 이 QR 코드를 스캔하세요",
+  kioskScanTitle: "휴대전화 카메라로 이 QR 코드를 비추세요",
 
   // File hand-off between two phones. Separate vocabulary from printing:
   // nothing here mentions paper, a printer, or the kiosk screen.
@@ -503,15 +506,15 @@ const ko = {
   pairWaitingReceiver: "업로드가 끝날 때까지 이 화면을 열어 두세요.",
   pairPickShape: "받는 휴대전화에 알려 줄 도형을 고르세요",
   pairPickShapeHint:
-    "받는 사람이 네 자리 숫자를 입력하고 같은 도형을 고르면 돼요. 이 방법을 쓰면 서비스가 3분 동안 열쇠를 보관해요.",
+    "받는 사람이 네 자리 숫자를 입력하고 같은 도형을 고르면 돼요. 이 방법을 쓰면 Print-cess가 잠금 열쇠를 3분 동안 맡아 둬요.",
   pairWrongShape: "상대방 화면의 도형과 달라요. 다시 확인하거나 새 숫자로 시작하세요.",
   pairHandedOver: "준비됐어요. 이 화면을 닫아도 돼요. 상대방은 3분 안에 받으면 돼요.",
   pairEnterShortCode: "네 자리 숫자를 입력하세요",
   pairEnterShortCodeHint: "보내는 사람의 네 자리 숫자를 입력한 뒤 도형을 고르세요.",
-  pairShowShape: "보내는 사람이 고른 도형을 선택하세요",
+  pairShowShape: "보내는 사람이 고른 도형을 고르세요",
   pairShowShapeHint: "두 번까지 고를 수 있어요. 두 번 다 틀리면 이 숫자는 취소돼요.",
   pairAwaitingConfirm: "상대방이 도형을 고르길 기다리고 있어요",
-  pairCodeUnknown: "숫자와 도형이 맞지 않아요. 새 숫자를 받거나 QR 코드나 링크로 받으세요.",
+  pairCodeUnknown: "숫자와 도형이 맞지 않아요. 새 숫자를 받거나, QR 코드나 링크로 받아 보세요.",
   pairCodeBusy: "이미 다른 사람이 받고 있어요. 보내는 사람에게 새 숫자를 요청하세요.",
   shapeCircle: "동그라미",
   shapeTriangle: "세모",
@@ -534,17 +537,16 @@ const ko = {
   dropFilesHint: "파일이 사라지기 전에 휴대전화에 저장하세요.",
   dropSaveAll: "휴대전화에 저장하기",
   dropReceiveAnother: "다른 파일 받기",
-  dropMemoryNotice:
-    "이 브라우저는 저장하는 동안 파일 전체를 메모리에 올려요. 아주 큰 파일은 최신 크롬이나 사파리에서 받으면 더 안정적이에요.",
-  dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 전송 시간이 끝나면 지워져요.",
+  dropMemoryNotice: "아주 큰 파일은 최신 크롬이나 사파리에서 받는 게 더 안정적이에요.",
+  dropPrivacyNote: "파일은 이 휴대전화에서 잠근 뒤에 보내고, 받을 수 있는 시간이 지나면 지워져요.",
   dropNoFiles: "파일을 하나 이상 고르세요.",
   dropTooManyFiles: "한 번에 20개까지 보낼 수 있어요. 나머지는 나눠서 보내세요.",
   dropTooLarge: "한 번에 보내기엔 너무 커요. 두 번에 나눠 보내세요.",
   dropFileUnreadable: "이 파일을 읽지 못했어요. 휴대전화에서 다시 고르세요.",
-  dropNetworkError: "연결이 끊겼어요. 신호를 확인한 뒤 다시 시도하세요.",
+  dropNetworkError: "연결이 끊겼어요. 인터넷 연결을 확인한 뒤 다시 해 보세요.",
   dropCodeNotFound: "이 코드로 열리는 파일이 없어요. 열두 글자를 확인하고 다시 입력하세요.",
   dropExpired: "이 전송은 이미 사라졌어요. 다시 보내 달라고 하세요.",
-  dropTooManyTries: "너무 여러 번 시도했어요. 잠시 뒤에 다시 시도하세요.",
+  dropTooManyTries: "너무 여러 번 시도했어요. 잠시 뒤에 다시 해 보세요.",
   dropDamaged: "파일이 온전히 도착하지 않았어요. 다시 보내 달라고 하세요.",
   dropCancelled: "보내기를 취소했어요. 보내던 파일은 모두 지웠어요.",
 
@@ -619,7 +621,7 @@ const ko = {
   quotaHardMaxLabel: "Print-cess 최대 출력량",
   quotaAtLimit: "무료 출력 한도에 딱 맞췄어요.",
   quotaUnverified:
-    "한글 문서는 키오스크에서 페이지 수를 세기 때문에, 최종 장수도 키오스크에서 확정돼요.",
+    "한글 문서는 키오스크에서 쪽수를 확인해요. 그래서 최종 장수도 키오스크에서 정해져요.",
 
   // V2 product structure: Print, Share, Scan.
   homePrintTitle: "인쇄",
@@ -636,6 +638,8 @@ const ko = {
   homeBeaconCaption: "이 표시가 있는 화면을 찾으세요.",
   homeScanQrCta: "QR 코드 찍기",
   homeLostCta: "화면을 못 찾겠어요",
+  homeFromKioskNote: "방금 연 주소는 프린터 옆 큰 화면용이에요. 휴대폰에서는 여기서 시작하면 돼요.",
+  homeFromKioskShowAnyway: "큰 화면 그대로 보기",
   homePrintStepFind: "화면 찾기",
   homeStepsLabel: "세 단계면 끝나요",
   homeLostTitle: "화면 찾는 방법",
@@ -661,7 +665,8 @@ const ko = {
   homeScanBody: "종이 문서를 이 휴대전화에서 PDF로 만들고, 저장하거나 보내요.",
   homeScanCta: "문서 스캔하기",
   homeWorkplaceTitle: "기관·공용 PC에서 쓰기",
-  homeWorkplaceBody: "설치 없이 브라우저에서, 기관 보안 정책을 지키며 쓸 수 있어요.",
+  homeWorkplaceBody:
+    "프로그램을 설치하지 않고 브라우저에서 바로 써요. 기관 보안 정책도 그대로 지켜요.",
   homeWorkstationCta: "업무용 PC",
   homeKioskCta: "이 기기를 Print-cess 화면으로 쓰기",
   shareTitle: "공유",
@@ -720,7 +725,7 @@ const zhCN = {
   closedTitle: "打印完成了",
   closedBody: "现在可以关闭这个页面了。",
   keepPageOpen: "不要关掉这个页面。",
-  preparingSession: "正在准备…",
+  preparingSession: "正在安全连接…",
 
   documentPreview: "文件预览",
   selectedDocumentPreview: "你选的文件预览",
@@ -812,8 +817,7 @@ const zhCN = {
   dropFilesHint: "在传输消失之前保存到手机里。",
   dropSaveAll: "保存到手机",
   dropReceiveAnother: "接收其他文件",
-  dropMemoryNotice:
-    "这个浏览器在保存时会把整个文件放进内存。文件很大时，用最新版 Chrome 或 Safari 更稳定。",
+  dropMemoryNotice: "文件很大时，用最新版 Chrome 或 Safari 保存更稳定。",
   dropPrivacyNote: "文件在这部手机上锁住后才发出，传送到期后就删掉。",
   dropNoFiles: "请先选择至少一个文件。",
   dropTooManyFiles: "一次最多 20 个文件。先选少一些，剩下的分批发送。",
@@ -909,6 +913,8 @@ const zhCN = {
   homeBeaconCaption: "找带有这个标志的屏幕。",
   homeScanQrCta: "扫描二维码",
   homeLostCta: "找不到屏幕",
+  homeFromKioskNote: "您刚打开的网址是给打印机旁的大屏幕用的。用手机的话，请从这里开始。",
+  homeFromKioskShowAnyway: "仍然查看大屏幕页面",
   homePrintStepFind: "找到屏幕",
   homeStepsLabel: "打印步骤",
   homeLostTitle: "怎么找到屏幕",
@@ -931,7 +937,7 @@ const zhCN = {
   homeScanBody: "在这部手机上把纸质文件变成 PDF，然后保存或发送。",
   homeScanCta: "扫描文档",
   homeWorkplaceTitle: "在单位或公用电脑上使用",
-  homeWorkplaceBody: "在浏览器中运行，遵守所在机构的安全策略。",
+  homeWorkplaceBody: "无需安装。在浏览器中运行，遵守所在机构的安全策略。",
   homeWorkstationCta: "办公电脑",
   homeKioskCta: "将此设备用作打印屏幕",
   shareTitle: "分享",
@@ -994,7 +1000,7 @@ const id = {
   closedTitle: "Pencetakan selesai",
   closedBody: "Anda boleh menutup halaman ini sekarang.",
   keepPageOpen: "Jangan tutup halaman ini.",
-  preparingSession: "Sedang bersiap…",
+  preparingSession: "Menghubungkan dengan aman…",
 
   documentPreview: "Pratinjau dokumen",
   selectedDocumentPreview: "Pratinjau berkas yang Anda pilih",
@@ -1096,8 +1102,7 @@ const id = {
   dropFilesHint: "Simpan ke ponsel sebelum transfernya hilang.",
   dropSaveAll: "Simpan ke ponsel",
   dropReceiveAnother: "Terima file lain",
-  dropMemoryNotice:
-    "Peramban ini menahan seluruh file di memori saat menyimpan. Untuk file sangat besar, Chrome atau Safari terbaru lebih stabil.",
+  dropMemoryNotice: "Untuk file sangat besar, Chrome atau Safari terbaru menyimpan lebih andal.",
   dropPrivacyNote:
     "File dikunci di ponsel ini sebelum dikirim, dan dihapus saat transfer berakhir.",
   dropNoFiles: "Pilih dulu minimal satu file.",
@@ -1200,6 +1205,9 @@ const id = {
   homeBeaconCaption: "Cari layar dengan tanda ini.",
   homeScanQrCta: "Pindai kode QR",
   homeLostCta: "Saya tidak menemukan layarnya",
+  homeFromKioskNote:
+    "Alamat yang Anda buka adalah untuk layar besar di samping printer. Di ponsel, mulai dari sini.",
+  homeFromKioskShowAnyway: "Tetap lihat layar besar",
   homePrintStepFind: "Cari layarnya",
   homeStepsLabel: "Cara mencetak",
   homeLostTitle: "Mencari layarnya",
@@ -1224,7 +1232,8 @@ const id = {
   homeScanBody: "Ubah kertas menjadi PDF di ponsel ini, lalu simpan atau kirimkan.",
   homeScanCta: "Pindai dokumen",
   homeWorkplaceTitle: "Di kantor atau komputer umum",
-  homeWorkplaceBody: "Berjalan di browser, sesuai kebijakan keamanan instansi Anda.",
+  homeWorkplaceBody:
+    "Tanpa perlu instal. Berjalan di browser, sesuai kebijakan keamanan instansi Anda.",
   homeWorkstationCta: "Komputer kerja",
   homeKioskCta: "Gunakan perangkat ini sebagai layar cetak",
   shareTitle: "Bagikan",
@@ -1288,7 +1297,7 @@ const fil = {
   closedTitle: "Tapos na ang pag-print",
   closedBody: "Puwede mo nang isara ang pahinang ito.",
   keepPageOpen: "Huwag isara ang pahinang ito.",
-  preparingSession: "Naghahanda…",
+  preparingSession: "Kumokonekta nang ligtas…",
 
   documentPreview: "Preview ng dokumento",
   selectedDocumentPreview: "Preview ng file na pinili mo",
@@ -1395,8 +1404,7 @@ const fil = {
   dropFilesHint: "I-save sa telepono bago mawala ang transfer.",
   dropSaveAll: "I-save sa telepono",
   dropReceiveAnother: "Tumanggap ng iba",
-  dropMemoryNotice:
-    "Hawak ng browser na ito ang buong file sa memory habang nagse-save. Sa napakalaking file, mas matatag ang bagong Chrome o Safari.",
+  dropMemoryNotice: "Sa napakalaking file, mas maaasahan ang bagong Chrome o Safari sa pag-save.",
   dropPrivacyNote:
     "Naka-lock ang mga file sa phone na ito bago ipadala, at nabubura kapag nag-expire ang transfer.",
   dropNoFiles: "Pumili muna ng kahit isang file.",
@@ -1501,6 +1509,9 @@ const fil = {
   homeBeaconCaption: "Hanapin ang screen na may markang ito.",
   homeScanQrCta: "I-scan ang QR code",
   homeLostCta: "Hindi ko makita ang screen",
+  homeFromKioskNote:
+    "Ang binuksan mong address ay para sa malaking screen sa tabi ng printer. Sa phone, dito ka magsimula.",
+  homeFromKioskShowAnyway: "Tingnan pa rin ang malaking screen",
   homePrintStepFind: "Hanapin ang screen",
   homeStepsLabel: "Paano mag-print",
   homeLostTitle: "Paghahanap sa screen",
@@ -1526,7 +1537,8 @@ const fil = {
   homeScanBody: "Gawing PDF ang papel sa phone na ito, saka i-save o ipadala.",
   homeScanCta: "Mag-scan ng dokumento",
   homeWorkplaceTitle: "Sa trabaho o pampublikong computer",
-  homeWorkplaceBody: "Gumagana sa browser, sa loob ng security policy ng inyong opisina.",
+  homeWorkplaceBody:
+    "Hindi kailangang mag-install. Gumagana sa browser, sa loob ng security policy ng inyong opisina.",
   homeWorkstationCta: "Computer sa trabaho",
   homeKioskCta: "Gamitin ang device na ito bilang print screen",
   shareTitle: "Share",
@@ -1587,7 +1599,7 @@ const vi = {
   closedTitle: "Đã in xong",
   closedBody: "Bây giờ bạn có thể đóng trang này.",
   keepPageOpen: "Đừng đóng trang này.",
-  preparingSession: "Đang chuẩn bị…",
+  preparingSession: "Đang kết nối an toàn…",
 
   documentPreview: "Xem trước tài liệu",
   selectedDocumentPreview: "Xem trước tệp bạn đã chọn",
@@ -1685,8 +1697,7 @@ const vi = {
   dropFilesHint: "Lưu vào điện thoại trước khi lượt gửi biến mất.",
   dropSaveAll: "Lưu vào điện thoại",
   dropReceiveAnother: "Nhận tệp khác",
-  dropMemoryNotice:
-    "Trình duyệt này giữ cả tệp trong bộ nhớ khi lưu. Với tệp rất lớn, Chrome hoặc Safari mới sẽ ổn định hơn.",
+  dropMemoryNotice: "Với tệp rất lớn, Chrome hoặc Safari mới lưu ổn định hơn.",
   dropPrivacyNote:
     "Tệp được khóa trên điện thoại này trước khi gửi và bị xóa khi lượt chuyển hết hạn.",
   dropNoFiles: "Hãy chọn ít nhất một tệp.",
@@ -1786,6 +1797,9 @@ const vi = {
   homeBeaconCaption: "Tìm màn hình có biểu tượng này.",
   homeScanQrCta: "Quét mã QR",
   homeLostCta: "Tôi không tìm thấy màn hình",
+  homeFromKioskNote:
+    "Địa chỉ bạn vừa mở là dành cho màn hình lớn cạnh máy in. Trên điện thoại, hãy bắt đầu từ đây.",
+  homeFromKioskShowAnyway: "Vẫn xem màn hình lớn",
   homePrintStepFind: "Tìm màn hình",
   homeStepsLabel: "Các bước in",
   homeLostTitle: "Cách tìm màn hình",
@@ -1810,7 +1824,8 @@ const vi = {
   homeScanBody: "Biến giấy thành PDF ngay trên điện thoại này, rồi lưu hoặc gửi đi.",
   homeScanCta: "Quét tài liệu",
   homeWorkplaceTitle: "Ở cơ quan hoặc máy tính công cộng",
-  homeWorkplaceBody: "Chạy trong trình duyệt, theo chính sách bảo mật của cơ quan bạn.",
+  homeWorkplaceBody:
+    "Không cần cài đặt. Chạy trong trình duyệt, theo chính sách bảo mật của cơ quan bạn.",
   homeWorkstationCta: "Máy tính cơ quan",
   homeKioskCta: "Dùng thiết bị này làm màn hình in",
   shareTitle: "Chia sẻ",
@@ -1870,7 +1885,7 @@ const th = {
   closedTitle: "พิมพ์เสร็จแล้ว",
   closedBody: "ตอนนี้ปิดหน้านี้ได้เลย",
   keepPageOpen: "อย่าปิดหน้านี้",
-  preparingSession: "กำลังเตรียม…",
+  preparingSession: "กำลังเชื่อมต่ออย่างปลอดภัย…",
 
   documentPreview: "ตัวอย่างเอกสาร",
   selectedDocumentPreview: "ตัวอย่างไฟล์ที่คุณเลือก",
@@ -1965,8 +1980,7 @@ const th = {
   dropFilesHint: "บันทึกลงเครื่องก่อนที่ไฟล์จะหายไป",
   dropSaveAll: "บันทึกลงเครื่อง",
   dropReceiveAnother: "รับไฟล์อื่น",
-  dropMemoryNotice:
-    "เบราว์เซอร์นี้เก็บทั้งไฟล์ไว้ในหน่วยความจำตอนบันทึก ถ้าไฟล์ใหญ่มาก ใช้ Chrome หรือ Safari รุ่นใหม่จะนิ่งกว่า",
+  dropMemoryNotice: "ถ้าไฟล์ใหญ่มาก ใช้ Chrome หรือ Safari รุ่นใหม่จะบันทึกได้นิ่งกว่า",
   dropPrivacyNote: "ไฟล์จะถูกล็อกบนโทรศัพท์เครื่องนี้ก่อนส่ง และถูกลบเมื่อการส่งหมดเวลา",
   dropNoFiles: "เลือกไฟล์อย่างน้อยหนึ่งไฟล์ก่อน",
   dropTooManyFiles: "ส่งได้ครั้งละไม่เกิน 20 ไฟล์ ที่เหลือส่งรอบถัดไปได้",
@@ -2065,6 +2079,9 @@ const th = {
   homeBeaconCaption: "มองหาหน้าจอที่มีเครื่องหมายนี้",
   homeScanQrCta: "สแกนคิวอาร์โค้ด",
   homeLostCta: "หาหน้าจอไม่เจอ",
+  homeFromKioskNote:
+    "ที่อยู่ที่คุณเพิ่งเปิดเป็นของจอใหญ่ข้างเครื่องพิมพ์ หากใช้โทรศัพท์ ให้เริ่มจากหน้านี้",
+  homeFromKioskShowAnyway: "ดูหน้าจอใหญ่ต่อ",
   homePrintStepFind: "หาหน้าจอ",
   homeStepsLabel: "ขั้นตอนการพิมพ์",
   homeLostTitle: "วิธีหาหน้าจอ",
@@ -2089,7 +2106,7 @@ const th = {
   homeScanBody: "เปลี่ยนเอกสารกระดาษเป็น PDF บนโทรศัพท์เครื่องนี้ แล้วบันทึกหรือส่งต่อ",
   homeScanCta: "สแกนเอกสาร",
   homeWorkplaceTitle: "ที่ทำงานหรือคอมพิวเตอร์สาธารณะ",
-  homeWorkplaceBody: "ทำงานในเบราว์เซอร์ ภายใต้นโยบายความปลอดภัยขององค์กร",
+  homeWorkplaceBody: "ไม่ต้องติดตั้ง ทำงานในเบราว์เซอร์ ภายใต้นโยบายความปลอดภัยขององค์กร",
   homeWorkstationCta: "คอมพิวเตอร์ที่ทำงาน",
   homeKioskCta: "ใช้อุปกรณ์นี้เป็นหน้าจอพิมพ์",
   shareTitle: "แชร์",
@@ -2151,7 +2168,7 @@ const ne = {
   closedTitle: "प्रिन्ट सकियो",
   closedBody: "अब यो पृष्ठ बन्द गर्न सक्नुहुन्छ।",
   keepPageOpen: "यो पृष्ठ बन्द नगर्नुहोस्।",
-  preparingSession: "तयारी हुँदै छ…",
+  preparingSession: "सुरक्षित रूपमा जडान हुँदै छ…",
 
   documentPreview: "कागजात पूर्वावलोकन",
   selectedDocumentPreview: "तपाईंले छानेको फाइलको पूर्वावलोकन",
@@ -2249,8 +2266,7 @@ const ne = {
   dropFilesHint: "हराउनुअघि मोबाइलमा सुरक्षित गर्नुहोस्।",
   dropSaveAll: "मोबाइलमा सुरक्षित गर्नुहोस्",
   dropReceiveAnother: "अर्को फाइल लिनुहोस्",
-  dropMemoryNotice:
-    "यो ब्राउजरले सुरक्षित गर्दा पूरै फाइल मेमोरीमा राख्छ। धेरै ठूलो फाइलका लागि नयाँ Chrome वा Safari बढी भरपर्दो हुन्छ।",
+  dropMemoryNotice: "धेरै ठूलो फाइलका लागि नयाँ Chrome वा Safari बढी भरपर्दो हुन्छ।",
   dropPrivacyNote: "फाइलहरू पठाउनुअघि यही फोनमा लक हुन्छन्, र ट्रान्सफरको समय सकिएपछि मेटिन्छन्।",
   dropNoFiles: "पहिले कम्तीमा एउटा फाइल छान्नुहोस्।",
   dropTooManyFiles: "एकपटकमा 20 वटासम्म। बाँकी पछि पठाउन सकिन्छ।",
@@ -2352,6 +2368,9 @@ const ne = {
   homeBeaconCaption: "यो चिन्ह भएको स्क्रिन खोज्नुहोस्।",
   homeScanQrCta: "QR कोड स्क्यान गर्नुहोस्",
   homeLostCta: "स्क्रिन भेटिएन",
+  homeFromKioskNote:
+    "तपाईंले खोल्नुभएको ठेगाना प्रिन्टर छेउको ठूलो स्क्रिनका लागि हो। फोनमा यहाँबाट सुरु गर्नुहोस्।",
+  homeFromKioskShowAnyway: "जे भए पनि ठूलो स्क्रिन हेर्नुहोस्",
   homePrintStepFind: "स्क्रिन खोज्नुहोस्",
   homeStepsLabel: "प्रिन्ट गर्ने तरिका",
   homeLostTitle: "स्क्रिन कसरी खोज्ने",
@@ -2377,7 +2396,7 @@ const ne = {
   homeScanBody: "यही फोनमा कागजलाई PDF बनाउनुहोस्, अनि सेभ गर्नुहोस् वा पठाउनुहोस्।",
   homeScanCta: "कागजात स्क्यान गर्नुहोस्",
   homeWorkplaceTitle: "कार्यालय वा सार्वजनिक कम्प्युटरमा",
-  homeWorkplaceBody: "ब्राउजरमै चल्छ, तपाईंको संस्थाको सुरक्षा नीतिभित्र।",
+  homeWorkplaceBody: "इन्स्टल गर्नु पर्दैन। ब्राउजरमै चल्छ, तपाईंको संस्थाको सुरक्षा नीतिभित्र।",
   homeWorkstationCta: "कार्य कम्प्युटर",
   homeKioskCta: "यो उपकरणलाई प्रिन्ट स्क्रिनका रूपमा प्रयोग गर्नुहोस्",
   shareTitle: "सेयर",
@@ -2439,7 +2458,7 @@ const km = {
   closedTitle: "ការបោះពុម្ពបានចប់",
   closedBody: "ឥឡូវនេះអ្នកអាចបិទទំព័រនេះបាន។",
   keepPageOpen: "សូមមិនបិទទំព័រនេះ។",
-  preparingSession: "កំពុងរៀបចំ…",
+  preparingSession: "កំពុងភ្ជាប់ដោយសុវត្ថិភាព…",
 
   documentPreview: "មើលឯកសារជាមុន",
   selectedDocumentPreview: "មើលឯកសារដែលអ្នកបានជ្រើស",
@@ -2535,8 +2554,7 @@ const km = {
   dropFilesHint: "រក្សាទុកក្នុងទូរស័ព្ទមុនពេលវាបាត់។",
   dropSaveAll: "រក្សាទុកក្នុងទូរស័ព្ទ",
   dropReceiveAnother: "ទទួលឯកសារផ្សេង",
-  dropMemoryNotice:
-    "កម្មវិធីរុករកនេះទុកឯកសារទាំងមូលក្នុងអង្គចងចាំពេលរក្សាទុក។ សម្រាប់ឯកសារធំ Chrome ឬ Safari ថ្មីមានស្ថេរភាពជាង។",
+  dropMemoryNotice: "សម្រាប់ឯកសារធំខ្លាំង Chrome ឬ Safari ថ្មីរក្សាទុកបានមានស្ថេរភាពជាង។",
   dropPrivacyNote: "ឯកសារត្រូវបានចាក់សោលើទូរសព្ទនេះមុនផ្ញើ ហើយត្រូវលុបពេលការផ្ទេរផុតកំណត់។",
   dropNoFiles: "ជ្រើសយ៉ាងតិចមួយឯកសារជាមុនសិន។",
   dropTooManyFiles: "ផ្ញើបានរហូតដល់ 20 ឯកសារក្នុងមួយលើក។ ផ្ញើផ្នែកនៅសល់នៅលើកក្រោយ។",
@@ -2636,6 +2654,9 @@ const km = {
   homeBeaconCaption: "រកអេក្រង់ដែលមានសញ្ញានេះ។",
   homeScanQrCta: "ស្កេនកូដ QR",
   homeLostCta: "រកអេក្រង់មិនឃើញ",
+  homeFromKioskNote:
+    "អាសយដ្ឋានដែលអ្នកទើបបើក គឺសម្រាប់អេក្រង់ធំនៅក្បែរម៉ាស៊ីនបោះពុម្ព។ នៅលើទូរស័ព្ទ សូមចាប់ផ្តើមពីទីនេះ។",
+  homeFromKioskShowAnyway: "នៅតែមើលអេក្រង់ធំ",
   homePrintStepFind: "រកអេក្រង់",
   homeStepsLabel: "របៀបបោះពុម្ព",
   homeLostTitle: "របៀបរកអេក្រង់",
@@ -2660,7 +2681,8 @@ const km = {
   homeScanBody: "បម្លែងក្រដាសទៅជា PDF លើទូរសព្ទនេះ រួចរក្សាទុក ឬផ្ញើបន្ត។",
   homeScanCta: "ស្កេនឯកសារ",
   homeWorkplaceTitle: "នៅកន្លែងធ្វើការ ឬកុំព្យូទ័រសាធារណៈ",
-  homeWorkplaceBody: "ដំណើរការក្នុងកម្មវិធីរុករក ក្រោមគោលការណ៍សុវត្ថិភាពរបស់ស្ថាប័ន។",
+  homeWorkplaceBody:
+    "មិនចាំបាច់ដំឡើង។ ដំណើរការក្នុងកម្មវិធីរុករក ក្រោមគោលការណ៍សុវត្ថិភាពរបស់ស្ថាប័ន។",
   homeWorkstationCta: "កុំព្យូទ័រការងារ",
   homeKioskCta: "ប្រើឧបករណ៍នេះជាអេក្រង់បោះពុម្ព",
   shareTitle: "ចែករំលែក",
@@ -2722,7 +2744,7 @@ const ar = {
   closedTitle: "انتهت الطباعة",
   closedBody: "يمكنك إغلاق هذه الصفحة الآن.",
   keepPageOpen: "لا تغلق هذه الصفحة.",
-  preparingSession: "جارٍ التحضير…",
+  preparingSession: "جارٍ الاتصال بأمان…",
 
   documentPreview: "معاينة المستند",
   selectedDocumentPreview: "معاينة الملف الذي اخترته",
@@ -2819,8 +2841,7 @@ const ar = {
   dropFilesHint: "احفظها على هاتفك قبل أن يختفي الإرسال.",
   dropSaveAll: "احفظ على هاتفي",
   dropReceiveAnother: "استلم ملفات أخرى",
-  dropMemoryNotice:
-    "يحتفظ هذا المتصفح بالملف كاملًا في الذاكرة أثناء الحفظ. للملفات الكبيرة جدًا، Chrome أو Safari الحديث أفضل.",
+  dropMemoryNotice: "للملفات الكبيرة جدًا، الحفظ عبر Chrome أو Safari الحديث أكثر موثوقية.",
   dropPrivacyNote: "تُقفَل الملفات على هذا الهاتف قبل إرسالها، وتُمحى عند انتهاء مدة النقل.",
   dropNoFiles: "اختر ملفًا واحدًا على الأقل أولًا.",
   dropTooManyFiles: "أرسل حتى 20 ملفًا في المرة. أرسل الباقي بعد ذلك.",
@@ -2919,6 +2940,9 @@ const ar = {
   homeBeaconCaption: "ابحث عن الشاشة التي عليها هذه العلامة.",
   homeScanQrCta: "مسح رمز QR",
   homeLostCta: "لا أجد الشاشة",
+  homeFromKioskNote:
+    "العنوان الذي فتحته مخصص للشاشة الكبيرة بجانب الطابعة. على الهاتف، ابدأ من هنا.",
+  homeFromKioskShowAnyway: "عرض الشاشة الكبيرة على أي حال",
   homePrintStepFind: "ابحث عن الشاشة",
   homeStepsLabel: "خطوات الطباعة",
   homeLostTitle: "كيف تجد الشاشة",
@@ -2943,7 +2967,7 @@ const ar = {
   homeScanBody: "حوّل الورق إلى PDF على هذا الهاتف، ثم احفظه أو أرسله.",
   homeScanCta: "امسح مستندًا",
   homeWorkplaceTitle: "في العمل أو على حاسوب عام",
-  homeWorkplaceBody: "يعمل داخل المتصفح، ضمن سياسة الأمان في جهة عملك.",
+  homeWorkplaceBody: "لا يحتاج إلى تثبيت. يعمل داخل المتصفح، ضمن سياسة الأمان في جهة عملك.",
   homeWorkstationCta: "كمبيوتر العمل",
   homeKioskCta: "استخدم هذا الجهاز كشاشة للطباعة",
   shareTitle: "مشاركة",
@@ -3005,7 +3029,7 @@ const ru = {
   closedTitle: "Печать завершена",
   closedBody: "Теперь эту страницу можно закрыть.",
   keepPageOpen: "Не закрывайте эту страницу.",
-  preparingSession: "Готовимся…",
+  preparingSession: "Безопасное подключение…",
 
   documentPreview: "Предпросмотр документа",
   selectedDocumentPreview: "Предпросмотр выбранного файла",
@@ -3106,8 +3130,7 @@ const ru = {
   dropFilesHint: "Сохраните их на телефон, пока передача не исчезла.",
   dropSaveAll: "Сохранить на телефон",
   dropReceiveAnother: "Получить другие файлы",
-  dropMemoryNotice:
-    "Этот браузер держит файл целиком в памяти при сохранении. Для очень больших файлов надёжнее свежий Chrome или Safari.",
+  dropMemoryNotice: "Для очень больших файлов надёжнее сохранять через свежий Chrome или Safari.",
   dropPrivacyNote:
     "Файлы запираются на этом телефоне перед отправкой и стираются, когда срок передачи истекает.",
   dropNoFiles: "Сначала выберите хотя бы один файл.",
@@ -3210,6 +3233,9 @@ const ru = {
   homeBeaconCaption: "Ищите экран с этим знаком.",
   homeScanQrCta: "Сканировать QR-код",
   homeLostCta: "Не могу найти экран",
+  homeFromKioskNote:
+    "Этот адрес предназначен для большого экрана рядом с принтером. С телефона начните здесь.",
+  homeFromKioskShowAnyway: "Всё равно показать большой экран",
   homePrintStepFind: "Найти экран",
   homeStepsLabel: "Как печатать",
   homeLostTitle: "Как найти экран",
@@ -3234,7 +3260,8 @@ const ru = {
   homeScanBody: "Превратите бумагу в PDF на этом телефоне, затем сохраните или отправьте.",
   homeScanCta: "Сканировать документ",
   homeWorkplaceTitle: "На работе или на общем компьютере",
-  homeWorkplaceBody: "Работает в браузере и в рамках политики безопасности вашей организации.",
+  homeWorkplaceBody:
+    "Установка не нужна. Работает в браузере и в рамках политики безопасности вашей организации.",
   homeWorkstationCta: "Рабочий компьютер",
   homeKioskCta: "Использовать это устройство как экран печати",
   shareTitle: "Обмен",
@@ -3297,7 +3324,7 @@ const mn = {
   closedTitle: "Хэвлэлт дууслаа",
   closedBody: "Одоо энэ хуудсыг хааж болно.",
   keepPageOpen: "Энэ хуудсыг хааж болохгүй.",
-  preparingSession: "Бэлтгэж байна…",
+  preparingSession: "Аюулгүй холбогдож байна…",
 
   documentPreview: "Баримтын урьдчилсан харах",
   selectedDocumentPreview: "Сонгосон файлын урьдчилсан харах",
@@ -3401,8 +3428,7 @@ const mn = {
   dropFilesHint: "Алга болохоос нь өмнө утсандаа хадгална уу.",
   dropSaveAll: "Утсандаа хадгалах",
   dropReceiveAnother: "Өөр файл авах",
-  dropMemoryNotice:
-    "Энэ хөтөч хадгалах үедээ файлыг бүтнээр нь санах ойд барьдаг. Маш том файлыг шинэ Chrome эсвэл Safari дээр авбал тогтвортой.",
+  dropMemoryNotice: "Маш том файлыг шинэ Chrome эсвэл Safari дээр хадгалбал илүү тогтвортой.",
   dropPrivacyNote:
     "Файлууд илгээгдэхээсээ өмнө энэ утсан дээр түгжигдэж, шилжүүлгийн хугацаа дуусахад устна.",
   dropNoFiles: "Эхлээд дор хаяж нэг файл сонгоно уу.",
@@ -3504,6 +3530,9 @@ const mn = {
   homeBeaconCaption: "Энэ тэмдэгтэй дэлгэцийг хайгаарай.",
   homeScanQrCta: "QR код уншуулах",
   homeLostCta: "Дэлгэцийг олсонгүй",
+  homeFromKioskNote:
+    "Таны нээсэн хаяг нь принтерийн хажууд байгаа том дэлгэцэд зориулагдсан. Утсаар бол эндээс эхэлнэ үү.",
+  homeFromKioskShowAnyway: "Том дэлгэцийг ямар ч байсан харах",
   homePrintStepFind: "Дэлгэцийг олох",
   homeStepsLabel: "Хэвлэх дараалал",
   homeLostTitle: "Дэлгэцийг хэрхэн олох вэ",
@@ -3529,7 +3558,8 @@ const mn = {
   homeScanBody: "Цаасан баримтыг энэ утсан дээр PDF болгоод хадгалах эсвэл илгээх.",
   homeScanCta: "Баримт скан хийх",
   homeWorkplaceTitle: "Ажил дээр эсвэл нийтийн компьютерт",
-  homeWorkplaceBody: "Хөтөч дотор, байгууллагынхаа аюулгүй байдлын бодлогын хүрээнд ажиллана.",
+  homeWorkplaceBody:
+    "Суулгах шаардлагагүй. Хөтөч дотор, байгууллагынхаа аюулгүй байдлын бодлогын хүрээнд ажиллана.",
   homeWorkstationCta: "Ажлын компьютер",
   homeKioskCta: "Энэ төхөөрөмжийг хэвлэх дэлгэц болгон ашиглах",
   shareTitle: "Хуваалцах",
@@ -3591,7 +3621,7 @@ const uk = {
   closedTitle: "Друк завершено",
   closedBody: "Тепер цю сторінку можна закрити.",
   keepPageOpen: "Не закривайте цю сторінку.",
-  preparingSession: "Готуємось…",
+  preparingSession: "Безпечне підключення…",
 
   documentPreview: "Попередній перегляд документа",
   selectedDocumentPreview: "Попередній перегляд вибраного файла",
@@ -3692,8 +3722,7 @@ const uk = {
   dropFilesHint: "Збережіть їх на телефон, поки передавання не зникло.",
   dropSaveAll: "Зберегти на телефон",
   dropReceiveAnother: "Отримати інші файли",
-  dropMemoryNotice:
-    "Цей браузер тримає файл цілком у пам’яті під час збереження. Для дуже великих файлів надійніший свіжий Chrome або Safari.",
+  dropMemoryNotice: "Для дуже великих файлів надійніше зберігати через свіжий Chrome або Safari.",
   dropPrivacyNote:
     "Файли замикаються на цьому телефоні перед надсиланням і стираються, коли строк передачі спливає.",
   dropNoFiles: "Спершу виберіть хоча б один файл.",
@@ -3796,6 +3825,9 @@ const uk = {
   homeBeaconCaption: "Шукайте екран із цим знаком.",
   homeScanQrCta: "Сканувати QR-код",
   homeLostCta: "Не можу знайти екран",
+  homeFromKioskNote:
+    "Ця адреса призначена для великого екрана біля принтера. З телефона почніть тут.",
+  homeFromKioskShowAnyway: "Усе одно показати великий екран",
   homePrintStepFind: "Знайти екран",
   homeStepsLabel: "Як друкувати",
   homeLostTitle: "Як знайти екран",
@@ -3820,7 +3852,8 @@ const uk = {
   homeScanBody: "Перетворіть папір на PDF на цьому телефоні, а потім збережіть або надішліть.",
   homeScanCta: "Сканувати документ",
   homeWorkplaceTitle: "На роботі або на спільному комп’ютері",
-  homeWorkplaceBody: "Працює в браузері в межах політики безпеки вашої організації.",
+  homeWorkplaceBody:
+    "Встановлення не потрібне. Працює в браузері в межах політики безпеки вашої організації.",
   homeWorkstationCta: "Робочий комп’ютер",
   homeKioskCta: "Використовувати цей пристрій як екран друку",
   shareTitle: "Обмін",

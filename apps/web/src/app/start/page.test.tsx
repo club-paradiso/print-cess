@@ -242,4 +242,14 @@ describe("home page", () => {
     expect(hrefs.some((href) => href.startsWith("/s/"))).toBe(false);
     expect(hrefs).not.toContain("/print");
   });
+  it("explains the change of page to a phone sent here from the kiosk address", async () => {
+    acceptLanguage.value = "ko-KR";
+    const page = await HomePage({ searchParams: Promise.resolve({ from: "kiosk" }) });
+    const text = textOf(page);
+    expect(text).toContain("프린터 옆 큰 화면용이에요");
+    expect(text).toContain("큰 화면 그대로 보기");
+
+    const plain = await HomePage({ searchParams: Promise.resolve({}) });
+    expect(textOf(plain)).not.toContain("큰 화면 그대로 보기");
+  });
 });

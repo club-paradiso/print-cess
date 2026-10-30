@@ -1,20 +1,31 @@
 /*
  * Print-cess design tokens.
  *
- * Two layers. The palette is the brand, taken from the Print-cess mark: Royal
- * Indigo, Ink Navy, Paper White, Soft Lilac, and Mint Teal. Components never
- * read the palette directly; they read the semantic layer below it, which says
- * what a colour is for. Re-tuning a hue happens once, in the palette, and a
- * change of meaning happens once, in the semantic layer.
+ * Two layers. The palette is the brand, built around one colour, Print-cess
+ * Crimson (#cc383a): Crimson, Warm Ink, Warm Paper, Soft Blush, and Sage.
+ * Components never read the palette directly; they read the semantic layer
+ * below it, which says what a colour is for. Re-tuning a hue happens once, in
+ * the palette, and a change of meaning happens once, in the semantic layer.
+ *
+ * Every neutral carries a trace of the crimson's warmth (hue 350-20), so ink,
+ * lines and paper read as one family with the brand instead of the cold,
+ * blue-violet greys a stock palette would bring. The only hues outside the
+ * reds are Sage (success, hue ~110) and Amber (warning, hue ~33). Both sit far
+ * from crimson's complement (cyan-teal, hue ~179), which is never used: a
+ * complementary pair vibrates next to the brand and reads as a second brand.
  *
  * Every text pairing below is measured, not assumed (WCAG 2.2 AA):
- *   text-primary   on background  15.3:1   brand          on surface     6.3:1
- *   text-secondary on surface     10.8:1   text-brand     on brand-soft  6.4:1
- *   text-muted     on background   6.2:1   success        on success-bg  5.0:1
- *   on-brand       on brand        6.3:1   destructive    on danger-bg   6.0:1
+ *   text-primary   on background  15.0:1   brand          on surface     5.0:1
+ *   text-secondary on surface      9.9:1   text-brand     on brand-soft  5.7:1
+ *   text-muted     on background   5.5:1   success        on success-bg  5.6:1
+ *   on-brand       on brand        5.0:1   destructive    on danger-bg   7.8:1
  *   border-strong  on surface      3.4:1   warning        on warning-bg  4.8:1
- * Mint Teal itself (#14b8a6) is 2.5:1 on white, so it is a fill and an accent,
- * never the colour of text; success text uses its deeper step.
+ * Sage itself (#6a9a5b) is 3.3:1 on white, so it is a fill and an accent, never
+ * the colour of text; success text uses its deeper step.
+ *
+ * Destructive is a deep wine, not a second crimson. It is darker (8.7:1 on
+ * white against the brand's 5.0:1) and only ever an outlined control, so a
+ * delete never looks like the screen's one primary action.
  *
  * The product is deliberately light-only. The kiosk is a controlled public
  * display, managed workstations run fixed themes, and the phone visit is a
@@ -23,92 +34,92 @@
  */
 :root {
   /* Palette ---------------------------------------------------------------- */
-  --pc-indigo-50: #f5f3ff;
-  --pc-indigo-100: #e9e5ff; /* Soft Lilac */
-  --pc-indigo-200: #d6d0fe;
-  --pc-indigo-300: #b4abf5;
-  --pc-indigo-400: #7c73ec;
-  --pc-indigo-600: #4f46e5; /* Royal Indigo */
-  --pc-indigo-700: #4338ca;
-  --pc-indigo-800: #3730a3;
-  --pc-navy-950: #0d0b26;
-  --pc-navy-900: #1e1b4b; /* Ink Navy */
-  --pc-navy-700: #3b3a5c;
-  --pc-navy-500: #5d5b7a;
-  --pc-navy-400: #8a87ab;
-  --pc-navy-200: #dcdbea;
-  --pc-navy-100: #eceef6;
-  --pc-paper: #f8fafc; /* Paper White */
+  --pc-crimson-50: #fef3f3;
+  --pc-crimson-100: #fde4e4; /* Soft Blush */
+  --pc-crimson-200: #f9c6c7;
+  --pc-crimson-300: #f0999b;
+  --pc-crimson-400: #e2686a;
+  --pc-crimson-600: #cc383a; /* Print-cess Crimson */
+  --pc-crimson-700: #a82b2d;
+  --pc-crimson-800: #8a2224;
+  --pc-ink-950: #1c1415;
+  --pc-ink-900: #2b1f21; /* Warm Ink */
+  --pc-ink-700: #4d4042;
+  --pc-ink-500: #6f6264;
+  --pc-ink-400: #958789;
+  --pc-ink-200: #e7dfdf;
+  --pc-ink-100: #f3eeed;
+  --pc-paper: #faf8f7; /* Warm Paper */
   --pc-white: #ffffff;
-  --pc-mint-300: #5eead4;
-  --pc-mint-500: #14b8a6; /* Mint Teal */
-  --pc-mint-700: #0f766e;
-  --pc-mint-50: #e7f8f5;
+  --pc-sage-300: #b5d6a3;
+  --pc-sage-500: #6a9a5b; /* Sage */
+  --pc-sage-700: #3f6b38;
+  --pc-sage-50: #eef5ea;
   --pc-amber-300: #fcd34d;
   --pc-amber-700: #a15c07;
   --pc-amber-50: #fff6e5;
-  --pc-red-700: #b42318;
-  --pc-red-800: #912018;
-  --pc-red-200: #f5b5b0;
-  --pc-red-50: #fef1f1;
+  --pc-wine-700: #8e1f3c;
+  --pc-wine-800: #731831;
+  --pc-wine-200: #ecbccb;
+  --pc-wine-50: #fcf0f3;
 
   /* Surfaces ------------------------------------------------------------- */
   --pc-background: var(--pc-paper);
   --pc-surface: var(--pc-white);
   --pc-surface-raised: var(--pc-white);
-  --pc-surface-sunken: var(--pc-navy-100);
-  --pc-surface-brand: var(--pc-indigo-100);
-  --pc-surface-brand-subtle: var(--pc-indigo-50);
-  /* The camera viewfinder is the only dark surface in the product. */
-  --pc-surface-inverse: var(--pc-navy-900);
-  --pc-surface-inverse-deep: var(--pc-navy-950);
+  --pc-surface-sunken: var(--pc-ink-100);
+  --pc-surface-brand: var(--pc-crimson-100);
+  --pc-surface-brand-subtle: var(--pc-crimson-50);
+  /* The camera viewfinder and the one trust band are the only dark surfaces. */
+  --pc-surface-inverse: var(--pc-ink-900);
+  --pc-surface-inverse-deep: var(--pc-ink-950);
 
   /* Text ----------------------------------------------------------------- */
-  --pc-text-primary: var(--pc-navy-900);
-  --pc-text-secondary: var(--pc-navy-700);
-  --pc-text-muted: var(--pc-navy-500);
-  --pc-text-brand: var(--pc-indigo-700);
+  --pc-text-primary: var(--pc-ink-900);
+  --pc-text-secondary: var(--pc-ink-700);
+  --pc-text-muted: var(--pc-ink-500);
+  --pc-text-brand: var(--pc-crimson-700);
   --pc-text-on-brand: var(--pc-white);
   --pc-text-on-inverse: var(--pc-white);
-  --pc-text-on-inverse-muted: #c9c7e3;
+  --pc-text-on-inverse-muted: #d9cdce;
 
   /* Lines ---------------------------------------------------------------- */
-  --pc-border: var(--pc-navy-200);
-  --pc-border-strong: var(--pc-navy-400);
+  --pc-border: var(--pc-ink-200);
+  --pc-border-strong: var(--pc-ink-400);
 
   /* Action --------------------------------------------------------------- */
-  --pc-brand: var(--pc-indigo-600);
-  --pc-brand-hover: var(--pc-indigo-700);
-  --pc-brand-active: var(--pc-indigo-800);
-  --pc-brand-muted: var(--pc-indigo-300);
-  --pc-brand-tint: var(--pc-indigo-400);
+  --pc-brand: var(--pc-crimson-600);
+  --pc-brand-hover: var(--pc-crimson-700);
+  --pc-brand-active: var(--pc-crimson-800);
+  --pc-brand-muted: var(--pc-crimson-300);
+  --pc-brand-tint: var(--pc-crimson-400);
   --pc-selected: var(--pc-surface-brand);
-  --pc-disabled-surface: var(--pc-navy-100);
-  --pc-disabled-text: var(--pc-navy-500);
+  --pc-disabled-surface: var(--pc-ink-100);
+  --pc-disabled-text: var(--pc-ink-500);
 
   /* State. The sentence carries the state; these are the second channel. -- */
-  --pc-success: var(--pc-mint-700);
-  --pc-success-accent: var(--pc-mint-500);
-  --pc-success-surface: var(--pc-mint-50);
+  --pc-success: var(--pc-sage-700);
+  --pc-success-accent: var(--pc-sage-500);
+  --pc-success-surface: var(--pc-sage-50);
   --pc-warning: var(--pc-amber-700);
   --pc-warning-surface: var(--pc-amber-50);
   --pc-warning-on-inverse: var(--pc-amber-300);
-  --pc-destructive: var(--pc-red-700);
-  --pc-destructive-hover: var(--pc-red-800);
-  --pc-destructive-border: var(--pc-red-200);
-  --pc-destructive-surface: var(--pc-red-50);
+  --pc-destructive: var(--pc-wine-700);
+  --pc-destructive-hover: var(--pc-wine-800);
+  --pc-destructive-border: var(--pc-wine-200);
+  --pc-destructive-surface: var(--pc-wine-50);
   /* The journey of one document. In flight is the brand's own "working" hue,
      finished is the success hue; neither borrows the warning colour. */
   --pc-upload-active: var(--pc-brand);
   --pc-transfer-active: var(--pc-brand);
   --pc-printing: var(--pc-brand);
   --pc-completed: var(--pc-success-accent);
-  --pc-detect-on-inverse: var(--pc-mint-300);
+  --pc-detect-on-inverse: var(--pc-sage-300);
 
-  /* Focus. Indigo on white is 6.3:1 and the 3px gap keeps it apart from an
-     indigo control, so the ring is visible on every light surface. -------- */
-  --pc-focus-ring: var(--pc-indigo-600);
-  --pc-focus-ring-on-inverse: var(--pc-indigo-200);
+  /* Focus. Crimson on white is 5.0:1 and the 3px gap keeps it apart from a
+     crimson control, so the ring is visible on every light surface. ------- */
+  --pc-focus-ring: var(--pc-crimson-600);
+  --pc-focus-ring-on-inverse: var(--pc-crimson-200);
 
   /* Type ----------------------------------------------------------------- */
   --pc-font-sans:
@@ -129,11 +140,12 @@
   --pc-radius-xl: 28px;
   --pc-radius-pill: 999px;
 
-  /* Depth: one soft shadow for a raised card, one for a sheet. ----------- */
-  --pc-shadow-sm: 0 1px 2px rgb(30 27 75 / 6%), 0 2px 8px rgb(30 27 75 / 5%);
-  --pc-shadow-md: 0 1px 2px rgb(30 27 75 / 5%), 0 12px 32px rgb(30 27 75 / 8%);
-  --pc-shadow-lg: 0 -16px 48px rgb(30 27 75 / 20%);
-  --pc-scrim: rgb(30 27 75 / 55%);
+  /* Depth: one soft shadow for a raised card, one for a sheet. Shadows are
+     tinted with the warm ink, never grey-blue. ---------------------------- */
+  --pc-shadow-sm: 0 1px 2px rgb(43 31 33 / 6%), 0 2px 8px rgb(43 31 33 / 5%);
+  --pc-shadow-md: 0 1px 2px rgb(43 31 33 / 5%), 0 12px 32px rgb(43 31 33 / 8%);
+  --pc-shadow-lg: 0 -16px 48px rgb(43 31 33 / 20%);
+  --pc-scrim: rgb(43 31 33 / 55%);
 
   /* Motion --------------------------------------------------------------- */
   --pc-ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -237,6 +249,9 @@ summary:focus-visible,
   gap: 9px;
 }
 .pc-wordmark strong {
+  /* Pathway Extreme, supplied by the app through next/font as --pc-font-logo.
+     Where the app does not supply it the wordmark keeps the body face. */
+  font-family: var(--pc-font-logo, var(--pc-font-sans));
   /* The hyphen is part of the name, not a place to break it. */
   white-space: nowrap;
   font-size: 30px;
@@ -276,10 +291,25 @@ summary:focus-visible,
   font-weight: 600;
   letter-spacing: 0;
 }
+/* Pathway Extreme is wide, so on a phone the full lockup stacks the
+   endorsement under the name too. Without this a header that puts a control
+   beside the wordmark pushes the page wider than the screen. */
+@media (max-width: 480px) {
+  .pc-wordmark > span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .pc-wordmark small {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+}
 
 /* --- Buttons --------------------------------------------------------------
-   One primary per screen, solid indigo. Secondary is a white control with a
-   visible edge. Tertiary is a text action. Destructive is only ever red. */
+   One primary per screen, solid crimson. Secondary is a white control with a
+   visible edge. Tertiary is a text action. Destructive is only ever an outlined wine control. */
 
 .pc-button {
   display: inline-flex;
@@ -322,7 +352,7 @@ summary:focus-visible,
 .pc-button--primary {
   background: var(--pc-brand);
   color: var(--pc-text-on-brand);
-  box-shadow: 0 1px 2px rgb(30 27 75 / 12%);
+  box-shadow: 0 1px 2px rgb(43 31 33 / 12%);
 }
 .pc-button--primary:hover:not(:disabled) {
   background: var(--pc-brand-hover);
@@ -365,7 +395,7 @@ summary:focus-visible,
 }
 
 /* --- Step indicator ------------------------------------------------------
-   A segmented bar: finished and current segments are indigo, the rest wait. */
+   A segmented bar: finished and current segments are crimson, the rest wait. */
 
 .pc-progress {
   display: grid;
@@ -503,7 +533,7 @@ summary:focus-visible,
 }
 
 /* --- Beacon ----------------------------------------------------------------
-   Solid Royal Indigo with a white sheet holding the mark, drawn in the same
+   Solid Crimson with a white sheet holding the mark, drawn in the same
    scan-frame corners as the QR code. No gradient, no shadow, no motion: it is
    recognised by shape and colour from across a room. The same tile is shown on
    the phone and on the shared display, so keep both on this one rule. */

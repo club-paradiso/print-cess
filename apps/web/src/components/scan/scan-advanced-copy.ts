@@ -36,7 +36,7 @@ const en: AdvancedScanCopy = {
 
 const ko: AdvancedScanCopy = {
   adjustCrop: "문서 영역 조정",
-  autoCrop: "다시 자동 인식",
+  autoCrop: "자동으로 다시 찾기",
   apply: "적용",
   cancel: "취소",
   filter: "문서 보정",
