@@ -1,0 +1,709 @@
+/* /promo is a separate marketing page. It reads the semantic tokens from
+   packages/ui and defines no colour of its own; the film sits behind a solid
+   panel so copy never depends on what the film shows. */
+
+.page {
+  background: var(--pc-background);
+  color: var(--pc-text-primary);
+  font-family: var(--pc-font-sans);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  min-height: 100dvh;
+}
+
+.page :where(a, button):focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: 16px;
+  top: -80px;
+  z-index: 10;
+  padding: 12px 16px;
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+  font-weight: 700;
+}
+.skip:focus {
+  top: 12px;
+}
+
+/* --- Header ----------------------------------------------------------- */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 72px;
+  padding: 8px max(16px, calc((100% - 1120px) / 2));
+  background: var(--pc-surface);
+  border-bottom: 1px solid var(--pc-border);
+}
+.brand {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+}
+.nav {
+  display: flex;
+  gap: 4px;
+}
+.nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: var(--pc-radius-pill);
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+}
+.nav a:hover {
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand);
+}
+@media (max-width: 480px) {
+  .nav a:nth-child(2) {
+    display: none;
+  }
+}
+
+/* --- Hero ------------------------------------------------------------- */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: max(640px, calc(100svh - 72px));
+  max-height: 880px;
+  padding: 16px max(16px, calc((100% - 1120px) / 2)) 24px;
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+  overflow: hidden;
+}
+.film {
+  position: absolute;
+  inset: 0;
+}
+.scene {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.scene[data-active="true"] {
+  opacity: 1;
+}
+.still,
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.video[data-ready="true"] {
+  opacity: 1;
+}
+.filmBar {
+  position: absolute;
+  top: 16px;
+  right: max(16px, calc((100% - 1120px) / 2));
+  left: max(16px, calc((100% - 1120px) / 2));
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  pointer-events: none;
+}
+.filmNote {
+  margin: 0;
+  max-width: 28em;
+  padding: 8px 12px;
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+  font-size: 13px;
+  line-height: 1.4;
+}
+.filmButton {
+  flex: none;
+  white-space: nowrap;
+  pointer-events: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 2px solid var(--pc-text-on-inverse);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.filmButton:hover {
+  background: var(--pc-surface-inverse-deep);
+}
+.filmBar :where(button):focus-visible {
+  outline-color: var(--pc-focus-ring-on-inverse);
+}
+.heroCopy {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 560px);
+  padding: clamp(20px, 4vw, 36px);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+}
+.heroCopy :where(a):focus-visible {
+  outline-color: var(--pc-focus-ring-on-inverse);
+}
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--pc-text-on-inverse-muted);
+  font-size: 15px;
+  font-weight: 650;
+}
+.heroCopy h1 {
+  margin: 0 0 14px;
+  font-size: clamp(30px, 7.6vw, 46px);
+  line-height: 1.16;
+  letter-spacing: var(--pc-tracking-tight);
+  font-weight: 850;
+}
+.heroLead {
+  margin: 0 0 22px;
+  color: var(--pc-text-on-inverse);
+  font-size: 18px;
+  line-height: 1.55;
+}
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.heroStatus {
+  margin: 18px 0 0;
+  color: var(--pc-text-on-inverse-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .hero {
+    min-height: max(760px, calc(100svh - 72px));
+  }
+}
+
+/* --- Buttons ---------------------------------------------------------- */
+.primary,
+.secondary,
+.secondaryOnDark,
+.tertiary,
+.navButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 56px;
+  padding: 0 22px;
+  border: 2px solid transparent;
+  border-radius: var(--pc-radius-md);
+  font: inherit;
+  font-size: 17px;
+  font-weight: 720;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.primary {
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+}
+.primary:hover {
+  background: var(--pc-brand-hover);
+}
+.primary:active {
+  background: var(--pc-brand-active);
+}
+.heroCopy .primary {
+  border-color: var(--pc-text-on-inverse);
+}
+.secondary,
+.navButton {
+  background: var(--pc-surface);
+  border-color: var(--pc-border-strong);
+  color: var(--pc-text-primary);
+}
+.secondary:hover,
+.navButton:hover:not(:disabled) {
+  background: var(--pc-surface-brand-subtle);
+  border-color: var(--pc-brand);
+}
+.secondaryOnDark {
+  background: transparent;
+  border-color: var(--pc-text-on-inverse);
+  color: var(--pc-text-on-inverse);
+}
+.secondaryOnDark:hover {
+  background: var(--pc-surface-inverse-deep);
+}
+.tertiary {
+  min-height: 48px;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--pc-text-brand);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.navButton {
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 15px;
+}
+.navButton:disabled {
+  background: var(--pc-disabled-surface);
+  border-color: transparent;
+  color: var(--pc-disabled-text);
+  cursor: not-allowed;
+}
+
+/* --- Sections --------------------------------------------------------- */
+.section {
+  width: min(100% - 32px, 1120px);
+  margin: 0 auto;
+  padding: clamp(48px, 9vw, 96px) 0 0;
+  scroll-margin-top: 8px;
+}
+.sectionHead {
+  max-width: 680px;
+  margin-bottom: 28px;
+}
+.sectionHead h2 {
+  margin: 0 0 12px;
+  font-size: var(--pc-text-title);
+  line-height: 1.2;
+  letter-spacing: var(--pc-tracking-tight);
+  font-weight: 850;
+}
+.sectionHead p {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: var(--pc-text-body);
+  line-height: 1.6;
+}
+
+/* --- How it works ----------------------------------------------------- */
+.demo {
+  display: grid;
+  gap: 24px;
+  align-items: start;
+}
+@media (min-width: 860px) {
+  .demo {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 40px;
+  }
+}
+.stepList {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.stepButton {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  width: 100%;
+  padding: 18px;
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.stepButton:hover {
+  border-color: var(--pc-brand);
+}
+.stepButton[aria-current="step"] {
+  border-color: var(--pc-brand);
+  background: var(--pc-selected);
+}
+.stepNumber {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+  font-weight: 800;
+}
+.stepText {
+  display: grid;
+  gap: 4px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--pc-text-secondary);
+}
+.stepText strong {
+  color: var(--pc-text-primary);
+  font-size: 19px;
+}
+.stage {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 20px;
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-sunken);
+}
+.stageScreen {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+}
+.stageCaption {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  text-align: center;
+}
+.stageNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.stageCount {
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  font-weight: 650;
+}
+.device {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 320px);
+  padding: 22px;
+  border: 2px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-md);
+}
+.deviceKiosk {
+  width: min(100%, 400px);
+  justify-items: center;
+  text-align: center;
+}
+.deviceLabel {
+  margin: 0;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  font-weight: 700;
+}
+.deviceStrong {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.deviceMuted {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.deviceFinder {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+}
+.qrBox {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 168px;
+  height: 168px;
+  color: var(--pc-text-primary);
+}
+.qrBox svg:first-child {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: var(--pc-brand);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.fakeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  padding: 0 16px;
+  border: 2px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-md);
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+}
+.fakeButton[data-primary="true"] {
+  border-color: var(--pc-brand);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+}
+.sheet {
+  display: block;
+  height: 120px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-sm);
+  background: var(--pc-surface-sunken);
+}
+.tryBox {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+  padding: clamp(20px, 4vw, 32px);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-brand);
+}
+.tryBox h3 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+.tryBox p {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  line-height: 1.6;
+}
+.tryActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+@media (min-width: 860px) {
+  .tryBox {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+}
+
+/* --- More ------------------------------------------------------------- */
+.cards {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  box-shadow: var(--pc-shadow-sm);
+}
+.card h3 {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 850;
+}
+.cardIcon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.cardBody {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.55;
+}
+.cardLabel {
+  margin: 8px 0 0;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  font-weight: 750;
+}
+.conditions {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding-inline-start: 20px;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.cardActions {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+/* --- Trust ------------------------------------------------------------ */
+.status {
+  display: grid;
+  gap: 10px;
+  padding: 24px;
+  border: 2px solid var(--pc-warning);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-warning-surface);
+}
+.status h3 {
+  margin: 0;
+  font-size: 22px;
+}
+.status p {
+  margin: 0;
+  line-height: 1.6;
+}
+.points {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 760px) {
+  .points {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.points li {
+  display: flex;
+  gap: 14px;
+  padding: 20px;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  color: var(--pc-text-brand);
+}
+.points svg {
+  flex: none;
+  margin-top: 3px;
+}
+.points h3 {
+  margin: 0 0 4px;
+  color: var(--pc-text-primary);
+  font-size: 19px;
+}
+.points p {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.limits {
+  margin-top: 16px;
+  padding: 24px;
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-sunken);
+}
+.limits h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px;
+  font-size: 20px;
+}
+.limits ul {
+  display: grid;
+  gap: 10px;
+  margin: 0 0 14px;
+  padding-inline-start: 20px;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  color: var(--pc-text-brand);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+/* --- Footer ----------------------------------------------------------- */
+.footer {
+  margin-top: clamp(48px, 9vw, 96px);
+  padding: 40px 16px max(40px, env(safe-area-inset-bottom));
+  background: var(--pc-surface);
+  border-top: 1px solid var(--pc-border);
+}
+.footerInner {
+  display: grid;
+  gap: 24px;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+}
+@media (min-width: 860px) {
+  .footerInner {
+    grid-template-columns: 1fr auto;
+    align-items: start;
+  }
+}
+.footerNote {
+  max-width: 440px;
+  margin: 12px 0 0;
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.footerLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footerLinks a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--pc-text-brand);
+  font-weight: 650;
+  text-underline-offset: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene,
+  .video {
+    transition: none;
+  }
+}
