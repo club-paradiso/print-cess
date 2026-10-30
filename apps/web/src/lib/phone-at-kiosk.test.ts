@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { decideRoot, hasKioskPin, isPhoneRequest, isPhoneScreen } from "./phone-at-kiosk";
+import { decideRoot, hasKioskPin, isNonDesktopRequest, isNonDesktopScreen } from "./phone-at-kiosk";
 
 const IPHONE =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
@@ -9,6 +9,8 @@ const ANDROID_PHONE =
 const ANDROID_TABLET =
   "Mozilla/5.0 (Linux; Android 15; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
 const IPAD =
+  "Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
+const IPAD_DESKTOP_MODE =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
 const WINDOWS =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
@@ -17,29 +19,28 @@ function headers(values: Record<string, string>) {
   return new Headers(values);
 }
 
-describe("isPhoneRequest", () => {
+describe("isNonDesktopRequest", () => {
   it.each([
     ["iPhone", IPHONE],
     ["Android phone", ANDROID_PHONE],
+    ["Android tablet without Mobile token", ANDROID_TABLET],
+    ["iPad", IPAD],
     ["Firefox for Android", "Mozilla/5.0 (Android 15; Mobile; rv:131.0) Gecko/131.0 Firefox/131.0"],
-  ])("treats %s as a phone", (_name, agent) => {
-    expect(isPhoneRequest(headers({ "user-agent": agent }))).toBe(true);
+  ])("redirects %s to the guide", (_name, agent) => {
+    expect(isNonDesktopRequest(headers({ "user-agent": agent }))).toBe(true);
   });
 
   it.each([
-    ["Android tablet", ANDROID_TABLET],
-    ["iPad (desktop user agent)", IPAD],
+    ["iPad disguised as macOS (handled by client)", IPAD_DESKTOP_MODE],
     ["Windows kiosk PC", WINDOWS],
     ["no user agent", ""],
-  ])("keeps %s on the kiosk", (_name, agent) => {
-    expect(isPhoneRequest(headers({ "user-agent": agent }))).toBe(false);
+  ])("leaves %s to the client-side check", (_name, agent) => {
+    expect(isNonDesktopRequest(headers({ "user-agent": agent }))).toBe(false);
   });
 
-  it("trusts the mobile client hint", () => {
-    expect(isPhoneRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?1" }))).toBe(true);
-    expect(isPhoneRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?0" }))).toBe(
-      false,
-    );
+  it("honors the mobile client hint", () => {
+    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?1" }))).toBe(true);
+    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?0" }))).toBe(false);
   });
 });
 
@@ -54,25 +55,29 @@ describe("hasKioskPin", () => {
 
 describe("decideRoot", () => {
   const phone = headers({ "user-agent": IPHONE });
+  const tablet = headers({ "user-agent": ANDROID_TABLET });
+  const ipad = headers({ "user-agent": IPAD });
   const pc = headers({ "user-agent": WINDOWS });
-  const pinnedPhone = headers({ "user-agent": IPHONE, cookie: "pc_kiosk=1" });
+  const pinnedTablet = headers({ "user-agent": ANDROID_TABLET, cookie: "pc_kiosk=1" });
   const params = (query = "") => new URLSearchParams(query);
 
-  it("sends a phone to the guide and keeps a PC on the kiosk", () => {
-    expect(decideRoot({ searchParams: params(), headers: phone })).toEqual({ kind: "phone-guide" });
+  it("sends phones and tablets to /start while keeping a desktop on /", () => {
+    for (const device of [phone, tablet, ipad]) {
+      expect(decideRoot({ searchParams: params(), headers: device })).toEqual({ kind: "phone-guide" });
+    }
     expect(decideRoot({ searchParams: params(), headers: pc })).toEqual({ kind: "kiosk" });
   });
 
-  it("pins with ?kiosk=1 and then stays on the kiosk", () => {
-    expect(decideRoot({ searchParams: params("kiosk=1"), headers: phone })).toEqual({
+  it("pins touchscreen stations with ?kiosk=1", () => {
+    expect(decideRoot({ searchParams: params("kiosk=1"), headers: tablet })).toEqual({
       kind: "kiosk",
       pin: "set",
     });
-    expect(decideRoot({ searchParams: params(), headers: pinnedPhone })).toEqual({ kind: "kiosk" });
+    expect(decideRoot({ searchParams: params(), headers: pinnedTablet })).toEqual({ kind: "kiosk" });
   });
 
-  it("unpins with ?kiosk=0", () => {
-    expect(decideRoot({ searchParams: params("kiosk=0"), headers: pinnedPhone })).toEqual({
+  it("unpins with ?kiosk=0 and redirects the newly unpinned tablet", () => {
+    expect(decideRoot({ searchParams: params("kiosk=0"), headers: pinnedTablet })).toEqual({
       kind: "phone-guide",
       pin: "clear",
     });
@@ -82,25 +87,35 @@ describe("decideRoot", () => {
     });
   });
 
-  it("shows the big screen once for ?view=kiosk without pinning", () => {
-    expect(decideRoot({ searchParams: params("view=kiosk"), headers: phone })).toEqual({
-      kind: "kiosk",
-    });
+  it("shows the kiosk once with ?view=kiosk without pinning", () => {
+    for (const device of [phone, tablet, ipad]) {
+      expect(decideRoot({ searchParams: params("view=kiosk"), headers: device })).toEqual({
+        kind: "kiosk",
+      });
+    }
   });
 });
 
-describe("isPhoneScreen", () => {
-  it("treats a phone as a phone in either orientation", () => {
-    expect(isPhoneScreen({ width: 393, height: 852 }, true)).toBe(true);
-    expect(isPhoneScreen({ width: 852, height: 393 }, true)).toBe(true);
+describe("isNonDesktopScreen", () => {
+  it("redirects touch phones and tablets in either orientation", () => {
+    for (const screen of [
+      { width: 393, height: 852 },
+      { width: 852, height: 393 },
+      { width: 744, height: 1133 },
+      { width: 1133, height: 744 },
+      { width: 800, height: 1280 },
+      { width: 1024, height: 1366 },
+      { width: 1032, height: 1376 },
+    ]) {
+      expect(isNonDesktopScreen(screen, true)).toBe(true);
+    }
   });
 
-  it("keeps tablets, including an iPad mini in portrait, on the kiosk", () => {
-    expect(isPhoneScreen({ width: 744, height: 1133 }, true)).toBe(false);
-    expect(isPhoneScreen({ width: 800, height: 1280 }, true)).toBe(false);
+  it("does not redirect a mouse-driven small desktop window", () => {
+    expect(isNonDesktopScreen({ width: 390, height: 844 }, false)).toBe(false);
   });
 
-  it("never redirects a mouse-driven screen, however small", () => {
-    expect(isPhoneScreen({ width: 390, height: 844 }, false)).toBe(false);
+  it("keeps large touch displays as kiosks", () => {
+    expect(isNonDesktopScreen({ width: 1280, height: 1920 }, true)).toBe(false);
   });
 });
