@@ -1,8 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { devices, expect, test, type Browser } from "@playwright/test";
 
-// The root address is the big screen beside the printer. A phone that opens it
-// is sent to the visitor guide, told why in one line, and can still look.
+// The root address is the big screen beside the printer. Phones and tablets
+// are sent to the visitor guide, told why in one line, and can still look.
 // Each phone is emulated here rather than through the `iphone` and `android`
 // projects, because the desktop project runs every test too and must see the
 // kiosk at "/".
@@ -82,7 +82,7 @@ test("a phone hiding behind a desktop user agent is caught by its screen", async
   await context.close();
 });
 
-test("an iPad mini in portrait (desktop user agent, touch) keeps the kiosk", async ({
+test("an iPad mini in portrait (desktop user agent, touch) opens the guide", async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -98,9 +98,8 @@ test("an iPad mini in portrait (desktop user agent, touch) keeps the kiosk", asy
   });
   const page = await context.newPage();
   await page.goto("/");
-  await expect(page.locator(".kiosk-qr")).toBeVisible();
-  await page.waitForTimeout(1000);
-  await expect(page).toHaveURL(/\/$/u);
+  await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+  await expect(page.getByRole("button", { name: "Scan QR code" })).toBeVisible();
   await context.close();
 });
 
