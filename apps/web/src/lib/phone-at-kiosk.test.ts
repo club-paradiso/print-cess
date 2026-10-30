@@ -39,8 +39,12 @@ describe("isNonDesktopRequest", () => {
   });
 
   it("honors the mobile client hint", () => {
-    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?1" }))).toBe(true);
-    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?0" }))).toBe(false);
+    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?1" }))).toBe(
+      true,
+    );
+    expect(isNonDesktopRequest(headers({ "user-agent": WINDOWS, "sec-ch-ua-mobile": "?0" }))).toBe(
+      false,
+    );
   });
 });
 
@@ -63,7 +67,9 @@ describe("decideRoot", () => {
 
   it("sends phones and tablets to /start while keeping a desktop on /", () => {
     for (const device of [phone, tablet, ipad]) {
-      expect(decideRoot({ searchParams: params(), headers: device })).toEqual({ kind: "phone-guide" });
+      expect(decideRoot({ searchParams: params(), headers: device })).toEqual({
+        kind: "phone-guide",
+      });
     }
     expect(decideRoot({ searchParams: params(), headers: pc })).toEqual({ kind: "kiosk" });
   });
@@ -73,7 +79,9 @@ describe("decideRoot", () => {
       kind: "kiosk",
       pin: "set",
     });
-    expect(decideRoot({ searchParams: params(), headers: pinnedTablet })).toEqual({ kind: "kiosk" });
+    expect(decideRoot({ searchParams: params(), headers: pinnedTablet })).toEqual({
+      kind: "kiosk",
+    });
   });
 
   it("unpins with ?kiosk=0 and redirects the newly unpinned tablet", () => {
