@@ -1,1 +1,1 @@
-export const QR_COLORS = { dark: "#1e1b4b", light: "#ffffff" } as const;
+export const QR_COLORS = { dark: "#2b1f21", light: "#ffffff" } as const;

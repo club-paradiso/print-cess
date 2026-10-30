@@ -2,12 +2,12 @@
   <title id="title">Print-cess by Club Paradiso</title>
   <defs>
     <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#5b52f0" />
-      <stop offset="1" stop-color="#4338ca" />
+      <stop offset="0" stop-color="#dd4a4c" />
+      <stop offset="1" stop-color="#a82b2d" />
     </linearGradient>
   </defs>
   <rect width="64" height="64" rx="15" fill="url(#tile)" />
-  <path fill="#e9e5ff" d="M32 6.2 35 9.2 32 12.2 29 9.2Z" />
+  <path fill="#fde4e4" d="M32 6.2 35 9.2 32 12.2 29 9.2Z" />
   <path
     fill="#ffffff"
     stroke="#ffffff"
@@ -15,21 +15,21 @@
     stroke-linejoin="round"
     d="M20.5 29V16.5l5.8 4.8 5.7-5.8 5.7 5.8 5.8-4.8V29Z"
   />
-  <rect x="10" y="26.5" width="44" height="21" rx="6.5" fill="#e9e5ff" />
-  <rect x="18" y="26.5" width="28" height="3.2" rx="1.6" fill="#1e1b4b" />
-  <rect x="17" y="39" width="30" height="3.6" rx="1.8" fill="#1e1b4b" />
+  <rect x="10" y="26.5" width="44" height="21" rx="6.5" fill="#fde4e4" />
+  <rect x="18" y="26.5" width="28" height="3.2" rx="1.6" fill="#2b1f21" />
+  <rect x="17" y="39" width="30" height="3.6" rx="1.8" fill="#2b1f21" />
   <path
     fill="#ffffff"
     d="M19.5 40.8h25V53a2.2 2.2 0 0 1-2.2 2.2H21.7a2.2 2.2 0 0 1-2.2-2.2Z"
   />
   <path
     fill="none"
-    stroke="#4f46e5"
+    stroke="#cc383a"
     stroke-width="2.6"
     stroke-linecap="round"
     stroke-linejoin="round"
     d="M24 47.4v-2.4h2.4M40 47.4v-2.4h-2.4M24 49.6V52h2.4M40 49.6V52h-2.4"
   />
-  <path fill="#4f46e5" d="M29.2 46.2h5.6v4.6h-5.6z" />
-  <circle cx="47.6" cy="32.6" r="2.3" fill="#14b8a6" />
+  <path fill="#cc383a" d="M29.2 46.2h5.6v4.6h-5.6z" />
+  <circle cx="47.6" cy="32.6" r="2.3" fill="#6a9a5b" />
 </svg>

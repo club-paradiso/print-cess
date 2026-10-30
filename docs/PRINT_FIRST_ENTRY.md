@@ -73,10 +73,10 @@ promise beyond what the system does.
 
 One marker, shown in two places: on the phone's home page and on the shared display.
 
-- **Look:** the Print-cess mark on a white sheet, inside a solid Royal Indigo rounded tile, wrapped
+- **Look:** the Print-cess mark on a white sheet, inside a solid Crimson rounded tile, wrapped
   in the mark's own four scan-frame corners. No gradient, no shadow, no animation.
 - **Why this shape:** it reuses existing brand parts (the printer mark, the scan frame, Royal
-  Indigo, the white sheet). A visitor matches indigo tile plus corner brackets to the same tile on
+  Crimson, the white sheet). A visitor matches crimson tile plus corner brackets to the same tile on
   the display, so finding the display is a recognition task, not a reading one.
 - **Where:** `Beacon` in `packages/ui` (`pc-beacon` in `packages/ui/src/styles.css`). Home:
   `print-entry__beacon`, with "Look for the screen with this mark." Display: `kiosk-beacon` above
@@ -152,12 +152,21 @@ line of text after it, no FAQ and no accordions.
 
 ## Kiosk display
 
-Since 2026-10-13 the root URL `/` opens the shared display itself (the same screen and
-`?printing=auto` / `?sound=off` switches as `/kiosk`), so a station can simply be pointed at the
-domain. The visitor's guide described in the sections above moved to `/start`, and every "home"
-link (the header name, the 404 page and the workstation page) now points
-there. When the browser kiosk is switched off in Production, `/` redirects to `/start` instead of
-returning 404.
+Since 2026-10-26 the root URL `/` is the visitor's home described in the sections above, and the
+former `/start` address redirects there (307, so it can be undone; the query string and any
+`#environment` fragment carry over). Every "home" link (the header name, the 404 page, the error
+screen's "처음 화면으로" and the workstation page) points to `/`.
+
+The shared display lives at `/kiosk`, which is what the station launcher opens. `/` shows the
+display, with links to the other features, only when its address carries one of the display's own
+switches, `?printing=` or `?sound=`. The choice is made from the address alone, never from screen
+size or the browser, so a phone cannot be shown the display by mistake: the codes phones scan open
+`/s/...`, and nobody types a display switch into a phone. A station pointed at the bare domain with
+no switch now gets the visitor's home, so stations belong at `/kiosk` (or `/?printing=auto`).
+
+From 2026-10-13 to 2026-10-26 the root URL opened the display itself and the visitor's guide lived
+at `/start`. When the browser kiosk is switched off in Production, `/` stays the visitor's home and
+`/kiosk` returns 404, which removes the old `/` to `/start` redirect and any chance of a loop.
 
 `/kiosk` (and `/demo/kiosk`, which shares its screens through
 `apps/web/src/components/kiosk/kiosk-screens.tsx`) is the primary screen of the service, so it was
@@ -166,7 +175,7 @@ redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 - **Waiting.** Left: the Beacon (unlabelled), one headline
   ("휴대전화 카메라로 QR 코드를 비추세요"), English beneath it, the rotating language line, and the
   whole visit as three steps (point the camera, choose files on the phone, take the paper), with
-  the first drawn as current. Right: the QR code on a solid Royal Indigo panel, the largest block
+  the first drawn as current. Right: the QR code on a solid Crimson panel, the largest block
   of colour on the screen, with "사진은 찍지 않아도 돼요" above the code and an emptying bar plus
   the countdown below it. A footer carries the small print (deletion, no sign-up, file types,
   languages). The old green "사용할 수 있어요" banner is gone; a small header pill appears only
@@ -178,7 +187,7 @@ redesigned on 2026-10-13 to be read from a few steps away in a few seconds:
 - **Phone connected.** A stage-specific headline and one-line hint (choose files on the phone /
   receiving / wait at the printer) above a four-station tracker (connected, arriving, checking,
   printing) that marks each station with a word and an icon as well as colour.
-- **Done.** "프린터에서 종이를 가져가세요" on the indigo panel is the loudest thing on the screen; the
+- **Done.** "프린터에서 종이를 가져가세요" on the crimson panel is the loudest thing on the screen; the
   staff download stays the quietest control, and an emptying bar shows when the next QR appears.
 - **Unavailable.** The display retries on its own after 30 seconds, because a shared screen is
   usually unattended; the button stays for anyone who does not want to wait.
@@ -199,7 +208,7 @@ Reviewed on 2026-10-13 for words a first-time visitor could misread. Each change
 | [인쇄하기]를 누르세요                  | 휴대전화의 인쇄 버튼을 누르세요                        | The phone's button reads "파일 N개 인쇄", not "인쇄하기"                                |
 | 작업 만료까지                          | 남은 시간                                              | "작업 만료" is system jargon                                                            |
 | 선택한 파일 N개를 처리했습니다         | 파일 N개를 프린터로 보냈어요 (or 인쇄할 준비를 했어요) | "처리" says nothing about where the paper is                                            |
-| 서버에 보관된 파일은 삭제됐습니다      | 보내신 파일은 모두 지웠어요                            | Visitors do not know or need "서버"                                                     |
+| 서버에 보관된 파일은 삭제됐습니다      | 보낸 파일은 모두 지웠어요                              | Visitors do not know or need "서버"                                                     |
 | 새 QR 코드 만들기 (failure screen)     | 다시 시도하기                                          | The visitor's goal is to retry, not to make a code                                      |
 | 보내신 파일은 삭제됐습니다 (failure)   | (removed)                                              | Often nothing had been sent yet, so it raised a question it did not answer              |
 

@@ -161,7 +161,7 @@ test("the finished screen fits a 1080p kiosk at 150% Windows scaling", async ({
     timeout: 60_000,
   });
 
-  const countdown = page.getByText(/초 후 새 QR 코드$/u);
+  const countdown = page.getByText(/초 뒤 새 QR 코드가 나와요$/u);
   await expect(countdown).toBeVisible();
   const box = await countdown.boundingBox();
   expect(box!.y + box!.height).toBeLessThanOrEqual(720);
@@ -338,7 +338,7 @@ test("the language picker and the guide are available without blocking anything"
   const sheet = mobile.getByRole("dialog");
   await mobile.getByRole("button", { name: "어떻게 쓰나요?" }).click();
   await expect(sheet.getByRole("heading", { name: "지금 무엇을 하면 되나요?" })).toBeVisible();
-  await expect(sheet.getByText("1. QR 코드 스캔하기")).toBeVisible();
+  await expect(sheet.getByText("1. QR 코드 찍기")).toBeVisible();
   await expect(sheet.getByRole("heading", { name: "인쇄할 문서가 어디에 있나요?" })).toBeVisible();
   await expect(sheet.getByText("카카오톡에 있어요", { exact: true })).toBeVisible();
   await expect(sheet.getByText(/직원에게 도움을 요청하세요/u)).toBeVisible();

@@ -6,7 +6,6 @@ import {
   ArrowDownToLine,
   Camera,
   CheckCircle2,
-  CircleHelp,
   Download,
   FileCheck2,
   FileSearch,
@@ -92,13 +91,6 @@ const SERVICES: {
     korean: "문서 스캔",
     english: "Scan a document",
     icon: ScanLine,
-  },
-  {
-    href: "/start",
-    key: "homeStepsLabel",
-    korean: "이용 안내",
-    english: "How it works",
-    icon: CircleHelp,
   },
 ];
 
@@ -288,7 +280,7 @@ export function KioskWaitingScreen({
                 ) : (
                   <small>
                     {locale === "ko"
-                      ? "사진이나 PDF를 고르고 미리 보기를 확인하세요"
+                      ? "사진이나 PDF를 고르고 미리보기를 확인하세요"
                       : translate(locale, "homePrintStepPickBody")}
                     <span lang="en"> · Pick a photo or PDF</span>
                   </small>
@@ -662,7 +654,7 @@ export function CompletedScreen({
         />
         <span className="kiosk-result__reset">
           <LockKeyhole aria-hidden="true" />
-          <span>보내신 파일은 모두 지웠어요 · {remaining}초 후 새 QR 코드</span>
+          <span>보낸 파일은 모두 지웠어요 · {remaining}초 뒤 새 QR 코드가 나와요</span>
         </span>
       </div>
     </main>
@@ -725,7 +717,7 @@ export function UnavailableScreen({
       </button>
       <div className="kiosk-result__footer">
         <span className="kiosk-result__reset">
-          <span>{retryIn}초 후 자동으로 다시 시도해요</span>
+          <span>{retryIn}초 뒤에 자동으로 다시 시도해요</span>
         </span>
       </div>
     </main>

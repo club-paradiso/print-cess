@@ -383,7 +383,7 @@
   color: var(--pc-destructive);
 }
 .drop-file--saving .drop-file__icon {
-  /* The in-flight hue is the brand's own "working" indigo, the same one the
+  /* The in-flight hue is the brand's own "working" crimson, the same one the
      sending phone's progress bar uses, so both ends speak one language. */
   background: var(--pc-transfer-active);
   color: var(--pc-text-on-brand);

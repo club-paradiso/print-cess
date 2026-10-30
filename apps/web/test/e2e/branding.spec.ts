@@ -20,10 +20,10 @@ test("the root URL opens the shared display", async ({ page }) => {
     [/파일 보내기/u, "/send"],
     [/파일 받기/u, "/receive"],
     [/문서 스캔/u, "/scan"],
-    [/이용 안내/u, "/start"],
   ] as const) {
     await expect(more.getByRole("link", { name })).toHaveAttribute("href", href);
   }
+  await expect(more.getByRole("link", { name: /이용 안내/u })).toHaveCount(0);
   await more.getByRole("link", { name: /파일 보내기/u }).click();
   await expect(page).toHaveURL(/\/send$/u);
 });

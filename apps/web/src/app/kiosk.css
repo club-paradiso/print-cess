@@ -5,7 +5,7 @@
 
    The waiting screen reads left to right in the order things happen: where
    you are ("Start printing here"), the one instruction, the whole visit in
-   three steps, then the code itself on an indigo panel that is the brightest
+   three steps, then the code itself on a crimson panel that is the brightest
    thing in the room. Everything is solid colour; the brand shows in the mark,
    the panel, and the scan frame around the code. */
 
@@ -276,7 +276,7 @@
 
 /* --- Waiting: the code --------------------------------------------------------- */
 
-/* The code lives on a solid indigo panel: the one large block of colour on the
+/* The code lives on a solid crimson panel: the one large block of colour on the
    screen, so it is what a visitor's eye lands on from across the room. The
    code itself stays pure ink on white with a quiet zone, which is what a phone
    camera needs, and it never moves. */
@@ -331,7 +331,7 @@
   padding: clamp(14px, 2.2vh, 24px);
   border-radius: var(--pc-radius-xl);
   background: var(--pc-surface-raised);
-  box-shadow: 0 18px 48px rgb(13 11 38 / 28%);
+  box-shadow: 0 18px 48px rgb(28 20 21 / 28%);
 }
 .kiosk-qr__frame img,
 .kiosk-qr__loading {
@@ -916,12 +916,26 @@
   .kiosk-shell {
     padding: 20px;
   }
+  /* Pathway Extreme is wider than the body face, so the full lockup no longer
+     fits one line on a phone. The endorsement stacks under the name, exactly
+     as the compact header lockup does. */
+  .kiosk-header > .pc-wordmark > span {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+  }
+  .kiosk-header > .pc-wordmark small {
+    font-size: 14px;
+  }
   .kiosk-services {
     width: 100%;
   }
   .kiosk-services ul {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .kiosk-services li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
   }
   .kiosk-services a {
     width: 100%;
