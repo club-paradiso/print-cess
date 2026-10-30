@@ -78,6 +78,10 @@ export function HeroFilm() {
   const userPaused = useRef(false);
   const onScreen = useRef(true);
   const stateRef = useRef<FilmState>("waiting");
+  const pickers = useRef<Record<Scene, HTMLButtonElement | null>>({
+    university: null,
+    airport: null,
+  });
 
   const change = useCallback((next: FilmState) => {
     stateRef.current = next;
@@ -157,6 +161,10 @@ export function HeroFilm() {
       };
       const onTime = () => {
         if (activeRef.current !== scene || !Number.isFinite(element.duration)) return;
+        pickers.current[scene]?.style.setProperty(
+          "--progress",
+          String(Math.min(1, element.currentTime / element.duration)),
+        );
         if (element.duration - element.currentTime <= CROSSFADE_SECONDS) {
           show(other);
           start(other);
@@ -243,6 +251,19 @@ export function HeroFilm() {
     resume();
   };
 
+  const pick = (scene: Scene) => {
+    userPaused.current = false;
+    for (const other of SCENES) {
+      if (other !== scene) {
+        videos.current[other]?.pause();
+        pickers.current[other]?.style.setProperty("--progress", "0");
+      }
+    }
+    show(scene);
+    if (stateRef.current === "still") change("paused");
+    start(scene);
+  };
+
   const showControl = state !== "failed" && state !== "waiting";
   const playing = state === "playing";
 
@@ -265,6 +286,23 @@ export function HeroFilm() {
           />
         </div>
       ))}
+      <div className={styles.picker} role="group" aria-label={hero.scenePicker}>
+        {hero.scenes.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            ref={(element) => {
+              pickers.current[id] = element;
+            }}
+            className={styles.pickerButton}
+            aria-pressed={active === id}
+            onClick={() => pick(id)}
+          >
+            <span className={styles.pickerFill} aria-hidden="true" />
+            <span className={styles.pickerLabel}>{label}</span>
+          </button>
+        ))}
+      </div>
       <div className={styles.filmBar}>
         <p className={styles.filmNote}>
           <span className="visually-hidden">{hero.filmLabel}. </span>

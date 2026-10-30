@@ -29,3 +29,20 @@ the portrait crop. The posters come from the first shot of each clip, which has 
 The film is muted and inline, loads after hydration, plays only while visible, and can be
 paused. Reduced motion, data saver and 2G keep the still until the visitor presses play. A
 failed load keeps the still.
+
+## Support section
+
+`/promo#support` can point a visitor to a support destination, but Print-cess never takes a
+payment itself: no card form, no amount field, no name. The destination comes from the server
+environment and is public by design (see `.env.example`):
+
+- `PRINT_CESS_SUPPORT_URL`: an `https` link (GitHub Sponsors, Buy Me a Coffee, ...). Links with
+  credentials, other schemes or a host without a dot are ignored. The button shows the host so
+  the visitor sees where it goes.
+- `PRINT_CESS_SUPPORT_BANK_NAME`, `..._ACCOUNT`, `..._HOLDER`: optional bank transfer; all three
+  must be set and the account holds only digits and hyphens.
+
+With none set, the section says the window is not open yet and offers free ways to help. Support
+never changes a feature or a quota. Before enabling it, the owner should confirm that soliciting
+and receiving support is permitted for Club Paradiso (for example under Korean law on soliciting
+donations) and that the notice about receipts and tax deduction in `promo-copy.ts` is true.

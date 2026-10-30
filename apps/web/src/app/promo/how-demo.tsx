@@ -38,6 +38,7 @@ function KioskFrame() {
 function PhoneFrame({ id }: { id: "choose" | "check" | "done" }) {
   return (
     <div className={`${styles.device} ${styles.devicePhone}`}>
+      <span className={styles.notch} aria-hidden="true" />
       {id === "choose" ? (
         <>
           <p className={styles.deviceStrong}>{screens.chooseTitle}</p>
@@ -69,6 +70,10 @@ function PhoneFrame({ id }: { id: "choose" | "check" | "done" }) {
         <>
           <p className={styles.deviceStrong}>{screens.doneTitle}</p>
           <p className={styles.deviceMuted}>{screens.doneBody}</p>
+          <span className={styles.printerArt} aria-hidden="true">
+            <span className={styles.printerBody} />
+            <span className={styles.printerSheet} />
+          </span>
           <span className={styles.fakeButton}>{screens.doneClose}</span>
         </>
       ) : null}
@@ -114,7 +119,7 @@ export function HowDemo() {
       </ol>
 
       <figure className={styles.stage}>
-        <div className={styles.stageScreen} aria-live="polite">
+        <div className={styles.stageScreen} aria-live="polite" key={index}>
           {frame.id === "kiosk" ? <KioskFrame /> : <PhoneFrame id={frame.id} />}
         </div>
         <figcaption className={styles.stageCaption}>{how.mockNote}</figcaption>

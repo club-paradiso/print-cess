@@ -3,9 +3,9 @@ import { join } from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { footer, hero, more, trust } from "./promo-copy";
+import { faq, footer, hero, more, support, trust } from "./promo-copy";
 
-const everyLine = JSON.stringify({ hero, more, trust, footer });
+const everyLine = JSON.stringify({ hero, more, trust, footer, support, faq });
 
 describe("/promo copy", () => {
   it("never claims a deployment, certification or official status", () => {
