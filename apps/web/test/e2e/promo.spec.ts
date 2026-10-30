@@ -96,6 +96,10 @@ test("the statement band states the three steps and the facts", async ({ page })
     page.getByRole("heading", { level: 2, name: /QR 찍고,\s*고르고,\s*받으면 끝\./u }),
   ).toBeAttached();
   await expect(page.getByText("새로 설치할 앱")).toBeAttached();
+  // The print lines feed out once the line is read.
+  const line = page.locator("#statement-title");
+  await line.scrollIntoViewIfNeeded();
+  await expect(line).toHaveAttribute("data-fed", "true");
 });
 
 test("the trust section says what it is and is not", async ({ page }) => {
