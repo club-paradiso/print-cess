@@ -135,6 +135,10 @@ describe("phones at the kiosk address", () => {
     "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
   const WINDOWS =
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
+  const ANDROID_TABLET =
+    "Mozilla/5.0 (Linux; Android 15; SM-X710) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
+  const IPAD =
+    "Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1";
 
   function request(path: string, agent: string, cookie?: string) {
     return new NextRequest(`https://print-cess.test${path}`, {
@@ -150,11 +154,22 @@ describe("phones at the kiosk address", () => {
     expect(response.headers.get("location")).toBe("https://print-cess.test/start?from=kiosk");
   });
 
-  it("leaves a PC, a pinned station and other paths alone", () => {
+  it("redirects Android tablets and iPads from / before rendering", () => {
+    for (const agent of [ANDROID_TABLET, IPAD]) {
+      const response = proxy(request("/", agent));
+      expect(response.status).toBe(307);
+      expect(response.headers.get("location")).toBe("https://print-cess.test/start?from=kiosk");
+    }
+  });
+
+  it("does not redirect desktop, an opted-in kiosk, /start or functional mobile routes", () => {
     expect(proxy(request("/", WINDOWS)).headers.get("location")).toBeNull();
     expect(proxy(request("/", IPHONE, "pc_kiosk=1")).headers.get("location")).toBeNull();
-    expect(proxy(request("/send", IPHONE)).headers.get("location")).toBeNull();
+    for (const path of ["/start", "/send", "/receive", "/scan", "/s/example", "/api/health"]) {
+      expect(proxy(request(path, ANDROID_TABLET)).headers.get("location")).toBeNull();
+    }
     expect(proxy(request("/?view=kiosk", IPHONE)).headers.get("location")).toBeNull();
+    expect(proxy(request("/?view=kiosk", IPAD)).headers.get("location")).toBeNull();
   });
 
   it("pins a station with ?kiosk=1", () => {
