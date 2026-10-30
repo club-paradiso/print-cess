@@ -239,7 +239,17 @@ export const support = {
   linkCta: "후원하러 가기",
   linkNote:
     "버튼을 누르면 아래 주소의 외부 사이트로 이동해요. 결제는 그 사이트에서 이뤄지고, Print-cess는 결제 정보를 받지 않아요.",
-  bankTitle: "계좌이체",
+  bankTitle: (bank: string) => `${bank} 계좌로 후원하기`,
+  bankCheck: "송금하기 전에 은행, 예금주, 금액을 꼭 확인하세요.",
+  bankName: "은행",
+  bankAccount: "계좌번호",
+  bankHolder: "예금주",
+  tossCta: "토스로 송금하기",
+  tossNote: "휴대전화에서 누르면 토스 앱이 열려요. 금액은 토스에서 직접 정하고 확인해요.",
+  tossQrTitle: "QR로 송금하기",
+  tossQrBody:
+    "컴퓨터로 보고 있다면 휴대전화 카메라로 QR 코드를 찍으세요. 토스가 열리지 않으면 아래 계좌번호를 복사해 송금할 수 있어요.",
+  tossQrAlt: "토스 앱 송금 화면으로 연결되는 QR 코드",
   bankCopy: "계좌번호 복사",
   bankCopied: "복사했어요",
   bankFailed: "복사하지 못했어요. 번호를 직접 선택해 복사하세요.",

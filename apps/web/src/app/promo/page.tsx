@@ -1,8 +1,11 @@
 import { ArrowRight, Check, ChevronDown, ExternalLink, LockKeyhole, Menu, X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import QRCode from "qrcode";
 
 import { Wordmark } from "@print-cess/ui";
+
+import { QR_COLORS } from "@/lib/qr-style";
 
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
@@ -43,8 +46,11 @@ function SectionHead({
   );
 }
 
-export default function PromoPage() {
+export default async function PromoPage() {
   const config = supportConfig();
+  const tossQr = config.toss
+    ? await QRCode.toDataURL(config.toss, { margin: 1, width: 264, color: QR_COLORS })
+    : undefined;
 
   return (
     <div className={styles.page}>
@@ -258,7 +264,7 @@ export default function PromoPage() {
                   ))}
                 </ul>
                 <div className={styles.supportButtons}>
-                  <SupportAction config={config} />
+                  <SupportAction config={config} tossQr={tossQr} />
                 </div>
                 <p className={styles.fine}>{support.fine}</p>
               </div>

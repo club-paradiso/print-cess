@@ -1610,6 +1610,64 @@ details[open] > summary .chevron {
   padding-top: 18px;
   border-top: 1px solid var(--hairline);
 }
+.toss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+  padding: 0 24px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-navy-900);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.toss:hover {
+  background: var(--pc-navy-950);
+}
+.tossQr {
+  display: none;
+  align-items: center;
+  gap: 16px;
+  padding: 14px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--pc-radius-md);
+}
+.tossQr img {
+  flex: none;
+  border-radius: 8px;
+}
+.tossQr strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+@media (min-width: 760px) {
+  .tossQr {
+    display: flex;
+  }
+}
+.bankDetails {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  margin: 4px 0 0;
+}
+.bankDetails div {
+  display: flex;
+  gap: 12px;
+}
+.bankDetails dt {
+  min-width: 64px;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+}
+.bankDetails dd {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+}
 .bank h4 {
   font-size: 17px;
   font-weight: 800;

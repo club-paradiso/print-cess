@@ -52,17 +52,25 @@ failed load keeps the still.
 
 ## Support section
 
-`/promo#support` can point a visitor to a support destination, but Print-cess never takes a
-payment itself: no card form, no amount field, no name. The destination comes from the server
-environment and is public by design (see `.env.example`):
+`/promo#support` points a visitor to support destinations, after the TAPSO site's support hub,
+but Print-cess never takes a payment itself: no card form, no amount field, no name. The
+destinations come from the server environment and are public by design (see `.env.example`); the
+recipient is never written into source code.
 
-- `PRINT_CESS_SUPPORT_URL`: an `https` link (GitHub Sponsors, Buy Me a Coffee, ...). Links with
-  credentials, other schemes or a host without a dot are ignored. The button shows the host so
-  the visitor sees where it goes.
-- `PRINT_CESS_SUPPORT_BANK_NAME`, `..._ACCOUNT`, `..._HOLDER`: optional bank transfer; all three
-  must be set and the account holds only digits and hyphens.
+- `PRINT_CESS_SUPPORT_URL`: an `https` support page (Buy Me a Coffee, GitHub Sponsors, ...).
+  Links with credentials, other schemes or a host without a dot are ignored. The page shows the
+  host so the visitor sees where the button goes.
+- `PRINT_CESS_SUPPORT_BANK_NAME`, `PRINT_CESS_SUPPORT_BANK_ACCOUNT`: bank transfer, with a copy
+  button. `PRINT_CESS_SUPPORT_BANK_HOLDER` is optional, as on TAPSO; the bank app shows the
+  recipient before the visitor confirms.
+- `PRINT_CESS_SUPPORT_TOSS_SEND_URL`: a `supertoss://send` link to the same account. It is used
+  only when its `bank` and `accountNo` match the two values above and it pre-fills no amount
+  (`amount` absent or `0`), the same check TAPSO applies. The page draws its QR on the server for
+  visitors on a computer.
 
-With none set, the section says the window is not open yet and offers free ways to help. Support
-never changes a feature or a quota. Before enabling it, the owner should confirm that soliciting
-and receiving support is permitted for Club Paradiso (for example under Korean law on soliciting
-donations) and that the notice about receipts and tax deduction in `promo-copy.ts` is true.
+The values the TAPSO site uses (Club Paradiso's Buy Me a Coffee page and its 제주은행 account and
+Toss link) are what `/promo` is meant to show. Set them in the Vercel project's environment
+variables; with none set, the section says the window is not open yet and offers free ways to
+help. Support never changes a feature or a quota. Before enabling it in Production, the owner
+should confirm that soliciting support is permitted for Club Paradiso and that the notice about
+receipts and tax deduction in `promo-copy.ts` is true.

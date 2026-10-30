@@ -1,22 +1,31 @@
 import { describe, expect, it } from "vitest";
 
-import { parseSupportUrl, supportConfig } from "./support-config";
+import { parseSupportUrl, parseTossSendUrl, supportConfig } from "./support-config";
+
+const env = (values: Record<string, string>) => values as unknown as NodeJS.ProcessEnv;
+const BANK = {
+  PRINT_CESS_SUPPORT_BANK_NAME: "예시은행",
+  PRINT_CESS_SUPPORT_BANK_ACCOUNT: "0001112223",
+};
+const TOSS =
+  "supertoss://send?amount=0&bank=%EC%98%88%EC%8B%9C%EC%9D%80%ED%96%89&accountNo=0001112223&origin=qr";
 
 describe("supportConfig", () => {
   it("is closed when nothing is configured", () => {
-    expect(supportConfig({} as NodeJS.ProcessEnv)).toEqual({
+    expect(supportConfig(env({}))).toEqual({
       link: undefined,
       bank: undefined,
+      toss: undefined,
       open: false,
     });
   });
 
   it("accepts a plain https link and names its host", () => {
-    const config = supportConfig({
-      PRINT_CESS_SUPPORT_URL: " https://github.com/sponsors/club-paradiso ",
-    } as unknown as NodeJS.ProcessEnv);
+    const config = supportConfig(
+      env({ PRINT_CESS_SUPPORT_URL: " https://buymeacoffee.com/example " }),
+    );
     expect(config.open).toBe(true);
-    expect(config.link?.host).toBe("github.com");
+    expect(config.link?.host).toBe("buymeacoffee.com");
   });
 
   it.each([
@@ -25,19 +34,29 @@ describe("supportConfig", () => {
     "https://user:pass@example.com/",
     "https://localhost/",
     "not a url",
-  ])("rejects %s", (value) => {
+  ])("rejects the link %s", (value) => {
     expect(parseSupportUrl(value)).toBeUndefined();
   });
 
-  it("needs a complete, well-formed bank account", () => {
-    const partial = {
-      PRINT_CESS_SUPPORT_BANK_NAME: "은행",
-      PRINT_CESS_SUPPORT_BANK_ACCOUNT: "123-456-7890",
-    };
-    expect(supportConfig(partial as unknown as NodeJS.ProcessEnv).open).toBe(false);
-    const full = { ...partial, PRINT_CESS_SUPPORT_BANK_HOLDER: "홍길동" };
-    expect(supportConfig(full as unknown as NodeJS.ProcessEnv).bank?.holder).toBe("홍길동");
-    const bad = { ...full, PRINT_CESS_SUPPORT_BANK_ACCOUNT: "<script>" };
-    expect(supportConfig(bad as unknown as NodeJS.ProcessEnv).open).toBe(false);
+  it("opens a bank transfer without a holder, as the TAPSO site does", () => {
+    const config = supportConfig(env(BANK));
+    expect(config.open).toBe(true);
+    expect(config.bank).toEqual({ name: "예시은행", account: "0001112223", holder: "" });
+  });
+
+  it("refuses a malformed account", () => {
+    expect(
+      supportConfig(env({ ...BANK, PRINT_CESS_SUPPORT_BANK_ACCOUNT: "<script>" })).bank,
+    ).toBeUndefined();
+    expect(supportConfig(env({ PRINT_CESS_SUPPORT_BANK_ACCOUNT: "0001112223" })).open).toBe(false);
+  });
+
+  it("shows a Toss link only for the same account and with no amount", () => {
+    expect(supportConfig(env({ ...BANK, PRINT_CESS_SUPPORT_TOSS_SEND_URL: TOSS })).toss).toBe(TOSS);
+    const bank = { name: "예시은행", account: "0001112223" };
+    expect(parseTossSendUrl(TOSS.replace("0001112223", "9999999999"), bank)).toBeUndefined();
+    expect(parseTossSendUrl(TOSS.replace("amount=0", "amount=50000"), bank)).toBeUndefined();
+    expect(parseTossSendUrl("https://toss.me/someone", bank)).toBeUndefined();
+    expect(parseTossSendUrl(TOSS, undefined)).toBeUndefined();
   });
 });
