@@ -38,9 +38,8 @@ export function isNonDesktopRequest(headers: { get(name: string): string | null 
   const agent = headers.get("user-agent") ?? "";
   if (/\b(iPhone|iPod|iPad)\b/i.test(agent)) return true;
   if (/\bAndroid\b/i.test(agent)) return true;
-  if (/\b(Windows Phone|IEMobile|Opera Mini|Kindle|Silk|PlayBook|BlackBerry|Tablet)\b/i.test(agent)) {
-    return true;
-  }
+  if (/\b(Windows Phone|IEMobile|Opera Mini|Kindle|Silk)\b/i.test(agent)) return true;
+  if (/\b(PlayBook|BlackBerry|Tablet)\b/i.test(agent)) return true;
   if (/\bMobile\b/i.test(agent) && /Firefox/i.test(agent)) return true;
   return false;
 }
