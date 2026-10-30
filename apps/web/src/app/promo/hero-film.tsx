@@ -1,6 +1,5 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { hero } from "./promo-copy";
@@ -8,9 +7,9 @@ import styles from "./promo.module.css";
 
 /**
  * - `waiting`: nothing decided yet (also the server render): the still shows.
- * - `still`: reduced motion, data saver or a 2G network; the film loads only
- *   when the visitor presses play.
- * - `playing` / `paused`: the film is loaded.
+ * - `still`: reduced motion, data saver or a 2G network; the film never loads.
+ * - `playing` / `paused`: the film is loaded (paused only while off screen,
+ *   in a hidden tab, or when the browser refused autoplay).
  * - `failed`: a file could not load; the still stays for good.
  */
 type FilmState = "waiting" | "still" | "playing" | "paused" | "failed";
@@ -59,10 +58,11 @@ function Still({ scene, eager }: { scene: Scene; eager: boolean }) {
 }
 
 /**
- * The hero film: two muted clips that fade into one another and loop. It loads
- * after hydration, never on reduced motion, data saver or 2G unless the visitor
- * asks, plays only while on screen and while the tab is visible, and keeps the
- * still when anything fails.
+ * The hero film: two muted clips that fade into one another and loop with no
+ * controls, by the owner's decision. It loads after hydration, never on
+ * reduced motion, data saver or 2G (those visitors keep the still), plays only
+ * while on screen and while the tab is visible, and keeps the still when
+ * anything fails.
  */
 export function HeroFilm({ children }: { children: ReactNode }) {
   const section = useRef<HTMLDivElement | null>(null);
@@ -75,7 +75,6 @@ export function HeroFilm({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState<Record<Scene, boolean>>({ university: false, airport: false });
   const [reducedMotion, setReducedMotion] = useState(false);
   const activeRef = useRef<Scene>("university");
-  const userPaused = useRef(false);
   const onScreen = useRef(true);
   const stateRef = useRef<FilmState>("waiting");
 
@@ -103,7 +102,7 @@ export function HeroFilm({ children }: { children: ReactNode }) {
       if (!element) return;
       element.currentTime = 0;
       void element.play().catch(() => {
-        // Autoplay refused (Low Power Mode, a policy): keep the still, offer the button.
+        // Autoplay refused (Low Power Mode, a policy): the still stays.
         change(element.error ? "failed" : "paused");
       });
     },
@@ -177,7 +176,7 @@ export function HeroFilm({ children }: { children: ReactNode }) {
         return;
       }
       if (stateRef.current === "still") change("paused");
-      if (!userPaused.current && onScreen.current) start(activeRef.current);
+      if (onScreen.current) start(activeRef.current);
     }, 400);
     return () => window.clearTimeout(timer);
   }, [reducedMotion, change, pauseAll, start]);
@@ -246,10 +245,7 @@ export function HeroFilm({ children }: { children: ReactNode }) {
         pauseAll();
         return;
       }
-      if (
-        !userPaused.current &&
-        (stateRef.current === "paused" || stateRef.current === "playing")
-      ) {
+      if (stateRef.current === "paused" || stateRef.current === "playing") {
         resume();
       }
     };
@@ -267,21 +263,6 @@ export function HeroFilm({ children }: { children: ReactNode }) {
       document.removeEventListener("visibilitychange", settle);
     };
   }, [pauseAll, resume]);
-
-  const toggle = () => {
-    if (state === "playing") {
-      userPaused.current = true;
-      pauseAll();
-      change("paused");
-      return;
-    }
-    userPaused.current = false;
-    if (state === "still") change("paused");
-    resume();
-  };
-
-  const showControl = state !== "failed" && state !== "waiting";
-  const playing = state === "playing";
 
   return (
     <div ref={section} className={styles.heroStage} data-state={state}>
@@ -316,16 +297,6 @@ export function HeroFilm({ children }: { children: ReactNode }) {
         <span className="visually-hidden">{hero.filmLabel}. </span>
         {state === "still" && reducedMotion ? hero.stillNote : hero.filmNote}
       </p>
-
-      {/* No visible film controls, by decision: the film is a quiet loop. This
-          one stays for keyboard and screen-reader users (WCAG 2.2.2) and only
-          appears while it has focus. */}
-      {showControl ? (
-        <button type="button" className={styles.focusPause} onClick={toggle}>
-          {playing ? <Pause aria-hidden="true" size={16} /> : <Play aria-hidden="true" size={16} />}
-          {playing ? hero.pause : hero.play}
-        </button>
-      ) : null}
     </div>
   );
 }

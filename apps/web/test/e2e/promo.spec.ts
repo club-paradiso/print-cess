@@ -36,18 +36,13 @@ test("the hero explains Print-cess and plays two muted films", async ({ page }) 
     await expect(videos.nth(index)).toHaveJSProperty("autoplay", false);
   }
   await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
-  // No visible film controls; the one pause button appears on keyboard focus.
-  const pause = page.getByRole("button", { name: "영상 멈추기" });
-  await expect(pause).not.toBeInViewport({ ratio: 0.5 });
-  await pause.focus();
-  await expect(pause).toBeVisible();
-  await page.keyboard.press("Enter");
-  await expect(page.getByRole("button", { name: "영상 재생" })).toBeAttached();
+  // The film runs with no controls of any kind, by the owner's decision.
+  await expect(page.locator("section[aria-labelledby='hero-title'] button")).toHaveCount(0);
 
   expect(errors.filter((text) => !/Failed to load resource/u.test(text))).toEqual([]);
 });
 
-test("reduced motion keeps the still and loads no film until asked", async ({ browser }) => {
+test("reduced motion keeps the still and never loads the film", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   const requested: string[] = [];
@@ -59,12 +54,7 @@ test("reduced motion keeps the still and loads no film until asked", async ({ br
   await expect(page.locator("[data-state='still']")).toHaveCount(1);
   await page.waitForTimeout(1500);
   expect(requested).toEqual([]);
-
-  const play = page.getByRole("button", { name: "영상 재생" });
-  await play.focus();
-  await page.keyboard.press("Enter");
-  await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
-  expect(requested.length).toBeGreaterThan(0);
+  await expect(page.getByText(/움직임을 줄이는 설정이라 사진만 보여요/u)).toBeVisible();
   await context.close();
 });
 

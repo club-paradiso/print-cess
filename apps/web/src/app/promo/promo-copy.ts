@@ -32,8 +32,6 @@ export const hero = {
   statusLink: "개발 현황 보기",
   filmLabel: "대학교 도서관과 공항에서 프린터로 종이를 받는 장면",
   filmNote: "AI로 만든 시연 영상이에요. 실제 장소나 설치 사례가 아니에요.",
-  pause: "영상 멈추기",
-  play: "영상 재생",
   stillNote: "기기에서 움직임을 줄이는 설정이라 사진만 보여요.",
 } as const;
 

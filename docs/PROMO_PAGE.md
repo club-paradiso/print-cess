@@ -48,8 +48,9 @@ the portrait crop. The posters come from the first shot of each clip, which has 
 
 The film is muted and inline, loads after hydration and plays only while visible. The two clips
 hand over through a 1.6 s crossfade and both drift slowly, so the loop reads as one unbroken
-take. There are no visible film controls, by decision; a pause button stays in the page for
-keyboard and screen-reader users (WCAG 2.2.2) and appears only while it has focus. Reduced motion, data saver and 2G keep the still until the visitor presses play. A
+take. There are no film controls at all, by the owner's decision (2026-10-30). This knowingly sets
+aside WCAG 2.2.2 (pause for moving content over five seconds) for this marketing page; visitors
+who ask their device for reduced motion, use data saver or are on 2G get the still and no film. Reduced motion, data saver and 2G keep the still until the visitor presses play. A
 failed load keeps the still.
 
 ## Support section
