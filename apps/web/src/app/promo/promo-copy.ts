@@ -23,12 +23,13 @@ export const nav = {
 
 export const hero = {
   eyebrow: "휴대전화에서 보내고 바로 출력하는 셀프 인쇄",
-  title: "휴대전화 속 문서를 프린터에서 바로 뽑아요",
-  lead: "프린터 옆 화면의 QR 코드를 찍고, 파일을 고르면 한 부가 나와요. 가입도 앱 설치도 필요 없어요.",
+  titleLines: ["휴대전화 속 문서를", "프린터에서 바로 뽑아요"],
+  lead: "QR 코드를 찍고 파일을 고르면, 프린터에서 한 부가 나와요.",
+  gloss: "가입도 앱 설치도 필요 없어요.",
   cta: "사용 방법 보기",
   secondaryCta: "Print-cess 시작하기",
   statusLine: "개발·시연 단계예요. 실제 기관에 설치된 서비스가 아니에요.",
-  chips: ["계정 없이", "앱 설치 없이", "출력하면 삭제", "개발·시연 단계"],
+  statusLink: "개발 현황 보기",
   scenePicker: "장면 고르기",
   previewScene: "화면 예시",
   previewNote: "화면 예시예요. 실제로 인쇄되지 않아요.",
@@ -39,7 +40,7 @@ export const hero = {
     { id: "airport", label: "공항" },
   ],
   filmLabel: "대학교 도서관과 공항에서 프린터로 종이를 받는 장면",
-  filmNote: "시연용 영상이에요. 실제 장소나 설치 사례가 아니에요.",
+  filmNote: "AI로 만든 시연 영상이에요. 실제 장소나 설치 사례가 아니에요.",
   pause: "영상 멈추기",
   play: "영상 재생",
   stillNote: "움직임을 줄이는 설정이라 사진만 보여요.",
@@ -147,7 +148,7 @@ export const more = {
 
 export const trust = {
   id: "trust",
-  title: "믿고 쓸 수 있는지 먼저 알려 드려요",
+  title: "지금은 여기까지 만들었어요",
   statusTitle: "지금은 개발·시연 단계예요",
   statusBody:
     "Print-cess는 아직 실제 개인 문서를 다루도록 승인받은 서비스가 아니에요. 어느 기관에도 설치되어 있지 않고, 인증이나 정식 운영 중이라는 뜻도 아니에요. 시연에는 실제 개인 문서를 쓰지 마세요.",

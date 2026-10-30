@@ -20,6 +20,15 @@ is and is not collected; a FAQ of native disclosure widgets; a support modal tha
 configured destinations (`support-action.tsx`). Not taken: the waitlist form (Print-cess collects no
 contact details), a dark theme (the product is light-only, see `BRAND.md`) and native checkout.
 
+## Typeface
+
+`/promo` self-hosts Pretendard Variable v1.3.9 (SIL OFL 1.1, licence in
+`public/promo/fonts/LICENSE.txt`) as the upstream dynamic subset: 92 `woff2` files split by
+`unicode-range`, so a visitor downloads only the slices the page uses. `pretendard.css` is
+imported by the promo page alone, `font-display: swap` keeps the first paint in the system face,
+and nothing is fetched from a third-party host (the CSP keeps `font-src 'self'`). Product
+screens keep the system font stack that `BRAND.md` asks for.
+
 ## Hero films
 
 Two 10-second clips (a university library and an airport counter), generated with Gemini

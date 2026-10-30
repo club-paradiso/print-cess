@@ -1,7 +1,7 @@
 "use client";
 
 import { Pause, Play } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { hero } from "./promo-copy";
 import styles from "./promo.module.css";
@@ -65,7 +65,7 @@ function Still({ scene, eager }: { scene: Scene; eager: boolean }) {
  * asks, plays only while on screen and while the tab is visible, and keeps the
  * still when anything fails.
  */
-export function HeroFilm() {
+export function HeroFilm({ children }: { children: ReactNode }) {
   const section = useRef<HTMLDivElement | null>(null);
   const videos = useRef<Record<Scene, HTMLVideoElement | null>>({
     university: null,
@@ -136,6 +136,35 @@ export function HeroFilm() {
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
+  }, []);
+
+  // While only film sits under the header, the header turns clear and white.
+  // It turns solid again before the hero copy can slide underneath it.
+  useEffect(() => {
+    const element = section.current;
+    if (!element) return;
+    const root = document.documentElement;
+    const copy = element.querySelector<HTMLElement>("[data-hero-copy]");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const header = 76;
+      const stage = element.getBoundingClientRect();
+      const copyTop = copy?.getBoundingClientRect().top ?? stage.top;
+      root.dataset.promoOverFilm = stage.bottom > header && copyTop > header ? "true" : "";
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) window.cancelAnimationFrame(frame);
+      delete root.dataset.promoOverFilm;
+    };
   }, []);
 
   // Page-wide: the stylesheet drops its own animations too.
@@ -287,86 +316,96 @@ export function HeroFilm() {
   const playing = state === "playing" && !preview;
 
   return (
-    <div ref={section} className={styles.film} data-state={state} data-preview={preview}>
-      {SCENES.map((scene) => (
-        <div key={scene} className={styles.scene} data-active={active === scene} aria-hidden="true">
-          <Still scene={scene} eager={scene === "university"} />
-          <video
-            ref={(element) => {
-              videos.current[scene] = element;
-            }}
-            className={styles.video}
-            data-ready={ready[scene] && state !== "failed" && state !== "still"}
-            muted
-            playsInline
-            preload="none"
-            tabIndex={-1}
-            disablePictureInPicture
-          />
-        </div>
-      ))}
-      <div className={styles.picker} role="group" aria-label={hero.scenePicker}>
-        {hero.scenes.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            ref={(element) => {
-              pickers.current[id] = element;
-            }}
-            className={styles.pickerButton}
-            aria-pressed={!preview && active === id}
-            onClick={() => pick(id)}
-          >
-            <span className={styles.pickerFill} aria-hidden="true" />
-            <span className={styles.pickerLabel}>{label}</span>
-          </button>
+    <div ref={section} className={styles.heroStage} data-state={state} data-preview={preview}>
+      <div className={styles.film} aria-hidden="true">
+        {SCENES.map((scene) => (
+          <div key={scene} className={styles.scene} data-active={active === scene}>
+            <Still scene={scene} eager={scene === "university"} />
+            <video
+              ref={(element) => {
+                videos.current[scene] = element;
+              }}
+              className={styles.video}
+              data-ready={ready[scene] && state !== "failed" && state !== "still"}
+              muted
+              playsInline
+              preload="none"
+              tabIndex={-1}
+              disablePictureInPicture
+            />
+          </div>
         ))}
-        <button
-          type="button"
-          className={styles.pickerButton}
-          aria-pressed={preview}
-          onClick={pickPreview}
-        >
-          <span className={styles.pickerLabel}>{hero.previewScene}</span>
-        </button>
+        <span className={styles.shade} />
       </div>
-      {preview ? (
-        <div className={styles.heroDevice} aria-hidden="true">
-          <Screen id="choose" />
+
+      <div className={styles.heroBody}>
+        <div className={styles.heroCopy} data-hero-copy>
+          {children}
         </div>
-      ) : null}
-      <div className={styles.filmBar}>
-        <p className={styles.filmNote}>
-          <span className="visually-hidden">{hero.filmLabel}. </span>
-          {preview
-            ? hero.previewNote
-            : state === "still" && reducedMotion
-              ? hero.stillNote
-              : hero.filmNote}
-        </p>
-        <div className={styles.filmControls}>
+        {preview ? (
+          <div className={styles.heroDevice} aria-hidden="true">
+            <Screen id="choose" />
+          </div>
+        ) : null}
+      </div>
+
+      <div className={styles.heroBottom}>
+        <div className={styles.picker} role="group" aria-label={hero.scenePicker}>
+          {hero.scenes.map(({ id, label }) => (
+            <button
+              key={id}
+              type="button"
+              ref={(element) => {
+                pickers.current[id] = element;
+              }}
+              className={styles.pickerButton}
+              aria-pressed={!preview && active === id}
+              onClick={() => pick(id)}
+            >
+              <span className={styles.pickerFill} aria-hidden="true" />
+              <span className={styles.pickerLabel}>{label}</span>
+            </button>
+          ))}
           <button
             type="button"
-            className={styles.filmButton}
+            className={`${styles.pickerButton} ${styles.pickerPreview}`}
+            aria-pressed={preview}
+            onClick={pickPreview}
+          >
+            <span className={styles.pickerLabel}>{hero.previewScene}</span>
+          </button>
+        </div>
+        <div className={styles.filmControls}>
+          <p className={styles.credit}>
+            <span className="visually-hidden">{hero.filmLabel}. </span>
+            {preview
+              ? hero.previewNote
+              : state === "still" && reducedMotion
+                ? hero.stillNote
+                : hero.filmNote}
+          </p>
+          <button
+            type="button"
+            className={styles.controlButton}
             aria-pressed={userReduced}
             title={
               systemReduced && !userReduced ? "기기 설정에서 움직임을 줄이고 있어요" : undefined
             }
             onClick={() => setUserReduced((value) => !value)}
           >
-            <span>{userReduced ? hero.motionDefault : hero.motionReduce}</span>
+            {userReduced ? hero.motionDefault : hero.motionReduce}
           </button>
           {showControl ? (
             <button
               type="button"
-              className={styles.filmButton}
+              className={styles.controlButton}
               onClick={toggle}
               aria-label={playing ? hero.pause : hero.play}
             >
               {playing ? (
-                <Pause aria-hidden="true" size={18} />
+                <Pause aria-hidden="true" size={16} />
               ) : (
-                <Play aria-hidden="true" size={18} />
+                <Play aria-hidden="true" size={16} />
               )}
               <span>{playing ? hero.pause : hero.play}</span>
             </button>
