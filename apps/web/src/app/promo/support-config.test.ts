@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { parseSupportUrl, parseTossSendUrl, supportConfig } from "./support-config";
+import {
+  parseSupportUrl,
+  parseTossSendUrl,
+  rejectedSupportKeys,
+  supportConfig,
+} from "./support-config";
 
 const env = (values: Record<string, string>) => values as unknown as NodeJS.ProcessEnv;
 const BANK = {
@@ -58,5 +63,29 @@ describe("supportConfig", () => {
     expect(parseTossSendUrl(TOSS.replace("amount=0", "amount=50000"), bank)).toBeUndefined();
     expect(parseTossSendUrl("https://toss.me/someone", bank)).toBeUndefined();
     expect(parseTossSendUrl(TOSS, undefined)).toBeUndefined();
+  });
+
+  it("accepts values pasted with wrapping quotes", () => {
+    const config = supportConfig(
+      env({
+        PRINT_CESS_SUPPORT_URL: '"https://buymeacoffee.com/example"',
+        PRINT_CESS_SUPPORT_BANK_NAME: "'예시은행'",
+        PRINT_CESS_SUPPORT_BANK_ACCOUNT: '"0001112223"',
+      }),
+    );
+    expect(config.link?.host).toBe("buymeacoffee.com");
+    expect(config.bank?.account).toBe("0001112223");
+  });
+
+  it("names the variables it rejected, never their values", () => {
+    const environment = env({
+      PRINT_CESS_SUPPORT_URL: "PRINT_CESS_SUPPORT_URL",
+      PRINT_CESS_SUPPORT_BANK_NAME: "예시은행",
+      PRINT_CESS_SUPPORT_BANK_ACCOUNT: "not-digits",
+    });
+    expect(rejectedSupportKeys(environment, supportConfig(environment))).toEqual([
+      "PRINT_CESS_SUPPORT_URL",
+      "PRINT_CESS_SUPPORT_BANK_NAME/ACCOUNT",
+    ]);
   });
 });

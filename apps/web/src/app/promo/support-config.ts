@@ -20,8 +20,31 @@ export type SupportConfig = {
   open: boolean;
 };
 
+/** Trims, and drops one pair of wrapping quotes pasted along with a value. */
 function clean(value: string | undefined): string {
-  return (value ?? "").trim();
+  const text = (value ?? "").trim();
+  const quoted = /^(["'])(.*)\1$/su.exec(text);
+  return (quoted?.[2] ?? text).trim();
+}
+
+/** Names of support variables that hold something but were not accepted. Never values. */
+export function rejectedSupportKeys(
+  environment: NodeJS.ProcessEnv,
+  config: SupportConfig,
+): string[] {
+  const set = (key: string) => clean(environment[key]).length > 0;
+  const rejected: string[] = [];
+  if (set("PRINT_CESS_SUPPORT_URL") && !config.link) rejected.push("PRINT_CESS_SUPPORT_URL");
+  if (
+    (set("PRINT_CESS_SUPPORT_BANK_NAME") || set("PRINT_CESS_SUPPORT_BANK_ACCOUNT")) &&
+    !config.bank
+  ) {
+    rejected.push("PRINT_CESS_SUPPORT_BANK_NAME/ACCOUNT");
+  }
+  if (set("PRINT_CESS_SUPPORT_TOSS_SEND_URL") && !config.toss) {
+    rejected.push("PRINT_CESS_SUPPORT_TOSS_SEND_URL");
+  }
+  return rejected;
 }
 
 /** Only a plain https address with no credentials, so the button cannot hide where it goes. */
@@ -79,5 +102,11 @@ export function supportConfig(environment: NodeJS.ProcessEnv = process.env): Sup
   const holder = clean(environment.PRINT_CESS_SUPPORT_BANK_HOLDER);
   const bank = name && /^[0-9][0-9-]{5,31}$/u.test(account) ? { name, account, holder } : undefined;
   const toss = parseTossSendUrl(environment.PRINT_CESS_SUPPORT_TOSS_SEND_URL, bank);
-  return { link, bank, toss, open: Boolean(link) || Boolean(bank) };
+  const config = { link, bank, toss, open: Boolean(link) || Boolean(bank) };
+  const rejected = rejectedSupportKeys(environment, config);
+  if (rejected.length > 0) {
+    // An operator clue for a mistyped value. Names only: the values stay out of logs.
+    console.warn(`promo.support.rejected ${rejected.join(",")}`);
+  }
+  return config;
 }
