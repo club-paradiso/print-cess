@@ -191,6 +191,7 @@
 :global(html[data-promo-over-film="true"]) .header {
   --pc-text-primary: #fff;
   --pc-text-muted: rgb(255 255 255 / 80%);
+  --pc-club-paradiso: #fff;
   --pc-brand: var(--pc-indigo-300);
   --pc-text-secondary: rgb(255 255 255 / 88%);
   --pc-text-brand: #fff;

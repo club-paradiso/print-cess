@@ -93,6 +93,10 @@ p {
   .home-header .pc-wordmark small {
     font-size: 11px;
   }
+  /* Stacked under the name, 11px script would be faint. */
+  .home-header .pc-wordmark .pc-club-paradiso {
+    height: 1.25em;
+  }
 }
 
 /* --- Home -----------------------------------------------------------------
