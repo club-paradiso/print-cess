@@ -5,11 +5,11 @@
 
 .page {
   --font: "Pretendard Variable", Pretendard, var(--pc-font-sans);
-  --ink-rgb: 30 27 75;
+  --ink-rgb: 28 20 21;
   --hairline: rgb(var(--ink-rgb) / 9%);
   --hairline-strong: rgb(var(--ink-rgb) / 16%);
   --on-dark-hairline: rgb(255 255 255 / 14%);
-  --accent-on-dark: var(--pc-indigo-300);
+  --accent-on-dark: var(--pc-crimson-300);
   --fs-display: clamp(2.5rem, 1rem + 4.6vw, 4.75rem);
   --fs-h2: clamp(1.95rem, 1.2rem + 2.9vw, 3.4rem);
   --fs-h3: clamp(1.2rem, 1.08rem + 0.45vw, 1.45rem);
@@ -47,6 +47,7 @@
   left: 16px;
   top: -80px;
   z-index: 60;
+  min-height: 44px;
   padding: 12px 16px;
   border-radius: var(--pc-radius-sm);
   background: var(--pc-surface-inverse);
@@ -75,6 +76,8 @@
 }
 .brand {
   display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   color: inherit;
   text-decoration: none;
 }
@@ -113,7 +116,7 @@
 .headerCta {
   display: inline-flex;
   align-items: center;
-  min-height: 42px;
+  min-height: 44px;
   padding: 0 18px;
   border-radius: var(--pc-radius-pill);
   background: var(--pc-brand);
@@ -169,7 +172,7 @@
   min-height: 48px;
   padding: 0 14px;
   border-radius: var(--pc-radius-sm);
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
   font-size: 16px;
   font-weight: 600;
   text-decoration: none;
@@ -192,7 +195,7 @@
   --pc-text-primary: #fff;
   --pc-text-muted: rgb(255 255 255 / 80%);
   --pc-club-paradiso: #fff;
-  --pc-brand: var(--pc-indigo-300);
+  --pc-brand: var(--pc-crimson-300);
   --pc-text-secondary: rgb(255 255 255 / 88%);
   --pc-text-brand: #fff;
   background: transparent;
@@ -200,7 +203,7 @@
 }
 :global(html[data-promo-over-film="true"]) .header .headerCta {
   background: #fff;
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
 }
 :global(html[data-promo-over-film="true"]) .header :where(a, summary):focus-visible {
   outline-color: var(--pc-focus-ring-on-inverse);
@@ -361,8 +364,8 @@
   right: max(var(--gutter), calc((100% - 1200px) / 2));
   bottom: 22px;
   max-width: 360px;
-  color: rgb(255 255 255 / 72%);
-  font-size: 12px;
+  color: rgb(255 255 255 / 82%);
+  font-size: 13px;
   line-height: 1.45;
   text-align: end;
 }
@@ -467,10 +470,10 @@
 }
 .filmPrimary {
   background: #fff;
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
 }
 .filmPrimary:hover {
-  background: var(--pc-indigo-100);
+  background: var(--pc-crimson-100);
 }
 .filmGlass {
   background: rgb(255 255 255 / 10%);
@@ -558,10 +561,10 @@
   max-width: 36em;
 }
 .dark .kicker {
-  color: var(--pc-indigo-200);
+  color: var(--pc-crimson-200);
 }
 .dark .kickerDot {
-  background: var(--pc-indigo-300);
+  background: var(--pc-crimson-300);
 }
 .dark .lede {
   color: var(--pc-text-on-inverse-muted);
@@ -743,7 +746,7 @@
 .step[data-state="active"] .stepStop {
   border-color: var(--pc-brand);
   background: var(--pc-brand);
-  box-shadow: 0 0 0 6px var(--pc-indigo-100);
+  box-shadow: 0 0 0 6px var(--pc-crimson-100);
 }
 .stepLabel {
   color: var(--pc-text-brand);
@@ -772,7 +775,7 @@
   background: var(--pc-surface-sunken);
 }
 .variants button {
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 16px;
   border: 0;
   border-radius: var(--pc-radius-pill);
@@ -877,7 +880,7 @@
   max-width: calc(100vw - 32px);
   padding: 6px 16px 6px 6px;
   border-radius: var(--pc-radius-pill);
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
   color: var(--pc-text-on-inverse);
   box-shadow: 0 16px 40px -12px rgb(var(--ink-rgb) / 55%);
   font-size: 14px;
@@ -921,7 +924,7 @@
   width: var(--phone-w);
   padding: 9px;
   border-radius: calc(var(--phone-w) * 0.16);
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
   box-shadow:
     inset 0 0 0 1.5px rgb(255 255 255 / 10%),
     var(--shadow-device);
@@ -934,7 +937,7 @@
   overflow: hidden;
   border-radius: calc(var(--phone-w) * 0.13);
   background: var(--pc-background);
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
   font-family: var(--pc-font-sans);
   text-align: start;
 }
@@ -945,7 +948,7 @@
   width: 31%;
   height: 26px;
   border-radius: var(--pc-radius-pill);
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
   transform: translateX(-50%);
 }
 .statusBar {
@@ -964,7 +967,7 @@
 .statusIcons i {
   width: 4px;
   border-radius: 1px;
-  background: var(--pc-navy-900);
+  background: var(--pc-ink-900);
 }
 .statusIcons i:nth-child(1) {
   height: 6px;
@@ -1004,7 +1007,7 @@
   letter-spacing: -0.03em;
 }
 .appMuted {
-  color: var(--pc-navy-700);
+  color: var(--pc-ink-700);
   font-size: 13.5px;
   line-height: 1.5;
 }
@@ -1015,14 +1018,14 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  color: var(--pc-navy-700);
+  color: var(--pc-ink-700);
   font-size: 12.5px;
   line-height: 1.5;
 }
 .appLock svg {
   flex: none;
   margin-top: 2px;
-  color: var(--pc-indigo-700);
+  color: var(--pc-crimson-700);
 }
 .appActions {
   display: grid;
@@ -1051,13 +1054,13 @@
 .appPaper span {
   height: 6px;
   border-radius: 3px;
-  background: var(--pc-navy-200);
+  background: var(--pc-ink-200);
 }
 .appPaper span:first-child {
   width: 60%;
   height: 9px;
   margin-bottom: 6px;
-  background: var(--pc-navy-400);
+  background: var(--pc-ink-400);
 }
 .appPaper span:last-child {
   width: 72%;
@@ -1085,16 +1088,16 @@
   gap: 12px;
   width: 100%;
   padding: 26px 24px 22px;
-  border: 12px solid var(--pc-navy-950);
+  border: 12px solid var(--pc-ink-950);
   border-radius: 22px;
   background: var(--pc-surface);
-  color: var(--pc-navy-900);
+  color: var(--pc-ink-900);
   box-shadow: var(--shadow-device);
   font-family: var(--pc-font-sans);
   text-align: center;
 }
 .monitorEyebrow {
-  color: var(--pc-navy-500);
+  color: var(--pc-ink-500);
   font-size: 12px;
   font-weight: 700;
 }
@@ -1117,7 +1120,7 @@
   width: 100%;
   height: 100%;
   fill: none;
-  stroke: var(--pc-indigo-600);
+  stroke: var(--pc-crimson-600);
   stroke-width: 3.5;
   stroke-linecap: round;
 }
@@ -1126,7 +1129,7 @@
   inset: 22px;
   width: calc(100% - 44px);
   height: calc(100% - 44px);
-  fill: var(--pc-navy-900);
+  fill: var(--pc-ink-900);
 }
 .codeGap {
   fill: var(--pc-surface);
@@ -1135,19 +1138,19 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--pc-navy-700);
+  color: var(--pc-ink-700);
   font-size: 13.5px;
 }
 .monitorNeck {
   width: 54px;
   height: 34px;
-  background: var(--pc-navy-700);
+  background: var(--pc-ink-700);
 }
 .monitorBase {
   width: 170px;
   height: 10px;
   border-radius: 6px 6px 3px 3px;
-  background: var(--pc-navy-900);
+  background: var(--pc-ink-900);
 }
 
 /* --- Try box ---------------------------------------------------------- */
@@ -1268,7 +1271,7 @@
 .cardLabel {
   margin-bottom: 4px !important;
   color: var(--pc-text-muted);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 750;
 }
 .conditions {
@@ -1383,7 +1386,7 @@
   border-radius: var(--pc-radius-pill);
   background: var(--pc-surface-sunken);
   color: var(--pc-text-secondary);
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 750;
 }
 .pill[data-state="done"] {
@@ -1417,7 +1420,7 @@
 .privacyLine {
   flex: 0 1 72px;
   height: 2px;
-  background: var(--pc-indigo-300);
+  background: var(--pc-crimson-300);
 }
 .privacyLabel {
   display: grid;
@@ -1494,7 +1497,7 @@
 }
 .dark .textLink {
   margin-bottom: 8px;
-  color: var(--pc-indigo-200);
+  color: var(--pc-crimson-200);
 }
 .chevron {
   flex: none;
@@ -1560,7 +1563,7 @@ details[open] > summary .chevron {
 }
 .fine {
   color: var(--pc-text-muted);
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 1.65;
 }
 .free {
@@ -1628,14 +1631,14 @@ details[open] > summary .chevron {
   min-height: 54px;
   padding: 0 24px;
   border-radius: var(--pc-radius-md);
-  background: var(--pc-navy-900);
+  background: var(--pc-ink-900);
   color: #fff;
   font-size: 16px;
   font-weight: 700;
   text-decoration: none;
 }
 .toss:hover {
-  background: var(--pc-navy-950);
+  background: var(--pc-ink-950);
 }
 .tossQr {
   display: none;
@@ -1851,7 +1854,7 @@ details[open] > summary .faqToggle::after {
 .footerNote {
   max-width: 420px;
   color: var(--pc-text-muted);
-  font-size: 13.5px;
+  font-size: 14.5px;
   line-height: 1.6;
 }
 .footerLinks {

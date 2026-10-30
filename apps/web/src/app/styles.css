@@ -73,8 +73,8 @@ p {
     flex: 0 0 auto;
   }
   .home-language-picker .drop-language {
-    min-height: 40px;
-    padding: 6px;
+    min-height: 44px;
+    padding: 0 6px;
     gap: 4px;
   }
   .home-language-picker .drop-language svg {
@@ -83,6 +83,8 @@ p {
   }
   .home-language-picker select {
     max-width: 112px;
+    margin-inline: -26px -6px;
+    padding-inline: 26px 6px;
     font-size: 13px;
   }
   .home-header .pc-wordmark > span {
