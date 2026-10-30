@@ -72,5 +72,4 @@ The values the TAPSO site uses (Club Paradiso's Buy Me a Coffee page and its 제
 Toss link) are what `/promo` is meant to show. Set them in the Vercel project's environment
 variables; with none set, the section says the window is not open yet and offers free ways to
 help. Support never changes a feature or a quota. Before enabling it in Production, the owner
-should confirm that soliciting support is permitted for Club Paradiso and that the notice about
-receipts and tax deduction in `promo-copy.ts` is true.
+should confirm that soliciting support is permitted for Club Paradiso.
