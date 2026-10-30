@@ -36,13 +36,13 @@ test("the hero explains Print-cess and plays two muted films", async ({ page }) 
     await expect(videos.nth(index)).toHaveJSProperty("autoplay", false);
   }
   await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
-  await page.getByRole("button", { name: "영상 멈추기" }).click();
-  await expect(page.getByRole("button", { name: "영상 재생" })).toBeVisible();
+  // The film runs with no controls of any kind, by the owner's decision.
+  await expect(page.locator("section[aria-labelledby='hero-title'] button")).toHaveCount(0);
 
   expect(errors.filter((text) => !/Failed to load resource/u.test(text))).toEqual([]);
 });
 
-test("reduced motion keeps the still and loads no film until asked", async ({ browser }) => {
+test("reduced motion keeps the still and never loads the film", async ({ browser }) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   const requested: string[] = [];
@@ -54,10 +54,7 @@ test("reduced motion keeps the still and loads no film until asked", async ({ br
   await expect(page.locator("[data-state='still']")).toHaveCount(1);
   await page.waitForTimeout(1500);
   expect(requested).toEqual([]);
-
-  await page.getByRole("button", { name: "영상 재생" }).click();
-  await expect(page.locator("[data-state='playing']")).toHaveCount(1, { timeout: 15_000 });
-  expect(requested.length).toBeGreaterThan(0);
+  await expect(page.getByText(/움직임을 줄이는 설정이라 사진만 보여요/u)).toBeVisible();
   await context.close();
 });
 
@@ -71,19 +68,38 @@ test("a film that cannot load leaves the still in place", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
 });
 
-test("the demo walks the four real screens and never prints", async ({ page }) => {
+test("the walkthrough follows the step being read and never prints", async ({ page }) => {
   await page.goto("/promo#how");
-  const stage = page.locator("figure");
-  await expect(stage.getByText("프린터 옆 화면")).toBeVisible();
-  await page.getByRole("button", { name: "다음 화면" }).click();
-  await expect(stage.getByText("인쇄할 문서를 하나 고르세요")).toBeVisible();
-  await page.getByRole("button", { name: "다음 화면" }).click();
-  await expect(stage.getByText("이 문서가 맞나요?")).toBeVisible();
-  await page.getByRole("button", { name: "다음 화면" }).click();
-  await expect(stage.getByText("종이를 가져가세요")).toBeVisible();
-  await expect(page.getByRole("button", { name: "다음 화면" })).toBeDisabled();
-  // The drawn buttons are not controls.
-  await expect(stage.getByRole("button", { name: /A4 한 부 인쇄/u })).toHaveCount(0);
+  const steps = page.getByRole("heading", {
+    level: 3,
+    name: /QR 코드 찍기|휴대전화에서 파일 선택|프린터에서 종이 받기/u,
+  });
+  await expect(steps).toHaveCount(3);
+  // Step two offers a second screen; the drawn buttons are not controls.
+  const variants = page.getByRole("group", { name: "화면 고르기" });
+  await variants.getByRole("button", { name: "확인하고 인쇄" }).click();
+  await expect(variants.getByRole("button", { name: "확인하고 인쇄" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(page.getByRole("button", { name: /A4 한 부 인쇄/u })).toHaveCount(0);
+  // Scrolling to the last step moves the sticky dock to it.
+  await page
+    .getByRole("heading", { level: 3, name: "프린터에서 종이 받기" })
+    .evaluate((element) => element.scrollIntoView({ block: "center" }));
+  await expect(page.locator("[data-visible='true']").getByText("3/3")).toBeVisible();
+});
+
+test("the statement band states the three steps and the facts", async ({ page }) => {
+  await page.goto("/promo");
+  await expect(
+    page.getByRole("heading", { level: 2, name: /QR 찍고,\s*고르고,\s*받으면 끝\./u }),
+  ).toBeAttached();
+  await expect(page.getByText("새로 설치할 앱")).toBeAttached();
+  // The print lines feed out once the line is read.
+  const line = page.locator("#statement-title");
+  await line.scrollIntoViewIfNeeded();
+  await expect(line).toHaveAttribute("data-fed", "true");
 });
 
 test("the trust section says what it is and is not", async ({ page }) => {
@@ -124,23 +140,14 @@ test("the tabs show one feature at a time, each with a real link", async ({ page
   await expect(tabs.getByRole("tab", { name: "스캔" })).toHaveAttribute("aria-selected", "true");
 });
 
-test("the scene picker switches the film", async ({ page }) => {
-  await page.goto("/promo");
-  const picker = page.getByRole("group", { name: "장면 고르기" });
-  await expect(picker.getByRole("button", { name: "대학교" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-  await picker.getByRole("button", { name: "공항" }).click();
-  await expect(picker.getByRole("button", { name: "공항" })).toHaveAttribute(
-    "aria-pressed",
-    "true",
-  );
-});
-
 test("support stays closed until the owner configures a destination", async ({ page }) => {
   await page.goto("/promo#support");
   await expect(page.getByText("후원 창구 준비 중")).toBeVisible();
+  await page.getByRole("button", { name: "후원 준비 상태 보기" }).click();
+  await expect(page.getByRole("dialog", { name: "후원 안내" })).toBeVisible();
+  await expect(page.getByText(/아직 후원을 받는 창구가 열리지 않았어요/u)).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   // No payment route, amount field or card form is ever shown.
   await expect(page.getByRole("link", { name: /후원하러 가기/u })).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);

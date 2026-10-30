@@ -1,16 +1,15 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 import { hero } from "./promo-copy";
 import styles from "./promo.module.css";
 
 /**
  * - `waiting`: nothing decided yet (also the server render): the still shows.
- * - `still`: reduced motion, data saver or a 2G network; the film loads only
- *   when the visitor presses play.
- * - `playing` / `paused`: the film is loaded.
+ * - `still`: reduced motion, data saver or a 2G network; the film never loads.
+ * - `playing` / `paused`: the film is loaded (paused only while off screen,
+ *   in a hidden tab, or when the browser refused autoplay).
  * - `failed`: a file could not load; the still stays for good.
  */
 type FilmState = "waiting" | "still" | "playing" | "paused" | "failed";
@@ -18,8 +17,8 @@ type FilmState = "waiting" | "still" | "playing" | "paused" | "failed";
 const SCENES = ["university", "airport"] as const;
 type Scene = (typeof SCENES)[number];
 
-/** How long the two films overlap while one fades into the other. */
-const CROSSFADE_SECONDS = 1;
+/** How long the two films overlap. Long enough that the hand-over reads as one take. */
+const CROSSFADE_SECONDS = 1.6;
 
 type NetworkInformation = { saveData?: boolean; effectiveType?: string };
 
@@ -59,12 +58,13 @@ function Still({ scene, eager }: { scene: Scene; eager: boolean }) {
 }
 
 /**
- * The hero film: two muted clips that fade into one another and loop. It loads
- * after hydration, never on reduced motion, data saver or 2G unless the visitor
- * asks, plays only while on screen and while the tab is visible, and keeps the
- * still when anything fails.
+ * The hero film: two muted clips that fade into one another and loop with no
+ * controls, by the owner's decision. It loads after hydration, never on
+ * reduced motion, data saver or 2G (those visitors keep the still), plays only
+ * while on screen and while the tab is visible, and keeps the still when
+ * anything fails.
  */
-export function HeroFilm() {
+export function HeroFilm({ children }: { children: ReactNode }) {
   const section = useRef<HTMLDivElement | null>(null);
   const videos = useRef<Record<Scene, HTMLVideoElement | null>>({
     university: null,
@@ -75,13 +75,8 @@ export function HeroFilm() {
   const [ready, setReady] = useState<Record<Scene, boolean>>({ university: false, airport: false });
   const [reducedMotion, setReducedMotion] = useState(false);
   const activeRef = useRef<Scene>("university");
-  const userPaused = useRef(false);
   const onScreen = useRef(true);
   const stateRef = useRef<FilmState>("waiting");
-  const pickers = useRef<Record<Scene, HTMLButtonElement | null>>({
-    university: null,
-    airport: null,
-  });
 
   const change = useCallback((next: FilmState) => {
     stateRef.current = next;
@@ -107,7 +102,7 @@ export function HeroFilm() {
       if (!element) return;
       element.currentTime = 0;
       void element.play().catch(() => {
-        // Autoplay refused (Low Power Mode, a policy): keep the still, offer the button.
+        // Autoplay refused (Low Power Mode, a policy): the still stays.
         change(element.error ? "failed" : "paused");
       });
     },
@@ -134,6 +129,43 @@ export function HeroFilm() {
     return () => query.removeEventListener("change", update);
   }, []);
 
+  // While only film sits under the header, the header turns clear and white.
+  // It turns solid again before the hero copy can slide underneath it.
+  useEffect(() => {
+    const element = section.current;
+    if (!element) return;
+    const root = document.documentElement;
+    const copy = element.querySelector<HTMLElement>("[data-hero-copy]");
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const header = 76;
+      const stage = element.getBoundingClientRect();
+      const copyTop = copy?.getBoundingClientRect().top ?? stage.top;
+      root.dataset.promoOverFilm = stage.bottom > header && copyTop > header ? "true" : "";
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) window.cancelAnimationFrame(frame);
+      delete root.dataset.promoOverFilm;
+    };
+  }, []);
+
+  // Page-wide: the stylesheet drops its own animations too.
+  useEffect(() => {
+    document.documentElement.dataset.promoMotion = reducedMotion ? "reduced" : "";
+    return () => {
+      delete document.documentElement.dataset.promoMotion;
+    };
+  }, [reducedMotion]);
+
   // Decide once the preference is known. Short delay so the still paints first.
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -144,7 +176,7 @@ export function HeroFilm() {
         return;
       }
       if (stateRef.current === "still") change("paused");
-      if (!userPaused.current && onScreen.current) start(activeRef.current);
+      if (onScreen.current) start(activeRef.current);
     }, 400);
     return () => window.clearTimeout(timer);
   }, [reducedMotion, change, pauseAll, start]);
@@ -161,10 +193,6 @@ export function HeroFilm() {
       };
       const onTime = () => {
         if (activeRef.current !== scene || !Number.isFinite(element.duration)) return;
-        pickers.current[scene]?.style.setProperty(
-          "--progress",
-          String(Math.min(1, element.currentTime / element.duration)),
-        );
         if (element.duration - element.currentTime <= CROSSFADE_SECONDS) {
           show(other);
           start(other);
@@ -217,10 +245,7 @@ export function HeroFilm() {
         pauseAll();
         return;
       }
-      if (
-        !userPaused.current &&
-        (stateRef.current === "paused" || stateRef.current === "playing")
-      ) {
+      if (stateRef.current === "paused" || stateRef.current === "playing") {
         resume();
       }
     };
@@ -239,91 +264,39 @@ export function HeroFilm() {
     };
   }, [pauseAll, resume]);
 
-  const toggle = () => {
-    if (state === "playing") {
-      userPaused.current = true;
-      pauseAll();
-      change("paused");
-      return;
-    }
-    userPaused.current = false;
-    if (state === "still") change("paused");
-    resume();
-  };
-
-  const pick = (scene: Scene) => {
-    userPaused.current = false;
-    for (const other of SCENES) {
-      if (other !== scene) {
-        videos.current[other]?.pause();
-        pickers.current[other]?.style.setProperty("--progress", "0");
-      }
-    }
-    show(scene);
-    if (stateRef.current === "still") change("paused");
-    start(scene);
-  };
-
-  const showControl = state !== "failed" && state !== "waiting";
-  const playing = state === "playing";
-
   return (
-    <div ref={section} className={styles.film} data-state={state}>
-      {SCENES.map((scene) => (
-        <div key={scene} className={styles.scene} data-active={active === scene} aria-hidden="true">
-          <Still scene={scene} eager={scene === "university"} />
-          <video
-            ref={(element) => {
-              videos.current[scene] = element;
-            }}
-            className={styles.video}
-            data-ready={ready[scene] && state !== "failed" && state !== "still"}
-            muted
-            playsInline
-            preload="none"
-            tabIndex={-1}
-            disablePictureInPicture
-          />
-        </div>
-      ))}
-      <div className={styles.picker} role="group" aria-label={hero.scenePicker}>
-        {hero.scenes.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            ref={(element) => {
-              pickers.current[id] = element;
-            }}
-            className={styles.pickerButton}
-            aria-pressed={active === id}
-            onClick={() => pick(id)}
-          >
-            <span className={styles.pickerFill} aria-hidden="true" />
-            <span className={styles.pickerLabel}>{label}</span>
-          </button>
+    <div ref={section} className={styles.heroStage} data-state={state}>
+      <div className={styles.film} aria-hidden="true">
+        {SCENES.map((scene) => (
+          <div key={scene} className={styles.scene} data-active={active === scene}>
+            <Still scene={scene} eager={scene === "university"} />
+            <video
+              ref={(element) => {
+                videos.current[scene] = element;
+              }}
+              className={styles.video}
+              data-ready={ready[scene] && state !== "failed" && state !== "still"}
+              muted
+              playsInline
+              preload="none"
+              tabIndex={-1}
+              disablePictureInPicture
+            />
+          </div>
         ))}
+        <span className={styles.shade} />
       </div>
-      <div className={styles.filmBar}>
-        <p className={styles.filmNote}>
-          <span className="visually-hidden">{hero.filmLabel}. </span>
-          {state === "still" && reducedMotion ? hero.stillNote : hero.filmNote}
-        </p>
-        {showControl ? (
-          <button
-            type="button"
-            className={styles.filmButton}
-            onClick={toggle}
-            aria-label={playing ? hero.pause : hero.play}
-          >
-            {playing ? (
-              <Pause aria-hidden="true" size={18} />
-            ) : (
-              <Play aria-hidden="true" size={18} />
-            )}
-            <span>{playing ? hero.pause : hero.play}</span>
-          </button>
-        ) : null}
+
+      <div className={styles.heroBody}>
+        <div className={styles.heroCopy} data-hero-copy>
+          {children}
+        </div>
       </div>
+
+      <p className={styles.credit}>
+        <span className="visually-hidden">{hero.filmLabel}. </span>
+        {state === "still" && reducedMotion ? hero.stillNote : hero.filmNote}
+      </p>
     </div>
   );
 }
