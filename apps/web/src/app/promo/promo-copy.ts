@@ -30,6 +30,10 @@ export const hero = {
   statusLine: "개발·시연 단계예요. 실제 기관에 설치된 서비스가 아니에요.",
   chips: ["계정 없이", "앱 설치 없이", "출력하면 삭제", "개발·시연 단계"],
   scenePicker: "장면 고르기",
+  previewScene: "화면 예시",
+  previewNote: "화면 예시예요. 실제로 인쇄되지 않아요.",
+  motionReduce: "움직임 줄이기",
+  motionDefault: "움직임 기본값",
   scenes: [
     { id: "university", label: "대학교" },
     { id: "airport", label: "공항" },
@@ -44,11 +48,17 @@ export const hero = {
 export const how = {
   id: "how",
   title: "세 단계면 끝나요",
-  lead: "아래는 휴대전화에 실제로 뜨는 문구를 따라 만든 화면 예시예요. 누르는 버튼은 없고, 위 단계 버튼으로 넘겨 볼 수 있어요.",
-  stepsLabel: "단계 고르기",
-  previous: "이전 화면",
-  next: "다음 화면",
+  lead: "스크롤하면 오른쪽 화면이 지금 읽는 단계를 따라가요. 화면은 휴대전화에 실제로 뜨는 문구를 따라 만든 예시이고, 누르는 버튼은 없어요.",
   mockNote: "화면 예시예요. 이 화면에서는 인쇄되지 않아요.",
+  dockLabel: "화면 예시",
+  variantsLabel: "화면 고르기",
+  variants: ["파일 고르기", "확인하고 인쇄"],
+  pictures: {
+    kiosk: "프린터 옆 큰 화면에 QR 코드가 보여요.",
+    choose: "휴대전화에 인쇄할 문서를 고르라는 화면이 떠요.",
+    check: "휴대전화에 미리보기와 A4 한 부 인쇄 버튼이 보여요.",
+    done: "휴대전화에 종이를 가져가라는 안내가 떠요.",
+  },
   steps: [
     {
       title: "QR 코드 찍기",
@@ -141,20 +151,42 @@ export const trust = {
   statusTitle: "지금은 개발·시연 단계예요",
   statusBody:
     "Print-cess는 아직 실제 개인 문서를 다루도록 승인받은 서비스가 아니에요. 어느 기관에도 설치되어 있지 않고, 인증이나 정식 운영 중이라는 뜻도 아니에요. 시연에는 실제 개인 문서를 쓰지 마세요.",
-  board: {
-    worksTitle: "지금 되는 것",
-    works: [
-      "개발 환경과 Preview 배포에서 인쇄, 공유, 스캔의 전 과정이 동작해요.",
-      "자동 테스트와 접근성 검사를 통과해요.",
-    ],
-    notYetTitle: "아직 안 된 것",
-    notYet: [
-      "기관의 정보보안·개인정보 검토",
-      "저장소 등 외부 서비스의 승인",
-      "실제 프린터로 하는 현장 검증",
-      "서명된 설치 파일",
-    ],
-  },
+  timelineLead: "끝난 것과 아직 남은 일을 나눠서 적었어요. 정식 운영 날짜는 정해지지 않았어요.",
+  timeline: [
+    {
+      state: "done",
+      title: "인쇄, 공유, 스캔의 전 과정",
+      body: "개발 환경과 Preview 배포에서 처음부터 끝까지 동작해요.",
+    },
+    {
+      state: "done",
+      title: "자동 테스트와 접근성 검사",
+      body: "화면 흐름과 접근성을 자동으로 확인해요.",
+    },
+    {
+      state: "next",
+      title: "실제 프린터 현장 검증",
+      body: "실제 프린터로 하는 시험은 아직 남아 있어요.",
+    },
+    {
+      state: "next",
+      title: "기관의 정보보안·개인정보 검토",
+      body: "실제 개인 문서를 다루려면 거쳐야 하는 검토예요.",
+    },
+    {
+      state: "next",
+      title: "외부 서비스 승인과 서명된 설치 파일",
+      body: "저장소 같은 외부 서비스의 승인과 윈도우용 설치 파일 서명이 남았어요.",
+    },
+  ],
+  stateLabels: { done: "동작해요", next: "아직이에요" },
+  privacyTitle: "문서만 잠깐 지나가요",
+  privacyLead: "이름도 연락처도 계정도 요청하지 않아요. 파일은 휴대전화에서 잠근 채 보내요.",
+  privacyRows: [
+    { on: true, title: "인쇄할 파일", body: "휴대전화에서 잠가 보내요" },
+    { on: false, title: "이름·연락처·계정", body: "요청하지 않아요" },
+    { on: false, title: "파일 이름", body: "서버가 받지 않아요" },
+  ],
   statusLink: "남은 과제 보기",
   statusHref: `${DOCS_URL}/PRODUCTION_BLOCKERS.md`,
   points: [
@@ -199,6 +231,10 @@ export const support = {
   closedLabel: "후원 창구 준비 중",
   closedBody:
     "아직 후원을 받는 창구가 열리지 않았어요. 열리면 이 자리에 안내해요. 그전에는 아래 방법으로 도와 주실 수 있어요.",
+  openButton: "후원하기",
+  closedButton: "후원 준비 상태 보기",
+  dialogTitle: "후원 안내",
+  dialogClose: "닫기",
   linkCta: "후원하러 가기",
   linkNote:
     "버튼을 누르면 아래 주소의 외부 사이트로 이동해요. 결제는 그 사이트에서 이뤄지고, Print-cess는 결제 정보를 받지 않아요.",

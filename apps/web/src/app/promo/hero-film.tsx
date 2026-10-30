@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { hero } from "./promo-copy";
 import styles from "./promo.module.css";
+import { Screen } from "./screens";
 
 /**
  * - `waiting`: nothing decided yet (also the server render): the still shows.
@@ -73,7 +74,10 @@ export function HeroFilm() {
   const [state, setState] = useState<FilmState>("waiting");
   const [active, setActive] = useState<Scene>("university");
   const [ready, setReady] = useState<Record<Scene, boolean>>({ university: false, airport: false });
-  const [reducedMotion, setReducedMotion] = useState(false);
+  const [systemReduced, setSystemReduced] = useState(false);
+  const [userReduced, setUserReduced] = useState(false);
+  const [preview, setPreview] = useState(false);
+  const reducedMotion = systemReduced || userReduced;
   const activeRef = useRef<Scene>("university");
   const userPaused = useRef(false);
   const onScreen = useRef(true);
@@ -128,11 +132,19 @@ export function HeroFilm() {
   // Follow the visitor's reduced-motion setting, including a change mid-visit.
   useEffect(() => {
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const update = () => setReducedMotion(query.matches);
+    const update = () => setSystemReduced(query.matches);
     update();
     query.addEventListener("change", update);
     return () => query.removeEventListener("change", update);
   }, []);
+
+  // Page-wide: the stylesheet drops its own animations too.
+  useEffect(() => {
+    document.documentElement.dataset.promoMotion = reducedMotion ? "reduced" : "";
+    return () => {
+      delete document.documentElement.dataset.promoMotion;
+    };
+  }, [reducedMotion]);
 
   // Decide once the preference is known. Short delay so the still paints first.
   useEffect(() => {
@@ -240,7 +252,8 @@ export function HeroFilm() {
   }, [pauseAll, resume]);
 
   const toggle = () => {
-    if (state === "playing") {
+    if (preview) setPreview(false);
+    if (state === "playing" && !preview) {
       userPaused.current = true;
       pauseAll();
       change("paused");
@@ -251,7 +264,13 @@ export function HeroFilm() {
     resume();
   };
 
+  const pickPreview = () => {
+    setPreview(true);
+    pauseAll();
+  };
+
   const pick = (scene: Scene) => {
+    setPreview(false);
     userPaused.current = false;
     for (const other of SCENES) {
       if (other !== scene) {
@@ -265,10 +284,10 @@ export function HeroFilm() {
   };
 
   const showControl = state !== "failed" && state !== "waiting";
-  const playing = state === "playing";
+  const playing = state === "playing" && !preview;
 
   return (
-    <div ref={section} className={styles.film} data-state={state}>
+    <div ref={section} className={styles.film} data-state={state} data-preview={preview}>
       {SCENES.map((scene) => (
         <div key={scene} className={styles.scene} data-active={active === scene} aria-hidden="true">
           <Still scene={scene} eager={scene === "university"} />
@@ -295,34 +314,64 @@ export function HeroFilm() {
               pickers.current[id] = element;
             }}
             className={styles.pickerButton}
-            aria-pressed={active === id}
+            aria-pressed={!preview && active === id}
             onClick={() => pick(id)}
           >
             <span className={styles.pickerFill} aria-hidden="true" />
             <span className={styles.pickerLabel}>{label}</span>
           </button>
         ))}
+        <button
+          type="button"
+          className={styles.pickerButton}
+          aria-pressed={preview}
+          onClick={pickPreview}
+        >
+          <span className={styles.pickerLabel}>{hero.previewScene}</span>
+        </button>
       </div>
+      {preview ? (
+        <div className={styles.heroDevice} aria-hidden="true">
+          <Screen id="choose" />
+        </div>
+      ) : null}
       <div className={styles.filmBar}>
         <p className={styles.filmNote}>
           <span className="visually-hidden">{hero.filmLabel}. </span>
-          {state === "still" && reducedMotion ? hero.stillNote : hero.filmNote}
+          {preview
+            ? hero.previewNote
+            : state === "still" && reducedMotion
+              ? hero.stillNote
+              : hero.filmNote}
         </p>
-        {showControl ? (
+        <div className={styles.filmControls}>
           <button
             type="button"
             className={styles.filmButton}
-            onClick={toggle}
-            aria-label={playing ? hero.pause : hero.play}
+            aria-pressed={userReduced}
+            title={
+              systemReduced && !userReduced ? "기기 설정에서 움직임을 줄이고 있어요" : undefined
+            }
+            onClick={() => setUserReduced((value) => !value)}
           >
-            {playing ? (
-              <Pause aria-hidden="true" size={18} />
-            ) : (
-              <Play aria-hidden="true" size={18} />
-            )}
-            <span>{playing ? hero.pause : hero.play}</span>
+            <span>{userReduced ? hero.motionDefault : hero.motionReduce}</span>
           </button>
-        ) : null}
+          {showControl ? (
+            <button
+              type="button"
+              className={styles.filmButton}
+              onClick={toggle}
+              aria-label={playing ? hero.pause : hero.play}
+            >
+              {playing ? (
+                <Pause aria-hidden="true" size={18} />
+              ) : (
+                <Play aria-hidden="true" size={18} />
+              )}
+              <span>{playing ? hero.pause : hero.play}</span>
+            </button>
+          ) : null}
+        </div>
       </div>
     </div>
   );

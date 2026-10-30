@@ -357,8 +357,7 @@
 /* --- Buttons ---------------------------------------------------------- */
 .primary,
 .secondary,
-.tertiary,
-.navButton {
+.tertiary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -390,14 +389,12 @@
   background: var(--pc-brand-active);
   transform: translateY(1px);
 }
-.secondary,
-.navButton {
+.secondary {
   background: var(--pc-surface);
   border-color: var(--pc-border-strong);
   color: var(--pc-text-primary);
 }
-.secondary:hover,
-.navButton:hover:not(:disabled) {
+.secondary:hover {
   background: var(--pc-surface-brand-subtle);
   border-color: var(--pc-brand);
 }
@@ -408,17 +405,6 @@
   color: var(--pc-text-brand);
   text-decoration: underline;
   text-underline-offset: 4px;
-}
-.navButton {
-  min-height: 48px;
-  padding: 0 16px;
-  font-size: 15px;
-}
-.navButton:disabled {
-  background: var(--pc-disabled-surface);
-  border-color: transparent;
-  color: var(--pc-disabled-text);
-  cursor: not-allowed;
 }
 
 /* --- Sections --------------------------------------------------------- */
@@ -453,71 +439,6 @@
 }
 
 /* --- How it works ----------------------------------------------------- */
-.demo {
-  display: grid;
-  gap: 24px;
-  align-items: start;
-}
-@media (min-width: 900px) {
-  .demo {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: 56px;
-  }
-}
-.stepList {
-  display: grid;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.stepButton {
-  display: flex;
-  align-items: flex-start;
-  gap: 18px;
-  width: 100%;
-  padding: 22px 8px 22px 0;
-  border: 0;
-  border-top: 2px solid var(--pc-border);
-  background: transparent;
-  color: var(--pc-text-muted);
-  font: inherit;
-  text-align: start;
-  cursor: pointer;
-}
-.stepList li:last-child .stepButton {
-  border-bottom: 2px solid var(--pc-border);
-}
-.stepButton:hover {
-  color: var(--pc-text-primary);
-}
-.stepButton[aria-current="step"] {
-  border-top-color: var(--pc-brand);
-  color: var(--pc-text-secondary);
-}
-.stepNumber {
-  flex: none;
-  min-width: 44px;
-  font-size: 40px;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: var(--pc-tracking-tight);
-  color: var(--pc-border-strong);
-}
-.stepButton[aria-current="step"] .stepNumber {
-  color: var(--pc-brand);
-}
-.stepText {
-  display: grid;
-  gap: 6px;
-  font-size: 17px;
-  line-height: 1.55;
-}
-.stepText strong {
-  color: var(--pc-text-primary);
-  font-size: 22px;
-  letter-spacing: -0.02em;
-}
 .stage {
   display: grid;
   gap: 14px;
@@ -547,17 +468,6 @@
   color: var(--pc-text-secondary);
   font-size: 14px;
   text-align: center;
-}
-.stageNav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-.stageCount {
-  color: var(--pc-text-secondary);
-  font-size: 15px;
-  font-weight: 650;
 }
 .device {
   position: relative;
@@ -832,59 +742,6 @@
   margin: 0;
   font-size: 17px;
   line-height: 1.65;
-}
-.board {
-  display: grid;
-  gap: 16px;
-  margin-top: 16px;
-}
-@media (min-width: 760px) {
-  .board {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-.boardColumn {
-  display: grid;
-  align-content: start;
-  gap: 14px;
-  padding: clamp(20px, 3vw, 32px);
-  border-radius: var(--pc-radius-xl);
-  background: var(--pc-surface);
-  border: 1px solid var(--pc-border);
-}
-.boardColumn h3 {
-  margin: 0;
-  font-size: 22px;
-}
-.boardColumn ul {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.boardColumn li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  color: var(--pc-text-secondary);
-  font-size: 17px;
-  line-height: 1.55;
-}
-.boardColumn[data-kind="works"] svg {
-  flex: none;
-  margin-top: 4px;
-  padding: 2px;
-  border-radius: var(--pc-radius-pill);
-  background: var(--pc-success-surface);
-  color: var(--pc-success);
-}
-.dash {
-  flex: none;
-  width: 18px;
-  height: 2px;
-  margin-top: 13px;
-  background: var(--pc-text-muted);
 }
 .points {
   display: grid;
@@ -1167,7 +1024,9 @@ details[open] > summary .chevron {
 @media (prefers-reduced-motion: reduce) {
   .scene,
   .video,
-  .chevron {
+  .chevron,
+  .flow::after,
+  .dock {
     transition: none;
   }
   .stageScreen,
@@ -1175,4 +1034,416 @@ details[open] > summary .chevron {
   .printerSheet {
     animation: none;
   }
+}
+
+/* --- Journey (after the TAPSO story) ---------------------------------- */
+.journey {
+  display: grid;
+  gap: 32px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .journey {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 64px;
+  }
+}
+.flow {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0 0 0 36px;
+  list-style: none;
+}
+.flow::before,
+.flow::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  bottom: 12px;
+  left: 11px;
+  width: 3px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-border);
+}
+.flow::after {
+  background: var(--pc-brand);
+  transform-origin: top;
+  transform: scaleY(var(--progress, 0));
+  transition: transform 0.4s ease;
+}
+.step {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 0 0 clamp(40px, 8vw, 96px);
+}
+.step:last-child {
+  padding-bottom: 0;
+}
+.stepStop {
+  position: absolute;
+  top: 6px;
+  left: -36px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-background);
+}
+.step[data-state="active"] .stepStop,
+.step[data-state="past"] .stepStop {
+  border-color: var(--pc-brand);
+}
+.step[data-state="active"] .stepStop {
+  background: var(--pc-brand);
+}
+.stepLabel {
+  margin: 0;
+  color: var(--pc-text-brand);
+  font-size: 15px;
+  font-weight: 750;
+}
+.stepTitle {
+  margin: 0;
+  font-size: clamp(26px, 4vw, 36px);
+  line-height: 1.2;
+  letter-spacing: var(--pc-tracking-tight);
+  font-weight: 850;
+}
+.stepBody {
+  margin: 0;
+  max-width: 30em;
+  color: var(--pc-text-secondary);
+  font-size: 18px;
+  line-height: 1.65;
+}
+.variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+.variants button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 2px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.variants button[aria-pressed="true"] {
+  border-color: var(--pc-brand);
+  background: var(--pc-brand);
+  color: var(--pc-text-on-brand);
+}
+.stepVisual {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 20px 12px;
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-brand);
+}
+.journeyStage {
+  display: none;
+}
+@media (min-width: 900px) {
+  .stepVisual {
+    display: none;
+  }
+  .journeyStage {
+    display: block;
+    position: sticky;
+    top: 96px;
+  }
+}
+.dock {
+  position: fixed;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  left: 50%;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+  padding: 8px 18px 8px 8px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-inverse);
+  color: var(--pc-text-on-inverse);
+  box-shadow: var(--pc-shadow-md);
+  font-size: 15px;
+  transform: translate(-50%, 24px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
+}
+.dock[data-visible="true"] {
+  transform: translate(-50%, 0);
+  opacity: 1;
+}
+.dockNumber {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  height: 32px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-brand);
+  font-weight: 800;
+  font-size: 14px;
+}
+.dockTitle {
+  font-weight: 700;
+}
+.dockNote {
+  color: var(--pc-text-on-inverse-muted);
+  font-size: 13px;
+}
+@media (max-width: 480px) {
+  .dockNote {
+    display: none;
+  }
+}
+
+/* --- Hero extras ------------------------------------------------------ */
+.filmControls {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.film[data-preview="true"] .scene {
+  opacity: 0;
+}
+.heroDevice {
+  position: absolute;
+  z-index: 1;
+  top: 128px;
+  right: var(--gutter);
+  display: none;
+  width: 340px;
+}
+@media (min-width: 980px) {
+  .heroDevice {
+    display: block;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+/* --- Status timeline -------------------------------------------------- */
+.timelineLead {
+  margin: 24px 0 8px;
+  color: var(--pc-text-secondary);
+  font-size: 18px;
+  line-height: 1.6;
+}
+.timeline {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 0 0 8px;
+  padding: 0 0 0 36px;
+  list-style: none;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  left: 11px;
+  width: 3px;
+  background: var(--pc-border);
+}
+.timeline li {
+  position: relative;
+  padding: 14px 0;
+}
+.timelineNode {
+  position: absolute;
+  top: 18px;
+  left: -36px;
+  width: 25px;
+  height: 25px;
+  border: 3px solid var(--pc-border-strong);
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-background);
+}
+.timeline li[data-state="done"] .timelineNode {
+  border-color: var(--pc-success-accent);
+  background: var(--pc-success-accent);
+}
+.timelineTop {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+.timeline li p:last-child {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 12px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary);
+  font-size: 13px;
+  font-weight: 750;
+}
+.pill[data-state="done"] {
+  background: var(--pc-success-surface);
+  color: var(--pc-success);
+}
+
+/* --- Privacy rows ----------------------------------------------------- */
+.privacy {
+  display: grid;
+  gap: 24px;
+  margin-top: 40px;
+  padding: clamp(22px, 4vw, 40px);
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface-brand-subtle);
+}
+@media (min-width: 860px) {
+  .privacy {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 48px;
+  }
+}
+.privacy h3 {
+  margin: 0 0 10px;
+  font-size: clamp(26px, 4vw, 34px);
+  letter-spacing: var(--pc-tracking-tight);
+  font-weight: 850;
+}
+.privacy p {
+  margin: 0;
+  color: var(--pc-text-secondary);
+  font-size: 18px;
+  line-height: 1.6;
+}
+.privacyRows {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.privacyRows li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: var(--pc-radius-md);
+  background: var(--pc-surface);
+  border: 1px solid var(--pc-border);
+}
+.privacyRows li > span:last-child {
+  display: grid;
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+}
+.privacyRows strong {
+  color: var(--pc-text-primary);
+  font-size: 17px;
+}
+.privacyToken {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-brand);
+  color: var(--pc-text-brand);
+}
+.privacyRows li[data-on="false"] {
+  border-style: dashed;
+}
+.privacyRows li[data-on="false"] .privacyToken {
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-muted);
+}
+
+/* --- Support dialog --------------------------------------------------- */
+.supportButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--pc-radius-xl);
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  box-shadow: var(--pc-shadow-lg);
+  overflow: auto;
+}
+.dialog::backdrop {
+  background: var(--pc-scrim);
+}
+.dialogBody {
+  display: grid;
+  gap: 16px;
+  padding: clamp(20px, 4vw, 32px);
+  font-family: var(--pc-font-sans);
+  word-break: keep-all;
+}
+.dialogHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dialogHead h3 {
+  margin: 0;
+  font-size: 24px;
+}
+.dialogClose {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-primary);
+  cursor: pointer;
+}
+.dialog :where(a, button):focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 3px;
+}
+
+/* One switch quiets every animation on the page. */
+:global(html[data-promo-motion="reduced"]) .stageScreen,
+:global(html[data-promo-motion="reduced"]) .tabPanel,
+:global(html[data-promo-motion="reduced"]) .printerSheet {
+  animation: none;
+}
+:global(html[data-promo-motion="reduced"]) .scene,
+:global(html[data-promo-motion="reduced"]) .video,
+:global(html[data-promo-motion="reduced"]) .flow::after,
+:global(html[data-promo-motion="reduced"]) .dock,
+:global(html[data-promo-motion="reduced"]) .chevron {
+  transition: none;
 }

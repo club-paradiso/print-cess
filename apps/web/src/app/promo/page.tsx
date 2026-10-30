@@ -1,6 +1,5 @@
 import {
   ArrowRight,
-  Check,
   ChevronDown,
   ExternalLink,
   FileText,
@@ -14,12 +13,12 @@ import Link from "next/link";
 
 import { Wordmark } from "@print-cess/ui";
 
-import { CopyButton } from "./copy-button";
 import { HeroFilm } from "./hero-film";
-import { HowDemo } from "./how-demo";
+import { Journey } from "./journey";
 import { MoreTabs } from "./more-tabs";
 import { faq, footer, hero, how, more, nav, REPOSITORY_URL, support, trust } from "./promo-copy";
 import styles from "./promo.module.css";
+import { SupportAction } from "./support-action";
 import { supportConfig } from "./support-config";
 
 export const metadata: Metadata = {
@@ -105,7 +104,7 @@ export default function PromoPage() {
             <h2 id="how-title">{how.title}</h2>
             <p>{how.lead}</p>
           </div>
-          <HowDemo />
+          <Journey />
           <div className={styles.tryBox}>
             <div>
               <h3>{how.tryTitle}</h3>
@@ -144,33 +143,46 @@ export default function PromoPage() {
             <h3 id="status-title">{trust.statusTitle}</h3>
             <p>{trust.statusBody}</p>
           </div>
-          <div className={styles.board}>
-            <div className={styles.boardColumn} data-kind="works">
-              <h3>{trust.board.worksTitle}</h3>
-              <ul>
-                {trust.board.works.map((item) => (
-                  <li key={item}>
-                    <Check aria-hidden="true" size={18} />
-                    {item}
-                  </li>
-                ))}
-              </ul>
+          <p className={styles.timelineLead}>{trust.timelineLead}</p>
+          <ol className={styles.timeline}>
+            {trust.timeline.map((item) => (
+              <li key={item.title} data-state={item.state}>
+                <span className={styles.timelineNode} aria-hidden="true" />
+                <div>
+                  <p className={styles.timelineTop}>
+                    <strong>{item.title}</strong>
+                    <span className={styles.pill} data-state={item.state}>
+                      {trust.stateLabels[item.state]}
+                    </span>
+                  </p>
+                  <p>{item.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <a className={styles.textLink} href={trust.statusHref} rel="noreferrer">
+            {trust.statusLink}
+            <ExternalLink aria-hidden="true" size={16} />
+          </a>
+
+          <div className={styles.privacy}>
+            <div>
+              <h3>{trust.privacyTitle}</h3>
+              <p>{trust.privacyLead}</p>
             </div>
-            <div className={styles.boardColumn} data-kind="notyet">
-              <h3>{trust.board.notYetTitle}</h3>
-              <ul>
-                {trust.board.notYet.map((item) => (
-                  <li key={item}>
-                    <span className={styles.dash} aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-              <a className={styles.textLink} href={trust.statusHref} rel="noreferrer">
-                {trust.statusLink}
-                <ExternalLink aria-hidden="true" size={16} />
-              </a>
-            </div>
+            <ul className={styles.privacyRows} aria-label={trust.privacyTitle}>
+              {trust.privacyRows.map((row) => (
+                <li key={row.title} data-on={row.on}>
+                  <span className={styles.privacyToken} aria-hidden="true">
+                    {row.on ? <LockKeyhole size={18} /> : <X size={18} />}
+                  </span>
+                  <span>
+                    <strong>{row.title}</strong>
+                    {row.body}
+                  </span>
+                </li>
+              ))}
+            </ul>
           </div>
           <ul className={styles.points}>
             {trust.points.map((point) => (
@@ -224,30 +236,10 @@ export default function PromoPage() {
                 ))}
               </ul>
 
-              {config.link ? (
-                <div className={styles.supportAction}>
-                  <a className={styles.primary} href={config.link.url} rel="noopener noreferrer">
-                    {support.linkCta}
-                    <ExternalLink aria-hidden="true" size={18} />
-                  </a>
-                  <p className={styles.supportNote}>
-                    {support.linkNote} <strong className={styles.host}>{config.link.host}</strong>
-                  </p>
-                </div>
-              ) : null}
+              <div className={styles.supportButtons}>
+                <SupportAction config={config} />
+              </div>
 
-              {config.bank ? (
-                <div className={styles.bank}>
-                  <h4>{support.bankTitle}</h4>
-                  <p className={styles.bankLine}>
-                    {config.bank.name} <span className={styles.account}>{config.bank.account}</span>
-                  </p>
-                  <p className={styles.supportNote}>예금주 {config.bank.holder}</p>
-                  <CopyButton value={config.bank.account} />
-                </div>
-              ) : null}
-
-              {config.open ? null : <p className={styles.supportNote}>{support.closedBody}</p>}
               <p className={styles.fine}>{support.fine}</p>
             </div>
 
@@ -305,7 +297,7 @@ export default function PromoPage() {
                 </li>
               ))}
               <li>
-                <a href="#support">후원하기</a>
+                <a href="#support">개발 후원하기</a>
               </li>
             </ul>
           </nav>

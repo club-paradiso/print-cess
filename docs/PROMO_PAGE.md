@@ -9,6 +9,17 @@ there comes from the phone strings in `packages/i18n`, `PRIVACY.md`, `PRINT_QUOT
 The page is `noindex` like the rest of the site and says it is a development and demo
 build. It must not imply an installation, certification or official operation.
 
+## Patterns taken from the TAPSO site
+
+Read from the live TAPSO marketing site's source (`apps/web/src` in the TAPSO repository), adapted
+to Print-cess and its rules: a hero film with a scene picker, progress and a screen-preview scene
+(`hero-film.tsx`); a motion switch that quiets every animation; the print flow as a story where
+scrolling only tells a sticky screen and a step dock which step is being read, and nothing is
+pinned or hijacked (`journey.tsx`); a status timeline with state pills; privacy rows that show what
+is and is not collected; a FAQ of native disclosure widgets; a support modal that lists only
+configured destinations (`support-action.tsx`). Not taken: the waitlist form (Print-cess collects no
+contact details), a dark theme (the product is light-only, see `BRAND.md`) and native checkout.
+
 ## Hero films
 
 Two 10-second clips (a university library and an airport counter), generated with Gemini
