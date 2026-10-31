@@ -261,7 +261,7 @@ export const faq = {
 
 export const footer = {
   by: "by Club Paradiso",
-  note: "Print-cess는 Club Paradiso의 오픈소스 프로젝트예요. 공공기관이 운영하는 서비스는 아니에요.",
+  note: "Print-cess는 Club Paradiso의 오픈소스 프로젝트예요.",
   linksLabel: "프로젝트 링크",
   links: [
     { label: "사용 방법", href: "#how" },
