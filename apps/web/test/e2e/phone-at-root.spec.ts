@@ -2,7 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { devices, expect, test, type Browser } from "@playwright/test";
 
 // The root address is the big screen beside the printer. Phones and tablets
-// are sent to the visitor guide, told why in one line, and can still look.
+// are sent to the promo, can enter the service, and can still view the kiosk.
 // Each phone is emulated here rather than through the `iphone` and `android`
 // projects, because the desktop project runs every test too and must see the
 // kiosk at "/".
@@ -22,16 +22,19 @@ async function phonePage(browser: Browser, phone: keyof typeof PHONES) {
 }
 
 for (const phone of Object.keys(PHONES) as (keyof typeof PHONES)[]) {
-  test(`${phone}: opening the kiosk address lands on the guide and is told why`, async ({
+  test(`${phone}: opening the kiosk address lands on the promo and can enter the service`, async ({
     browser,
   }) => {
     const { context, page } = await phonePage(browser, phone);
     await page.goto("/");
 
-    await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
-    const note = page.getByRole("status").filter({ hasText: "big screen beside the printer" });
-    await expect(note).toBeVisible();
+    await expect(page).toHaveURL(/\/promo$/u);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await page.getByRole("link", { name: "Print-cess 시작하기", exact: true }).click();
+    await expect(page).toHaveURL(/\/start$/u);
     await expect(page.getByRole("button", { name: "Scan QR code" })).toBeVisible();
+    await page.goBack();
+    await expect(page).toHaveURL(/\/promo$/u);
 
     // Nothing sideways, and the page still passes the automated checks.
     const overflow = await page.evaluate(
@@ -42,11 +45,11 @@ for (const phone of Object.keys(PHONES) as (keyof typeof PHONES)[]) {
     expect(results.violations).toEqual([]);
 
     // The way back shows the big screen once, without pinning the phone.
-    await note.getByRole("link", { name: "Show the big screen anyway" }).click();
+    await page.goto("/?view=kiosk");
     await expect(page).toHaveURL(/\/\?view=kiosk$/u);
     await expect(page.locator(".kiosk-qr")).toBeVisible();
     await page.goto("/");
-    await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+    await expect(page).toHaveURL(/\/promo$/u);
     await context.close();
   });
 }
@@ -60,7 +63,7 @@ test("a touch station pinned with ?kiosk=1 keeps the kiosk until unpinned", asyn
   await expect(page.locator(".kiosk-qr")).toBeVisible();
 
   await page.goto("/?kiosk=0");
-  await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+  await expect(page).toHaveURL(/\/promo$/u);
   await context.close();
 });
 
@@ -78,11 +81,11 @@ test("a phone hiding behind a desktop user agent is caught by its screen", async
   });
   const page = await context.newPage();
   await page.goto("/");
-  await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+  await expect(page).toHaveURL(/\/promo$/u);
   await context.close();
 });
 
-test("an iPad mini in portrait (desktop user agent, touch) opens the guide", async ({
+test("an iPad mini in portrait (desktop user agent, touch) opens the promo", async ({
   browser,
 }) => {
   const context = await browser.newContext({
@@ -98,8 +101,8 @@ test("an iPad mini in portrait (desktop user agent, touch) opens the guide", asy
   });
   const page = await context.newPage();
   await page.goto("/");
-  await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
-  await expect(page.getByRole("button", { name: "Scan QR code" })).toBeVisible();
+  await expect(page).toHaveURL(/\/promo$/u);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   await context.close();
 });
 
