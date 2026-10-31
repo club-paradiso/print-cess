@@ -75,7 +75,7 @@ export const how = {
     kioskCaption: "휴대전화 카메라로 이 화면의 QR 코드를 찍어요.",
     kioskFinder: "이 표시가 있는 화면을 찾으세요.",
     chooseTitle: "인쇄할 문서를 하나 고르세요",
-    chooseRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB 이하",
+    chooseRules: "사진 또는 PDF · 사진·PDF 50MB 이하",
     choosePhotos: "사진에서 고르기",
     chooseFiles: "파일에서 고르기",
     checkTitle: "이 문서가 맞나요?",
@@ -106,7 +106,7 @@ export const more = {
       body: "휴대전화 속 파일을 종이 한 부로 뽑아요.",
       conditions: [
         "프린터 옆 Print-cess 화면의 QR 코드를 찍어야 시작돼요.",
-        "사진 또는 PDF를 쓸 수 있어요. 사진은 20MB, PDF는 10MB 이하예요.",
+        "사진 또는 PDF를 쓸 수 있어요. 사진과 PDF는 각각 50MB 이하예요.",
         "HWPX는 프린터가 지원할 때만 고를 수 있어요. 그 밖의 문서는 PDF로 저장한 뒤 고르세요.",
       ],
       cta: "인쇄 시작 화면",
@@ -233,7 +233,7 @@ export const faq = {
     },
     {
       q: "어떤 파일을 인쇄할 수 있나요?",
-      a: "사진 또는 PDF예요. 사진은 20MB, PDF는 10MB 이하, 50페이지 이하여야 해요. 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요. HWPX는 프린터가 지원할 때만 고를 수 있어요.",
+      a: "사진 또는 PDF예요. 사진과 PDF는 각각 50MB 이하, 50페이지 이하여야 해요. 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요. HWPX는 프린터가 지원할 때만 고를 수 있어요.",
     },
     {
       q: "QR 코드가 안 찍히거나 시간이 지났다고 해요.",
