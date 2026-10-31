@@ -13,7 +13,6 @@ export const nav = {
   items: [
     { href: "#how", label: "사용 방법" },
     { href: "#more", label: "기능" },
-    { href: "#trust", label: "개발 현황" },
     { href: "#support", label: "후원" },
     { href: "#faq", label: "자주 묻는 질문" },
   ],
@@ -28,8 +27,6 @@ export const hero = {
   gloss: "가입도 앱 설치도 필요 없어요.",
   cta: "사용 방법 보기",
   secondaryCta: "Print-cess 시작하기",
-  statusLine: "개발·시연 단계예요. 실제 기관에 설치된 서비스가 아니에요.",
-  statusLink: "개발 현황 보기",
   filmLabel: "대학교 도서관과 공항에서 프린터로 종이를 받는 장면",
   filmNote: "AI로 만든 시연 영상이에요. 실제 장소나 설치 사례가 아니에요.",
   stillNote: "기기에서 움직임을 줄이는 설정이라 사진만 보여요.",
@@ -146,40 +143,6 @@ export const more = {
 } as const;
 
 export const trust = {
-  id: "trust",
-  title: "지금은 여기까지 만들었어요",
-  statusTitle: "지금은 개발·시연 단계예요",
-  statusBody:
-    "Print-cess는 아직 실제 개인 문서를 다루도록 승인받은 서비스가 아니에요. 어느 기관에도 설치되어 있지 않고, 인증이나 정식 운영 중이라는 뜻도 아니에요. 시연에는 실제 개인 문서를 쓰지 마세요.",
-  timelineLead: "끝난 것과 아직 남은 일을 나눠서 적었어요. 정식 운영 날짜는 정해지지 않았어요.",
-  timeline: [
-    {
-      state: "done",
-      title: "인쇄, 공유, 스캔의 전 과정",
-      body: "개발 환경과 Preview 배포에서 처음부터 끝까지 동작해요.",
-    },
-    {
-      state: "done",
-      title: "자동 테스트와 접근성 검사",
-      body: "화면 흐름과 접근성을 자동으로 확인해요.",
-    },
-    {
-      state: "next",
-      title: "실제 프린터 현장 검증",
-      body: "실제 프린터로 하는 시험은 아직 남아 있어요.",
-    },
-    {
-      state: "next",
-      title: "기관의 정보보안·개인정보 검토",
-      body: "실제 개인 문서를 다루려면 거쳐야 하는 검토예요.",
-    },
-    {
-      state: "next",
-      title: "외부 서비스 승인과 서명된 설치 파일",
-      body: "저장소 같은 외부 서비스의 승인과 윈도우용 설치 파일 서명이 남았어요.",
-    },
-  ],
-  stateLabels: { done: "동작해요", next: "아직이에요" },
   privacyTitle: "문서만 잠깐 지나가요",
   privacyLead: "이름도 연락처도 계정도 요청하지 않아요. 파일은 휴대전화에서 잠근 채 보내요.",
   privacyRows: [
@@ -305,7 +268,7 @@ export const faq = {
 
 export const footer = {
   by: "by Club Paradiso",
-  note: "Print-cess는 개발·시연 단계의 오픈소스 프로젝트예요. 공공기관의 서비스가 아니에요.",
+  note: "Print-cess는 Club Paradiso의 오픈소스 프로젝트예요. 공공기관이 운영하는 서비스는 아니에요.",
   linksLabel: "프로젝트 링크",
   links: [
     { label: "사용 방법", href: "#how" },
