@@ -278,15 +278,7 @@ export default async function PromoPage() {
 
         <section id={faq.id} className={styles.section} aria-labelledby="faq-title">
           <div className={`${styles.container} ${styles.split}`}>
-            <SectionHead kicker="FAQ" title={faq.title} id="faq-title">
-              <p>
-                여기에 없는 질문은{" "}
-                <a className={styles.inlineLink} href={`${REPOSITORY_URL}/issues`} rel="noreferrer">
-                  GitHub 이슈
-                </a>
-                로 남겨 주세요.
-              </p>
-            </SectionHead>
+            <SectionHead kicker="FAQ" title={faq.title} id="faq-title" />
             <div className={styles.faq}>
               {faq.items.map((item) => (
                 <details key={item.q}>
