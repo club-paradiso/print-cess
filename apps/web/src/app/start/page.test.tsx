@@ -249,6 +249,19 @@ describe("home page", () => {
     expect(text).toContain("프린터 옆 큰 화면용이에요");
     expect(text).toContain("큰 화면 그대로 보기");
 
+    // When a phone opens the shared-display URL, tools that work on the phone
+    // must be discoverable before the long printer QR explanation.
+    const content = page.props.children as unknown[];
+    const entry = content.find(
+      (child) =>
+        child &&
+        typeof child === "object" &&
+        "props" in child &&
+        (child as { props: { className?: string } }).props.className === "home-from-kiosk",
+    );
+    expect(entry).toBeDefined();
+    expect(hrefsOf(entry)).toEqual(["/?view=kiosk", "/send", "/receive", "/scan"]);
+
     const plain = await HomePage({ searchParams: Promise.resolve({}) });
     expect(textOf(plain)).not.toContain("큰 화면 그대로 보기");
   });
