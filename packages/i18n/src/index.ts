@@ -153,7 +153,7 @@ const en = {
     "Pick a photo or a PDF. Save an HWP, Word, Excel or PowerPoint file as a PDF first, then pick it.",
   tooLarge:
     "This file is too big. Keep photos under 20 MB and PDFs under 10 MB, or save only the pages you need.",
-  tooManyPages: "This document has more than 50 pages. Save only the pages you need.",
+  tooManyPages: "This document could not be processed.",
   lockedPdf:
     "This PDF has a password. Open it on your phone and take a screenshot of the pages you need.",
   damagedFile:
@@ -410,9 +410,9 @@ const ko = {
   guideCollectBody: "큰 화면 옆 프린터에서 종이를 가져가세요.",
 
   chooseFile: "인쇄할 문서를 하나 고르세요",
-  fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 50페이지 이하",
+  fileRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB 이하",
   guideChooseBodyHwpx: "사진, PDF, HWPX 파일 중 하나를 고르세요.",
-  fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하 · 최대 50페이지",
+  fileRulesHwpx: "사진, PDF, HWPX · 사진 20MB 이하 · 문서 10MB 이하",
   documentNeedsPdf:
     "이 문서는 휴대전화에서 PDF로 저장한 뒤 다시 고르세요. 변환하려고 문서를 외부 회사로 보내지는 않아요.",
   imageConversionUnsupported:
@@ -452,7 +452,7 @@ const ko = {
   unsupportedType:
     "사진이나 PDF를 고르세요. HWP, 워드, 엑셀, 파워포인트 파일은 먼저 PDF로 저장한 뒤 고르세요.",
   tooLarge: "파일이 너무 커요. 사진은 20MB, PDF는 10MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
-  tooManyPages: "문서가 50페이지보다 많아요. 필요한 페이지만 저장하세요.",
+  tooManyPages: "문서를 처리하지 못했어요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
   damagedFile:
     "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 고르세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
