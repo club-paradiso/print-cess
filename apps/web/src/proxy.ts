@@ -6,9 +6,8 @@ import {
   decideRoot,
   KIOSK_PIN_COOKIE,
   KIOSK_PIN_MAX_AGE_SECONDS,
-  PHONE_GUIDE_PATH,
+  PHONE_PROMO_PATH,
 } from "./lib/phone-at-kiosk";
-import { isBrowserKioskEnabled } from "./server/demo";
 
 const OCR_ASSET_ORIGINS = ["https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com"];
 
@@ -66,18 +65,14 @@ export function buildContentSecurityPolicy(
   ].join("; ");
 }
 
-function kioskAtRoot(environment: NodeJS.ProcessEnv = process.env): boolean {
-  return environment.NODE_ENV !== "production" || isBrowserKioskEnabled(environment);
-}
-
 export function proxy(request: NextRequest) {
   const decision =
-    request.nextUrl.pathname === "/" && kioskAtRoot()
+    request.nextUrl.pathname === "/"
       ? decideRoot({ searchParams: request.nextUrl.searchParams, headers: request.headers })
       : undefined;
 
-  if (decision?.kind === "phone-guide") {
-    const redirect = NextResponse.redirect(new URL(PHONE_GUIDE_PATH, request.url));
+  if (decision?.kind === "phone-promo") {
+    const redirect = NextResponse.redirect(new URL(PHONE_PROMO_PATH, request.url));
     if (decision.pin === "clear") redirect.cookies.delete(KIOSK_PIN_COOKIE);
     return redirect;
   }

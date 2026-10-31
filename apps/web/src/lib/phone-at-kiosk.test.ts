@@ -26,7 +26,7 @@ describe("isNonDesktopRequest", () => {
     ["Android tablet without Mobile token", ANDROID_TABLET],
     ["iPad", IPAD],
     ["Firefox for Android", "Mozilla/5.0 (Android 15; Mobile; rv:131.0) Gecko/131.0 Firefox/131.0"],
-  ])("redirects %s to the guide", (_name, agent) => {
+  ])("identifies %s as mobile for the promotional landing", (_name, agent) => {
     expect(isNonDesktopRequest(headers({ "user-agent": agent }))).toBe(true);
   });
 
@@ -65,10 +65,10 @@ describe("decideRoot", () => {
   const pinnedTablet = headers({ "user-agent": ANDROID_TABLET, cookie: "pc_kiosk=1" });
   const params = (query = "") => new URLSearchParams(query);
 
-  it("sends phones and tablets to /start while keeping a desktop on /", () => {
+  it("sends phones and tablets to /promo while keeping a desktop on /", () => {
     for (const device of [phone, tablet, ipad]) {
       expect(decideRoot({ searchParams: params(), headers: device })).toEqual({
-        kind: "phone-guide",
+        kind: "phone-promo",
       });
     }
     expect(decideRoot({ searchParams: params(), headers: pc })).toEqual({ kind: "kiosk" });
@@ -86,7 +86,7 @@ describe("decideRoot", () => {
 
   it("unpins with ?kiosk=0 and redirects the newly unpinned tablet", () => {
     expect(decideRoot({ searchParams: params("kiosk=0"), headers: pinnedTablet })).toEqual({
-      kind: "phone-guide",
+      kind: "phone-promo",
       pin: "clear",
     });
     expect(decideRoot({ searchParams: params("kiosk=0"), headers: pc })).toEqual({

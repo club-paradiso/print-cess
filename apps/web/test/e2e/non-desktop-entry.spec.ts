@@ -5,7 +5,7 @@ const ANDROID_TABLET =
 const IPAD_DESKTOP_MODE =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15";
 
-test("Android tablet opening / goes straight to /start", async ({ browser }) => {
+test("Android tablet opening / goes straight to /promo", async ({ browser }) => {
   const context = await browser.newContext({
     userAgent: ANDROID_TABLET,
     viewport: { width: 800, height: 1280 },
@@ -15,7 +15,7 @@ test("Android tablet opening / goes straight to /start", async ({ browser }) => 
   try {
     const page = await context.newPage();
     await page.goto("/");
-    await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+    await expect(page).toHaveURL(/\/promo$/u);
   } finally {
     await context.close();
   }
@@ -40,7 +40,7 @@ test("desktop-style iPad uses the touch fallback but can explicitly view the kio
   try {
     const page = await context.newPage();
     await page.goto("/");
-    await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+    await expect(page).toHaveURL(/\/promo$/u);
     await page.goto("/?view=kiosk");
     await expect(page).toHaveURL(/\/\?view=kiosk$/u);
   } finally {
