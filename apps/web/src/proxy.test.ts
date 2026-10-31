@@ -181,9 +181,11 @@ describe("phones at the kiosk address", () => {
   });
 
   it("preserves repeated and encoded query parameters when redirecting to the promo", () => {
-    const response = proxy(request("/?utm_source=qr&tag=one&tag=two&lang=ko", IPHONE));
+    const response = proxy(
+      request("/?utm_source=qr&tag=one&tag=two&term=%ED%94%84%EB%A6%B0%ED%84%B0", IPHONE),
+    );
     expect(response.headers.get("location")).toBe(
-      "https://print-cess.test/promo?utm_source=qr&tag=one&tag=two&lang=ko",
+      "https://print-cess.test/promo?utm_source=qr&tag=one&tag=two&term=%ED%94%84%EB%A6%B0%ED%84%B0",
     );
   });
 

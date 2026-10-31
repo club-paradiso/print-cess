@@ -66,6 +66,9 @@ test("a touch station pinned with ?kiosk=1 keeps the kiosk until unpinned", asyn
   await expect(page.locator(".kiosk-qr")).toBeVisible();
 
   await page.goto("/?kiosk=0");
+  await expect(page).toHaveURL(/\/promo\?kiosk=0$/u);
+  expect((await context.cookies()).some((cookie) => cookie.name === "pc_kiosk")).toBe(false);
+  await page.goto("/");
   await expect(page).toHaveURL(/\/promo$/u);
   await context.close();
 });
