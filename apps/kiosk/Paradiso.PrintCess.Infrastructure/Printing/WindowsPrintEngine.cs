@@ -144,20 +144,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
                 return PrintResult.Rejected("F-01");
             }
 
-            var renderedPageCount = fixedDocument.Pages.Count;
-            var quotaDecision = PrintQuotaPolicy.Decide(renderedPageCount);
-            if (quotaDecision == PrintQuotaDecision.HardLimitExceeded)
-            {
-                return PrintResult.Rejected("Q-02");
-            }
-
-            if (quotaDecision == PrintQuotaDecision.StaffOverrideRequired &&
-                (authorizeQuotaOverride is null ||
-                 !await authorizeQuotaOverride(renderedPageCount, cancellationToken)))
-            {
-                return PrintResult.Rejected("Q-01");
-            }
-
             cancellationToken.ThrowIfCancellationRequested();
             if (onReadyToSubmit is not null)
             {
@@ -218,7 +204,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
             : await RenderPagesAsync(
                 document.Content,
                 document.Kind,
-                PrintQuotaPolicy.SystemPageLimit,
+                int.MaxValue,
                 cancellationToken);
 
         if (renderedPages.Count == 0)
@@ -264,11 +250,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
         foreach (var entry in bundle.Entries)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var remainingPageCapacity = PrintQuotaPolicy.SystemPageLimit - pages.Count;
-            if (remainingPageCapacity <= 0)
-            {
-                throw new PrintQuotaExceededException("The print bundle exceeds the system page limit.");
-            }
+            var remainingPageCapacity = int.MaxValue;
 
             var rendered = await RenderPagesAsync(
                 entry.Bytes,
@@ -409,8 +391,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
             throw new InvalidDataException("PDF page count is outside the permitted range.");
         }
 
-        if (pdf.PageCount > PortableDocumentValidator.MaximumPdfPages ||
-            pdf.PageCount > checked((uint)maximumPages))
+        if (pdf.PageCount > checked((uint)maximumPages))
         {
             throw new PrintQuotaExceededException("The rendered document exceeds the system page limit.");
         }
