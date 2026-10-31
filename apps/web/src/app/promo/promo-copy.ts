@@ -217,11 +217,6 @@ export const support = {
   freeTitle: "돈 말고도 큰 도움이 돼요",
   free: [
     {
-      title: "GitHub에서 지켜보기",
-      body: "코드와 개발 과정이 모두 공개되어 있어요.",
-      href: REPOSITORY_URL,
-    },
-    {
       title: "의견이나 오류 알려 주기",
       body: "써 보다 불편했던 점을 이슈로 남겨 주세요.",
       href: `${REPOSITORY_URL}/issues`,
