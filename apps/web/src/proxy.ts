@@ -8,7 +8,7 @@ import {
   KIOSK_PIN_MAX_AGE_SECONDS,
   PHONE_PROMO_PATH,
 } from "./lib/phone-at-kiosk";
- 
+
 const OCR_ASSET_ORIGINS = ["https://cdn.jsdelivr.net", "https://tessdata.projectnaptha.com"];
 
 export function blobConnectOrigins(environment: NodeJS.ProcessEnv = process.env): string[] {
