@@ -9,6 +9,7 @@ import { QR_COLORS } from "@/lib/qr-style";
 
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
+import { LegalDocumentModal } from "./legal-document-modal";
 import { MoreTabs } from "./more-tabs";
 import { StatementLine } from "./statement-line";
 import {
@@ -305,12 +306,13 @@ export default async function PromoPage() {
             <ul className={styles.footerLinks}>
               {footer.links.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}
-                  >
-                    {link.label}
-                  </a>
+                  {link.label === "보안 정책" ? (
+                    <LegalDocumentModal kind="security" label={link.label} />
+                  ) : link.label === "라이선스(Apache-2.0)" ? (
+                    <LegalDocumentModal kind="license" label={link.label} />
+                  ) : (
+                    <a href={link.href} {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}>{link.label}</a>
+                  )}
                 </li>
               ))}
               <li>
