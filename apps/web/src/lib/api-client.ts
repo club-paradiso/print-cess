@@ -76,6 +76,20 @@ export async function startUpload(sessionId: string, mobileToken: string) {
   });
 }
 
+const UPLOAD_MIN_TIMEOUT_MS = 120_000;
+const UPLOAD_MAX_TIMEOUT_MS = 600_000;
+const UPLOAD_ASSUMED_MIN_BYTES_PER_SECOND = 256 * 1024;
+
+/**
+ * A fixed two-minute cap cannot carry a 128 MiB bundle over a slow phone link.
+ * The allowance grows with the payload at a deliberately pessimistic floor of
+ * 256 KiB/s and is bounded so a stalled transfer still fails.
+ */
+export function uploadTimeoutMs(byteLength: number): number {
+  const transferMs = Math.ceil(byteLength / UPLOAD_ASSUMED_MIN_BYTES_PER_SECOND) * 1000 + 30_000;
+  return Math.min(Math.max(UPLOAD_MIN_TIMEOUT_MS, transferMs), UPLOAD_MAX_TIMEOUT_MS);
+}
+
 export async function uploadCiphertext(
   operation: { url: string; headers: Record<string, string> },
   bytes: Uint8Array,
@@ -84,7 +98,7 @@ export async function uploadCiphertext(
     method: "PUT",
     headers: operation.headers,
     body: Uint8Array.from(bytes).buffer,
-    signal: AbortSignal.timeout(120_000),
+    signal: AbortSignal.timeout(uploadTimeoutMs(bytes.byteLength)),
   });
   if (!response.ok)
     throw new ApiClientError("networkError", "Encrypted upload failed", response.status);

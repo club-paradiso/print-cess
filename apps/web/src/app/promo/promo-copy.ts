@@ -13,7 +13,6 @@ export const nav = {
   items: [
     { href: "#how", label: "사용 방법" },
     { href: "#more", label: "기능" },
-    { href: "#trust", label: "개발 현황" },
     { href: "#support", label: "후원" },
     { href: "#faq", label: "자주 묻는 질문" },
   ],
@@ -28,8 +27,6 @@ export const hero = {
   gloss: "가입도 앱 설치도 필요 없어요.",
   cta: "사용 방법 보기",
   secondaryCta: "Print-cess 시작하기",
-  statusLine: "개발·시연 단계예요. 실제 기관에 설치된 서비스가 아니에요.",
-  statusLink: "개발 현황 보기",
   filmLabel: "대학교 도서관과 공항에서 프린터로 종이를 받는 장면",
   filmNote: "AI로 만든 시연 영상이에요. 실제 장소나 설치 사례가 아니에요.",
   stillNote: "기기에서 움직임을 줄이는 설정이라 사진만 보여요.",
@@ -78,7 +75,7 @@ export const how = {
     kioskCaption: "휴대전화 카메라로 이 화면의 QR 코드를 찍어요.",
     kioskFinder: "이 표시가 있는 화면을 찾으세요.",
     chooseTitle: "인쇄할 문서를 하나 고르세요",
-    chooseRules: "사진 또는 PDF · 사진 20MB 이하 · PDF 10MB, 50페이지 이하",
+    chooseRules: "사진 또는 PDF · 사진·PDF 50MB 이하",
     choosePhotos: "사진에서 고르기",
     chooseFiles: "파일에서 고르기",
     checkTitle: "이 문서가 맞나요?",
@@ -109,8 +106,7 @@ export const more = {
       body: "휴대전화 속 파일을 종이 한 부로 뽑아요.",
       conditions: [
         "프린터 옆 Print-cess 화면의 QR 코드를 찍어야 시작돼요.",
-        "사진 또는 PDF를 쓸 수 있어요. 사진은 20MB, PDF는 10MB 이하예요.",
-        "11페이지까지는 바로 인쇄돼요. 12~50페이지는 직원이 큰 화면에서 승인해야 하고, 50페이지가 넘으면 인쇄할 수 없어요.",
+        "사진 또는 PDF를 쓸 수 있어요. 사진과 PDF는 각각 50MB 이하예요.",
         "HWPX는 프린터가 지원할 때만 고를 수 있어요. 그 밖의 문서는 PDF로 저장한 뒤 고르세요.",
       ],
       cta: "인쇄 시작 화면",
@@ -146,40 +142,6 @@ export const more = {
 } as const;
 
 export const trust = {
-  id: "trust",
-  title: "지금은 여기까지 만들었어요",
-  statusTitle: "지금은 개발·시연 단계예요",
-  statusBody:
-    "Print-cess는 아직 실제 개인 문서를 다루도록 승인받은 서비스가 아니에요. 어느 기관에도 설치되어 있지 않고, 인증이나 정식 운영 중이라는 뜻도 아니에요. 시연에는 실제 개인 문서를 쓰지 마세요.",
-  timelineLead: "끝난 것과 아직 남은 일을 나눠서 적었어요. 정식 운영 날짜는 정해지지 않았어요.",
-  timeline: [
-    {
-      state: "done",
-      title: "인쇄, 공유, 스캔의 전 과정",
-      body: "개발 환경과 Preview 배포에서 처음부터 끝까지 동작해요.",
-    },
-    {
-      state: "done",
-      title: "자동 테스트와 접근성 검사",
-      body: "화면 흐름과 접근성을 자동으로 확인해요.",
-    },
-    {
-      state: "next",
-      title: "실제 프린터 현장 검증",
-      body: "실제 프린터로 하는 시험은 아직 남아 있어요.",
-    },
-    {
-      state: "next",
-      title: "기관의 정보보안·개인정보 검토",
-      body: "실제 개인 문서를 다루려면 거쳐야 하는 검토예요.",
-    },
-    {
-      state: "next",
-      title: "외부 서비스 승인과 서명된 설치 파일",
-      body: "저장소 같은 외부 서비스의 승인과 윈도우용 설치 파일 서명이 남았어요.",
-    },
-  ],
-  stateLabels: { done: "동작해요", next: "아직이에요" },
   privacyTitle: "문서만 잠깐 지나가요",
   privacyLead: "이름도 연락처도 계정도 요청하지 않아요. 파일은 휴대전화에서 잠근 채 보내요.",
   privacyRows: [
@@ -187,8 +149,6 @@ export const trust = {
     { on: false, title: "이름·연락처·계정", body: "요청하지 않아요" },
     { on: false, title: "파일 이름", body: "서버가 받지 않아요" },
   ],
-  statusLink: "남은 과제 보기",
-  statusHref: `${DOCS_URL}/PRODUCTION_BLOCKERS.md`,
   points: [
     {
       title: "계정이 필요 없어요",
@@ -256,14 +216,9 @@ export const support = {
   freeTitle: "돈 말고도 큰 도움이 돼요",
   free: [
     {
-      title: "GitHub에서 지켜보기",
-      body: "코드와 개발 과정이 모두 공개되어 있어요.",
-      href: REPOSITORY_URL,
-    },
-    {
-      title: "의견이나 오류 알려 주기",
-      body: "써 보다 불편했던 점을 이슈로 남겨 주세요.",
-      href: `${REPOSITORY_URL}/issues`,
+      title: "의견 보내기",
+      body: "불편했던 점이나 개선할 점을 알려주세요.",
+      href: "https://docs.google.com/forms/d/e/1FAIpQLSdaKWWcQfV5Tb5rKwFzk8gUh4Mrz0ZgV18TqO2-mZxqOHfRoA/viewform",
     },
   ],
 } as const;
@@ -278,11 +233,7 @@ export const faq = {
     },
     {
       q: "어떤 파일을 인쇄할 수 있나요?",
-      a: "사진 또는 PDF예요. 사진은 20MB, PDF는 10MB 이하, 50페이지 이하여야 해요. 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요. HWPX는 프린터가 지원할 때만 고를 수 있어요.",
-    },
-    {
-      q: "12페이지가 넘으면 어떻게 되나요?",
-      a: "11페이지까지는 바로 인쇄돼요. 12~50페이지는 직원이 프린터 옆 화면에서 승인해야 하고, 휴대전화에서는 승인할 수 없어요. 50페이지가 넘으면 인쇄할 수 없어요.",
+      a: "사진 또는 PDF예요. 사진과 PDF는 각각 50MB 이하이고, 페이지 수 제한은 없어요. 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요. HWPX는 프린터가 지원할 때만 고를 수 있어요.",
     },
     {
       q: "QR 코드가 안 찍히거나 시간이 지났다고 해요.",
@@ -297,15 +248,15 @@ export const faq = {
       a: "이 서비스는 문서를 찾거나 새로 만들어 주지 않아요. 예약한 분이나 항공사, 여행사에 연락해서 휴대전화로 문서를 받으세요.",
     },
     {
-      q: "후원하면 더 많이 인쇄할 수 있나요?",
-      a: "아니요. 후원 여부와 기능, 인쇄 한도는 관계없어요.",
+      q: "후원해야만 이용할 수 있나요?",
+      a: "그건 아니긴 한데…. (제발 도와주세요)",
     },
   ],
 } as const;
 
 export const footer = {
   by: "by Club Paradiso",
-  note: "Print-cess는 개발·시연 단계의 오픈소스 프로젝트예요. 공공기관의 서비스가 아니에요.",
+  note: "Print-cess는 Club Paradiso의 오픈소스 프로젝트예요.",
   linksLabel: "프로젝트 링크",
   links: [
     { label: "사용 방법", href: "#how" },

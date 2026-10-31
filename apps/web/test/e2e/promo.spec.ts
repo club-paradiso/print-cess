@@ -27,7 +27,7 @@ test("the hero explains Print-cess and plays two muted films", async ({ page }) 
     page.getByRole("heading", { level: 1, name: /휴대전화 속 문서를\s*프린터에서 바로 뽑아요/u }),
   ).toBeVisible();
   await expect(page.getByRole("link", { name: /사용 방법 보기/u })).toHaveAttribute("href", "#how");
-  await expect(page.getByText(/개발·시연 단계예요/u).first()).toBeVisible();
+  await expect(page.getByText(/개발·시연 단계/u)).toHaveCount(0);
 
   const videos = page.locator("video");
   await expect(videos).toHaveCount(2);
@@ -104,7 +104,7 @@ test("the statement band states the three steps and the facts", async ({ page })
 
 test("the trust section says what it is and is not", async ({ page }) => {
   await page.goto("/promo#trust");
-  await expect(page.getByRole("heading", { name: "지금은 개발·시연 단계예요" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "지금은 개발·시연 단계예요" })).toHaveCount(0);
   await expect(page.getByText(/계정이 필요 없어요/u)).toBeVisible();
   await page.getByText("그래도 알아 둘 점").click();
   await expect(page.getByText(/즉시 지워진다는 약속은 아니에요/u)).toBeVisible();
@@ -158,7 +158,7 @@ test("the FAQ answers in place", async ({ page }) => {
   await page.goto("/promo#faq");
   const question = page.getByText("어떤 파일을 인쇄할 수 있나요?");
   await question.click();
-  await expect(page.getByText(/사진은 20MB, PDF는 10MB 이하/u).first()).toBeVisible();
+  await expect(page.getByText(/사진과 PDF는 각각 50MB 이하/u).first()).toBeVisible();
 });
 
 test("every product page is untouched and carries no promo media", async ({ page }) => {

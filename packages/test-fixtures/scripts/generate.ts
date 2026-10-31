@@ -16,14 +16,14 @@ await mkdir(outputDirectory, { recursive: true });
 const fixtures: Array<[string, Uint8Array | Promise<Uint8Array>]> = [
   ["synthetic-ticket-1-page.pdf", createSyntheticPdf(1)],
   ["synthetic-confirmation-2-pages.pdf", createSyntheticPdf(2)],
-  ["synthetic-over-limit-11-pages.pdf", createSyntheticPdf(11)],
+  ["synthetic-120-pages.pdf", createSyntheticPdf(120)],
   ["synthetic-locked.pdf", createSyntheticPdf(1, "fixture-only-password")],
   ["synthetic-ticket.jpg", createSyntheticJpeg()],
   ["synthetic-ticket.png", createSyntheticPng()],
   ["damaged.pdf", createDamagedPdf()],
   ["disguised.pdf", createDisguisedPdf()],
-  ["boundary-10-mib.pdf", createBoundaryBytes()],
-  ["over-10-mib.pdf", createBoundaryBytes(1)],
+  ["boundary-50-mib.pdf", createBoundaryBytes()],
+  ["over-50-mib.pdf", createBoundaryBytes(1)],
   ["oversized-dimensions.png", createSyntheticPng(13_000, 2)],
 ];
 

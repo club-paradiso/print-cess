@@ -40,7 +40,6 @@ export async function validateMobileDocument(
     bytes,
     fileKind: "hwp",
     pageCount: 1,
-    pageCountIsExact: false,
     normalized: false,
   };
 }

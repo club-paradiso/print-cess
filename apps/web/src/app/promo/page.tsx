@@ -9,6 +9,7 @@ import { QR_COLORS } from "@/lib/qr-style";
 
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
+import { LegalDocumentModal } from "./legal-document-modal";
 import { MoreTabs } from "./more-tabs";
 import { StatementLine } from "./statement-line";
 import {
@@ -31,7 +32,7 @@ import "./pretendard.css";
 
 export const metadata: Metadata = {
   title: "Print-cess 소개 · Print-cess by Club Paradiso",
-  description: "휴대전화에서 보내고 바로 출력하는 셀프 인쇄. 사용 방법과 개발 현황을 소개해요.",
+  description: "휴대전화에서 보내고 바로 출력하는 셀프 인쇄. 사용 방법과 주요 기능을 소개해요.",
   robots: { index: false, follow: false },
 };
 
@@ -122,10 +123,6 @@ export default async function PromoPage() {
                 {hero.secondaryCta}
               </Link>
             </div>
-            <p className={styles.heroStatus}>
-              <span className={styles.statusDot} aria-hidden="true" />
-              {hero.statusLine} <a href="#trust">{hero.statusLink}</a>
-            </p>
           </HeroFilm>
         </section>
 
@@ -177,40 +174,6 @@ export default async function PromoPage() {
               <p>{more.lead}</p>
             </SectionHead>
             <MoreTabs />
-          </div>
-        </section>
-
-        <section id={trust.id} className={styles.section} aria-labelledby="trust-title">
-          <div className={`${styles.container} ${styles.split}`}>
-            <div className={styles.splitHead}>
-              <SectionHead kicker="개발 현황" title={trust.title} id="trust-title">
-                <p>{trust.timelineLead}</p>
-              </SectionHead>
-              <div className={styles.callout} role="note" aria-labelledby="status-title">
-                <h3 id="status-title">{trust.statusTitle}</h3>
-                <p>{trust.statusBody}</p>
-                <a className={styles.textLink} href={trust.statusHref} rel="noreferrer">
-                  {trust.statusLink}
-                  <ExternalLink aria-hidden="true" size={15} />
-                </a>
-              </div>
-            </div>
-            <ol className={styles.timeline}>
-              {trust.timeline.map((item) => (
-                <li key={item.title} data-state={item.state}>
-                  <span className={styles.timelineNode} aria-hidden="true" />
-                  <div>
-                    <p className={styles.timelineTop}>
-                      <strong>{item.title}</strong>
-                      <span className={styles.pill} data-state={item.state}>
-                        {trust.stateLabels[item.state]}
-                      </span>
-                    </p>
-                    <p className={styles.timelineBody}>{item.body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
           </div>
         </section>
 
@@ -316,15 +279,7 @@ export default async function PromoPage() {
 
         <section id={faq.id} className={styles.section} aria-labelledby="faq-title">
           <div className={`${styles.container} ${styles.split}`}>
-            <SectionHead kicker="FAQ" title={faq.title} id="faq-title">
-              <p>
-                여기에 없는 질문은{" "}
-                <a className={styles.inlineLink} href={`${REPOSITORY_URL}/issues`} rel="noreferrer">
-                  GitHub 이슈
-                </a>
-                로 남겨 주세요.
-              </p>
-            </SectionHead>
+            <SectionHead kicker="FAQ" title={faq.title} id="faq-title" />
             <div className={styles.faq}>
               {faq.items.map((item) => (
                 <details key={item.q}>
@@ -345,22 +300,26 @@ export default async function PromoPage() {
           <div className={styles.footerBrand}>
             <Wordmark />
             <p className={styles.footerMotto}>{hero.eyebrow}</p>
-            <p className={styles.footerStatus}>
-              <span className={styles.statusDot} aria-hidden="true" />
-              개발·시연 단계
-            </p>
             <p className={styles.footerNote}>{footer.note}</p>
           </div>
           <nav aria-label={footer.linksLabel}>
             <ul className={styles.footerLinks}>
               {footer.links.map((link) => (
                 <li key={link.href}>
-                  <a
-                    href={link.href}
-                    {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}
-                  >
-                    {link.label}
-                  </a>
+                  {link.label === "보안 정책" ? (
+                    <LegalDocumentModal kind="security" label={link.label} />
+                  ) : link.label === "개인정보 문서" ? (
+                    <LegalDocumentModal kind="privacy" label={link.label} />
+                  ) : link.label === "라이선스(Apache-2.0)" ? (
+                    <LegalDocumentModal kind="license" label={link.label} />
+                  ) : (
+                    <a
+                      href={link.href}
+                      {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}
+                    >
+                      {link.label}
+                    </a>
+                  )}
                 </li>
               ))}
               <li>

@@ -24,20 +24,11 @@ public sealed class WindowsPrintEngine : IPrintEngine
     private const double Margin = 24.0;
     private const uint PdfLongEdgePixels = 2_339;
 
-    private sealed class PrintQuotaExceededException : Exception
-    {
-        public PrintQuotaExceededException(string message)
-            : base(message)
-        {
-        }
-    }
-
     public Task<PrintResult> PrintAsync(
         ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null,
-        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
+        Func<CancellationToken, Task>? onReadyToSubmit = null)
     {
         ArgumentNullException.ThrowIfNull(document);
         settings.EnsureKioskPolicy();
@@ -51,7 +42,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
                     document,
                     settings,
                     onReadyToSubmit,
-                    authorizeQuotaOverride,
                     cancellationToken).GetAwaiter().GetResult());
             }
             catch (OperationCanceledException exception)
@@ -96,7 +86,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
         ValidatedDocument document,
         PrintSettings settings,
         Func<CancellationToken, Task>? onReadyToSubmit,
-        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride,
         CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
@@ -135,27 +124,9 @@ public sealed class WindowsPrintEngine : IPrintEngine
             {
                 fixedDocument = await RenderDocumentAsync(document, cancellationToken);
             }
-            catch (PrintQuotaExceededException)
-            {
-                return PrintResult.Rejected("Q-02");
-            }
-            catch (Exception exception) when (exception is InvalidDataException or ArgumentException or COMException or ProtocolException)
+            catch (Exception exception) when (exception is InvalidDataException or ArgumentException or COMException or ProtocolException or OutOfMemoryException)
             {
                 return PrintResult.Rejected("F-01");
-            }
-
-            var renderedPageCount = fixedDocument.Pages.Count;
-            var quotaDecision = PrintQuotaPolicy.Decide(renderedPageCount);
-            if (quotaDecision == PrintQuotaDecision.HardLimitExceeded)
-            {
-                return PrintResult.Rejected("Q-02");
-            }
-
-            if (quotaDecision == PrintQuotaDecision.StaffOverrideRequired &&
-                (authorizeQuotaOverride is null ||
-                 !await authorizeQuotaOverride(renderedPageCount, cancellationToken)))
-            {
-                return PrintResult.Rejected("Q-01");
             }
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -218,7 +189,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
             : await RenderPagesAsync(
                 document.Content,
                 document.Kind,
-                PrintQuotaPolicy.SystemPageLimit,
                 cancellationToken);
 
         if (renderedPages.Count == 0)
@@ -264,16 +234,9 @@ public sealed class WindowsPrintEngine : IPrintEngine
         foreach (var entry in bundle.Entries)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var remainingPageCapacity = PrintQuotaPolicy.SystemPageLimit - pages.Count;
-            if (remainingPageCapacity <= 0)
-            {
-                throw new PrintQuotaExceededException("The print bundle exceeds the system page limit.");
-            }
-
             var rendered = await RenderPagesAsync(
                 entry.Bytes,
                 entry.Kind,
-                remainingPageCapacity,
                 cancellationToken);
             pages.AddRange(rendered);
         }
@@ -283,22 +246,15 @@ public sealed class WindowsPrintEngine : IPrintEngine
     private static async Task<IReadOnlyList<BitmapSource>> RenderPagesAsync(
         byte[] content,
         DocumentKind kind,
-        int maximumPages,
         CancellationToken cancellationToken)
     {
-        if (maximumPages < 1)
-        {
-            throw new PrintQuotaExceededException("The print job exceeds the system page limit.");
-        }
-
         return kind switch
         {
-            DocumentKind.Pdf => await RenderPdfAsync(content, maximumPages, cancellationToken),
+            DocumentKind.Pdf => await RenderPdfAsync(content, cancellationToken),
             DocumentKind.Jpeg or DocumentKind.Png => [DecodePhoto(content)],
             DocumentKind.Hwp or DocumentKind.Hwpx => await RenderHangulAsync(
                 content,
                 kind,
-                maximumPages,
                 cancellationToken),
             _ => throw new InvalidDataException("Unsupported document kind inside the print job."),
         };
@@ -374,13 +330,12 @@ public sealed class WindowsPrintEngine : IPrintEngine
     private static async Task<IReadOnlyList<BitmapSource>> RenderHangulAsync(
         byte[] content,
         DocumentKind kind,
-        int maximumPages,
         CancellationToken cancellationToken)
     {
         var pdf = await HancomHwpxRenderer.RenderToPdfAsync(content, kind, cancellationToken);
         try
         {
-            return await RenderPdfAsync(pdf, maximumPages, cancellationToken);
+            return await RenderPdfAsync(pdf, cancellationToken);
         }
         finally
         {
@@ -390,7 +345,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
 
     private static async Task<IReadOnlyList<BitmapSource>> RenderPdfAsync(
         byte[] content,
-        int maximumPages,
         CancellationToken cancellationToken)
     {
         using var input = new InMemoryRandomAccessStream();
@@ -407,12 +361,6 @@ public sealed class WindowsPrintEngine : IPrintEngine
         if (pdf.PageCount < 1)
         {
             throw new InvalidDataException("PDF page count is outside the permitted range.");
-        }
-
-        if (pdf.PageCount > PortableDocumentValidator.MaximumPdfPages ||
-            pdf.PageCount > checked((uint)maximumPages))
-        {
-            throw new PrintQuotaExceededException("The rendered document exceeds the system page limit.");
         }
 
         var bitmaps = new List<BitmapSource>(checked((int)pdf.PageCount));

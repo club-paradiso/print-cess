@@ -46,11 +46,6 @@ internal static class PdfDocumentInspector
             throw new DocumentValidationException(DocumentValidationError.CorruptPdf);
         }
 
-        if (pages > PortableDocumentValidator.MaximumPdfPages)
-        {
-            throw new DocumentValidationException(DocumentValidationError.TooManyPages);
-        }
-
         return new DocumentProperties(pages, null, null);
     }
 

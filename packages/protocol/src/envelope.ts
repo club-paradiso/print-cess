@@ -1,16 +1,8 @@
 import { DIGEST_PATTERN, SESSION_ID_PATTERN } from "./canonical.js";
-import { SYSTEM_MAX_PAGE_LIMIT } from "./print-quota.js";
 
-export const MAX_PLAINTEXT_BYTES = 10 * 1024 * 1024;
-/**
- * A single PDF cannot exceed what the kiosk can render at all, so this tracks
- * the technical ceiling rather than standing as a limit of its own. The number
- * a visitor actually meets is `PUBLIC_FREE_PAGE_LIMIT`, which lives in
- * `print-quota.ts` and is deliberately not this constant.
- */
-export const MAX_PDF_PAGES = SYSTEM_MAX_PAGE_LIMIT;
+export const MAX_PLAINTEXT_BYTES = 50 * 1024 * 1024;
 export const MAX_PRINT_BUNDLE_FILES = 10;
-export const MAX_PRINT_BUNDLE_BYTES = 32 * 1024 * 1024;
+export const MAX_PRINT_BUNDLE_BYTES = 128 * 1024 * 1024;
 export const ENVELOPE_FIXED_HEADER_BYTES = 26;
 export const P256_PUBLIC_KEY_BYTES = 65;
 export const HKDF_SALT_BYTES = 32;
@@ -19,9 +11,11 @@ export const AES_GCM_TAG_BYTES = 16;
 export const ENVELOPE_HEADER_BYTES =
   ENVELOPE_FIXED_HEADER_BYTES + P256_PUBLIC_KEY_BYTES + HKDF_SALT_BYTES + AES_GCM_IV_BYTES;
 export const ENVELOPE_OVERHEAD_BYTES = ENVELOPE_HEADER_BYTES + AES_GCM_TAG_BYTES;
-// A normal document still tops out at 10 MiB. Only the authenticated bundle
-// container may use the larger payload budget, so adding batch printing does
-// not quietly make single-document validation more permissive.
+// A single document tops out at 50 MiB (MAX_PLAINTEXT_BYTES). Only the
+// authenticated bundle container may use the larger 128 MiB payload budget, so
+// batch printing does not quietly make single-document validation more
+// permissive. There is deliberately no page-count limit anywhere in the
+// protocol: size is the only bound.
 export const MAX_ENVELOPE_BYTES = MAX_PRINT_BUNDLE_BYTES + ENVELOPE_OVERHEAD_BYTES;
 export const HKDF_INFO = "print-cess-by-paradiso:file:v1";
 

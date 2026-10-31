@@ -24,10 +24,23 @@ describe("/promo copy", () => {
     }
   });
 
-  it("states the development stage in the hero and in the trust section", () => {
-    expect(hero.statusLine).toContain("개발·시연 단계");
-    expect(trust.statusTitle).toContain("개발·시연 단계");
-    expect(trust.statusBody).toContain("승인받은 서비스가 아니에요");
+  it("no longer carries the removed development-status messaging", () => {
+    for (const phrase of [
+      "개발·시연 단계",
+      "승인받은 서비스가 아니에요",
+      "statusLine",
+      "statusTitle",
+    ]) {
+      expect(everyLine, phrase).not.toContain(phrase);
+    }
+  });
+
+  it("states the current file limits and no page-count or staff-approval limit", () => {
+    const answer = faq.items.map((item) => item.a).join("\n");
+    expect(answer).toContain("50MB");
+    for (const stale of ["20MB", "10MB", "32MB", "50페이지", "11페이지", "직원 승인"]) {
+      expect(everyLine, stale).not.toContain(stale);
+    }
   });
 
   it("only links to routes that exist", () => {
