@@ -150,8 +150,6 @@ export const trust = {
     { on: false, title: "이름·연락처·계정", body: "요청하지 않아요" },
     { on: false, title: "파일 이름", body: "서버가 받지 않아요" },
   ],
-  statusLink: "남은 과제 보기",
-  statusHref: `${DOCS_URL}/PRODUCTION_BLOCKERS.md`,
   points: [
     {
       title: "계정이 필요 없어요",
