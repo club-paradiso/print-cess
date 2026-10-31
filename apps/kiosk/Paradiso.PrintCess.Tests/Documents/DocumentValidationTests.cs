@@ -1,4 +1,5 @@
 using Paradiso.PrintCess.Core.Documents;
+using Paradiso.PrintCess.Core.Protocol;
 using Paradiso.PrintCess.Tests.Fixtures;
 
 namespace Paradiso.PrintCess.Tests.Documents;
