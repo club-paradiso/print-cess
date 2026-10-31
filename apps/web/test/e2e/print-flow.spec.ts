@@ -1,3 +1,7 @@
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type BrowserContext, type Page } from "@playwright/test";
 
@@ -8,6 +12,17 @@ import {
   createSyntheticPdf,
   createSyntheticPng,
 } from "@print-cess/test-fixtures";
+
+/**
+ * Playwright refuses in-memory upload buffers above 50 MiB, which is exactly
+ * the product limit, so the one-byte-over fixture travels as a file on disk.
+ */
+function writeOversizedPdf(): { path: string; cleanup: () => void } {
+  const directory = mkdtempSync(join(tmpdir(), "print-cess-e2e-"));
+  const path = join(directory, "too-large.pdf");
+  writeFileSync(path, createBoundaryBytes(1), { mode: 0o600 });
+  return { path, cleanup: () => rmSync(directory, { recursive: true, force: true }) };
+}
 
 async function openSession(page: Page, kioskPath = "/kiosk"): Promise<string> {
   await page.goto(kioskPath);
@@ -258,12 +273,13 @@ test("a claim network interruption produces a recovery instruction", async ({ pa
 
 test("large files are rejected before encryption", async ({ page, context }) => {
   const { mobile } = await openMobile(page, context);
-  await mobile.getByTestId("file-input").setInputFiles({
-    name: "too-large.pdf",
-    mimeType: "application/pdf",
-    buffer: Buffer.from(createBoundaryBytes(1)),
-  });
-  await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
+  const oversized = writeOversizedPdf();
+  try {
+    await mobile.getByTestId("file-input").setInputFiles(oversized.path);
+    await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
+  } finally {
+    oversized.cleanup();
+  }
 });
 
 test("a rejected pick clears the picker so the same file can be chosen again", async ({
@@ -272,13 +288,14 @@ test("a rejected pick clears the picker so the same file can be chosen again", a
 }) => {
   const { mobile } = await openMobile(page, context);
   const input = mobile.getByTestId("file-input");
-  await input.setInputFiles({
-    name: "too-large.pdf",
-    mimeType: "application/pdf",
-    buffer: Buffer.from(createBoundaryBytes(1)),
-  });
-  await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
-  await expect(input).toHaveValue("");
+  const oversized = writeOversizedPdf();
+  try {
+    await input.setInputFiles(oversized.path);
+    await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
+    await expect(input).toHaveValue("");
+  } finally {
+    oversized.cleanup();
+  }
 });
 
 test("cancelling a file picker keeps the claimed session ready", async ({ page, context }) => {
