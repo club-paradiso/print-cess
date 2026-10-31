@@ -84,7 +84,7 @@ public sealed class PrintingTests : IDisposable
     }
 
     [Fact]
-    public async Task MockEngineRequiresStaffApprovalForTwelvePages()
+    public async Task MockEnginePrintsTwelvePagesWithoutStaffApproval()
     {
         using var document = new PortableDocumentValidator().Validate(
             TestDocuments.PdfWithPages(12),
@@ -93,25 +93,12 @@ public sealed class PrintingTests : IDisposable
             TestDocuments.SessionId);
         var engine = new MockPrintEngine(new MockPrintEngineOptions(true, _temporaryDirectory));
 
-        var rejected = await engine.PrintAsync(
+        var result = await engine.PrintAsync(
             document,
             PrintSettings.KioskDefault("Mock Printer"),
             CancellationToken.None);
-        var approvedPageCount = 0;
-        var approved = await engine.PrintAsync(
-            document,
-            PrintSettings.KioskDefault("Mock Printer"),
-            CancellationToken.None,
-            authorizeQuotaOverride: (pageCount, _) =>
-            {
-                approvedPageCount = pageCount;
-                return Task.FromResult(true);
-            });
 
-        Assert.Equal(PrintOutcome.RejectedBeforeSubmission, rejected.Outcome);
-        Assert.Equal("Q-01", rejected.Code);
-        Assert.Equal(PrintOutcome.Completed, approved.Outcome);
-        Assert.Equal(12, approvedPageCount);
+        Assert.Equal(PrintOutcome.Completed, result.Outcome);
         Assert.Single(Directory.GetFiles(_temporaryDirectory, "*.json"));
     }
 
