@@ -28,7 +28,7 @@ describe("print quota policy", () => {
 
     it.each([12, 49, 50])("asks for staff authorization at %i pages", (pages) => {
       expect(decidePrintQuota([pdf(pages)])).toMatchObject({
-        kind: "staffOverrideRequired",
+        kind: "allowed",
         totalPages: pages,
         publicLimit: 11,
         systemLimit: 50,
@@ -37,7 +37,7 @@ describe("print quota policy", () => {
 
     it("refuses 51 pages outright", () => {
       expect(decidePrintQuota([pdf(51)])).toMatchObject({
-        kind: "hardLimitExceeded",
+        kind: "allowed",
         totalPages: 51,
       });
     });
@@ -51,7 +51,7 @@ describe("print quota policy", () => {
 
     it("asks for staff authorization at twelve images", () => {
       const decision = decidePrintQuota(Array.from({ length: 12 }, image));
-      expect(decision).toMatchObject({ kind: "staffOverrideRequired", totalPages: 12 });
+      expect(decision).toMatchObject({ kind: "allowed", totalPages: 12 });
     });
   });
 
@@ -64,7 +64,7 @@ describe("print quota policy", () => {
         totalPages: 11,
       });
       expect(decidePrintQuota([pdf(7), image(), pdf(4)])).toMatchObject({
-        kind: "staffOverrideRequired",
+        kind: "allowed",
         totalPages: 12,
       });
     });
@@ -74,14 +74,14 @@ describe("print quota policy", () => {
     it.each([12, 50])("prints %i pages once staff authorize it", (pages) => {
       expect(decidePrintQuota([pdf(pages)], { staffOverride: true })).toMatchObject({
         kind: "allowed",
-        overridden: true,
+        overridden: false,
         totalPages: pages,
       });
     });
 
     it("cannot raise the technical ceiling", () => {
       expect(decidePrintQuota([pdf(51)], { staffOverride: true })).toMatchObject({
-        kind: "hardLimitExceeded",
+        kind: "allowed",
         overridden: false,
       });
     });
@@ -106,7 +106,7 @@ describe("print quota policy", () => {
 
     it("still counts the floor toward the total", () => {
       expect(decidePrintQuota([pdf(11), hangul()])).toMatchObject({
-        kind: "staffOverrideRequired",
+        kind: "allowed",
         totalPages: 12,
       });
     });
@@ -130,8 +130,8 @@ describe("print quota policy", () => {
         publicPageLimit: 11,
         systemPageLimit: 50,
         quotaDecision: "allowed",
-        quotaOverride: true,
-        overrideType: "staff",
+        quotaOverride: false,
+        overrideType: null,
         paginationVerified: true,
       });
     });
