@@ -148,24 +148,24 @@ describe("phones at the kiosk address", () => {
 
   afterEach(() => vi.unstubAllEnvs());
 
-  it("redirects a phone from / to the visitor guide", () => {
+  it("redirects a phone from / to the promotional landing", () => {
     const response = proxy(request("/", IPHONE));
     expect(response.status).toBe(307);
-    expect(response.headers.get("location")).toBe("https://print-cess.test/start?from=kiosk");
+    expect(response.headers.get("location")).toBe("https://print-cess.test/promo");
   });
 
   it("redirects Android tablets and iPads from / before rendering", () => {
     for (const agent of [ANDROID_TABLET, IPAD]) {
       const response = proxy(request("/", agent));
       expect(response.status).toBe(307);
-      expect(response.headers.get("location")).toBe("https://print-cess.test/start?from=kiosk");
+      expect(response.headers.get("location")).toBe("https://print-cess.test/promo");
     }
   });
 
   it("does not redirect desktop, an opted-in kiosk, /start or functional mobile routes", () => {
     expect(proxy(request("/", WINDOWS)).headers.get("location")).toBeNull();
     expect(proxy(request("/", IPHONE, "pc_kiosk=1")).headers.get("location")).toBeNull();
-    for (const path of ["/start", "/send", "/receive", "/scan", "/s/example", "/api/health"]) {
+    for (const path of ["/promo", "/start", "/send", "/receive", "/scan", "/s/example", "/api/health"]) {
       expect(proxy(request(path, ANDROID_TABLET)).headers.get("location")).toBeNull();
     }
     expect(proxy(request("/?view=kiosk", IPHONE)).headers.get("location")).toBeNull();
@@ -178,9 +178,11 @@ describe("phones at the kiosk address", () => {
     expect(cookie.toLowerCase()).toContain("httponly");
   });
 
-  it("does not redirect when the root is not the kiosk in production", () => {
+  it("keeps the mobile promotional entry even when the browser kiosk is disabled", () => {
     vi.stubEnv("NODE_ENV", "production");
     vi.stubEnv("ENABLE_BROWSER_KIOSK", "false");
-    expect(proxy(request("/", IPHONE)).headers.get("location")).toBeNull();
+    expect(proxy(request("/", IPHONE)).headers.get("location")).toBe(
+      "https://print-cess.test/promo",
+    );
   });
 });
