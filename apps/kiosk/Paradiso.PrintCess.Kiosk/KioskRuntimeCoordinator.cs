@@ -541,14 +541,14 @@ internal sealed class KioskRuntimeCoordinator : IKioskAdminRuntime
                 {
                     _viewModel.ShowSessionError(
                         "직원 승인이 없어 출력을 취소했습니다",
-                        "11페이지 이하로 다시 고르거나 직원에게 승인을 요청하세요",
+                        "문서를 다시 확인해 주세요",
                         failedCleanupConfirmed);
                 }
                 else if (string.Equals(printResult.Code, "Q-02", StringComparison.Ordinal))
                 {
                     _viewModel.ShowSessionError(
-                        "시스템 최대 출력량 50페이지를 넘었습니다",
-                        "50페이지 이하로 나누어 새 QR 코드로 다시 보내세요",
+                        "인쇄 작업을 처리하지 못했습니다",
+                        "문서를 확인한 뒤 다시 시도해 주세요",
                         failedCleanupConfirmed);
                 }
                 else
@@ -637,7 +637,7 @@ internal sealed class KioskRuntimeCoordinator : IKioskAdminRuntime
         DocumentValidationException { Error: DocumentValidationError.LockedPdf } =>
             ("암호가 설정된 PDF는 인쇄할 수 없습니다", "휴대전화에서 필요한 페이지를 화면 캡처한 뒤 새 QR 코드로 다시 보내세요"),
         DocumentValidationException { Error: DocumentValidationError.TooManyPages } =>
-            ("시스템 최대 출력량 50페이지를 넘었습니다", "50페이지 이하로 나누어 새 QR 코드로 다시 보내세요"),
+            ("인쇄 작업을 처리하지 못했습니다", "문서를 확인한 뒤 다시 시도해 주세요"),
         DocumentValidationException { Error: DocumentValidationError.TypeMismatch or DocumentValidationError.MimeMismatch } =>
             ("PDF, JPG, PNG 파일만 인쇄할 수 있습니다", "지원 형식으로 저장하거나 선명한 화면 캡처를 새 QR 코드로 보내세요"),
         DocumentValidationException =>
