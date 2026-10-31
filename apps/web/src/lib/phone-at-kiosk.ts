@@ -1,6 +1,6 @@
 /**
  * The root route is a printer-side kiosk. Phones and tablets visiting it are
- * sent to /start instead, where they can find the print/scan/share entry points.
+ * sent to /promo instead, where they can learn about Print-cess.
  *
  * This decision applies only to /. Session, transfer, scanner and API routes
  * must remain available on handheld devices. An explicitly pinned kiosk or
@@ -9,7 +9,7 @@
 
 export const KIOSK_PIN_COOKIE = "pc_kiosk";
 export const KIOSK_PIN_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
-export const PHONE_GUIDE_PATH = "/start?from=kiosk";
+export const PHONE_PROMO_PATH = "/promo";
 export const KIOSK_VIEW_ONCE_PATH = "/?view=kiosk";
 
 /**
@@ -50,7 +50,7 @@ export function hasKioskPin(cookieHeader: string | null | undefined): boolean {
 }
 
 export type RootDecision =
-  { kind: "kiosk"; pin?: "set" | "clear" } | { kind: "phone-guide"; pin?: "clear" };
+  { kind: "kiosk"; pin?: "set" | "clear" } | { kind: "phone-promo"; pin?: "clear" };
 
 /** What the root address should do for this request. */
 export function decideRoot(input: {
@@ -63,6 +63,6 @@ export function decideRoot(input: {
   const clear = kiosk === "0" ? ({ pin: "clear" } as const) : {};
   if (searchParams.get("view") === "kiosk") return { kind: "kiosk", ...clear };
   if (kiosk !== "0" && hasKioskPin(headers.get("cookie"))) return { kind: "kiosk" };
-  if (isNonDesktopRequest(headers)) return { kind: "phone-guide", ...clear };
+  if (isNonDesktopRequest(headers)) return { kind: "phone-promo", ...clear };
   return { kind: "kiosk", ...clear };
 }
