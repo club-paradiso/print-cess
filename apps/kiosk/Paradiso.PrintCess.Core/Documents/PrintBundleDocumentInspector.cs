@@ -25,11 +25,7 @@ internal static class PrintBundleDocumentInspector
                 if (properties.PageCount is { } pageCount)
                 {
                     exactPageCount = checked(exactPageCount + pageCount);
-                    if (exactPageCount > PortableDocumentValidator.MaximumPdfPages)
-                    {
-                        throw new DocumentValidationException(DocumentValidationError.TooManyPages);
-                    }
-                }
+}
                 else
                 {
                     paginationVerified = false;
