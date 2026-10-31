@@ -12,9 +12,9 @@ public static class BinaryEnvelope
     public const int IvBytes = 12;
     public const int TagBytes = 16;
     public const int HeaderBytes = FixedPrefixBytes + PublicKeyBytes + SaltBytes + IvBytes;
-    public const int MaxPlaintextBytes = 10 * 1024 * 1024;
+    public const int MaxPlaintextBytes = 50 * 1024 * 1024;
     public const int MaxBundleFiles = 10;
-    public const int MaxBundleBytes = 32 * 1024 * 1024;
+    public const int MaxBundleBytes = 128 * 1024 * 1024;
     public const int MaxEnvelopeBytes = MaxBundleBytes + HeaderBytes + TagBytes;
     public const string HkdfInfo = "print-cess-by-paradiso:file:v1";
     public const string AadDomain = "print-cess-by-paradiso:aad:v1";
