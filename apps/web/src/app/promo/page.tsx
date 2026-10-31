@@ -313,7 +313,12 @@ export default async function PromoPage() {
                   ) : link.label === "라이선스(Apache-2.0)" ? (
                     <LegalDocumentModal kind="license" label={link.label} />
                   ) : (
-                    <a href={link.href} {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}>{link.label}</a>
+                    <a
+                      href={link.href}
+                      {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}
+                    >
+                      {link.label}
+                    </a>
                   )}
                 </li>
               ))}
