@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { Wordmark } from "@print-cess/ui";
 
 import { QR_COLORS } from "@/lib/qr-style";
+import { isBrowserKioskEnabled } from "@/server/demo";
 
 import { PromoMenu } from "./promo-menu";
 import { HeroFilm } from "./hero-film";
@@ -62,6 +63,7 @@ function SectionHead({
 
 export default async function PromoPage() {
   const config = supportConfig();
+  const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
   const tossQr = config.toss
     ? await QRCode.toDataURL(config.toss, { margin: 1, width: 264, color: QR_COLORS })
     : undefined;
@@ -117,7 +119,6 @@ export default async function PromoPage() {
         <section className={styles.statement} aria-labelledby="statement-title">
           <div className={styles.container}>
             <StatementLine id="statement-title" words={statement.words} />
-
             <ul className={styles.facts}>
               {statement.facts.map((fact) => (
                 <li key={fact.label}>
@@ -137,13 +138,15 @@ export default async function PromoPage() {
             <Journey />
             <div className={styles.tryBox}>
               <div>
-                <h3>{how.tryTitle}</h3>
-                <p>{how.tryBody}</p>
+                <h3>{kioskAvailable ? how.tryTitle : how.entryTitle}</h3>
+                <p>{kioskAvailable ? how.tryBody : how.entryBody}</p>
               </div>
               <div className={styles.tryActions}>
-                <Link className={styles.filmPrimary} href="/kiosk">
-                  {how.tryKiosk}
-                </Link>
+                {kioskAvailable ? (
+                  <Link className={styles.filmPrimary} href="/kiosk">
+                    {how.tryKiosk}
+                  </Link>
+                ) : null}
                 <Link className={styles.filmGlass} href="/start">
                   {how.tryStart}
                 </Link>
