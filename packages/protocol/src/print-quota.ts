@@ -78,14 +78,6 @@ export function decidePrintQuota(
 
   // The technical ceiling is checked first and on purpose: no authorization
   // exists that makes the machine able to print more than it can print.
-  if (totalPages > SYSTEM_MAX_PAGE_LIMIT) {
-    return { ...base, kind: "hardLimitExceeded", overridden: false };
-  }
-  if (totalPages > PUBLIC_FREE_PAGE_LIMIT) {
-    return options.staffOverride
-      ? { ...base, kind: "allowed", overridden: true }
-      : { ...base, kind: "staffOverrideRequired", overridden: false };
-  }
   return { ...base, kind: "allowed", overridden: false };
 }
 
