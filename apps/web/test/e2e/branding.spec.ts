@@ -132,3 +132,36 @@ test("shows the two-minute QR renewal window", async ({ page }) => {
     /새 QR 코드로 바뀌기까지 (?:02:00|01:5\d)/u,
   );
 });
+
+
+test("@viewport phone entry links to real features without a warning banner", async ({
+  page,
+}, testInfo) => {
+  await page.goto(testInfo.project.name === "chromium" ? "/start?from=kiosk" : "/");
+  if (testInfo.project.name !== "chromium") {
+    await expect(page).toHaveURL(/\/start\?from=kiosk$/u);
+  }
+
+  const quick = page.getByRole("navigation", { name: "이런 것도 할 수 있어요" }).first();
+  await expect(quick.getByRole("link", { name: "보낼 파일 고르기" })).toHaveAttribute(
+    "href",
+    "/send",
+  );
+  await expect(quick.getByRole("link", { name: "코드로 파일 받기" })).toHaveAttribute(
+    "href",
+    "/receive",
+  );
+  await expect(quick.getByRole("link", { name: "문서 스캔하기" })).toHaveAttribute(
+    "href",
+    "/scan",
+  );
+  await expect(page.locator(".home-from-kiosk")).not.toHaveCSS(
+    "background-color",
+    "rgb(255, 251, 235)",
+  );
+  await expect(page.locator(".pc-club-paradiso").first()).toHaveCSS("color", "rgb(168, 43, 45)");
+  await expect(page.locator(".pc-club-paradiso").first()).toHaveCSS("opacity", "1");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+    true,
+  );
+});
