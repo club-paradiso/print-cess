@@ -144,9 +144,11 @@ test("@viewport phone root lands on /promo while desktop keeps the kiosk", async
   } else {
     await expect(page).toHaveURL(/\/promo$/u);
     await expect(page.locator("h1")).toBeVisible();
-    const logo = page.locator(".pc-club-paradiso").first();
-    await expect(logo).toBeVisible();
-    await expect(logo).toHaveCSS("color", "rgb(168, 43, 45)");
-    await expect(logo).toHaveCSS("opacity", "1");
+    // Header artwork becomes white when laid over the hero film. Check the
+    // footer lockup, where the deep-crimson endorsement remains the theme color.
+    const footerLogo = page.locator("footer .pc-club-paradiso");
+    await expect(footerLogo).toBeVisible();
+    await expect(footerLogo).toHaveCSS("color", "rgb(168, 43, 45)");
+    await expect(footerLogo).toHaveCSS("opacity", "1");
   }
 });
