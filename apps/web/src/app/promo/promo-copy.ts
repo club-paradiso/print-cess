@@ -217,9 +217,9 @@ export const support = {
   freeTitle: "돈 말고도 큰 도움이 돼요",
   free: [
     {
-      title: "의견이나 오류 알려 주기",
-      body: "써 보다 불편했던 점을 이슈로 남겨 주세요.",
-      href: `${REPOSITORY_URL}/issues`,
+      title: "의견 보내기",
+      body: "불편했던 점이나 개선할 점을 알려주세요.",
+      href: "https://docs.google.com/forms/d/e/1FAIpQLSdaKWWcQfV5Tb5rKwFzk8gUh4Mrz0ZgV18TqO2-mZxqOHfRoA/viewform",
     },
   ],
 } as const;
