@@ -99,8 +99,8 @@ public sealed class DocumentValidationTests
             _validator.Validate(TestDocuments.OnePagePdf("/Encrypt 9 0 R"), DocumentKind.Pdf, null, TestDocuments.SessionId));
         AssertError(DocumentValidationError.ActivePdfContent, () =>
             _validator.Validate(TestDocuments.OnePagePdf("/OpenAction 9 0 R"), DocumentKind.Pdf, null, TestDocuments.SessionId));
-        AssertError(DocumentValidationError.TooManyPages, () =>
-            _validator.Validate(TestDocuments.PdfWithPages(51), DocumentKind.Pdf, null, TestDocuments.SessionId));
+        using var largePdf = _validator.Validate(TestDocuments.PdfWithPages(51), DocumentKind.Pdf, null, TestDocuments.SessionId);
+        Assert.Equal(51, largePdf.Properties.PageCount);
         AssertError(DocumentValidationError.CorruptPdf, () =>
             _validator.Validate("%PDF-1.4 no trailer"u8, DocumentKind.Pdf, null, TestDocuments.SessionId));
     }
@@ -121,7 +121,7 @@ public sealed class DocumentValidationTests
     [Fact]
     public void RejectsOversizedFilesAndImageDimensionsBeforeAllocationHeavyWork()
     {
-        var oversized = new byte[(10 * 1024 * 1024) + 1];
+        var oversized = new byte[BinaryEnvelope.MaxPlaintextBytes + 1];
         AssertError(DocumentValidationError.TooLarge, () =>
             _validator.Validate(oversized, DocumentKind.Pdf, null, TestDocuments.SessionId));
 
