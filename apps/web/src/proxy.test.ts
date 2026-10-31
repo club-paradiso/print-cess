@@ -165,7 +165,15 @@ describe("phones at the kiosk address", () => {
   it("does not redirect desktop, an opted-in kiosk, /start or functional mobile routes", () => {
     expect(proxy(request("/", WINDOWS)).headers.get("location")).toBeNull();
     expect(proxy(request("/", IPHONE, "pc_kiosk=1")).headers.get("location")).toBeNull();
-    for (const path of ["/promo", "/start", "/send", "/receive", "/scan", "/s/example", "/api/health"]) {
+    for (const path of [
+      "/promo",
+      "/start",
+      "/send",
+      "/receive",
+      "/scan",
+      "/s/example",
+      "/api/health",
+    ]) {
       expect(proxy(request(path, ANDROID_TABLET)).headers.get("location")).toBeNull();
     }
     expect(proxy(request("/?view=kiosk", IPHONE)).headers.get("location")).toBeNull();
