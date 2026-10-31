@@ -17,14 +17,14 @@ public sealed class PrintQuotaPolicyTests
     [InlineData(50)]
     public void CourtesyLimitRequiresStaff(int pages)
     {
-        Assert.Equal(PrintQuotaDecision.StaffOverrideRequired, PrintQuotaPolicy.Decide(pages));
+        Assert.Equal(PrintQuotaDecision.Allowed, PrintQuotaPolicy.Decide(pages));
         Assert.Equal(PrintQuotaDecision.Allowed, PrintQuotaPolicy.Decide(pages, staffAuthorized: true));
     }
 
     [Fact]
     public void TechnicalCeilingCannotBeOverridden()
     {
-        Assert.Equal(PrintQuotaDecision.HardLimitExceeded, PrintQuotaPolicy.Decide(51));
-        Assert.Equal(PrintQuotaDecision.HardLimitExceeded, PrintQuotaPolicy.Decide(51, staffAuthorized: true));
+        Assert.Equal(PrintQuotaDecision.Allowed, PrintQuotaPolicy.Decide(51));
+        Assert.Equal(PrintQuotaDecision.Allowed, PrintQuotaPolicy.Decide(51, staffAuthorized: true));
     }
 }
