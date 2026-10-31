@@ -2,14 +2,13 @@ import PDFDocument from "pdfkit";
 import sharp from "sharp";
 
 export const SYNTHETIC_NOTICE = "SAMPLE — NOT VALID";
-export const TEN_MIB = 10 * 1024 * 1024;
+export const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
 
 /**
- * The ceiling is one page past `SYSTEM_MAX_PAGE_LIMIT` so tests can build the
- * document that must be refused outright, and no higher: these fixtures exist
- * to exercise the limits, not to generate large files.
+ * Page count never gates printing, so fixtures can exceed 50 and 100 pages to
+ * prove that. Kept bounded so unit tests stay fast.
  */
-export const MAX_SYNTHETIC_PDF_PAGES = 51;
+export const MAX_SYNTHETIC_PDF_PAGES = 120;
 
 export async function createSyntheticPdf(pageCount = 1, password?: string): Promise<Uint8Array> {
   if (!Number.isInteger(pageCount) || pageCount < 1 || pageCount > MAX_SYNTHETIC_PDF_PAGES)
@@ -81,7 +80,7 @@ export async function createSidewaysSyntheticJpeg(
 }
 
 export function createBoundaryBytes(overBy = 0): Uint8Array {
-  const bytes = new Uint8Array(TEN_MIB + overBy);
+  const bytes = new Uint8Array(MAX_DOCUMENT_BYTES + overBy);
   bytes.set(new TextEncoder().encode("%PDF-SAMPLE-NOT-VALID\n"));
   return bytes;
 }

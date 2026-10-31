@@ -5,15 +5,8 @@ import { isHwpxSelection, validateHwpxHeader } from "./hwpx-validation";
 export type ValidatedMobileFile = {
   bytes: Uint8Array;
   fileKind: FileKind;
-  /** Exact for PDFs and images. A floor when `pageCountIsExact` is false. */
+  /** Informational only: page count never gates printing. 1 for HWP/HWPX/images. */
   pageCount: number;
-  /**
-   * False for HWP and HWPX: Hangul decides their pagination while rendering,
-   * and only the kiosk runs Hangul. Counting them as one page would let a
-   * fifty-page document through the free limit, so the quota carries the
-   * uncertainty instead of hiding it.
-   */
-  pageCountIsExact: boolean;
   width?: number;
   height?: number;
   normalized: boolean;
@@ -25,7 +18,6 @@ export type FileValidationCode =
   | "hwpxUnavailable"
   | "imageConversionUnsupported"
   | "tooLarge"
-  | "tooManyPages"
   | "lockedPdf"
   | "damagedFile";
 
@@ -131,7 +123,7 @@ export async function validateFileForMobile(
     } catch {
       throw new FileValidationError("damagedFile");
     }
-    return { bytes, fileKind: "hwpx", pageCount: 1, pageCountIsExact: false, normalized: false };
+    return { bytes, fileKind: "hwpx", pageCount: 1, normalized: false };
   }
 
   let fileKind: FileKind;
@@ -146,7 +138,7 @@ export async function validateFileForMobile(
 
   if (fileKind === "hwpx") {
     if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
-    return { bytes, fileKind, pageCount: 1, pageCountIsExact: false, normalized: false };
+    return { bytes, fileKind, pageCount: 1, normalized: false };
   }
 
   if (fileKind === "pdf") {
@@ -155,7 +147,6 @@ export async function validateFileForMobile(
       bytes,
       fileKind,
       pageCount: await validatePdf(bytes),
-      pageCountIsExact: true,
       normalized: false,
     };
   }
@@ -174,7 +165,6 @@ export async function validateFileForMobile(
     bytes,
     fileKind,
     pageCount: 1,
-    pageCountIsExact: true,
     ...dimensions,
     normalized: false,
   };
@@ -341,7 +331,6 @@ async function normalizeBrowserImage(file: File): Promise<ValidatedMobileFile> {
       bytes,
       fileKind: "jpeg",
       pageCount: 1,
-      pageCountIsExact: true,
       ...dimensions,
       normalized: true,
     };

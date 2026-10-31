@@ -23,7 +23,7 @@ The kiosk fails closed for:
 - DRM-protected documents;
 - script-enabled HWP, or a script/macro storage or stream name (`Scripts`, `DefaultJScript`, `JScriptVersion`, `_VBA_PROJECT`, `Macros`, compared without case) anywhere in the directory, linked into the tree or not;
 - a `ViewText` storage, which holds the body of a distribution document;
-- files larger than 10 MiB;
+- files larger than 50 MiB;
 - Hancom rendering failures or generated PDFs outside the existing print limits;
 - a Hancom render that does not finish within the time limit (60 seconds by default).
 

@@ -100,8 +100,12 @@ public sealed class DocumentValidationTests
             _validator.Validate(TestDocuments.OnePagePdf("/Encrypt 9 0 R"), DocumentKind.Pdf, null, TestDocuments.SessionId));
         AssertError(DocumentValidationError.ActivePdfContent, () =>
             _validator.Validate(TestDocuments.OnePagePdf("/OpenAction 9 0 R"), DocumentKind.Pdf, null, TestDocuments.SessionId));
-        using var largePdf = _validator.Validate(TestDocuments.PdfWithPages(51), DocumentKind.Pdf, null, TestDocuments.SessionId);
-        Assert.Equal(51, largePdf.Properties.PageCount);
+        foreach (var pages in new[] { 51, 101 })
+        {
+            using var largePdf = _validator.Validate(TestDocuments.PdfWithPages(pages), DocumentKind.Pdf, null, TestDocuments.SessionId);
+            Assert.Equal(pages, largePdf.Properties.PageCount);
+        }
+
         AssertError(DocumentValidationError.CorruptPdf, () =>
             _validator.Validate("%PDF-1.4 no trailer"u8, DocumentKind.Pdf, null, TestDocuments.SessionId));
     }
@@ -117,6 +121,43 @@ public sealed class DocumentValidationTests
         var trailing = TestDocuments.OnePixelPng().Concat(new byte[] { 0 }).ToArray();
         AssertError(DocumentValidationError.CorruptImage, () =>
             _validator.Validate(trailing, DocumentKind.Png, null, TestDocuments.SessionId));
+    }
+
+    [Fact]
+    public void ProtocolLimitsMatchProductRequirements()
+    {
+        Assert.Equal(50 * 1024 * 1024, BinaryEnvelope.MaxPlaintextBytes);
+        Assert.Equal(128 * 1024 * 1024, BinaryEnvelope.MaxBundleBytes);
+        Assert.Equal(
+            BinaryEnvelope.MaxBundleBytes + BinaryEnvelope.HeaderBytes + BinaryEnvelope.TagBytes,
+            BinaryEnvelope.MaxEnvelopeBytes);
+    }
+
+    [Fact]
+    public void AcceptsAPdfExactlyAtTheFiftyMegabyteLimitAndRejectsOneByteMore()
+    {
+        using var accepted = _validator.Validate(
+            PaddedPdf(BinaryEnvelope.MaxPlaintextBytes),
+            DocumentKind.Pdf,
+            null,
+            TestDocuments.SessionId);
+        Assert.Equal(1, accepted.Properties.PageCount);
+
+        var overLimit = PaddedPdf(BinaryEnvelope.MaxPlaintextBytes + 1);
+        AssertError(DocumentValidationError.TooLarge, () =>
+            _validator.Validate(overLimit, DocumentKind.Pdf, null, TestDocuments.SessionId));
+    }
+
+    // A structurally valid one-page PDF padded with whitespace to an exact size,
+    // keeping the %%EOF marker inside the trailer window the inspector reads.
+    private static byte[] PaddedPdf(int totalBytes)
+    {
+        var padded = new byte[totalBytes];
+        Array.Fill(padded, (byte)' ');
+        var pdf = TestDocuments.OnePagePdf();
+        pdf.CopyTo(padded, 0);
+        "\n%%EOF\n"u8.CopyTo(padded.AsSpan(totalBytes - 7));
+        return padded;
     }
 
     [Fact]

@@ -5,6 +5,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { generateToken } from "@print-cess/crypto";
+import { MAX_ENVELOPE_BYTES } from "@print-cess/protocol";
 
 import { LocalEncryptedBlobTransport } from "@/server/blob/local";
 
@@ -77,5 +78,31 @@ describe("LocalEncryptedBlobTransport", () => {
     expect(result.bytes).toEqual(payload);
     await transport.delete(pathname, metadata.etag);
     await transport.delete(pathname, metadata.etag);
+  });
+
+  it("accepts an envelope of exactly MAX_ENVELOPE_BYTES and rejects one byte more", async () => {
+    const root = await mkdtemp(join(tmpdir(), "print-cess-test-"));
+    directories.push(root);
+    const transport = new LocalEncryptedBlobTransport("http://localhost:3000", root);
+    const put = async (size: number) => {
+      const upload = await transport.authorizeUpload(
+        `v1/${generateToken(16)}.bin`,
+        Date.now() + 30_000,
+        MAX_ENVELOPE_BYTES,
+      );
+      return transport.put(
+        new Request(upload.url, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": String(size),
+          },
+          body: new Uint8Array(size),
+        }),
+        new URL(upload.url).searchParams.get("t")!,
+      );
+    };
+    expect((await put(MAX_ENVELOPE_BYTES)).size).toBe(MAX_ENVELOPE_BYTES);
+    await expect(put(MAX_ENVELOPE_BYTES + 1)).rejects.toMatchObject({ status: 413 });
   });
 });

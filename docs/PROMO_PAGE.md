@@ -3,7 +3,7 @@
 `/promo` is a separate, Korean-first page that introduces Print-cess. It is not part of
 the product flow: no product route links to it, and the film and scroll effects stay on
 this page only. Copy lives in `apps/web/src/app/promo/promo-copy.ts`; every product claim
-there comes from the phone strings in `packages/i18n`, `PRIVACY.md`, `PRINT_QUOTA.md`,
+there comes from the phone strings in `packages/i18n`, `PRIVACY.md`, `PRINT_QUOTA.md` (page policy),
 `FILE_TRANSFER.md` and the scanner README. Change both together.
 
 The page is `noindex` like the rest of the site and says it is a development and demo

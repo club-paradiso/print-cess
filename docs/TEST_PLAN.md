@@ -27,7 +27,7 @@ Generate and label each page “SYNTHETIC TEST DOCUMENT — NOT VALID”:
 - password-protected PDF;
 - damaged/truncated PDF;
 - non-PDF renamed `.pdf`;
-- exactly 10 MiB plaintext boundary file and one-byte-over boundary file;
+- exactly 50 MiB plaintext boundary file and one-byte-over boundary file;
 - image with excessive dimensions/pixel budget;
 - malformed/truncated JPEG and PNG;
 - PDF with prohibited JavaScript/OpenAction/Launch/attachment/external-link structures where the
@@ -37,18 +37,18 @@ Fixtures use fictitious values that cannot be mistaken for a real traveler or va
 
 ## TypeScript unit tests
 
-| Area            | Required cases                                                                                                                     |
-| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| State machine   | Every allowed edge, every unlisted edge rejected, terminal immutability, revision conflict                                         |
-| Tokens          | CSPRNG length/encoding, independent token values, SHA-256 storage, malformed input, timing-safe equality including unequal lengths |
-| Time            | waiting TTL, claim work deadline, exact expiry boundary, signed URL capped by session expiry, clock-skew handling                  |
-| Envelope        | exact offsets/endianness/lengths, 10 MiB maximum, truncation/trailing bytes, flags/reserved/version/kind rejection                 |
-| Cryptography    | P-256 ECDH, HKDF info/salt, AES-GCM round trip, fingerprint validation, best-effort secret buffer clearing                         |
-| Tamper          | one byte in header/public key/salt/IV/ciphertext/tag, wrong session/fingerprint/kiosk key                                          |
-| File validation | magic/type mismatch, size, PDF pages/encryption/parse/actions, image decode/dimensions/resource budget                             |
-| Stores          | claim race, upload-once, consume-once, completed-not-reactivated, expiration                                                       |
-| Cleanup         | terminal seal/finalize, delete failure, lost session, conditional ETag, lease race, due orphan sweep, schedule retry/dedup         |
-| Logging         | tokens, fragments, filenames, signed URLs, keys, identifiers, and provider bodies are redacted                                     |
+| Area            | Required cases                                                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| State machine   | Every allowed edge, every unlisted edge rejected, terminal immutability, revision conflict                                                   |
+| Tokens          | CSPRNG length/encoding, independent token values, SHA-256 storage, malformed input, timing-safe equality including unequal lengths           |
+| Time            | waiting TTL, claim work deadline, exact expiry boundary, signed URL capped by session expiry, clock-skew handling                            |
+| Envelope        | exact offsets/endianness/lengths, 50 MiB document / 128 MiB bundle maximum, truncation/trailing bytes, flags/reserved/version/kind rejection |
+| Cryptography    | P-256 ECDH, HKDF info/salt, AES-GCM round trip, fingerprint validation, best-effort secret buffer clearing                                   |
+| Tamper          | one byte in header/public key/salt/IV/ciphertext/tag, wrong session/fingerprint/kiosk key                                                    |
+| File validation | magic/type mismatch, size, PDF pages/encryption/parse/actions, image decode/dimensions/resource budget                                       |
+| Stores          | claim race, upload-once, consume-once, completed-not-reactivated, expiration                                                                 |
+| Cleanup         | terminal seal/finalize, delete failure, lost session, conditional ETag, lease race, due orphan sweep, schedule retry/dedup                   |
+| Logging         | tokens, fragments, filenames, signed URLs, keys, identifiers, and provider bodies are redacted                                               |
 
 ## C# unit tests
 

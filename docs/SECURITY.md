@@ -66,7 +66,7 @@ beyond the stated threat model.
 
 ## File handling
 
-- Accept validated PDF, JPEG, PNG, or authenticated print bundles, plus HWP and HWPX only when the kiosk reports an available Hancom renderer; 10 MiB per document and 32 MiB per bundle. The kiosk enforces an absolute 50-page ceiling after rendering.
+- Accept validated PDF, JPEG, PNG, or authenticated print bundles, plus HWP and HWPX only when the kiosk reports an available Hancom renderer; 50 MiB per document and 128 MiB per bundle. There is no page-count limit; size, content validation and printer/host resources are the bounds.
 - Mobile validation improves feedback. Kiosk validation is mandatory after authenticated
   decryption and checks magic bytes, actual type, bounded size, file-kind match, parse/decode
   success, page count, PDF encryption/actions, and image dimensions/resource budget.

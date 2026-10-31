@@ -123,16 +123,48 @@ describe("file validation", () => {
     );
   });
 
-  it("returns page counts above the system ceiling so the quota screen can explain the denial", async () => {
+  it.each([51, 101, 500])(
+    "accepts a %i-page PDF because page count never gates printing",
+    async (numPages) => {
+      const pdfjs = await import("pdfjs-dist");
+      vi.mocked(pdfjs.getDocument).mockReturnValue({
+        promise: Promise.resolve({
+          numPages,
+          cleanup: vi.fn(),
+        }),
+        destroy: vi.fn(),
+      } as never);
+
+      await expect(validatePdf(new TextEncoder().encode("%PDF-1.7\n%%EOF"))).resolves.toBe(
+        numPages,
+      );
+    },
+  );
+
+  it("enforces the 50 MiB per-document limit on its exact boundary", async () => {
+    const limit = 50 * 1024 * 1024;
+    const over = new File([new Uint8Array(limit + 1)], "big.pdf", { type: "application/pdf" });
+    await expect(validateFileForMobile(over)).rejects.toThrow(
+      expect.objectContaining({ code: "tooLarge" }),
+    );
+    const overImage = new File([new Uint8Array(limit + 1)], "big.jpg", { type: "image/jpeg" });
+    await expect(validateFileForMobile(overImage)).rejects.toThrow(
+      expect.objectContaining({ code: "tooLarge" }),
+    );
+  });
+
+  it.each([10, 20])("no longer rejects a %i MiB PDF on size", async (mebibytes) => {
+    const bytes = new Uint8Array(mebibytes * 1024 * 1024 + 1);
+    bytes.set(new TextEncoder().encode("%PDF-1.7\n"));
     const pdfjs = await import("pdfjs-dist");
     vi.mocked(pdfjs.getDocument).mockReturnValue({
-      promise: Promise.resolve({
-        numPages: 51,
-        cleanup: vi.fn(),
-      }),
+      promise: Promise.resolve({ numPages: 3, cleanup: vi.fn() }),
       destroy: vi.fn(),
     } as never);
-
-    await expect(validatePdf(new TextEncoder().encode("%PDF-1.7\n%%EOF"))).resolves.toBe(51);
+    const file = new File([bytes], "ok.pdf", { type: "application/pdf" });
+    await expect(validateFileForMobile(file)).resolves.toMatchObject({
+      fileKind: "pdf",
+      pageCount: 3,
+    });
   });
 });

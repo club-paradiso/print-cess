@@ -83,11 +83,14 @@ public sealed class PrintingTests : IDisposable
         Assert.DoesNotContain(TestDocuments.SessionId, json, StringComparison.Ordinal);
     }
 
-    [Fact]
-    public async Task MockEnginePrintsTwelvePagesWithoutStaffApproval()
+    [Theory]
+    [InlineData(12)]
+    [InlineData(51)]
+    [InlineData(101)]
+    public async Task MockEnginePrintsAnyPageCountWithoutStaffApproval(int pages)
     {
         using var document = new PortableDocumentValidator().Validate(
-            TestDocuments.PdfWithPages(12),
+            TestDocuments.PdfWithPages(pages),
             DocumentKind.Pdf,
             "application/pdf",
             TestDocuments.SessionId);
@@ -136,8 +139,7 @@ public sealed class PrintingTests : IDisposable
             ValidatedDocument document,
             PrintSettings settings,
             CancellationToken cancellationToken,
-            Func<CancellationToken, Task>? onReadyToSubmit = null,
-            Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
+            Func<CancellationToken, Task>? onReadyToSubmit = null)
         {
             Interlocked.Increment(ref _callCount);
             if (onReadyToSubmit is not null)
@@ -158,8 +160,7 @@ public sealed class PrintingTests : IDisposable
             ValidatedDocument document,
             PrintSettings settings,
             CancellationToken cancellationToken,
-            Func<CancellationToken, Task>? onReadyToSubmit = null,
-            Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
+            Func<CancellationToken, Task>? onReadyToSubmit = null)
         {
             CallCount++;
             throw new InvalidOperationException("Synthetic engine failure");

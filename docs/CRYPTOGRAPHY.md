@@ -12,20 +12,20 @@ rather than an ECDH exchange, so the two are not interchangeable.
 
 ## Primitives and encodings
 
-| Purpose                | Protocol value                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------ |
-| Key agreement          | ECDH on NIST P-256                                                                   |
-| Public-key wire format | 65-byte uncompressed SEC1 point: `04` + `X(32)` + `Y(32)`                            |
-| Fingerprint            | SHA-256 of the exact 65 public-key bytes, base64url without padding                  |
-| KDF                    | HKDF-SHA-256                                                                         |
-| HKDF salt              | Fresh 32 random bytes per document                                                   |
-| HKDF info              | UTF-8 bytes of `print-cess-by-paradiso:file:v1`                                      |
-| AEAD                   | AES-256-GCM                                                                          |
-| IV                     | Fresh 12 random bytes per document                                                   |
-| Authentication tag     | 16 bytes (128 bits), appended by Web Crypto after ciphertext                         |
-| Integer encoding       | Unsigned, network byte order (big-endian)                                            |
-| Maximum plaintext      | 10,485,760 bytes (10 MiB) per document; 33,554,432 bytes (32 MiB) for a print bundle |
-| Maximum envelope       | The plaintext maximum plus 151 bytes of overhead                                     |
+| Purpose                | Protocol value                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------------- |
+| Key agreement          | ECDH on NIST P-256                                                                     |
+| Public-key wire format | 65-byte uncompressed SEC1 point: `04` + `X(32)` + `Y(32)`                              |
+| Fingerprint            | SHA-256 of the exact 65 public-key bytes, base64url without padding                    |
+| KDF                    | HKDF-SHA-256                                                                           |
+| HKDF salt              | Fresh 32 random bytes per document                                                     |
+| HKDF info              | UTF-8 bytes of `print-cess-by-paradiso:file:v1`                                        |
+| AEAD                   | AES-256-GCM                                                                            |
+| IV                     | Fresh 12 random bytes per document                                                     |
+| Authentication tag     | 16 bytes (128 bits), appended by Web Crypto after ciphertext                           |
+| Integer encoding       | Unsigned, network byte order (big-endian)                                              |
+| Maximum plaintext      | 52,428,800 bytes (50 MiB) per document; 134,217,728 bytes (128 MiB) for a print bundle |
+| Maximum envelope       | The plaintext maximum plus 151 bytes of overhead                                       |
 
 Randomness comes from Web Crypto `crypto.getRandomValues` on the phone and a platform CSPRNG on
 Windows. IVs and salts must never be counters, timestamps, session IDs, or reused values.

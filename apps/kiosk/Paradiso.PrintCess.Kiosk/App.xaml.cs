@@ -51,7 +51,7 @@ public partial class App : Application
             StringComparison.Ordinal);
         var viewModel = new MainViewModel(simulatorRequested && simulatorEnvironment);
         var runtime = recovery.Succeeded && journal is not null
-            ? TryCreateRuntime(viewModel, journal, localData, new StaffQuotaAuthorizer(authenticator, adminThrottle))
+            ? TryCreateRuntime(viewModel, journal, localData)
             : null;
 
         var window = new MainWindow(viewModel, authenticator, adminThrottle, recovery, runtime, journal)
@@ -77,8 +77,7 @@ public partial class App : Application
     private static KioskRuntimeCoordinator? TryCreateRuntime(
         MainViewModel viewModel,
         IPrintSubmissionJournal journal,
-        string localData,
-        IStaffQuotaAuthorizer quotaAuthorizer)
+        string localData)
     {
         try
         {
@@ -192,8 +191,7 @@ public partial class App : Application
                 printerCatalog,
                 selectionStore,
                 adminOperations,
-                mockEnabled,
-                quotaAuthorizer);
+                mockEnabled);
         }
         catch (Exception exception) when (exception is ArgumentException or InvalidOperationException or IOException or UnauthorizedAccessException)
         {

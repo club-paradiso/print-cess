@@ -46,7 +46,7 @@ internal static class PdfDocumentInspector
             throw new DocumentValidationException(DocumentValidationError.CorruptPdf);
         }
 
-return new DocumentProperties(pages, null, null);
+        return new DocumentProperties(pages, null, null);
     }
 
     private static int CountPages(ReadOnlySpan<byte> content)

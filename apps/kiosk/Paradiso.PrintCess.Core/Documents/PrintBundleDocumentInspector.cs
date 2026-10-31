@@ -25,7 +25,7 @@ internal static class PrintBundleDocumentInspector
                 if (properties.PageCount is { } pageCount)
                 {
                     exactPageCount = checked(exactPageCount + pageCount);
-}
+                }
                 else
                 {
                     paginationVerified = false;

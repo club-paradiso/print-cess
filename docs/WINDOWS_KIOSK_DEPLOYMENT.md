@@ -94,7 +94,7 @@ Before enabling the capability:
    footers, and required fonts. Compare page count, wrapping, clipping, grayscale output, and
    margins against interactive Hancom Office output on the same machine.
 
-HWPX files larger than 10 MiB, malformed or encrypted packages, unsafe archive paths, excessive
+HWPX files larger than 50 MiB, malformed or encrypted packages, unsafe archive paths, excessive
 expansion ratios, scripts, and prohibited embedded objects fail closed. A missing Hancom component,
 security module, font, or PDF output also fails the session without falling back to a third-party
 conversion service.

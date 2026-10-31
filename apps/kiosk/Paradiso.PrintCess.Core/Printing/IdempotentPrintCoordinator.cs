@@ -15,8 +15,7 @@ public sealed class IdempotentPrintCoordinator
         Documents.ValidatedDocument document,
         PrintSettings settings,
         CancellationToken cancellationToken,
-        Func<CancellationToken, Task>? onReadyToSubmit = null,
-        Func<int, CancellationToken, Task<bool>>? authorizeQuotaOverride = null)
+        Func<CancellationToken, Task>? onReadyToSubmit = null)
     {
         settings.EnsureKioskPolicy();
         if (!await _journal.TryCreateStartedAsync(document.IdempotencyKey, cancellationToken).ConfigureAwait(false))
@@ -30,8 +29,7 @@ public sealed class IdempotentPrintCoordinator
                 document,
                 settings,
                 cancellationToken,
-                onReadyToSubmit,
-                authorizeQuotaOverride).ConfigureAwait(false);
+                onReadyToSubmit).ConfigureAwait(false);
             var journalState = result.Outcome switch
             {
                 PrintOutcome.Completed => PrintJournalState.Completed,

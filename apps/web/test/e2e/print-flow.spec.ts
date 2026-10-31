@@ -263,7 +263,7 @@ test("large files are rejected before encryption", async ({ page, context }) => 
     mimeType: "application/pdf",
     buffer: Buffer.from(createBoundaryBytes(1)),
   });
-  await expect(mobile.getByText(/PDFs under 10 MB/u)).toBeVisible();
+  await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
 });
 
 test("a rejected pick clears the picker so the same file can be chosen again", async ({
@@ -277,7 +277,7 @@ test("a rejected pick clears the picker so the same file can be chosen again", a
     mimeType: "application/pdf",
     buffer: Buffer.from(createBoundaryBytes(1)),
   });
-  await expect(mobile.getByText(/PDFs under 10 MB/u)).toBeVisible();
+  await expect(mobile.getByText(/PDFs under 50 MB/u)).toBeVisible();
   await expect(input).toHaveValue("");
 });
 
