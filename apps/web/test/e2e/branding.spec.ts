@@ -132,3 +132,21 @@ test("shows the two-minute QR renewal window", async ({ page }) => {
     /새 QR 코드로 바뀌기까지 (?:02:00|01:5\d)/u,
   );
 });
+
+test("@viewport phone root lands on /promo while desktop keeps the kiosk", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+
+  if (testInfo.project.name === "chromium") {
+    await expect(page.locator(".kiosk-qr")).toBeVisible();
+    await expect(page).toHaveURL(/\/$/u);
+  } else {
+    await expect(page).toHaveURL(/\/promo$/u);
+    await expect(page.locator("h1")).toBeVisible();
+    const logo = page.locator(".pc-club-paradiso").first();
+    await expect(logo).toBeVisible();
+    await expect(logo).toHaveCSS("color", "rgb(168, 43, 45)");
+    await expect(logo).toHaveCSS("opacity", "1");
+  }
+});
