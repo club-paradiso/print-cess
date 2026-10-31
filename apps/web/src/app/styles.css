@@ -1369,76 +1369,34 @@ ol.mobile-selected li::before {
   }
 }
 
-/* A phone arriving from the display URL gets a compact explanation and
-   direct links to the tools that work without a printer-side session.
-   It is navigation, not an amber warning or an error state. */
+/* Shown on the guide when a phone opened the big screen's address. It names
+   the change of page in one calm line, above the first thing to do. */
 .home-from-kiosk {
   display: grid;
-  gap: 12px;
-  min-width: 0;
-  padding: 14px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-md);
-  background: var(--pc-surface);
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  align-items: start;
+  padding: 14px 16px;
+  border: 1px solid var(--pc-amber-300);
+  border-radius: 14px;
+  background: var(--pc-amber-50);
+  color: var(--pc-ink-900);
 }
-.home-from-kiosk__message {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 6px 10px;
-}
-.home-from-kiosk__message > svg {
-  flex: none;
-  width: 18px;
-  height: 18px;
-  color: var(--pc-text-secondary);
-}
-.home-from-kiosk__message p {
-  flex: 1 1 16rem;
-  margin: 0;
-  color: var(--pc-text-secondary);
-  font-size: 14px;
-  line-height: 1.45;
-  overflow-wrap: anywhere;
-}
-.home-from-kiosk__message .home-link {
-  margin-inline-start: 28px;
-  font-size: 13px;
-}
-.home-from-kiosk__quick {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-.home-from-kiosk__quick a {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-width: 0;
-  min-height: 76px;
-  padding: 10px 4px;
-  border: 1px solid var(--pc-border);
-  border-radius: var(--pc-radius-sm);
-  background: var(--pc-surface-brand-subtle);
-  color: var(--pc-text-brand);
-  font-size: clamp(11px, 2.8vw, 14px);
-  font-weight: 750;
-  line-height: 1.25;
-  text-align: center;
-  text-decoration: none;
-  overflow-wrap: anywhere;
-}
-.home-from-kiosk__quick a:hover {
-  border-color: var(--pc-brand);
-}
-.home-from-kiosk__quick a:focus-visible {
-  outline: 3px solid var(--pc-focus-ring);
-  outline-offset: 2px;
-}
-.home-from-kiosk__quick svg {
-  flex: none;
+.home-from-kiosk > svg {
   width: 22px;
   height: 22px;
+  margin-top: 2px;
+  color: var(--pc-amber-700);
+}
+.home-from-kiosk p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.home-from-kiosk .home-link {
+  grid-column: 2;
+  justify-self: start;
+  min-height: 44px;
+  font-size: 15px;
 }
