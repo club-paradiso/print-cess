@@ -273,3 +273,21 @@ test("@viewport the promo fits the full viewport matrix", async ({ page }) => {
   }
   if (evidence) writeFileSync(join(evidence, "after.json"), JSON.stringify(metrics, null, 2));
 });
+
+test("@viewport legal documents have touch targets, readable dialogs and native focus return", async ({
+  page,
+}) => {
+  await page.goto("/promo");
+  for (const name of ["보안 정책", "개인정보 문서", "라이선스(Apache-2.0)"]) {
+    const trigger = page.getByRole("button", { name, exact: true });
+    expect((await trigger.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await trigger.click();
+    const dialog = page.getByRole("dialog", { name, exact: true });
+    await expect(dialog).toBeVisible();
+    const close = dialog.getByRole("button", { name: "닫기", exact: true });
+    expect((await close.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await close.press("Escape");
+    await expect(dialog).not.toBeVisible();
+    await expect(trigger).toBeFocused();
+  }
+});

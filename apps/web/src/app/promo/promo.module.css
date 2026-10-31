@@ -1908,7 +1908,7 @@ details[open] > summary .faqToggle::after {
   padding: 0;
   list-style: none;
 }
-.footerLinks a {
+.footerLinks :is(a, .legalLink) {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
@@ -1917,7 +1917,7 @@ details[open] > summary .faqToggle::after {
   font-weight: 600;
   text-decoration: none;
 }
-.footerLinks a:hover {
+.footerLinks :is(a, .legalLink):hover {
   color: var(--pc-text-brand);
   text-decoration: underline;
   text-underline-offset: 4px;
@@ -2217,4 +2217,74 @@ details[open] > summary .faqToggle::after {
   .brand :global(.pc-wordmark small) {
     font-size: 10px;
   }
+}
+
+/* Legal documents share the page's stylesheet: inline styles are rejected by
+   the production CSP, and every trigger/close control needs a touch target. */
+.legalLink {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: start;
+  cursor: pointer;
+}
+.legalDialog {
+  width: min(92vw, 780px);
+  max-width: none;
+  max-height: 85dvh;
+  padding: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 14px;
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  box-shadow: 0 20px 70px rgb(var(--ink-rgb) / 35%);
+  overflow: auto;
+}
+.legalDialog::backdrop {
+  background: rgb(var(--ink-rgb) / 55%);
+}
+.legalHeader {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 20px;
+  background: var(--pc-surface);
+  border-bottom: 1px solid var(--hairline);
+}
+.legalHeader h2 {
+  font-size: 18px;
+  font-weight: 750;
+}
+.legalClose {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 64px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 8px;
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+.legalContent {
+  padding: 20px;
+}
+.legalContent pre {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.7;
 }
