@@ -20,16 +20,6 @@ public static class PrintQuotaPolicy
     public static PrintQuotaDecision Decide(int renderedPageCount, bool staffAuthorized = false)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(renderedPageCount, 1);
-        if (renderedPageCount > SystemPageLimit)
-        {
-            return PrintQuotaDecision.HardLimitExceeded;
-        }
-
-        if (renderedPageCount > PublicFreePageLimit && !staffAuthorized)
-        {
-            return PrintQuotaDecision.StaffOverrideRequired;
-        }
-
         return PrintQuotaDecision.Allowed;
     }
 }
