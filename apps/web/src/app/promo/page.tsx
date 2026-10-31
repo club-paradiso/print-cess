@@ -308,6 +308,8 @@ export default async function PromoPage() {
                 <li key={link.href}>
                   {link.label === "보안 정책" ? (
                     <LegalDocumentModal kind="security" label={link.label} />
+                  ) : link.label === "개인정보 문서" ? (
+                    <LegalDocumentModal kind="privacy" label={link.label} />
                   ) : link.label === "라이선스(Apache-2.0)" ? (
                     <LegalDocumentModal kind="license" label={link.label} />
                   ) : (
