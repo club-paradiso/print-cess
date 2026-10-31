@@ -92,11 +92,17 @@ export function Journey() {
                   ))}
                 </div>
               ) : null}
-              <p className="visually-hidden">그림: {how.pictures[shown]}</p>
-              <div className={styles.stepVisual} aria-hidden="true">
-                <Screen id={shown} />
-                <span className={styles.stageCaption}>{how.mockNote}</span>
-              </div>
+              <details className={styles.stepPreview}>
+                <summary>
+                  {how.previewLabel}
+                  <span aria-hidden="true"> +</span>
+                </summary>
+                <p className="visually-hidden">그림: {how.pictures[shown]}</p>
+                <div className={styles.stepVisual} aria-hidden="true">
+                  <Screen id={shown} />
+                  <span className={styles.stageCaption}>{how.mockNote}</span>
+                </div>
+              </details>
             </li>
           );
         })}

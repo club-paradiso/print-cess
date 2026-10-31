@@ -14,7 +14,9 @@ export function PhoneFallbackRedirect() {
     const coarse = window.matchMedia?.(COARSE_POINTER_QUERY).matches ?? false;
     const hasTouch = coarse || window.navigator.maxTouchPoints > 1;
     if (isNonDesktopScreen(window.screen, hasTouch)) {
-      window.location.replace(PHONE_PROMO_PATH);
+      const destination = new URL(window.location.href);
+      destination.pathname = PHONE_PROMO_PATH;
+      window.location.replace(destination.href);
     }
   }, []);
   return null;

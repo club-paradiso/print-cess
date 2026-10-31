@@ -180,6 +180,13 @@ describe("phones at the kiosk address", () => {
     expect(proxy(request("/?view=kiosk", IPAD)).headers.get("location")).toBeNull();
   });
 
+  it("preserves repeated and encoded query parameters when redirecting to the promo", () => {
+    const response = proxy(request("/?utm_source=qr&tag=one&tag=two&lang=ko", IPHONE));
+    expect(response.headers.get("location")).toBe(
+      "https://print-cess.test/promo?utm_source=qr&tag=one&tag=two&lang=ko",
+    );
+  });
+
   it("pins a station with ?kiosk=1", () => {
     const cookie = proxy(request("/?kiosk=1", WINDOWS)).headers.get("set-cookie") ?? "";
     expect(cookie).toContain("pc_kiosk=1");

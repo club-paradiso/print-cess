@@ -73,16 +73,6 @@ export function MoreTabs() {
           <div className={styles.tabIntro}>
             <h3>{item.name}</h3>
             <p>{item.body}</p>
-            <div className={styles.tabActions}>
-              <Link className={styles.primary} href={item.href}>
-                {item.cta}
-              </Link>
-              {"secondaryHref" in item ? (
-                <Link className={styles.tertiary} href={item.secondaryHref}>
-                  {item.secondaryCta}
-                </Link>
-              ) : null}
-            </div>
           </div>
           <div className={styles.tabConditions}>
             <p className={styles.cardLabel}>{more.conditionsLabel}</p>
@@ -92,8 +82,41 @@ export function MoreTabs() {
               ))}
             </ul>
           </div>
+          <div className={styles.tabActions}>
+            <Link className={styles.primary} href={item.href}>
+              {item.cta}
+            </Link>
+            {"secondaryHref" in item ? (
+              <Link className={styles.tertiary} href={item.secondaryHref}>
+                {item.secondaryCta}
+              </Link>
+            ) : null}
+          </div>
         </div>
       ))}
+      <noscript>
+        <div className={styles.noScriptFeatures}>
+          {more.items.slice(1).map((item) => (
+            <details key={item.id} className={styles.disclosure}>
+              <summary>{item.name}</summary>
+              <p>{item.body}</p>
+              <ul>
+                {item.conditions.map((condition) => (
+                  <li key={condition}>{condition}</li>
+                ))}
+              </ul>
+              <a className={styles.tertiary} href={item.href}>
+                {item.cta}
+              </a>
+              {"secondaryHref" in item ? (
+                <a className={styles.tertiary} href={item.secondaryHref}>
+                  {item.secondaryCta}
+                </a>
+              ) : null}
+            </details>
+          ))}
+        </div>
+      </noscript>
     </div>
   );
 }
