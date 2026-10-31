@@ -77,33 +77,16 @@ export default async function HomePage({
         <HomeLanguagePicker locale={locale} />
       </header>
 
-      {/* Opening the shared display's address on a phone leads here instead.
-          Explain the switch without making it look like an error, and put
-          independent phone tools within reach before the print instructions.
-          Printing still needs a real session QR from the printer-side screen. */}
+      {/* A phone that opened the big screen's address was sent here by the
+          proxy. Say why in one line, so the change of page is not a surprise,
+          and leave a way back for someone who only wanted to look. */}
       {from === "kiosk" ? (
-        <div className="home-from-kiosk">
-          <div className="home-from-kiosk__message" role="status">
-            <Info aria-hidden="true" />
-            <p>{text("homeFromKioskNote")}</p>
-            <a className="home-link" href={KIOSK_VIEW_ONCE_PATH}>
-              {text("homeFromKioskShowAnyway")}
-            </a>
-          </div>
-          <nav className="home-from-kiosk__quick" aria-label={text("homeMoreTitle")}>
-            <a href="/send">
-              <Smartphone aria-hidden="true" />
-              <span>{text("homeShareCta")}</span>
-            </a>
-            <a href="/receive">
-              <LaptopMinimal aria-hidden="true" />
-              <span>{text("homeReceiveCta")}</span>
-            </a>
-            <a href="/scan">
-              <Camera aria-hidden="true" />
-              <span>{text("homeScanCta")}</span>
-            </a>
-          </nav>
+        <div className="home-from-kiosk" role="status">
+          <Info aria-hidden="true" />
+          <p>{text("homeFromKioskNote")}</p>
+          <a className="home-link" href={KIOSK_VIEW_ONCE_PATH}>
+            {text("homeFromKioskShowAnyway")}
+          </a>
         </div>
       ) : null}
 
