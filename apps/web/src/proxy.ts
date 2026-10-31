@@ -72,7 +72,9 @@ export function proxy(request: NextRequest) {
       : undefined;
 
   if (decision?.kind === "phone-promo") {
-    const redirect = NextResponse.redirect(new URL(PHONE_PROMO_PATH, request.url));
+    const destination = request.nextUrl.clone();
+    destination.pathname = PHONE_PROMO_PATH;
+    const redirect = NextResponse.redirect(destination);
     if (decision.pin === "clear") redirect.cookies.delete(KIOSK_PIN_COOKIE);
     return redirect;
   }

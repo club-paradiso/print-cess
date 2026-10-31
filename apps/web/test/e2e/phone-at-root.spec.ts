@@ -30,7 +30,10 @@ for (const phone of Object.keys(PHONES) as (keyof typeof PHONES)[]) {
 
     await expect(page).toHaveURL(/\/promo$/u);
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await page.getByRole("link", { name: "Print-cess 시작하기", exact: true }).click();
+    await page
+      .locator("section[aria-labelledby='hero-title']")
+      .getByRole("link", { name: "이용 화면 열기", exact: true })
+      .click();
     await expect(page).toHaveURL(/\/start$/u);
     await expect(page.getByRole("button", { name: "Scan QR code" })).toBeVisible();
     await page.goBack();
@@ -63,6 +66,9 @@ test("a touch station pinned with ?kiosk=1 keeps the kiosk until unpinned", asyn
   await expect(page.locator(".kiosk-qr")).toBeVisible();
 
   await page.goto("/?kiosk=0");
+  await expect(page).toHaveURL(/\/promo\?kiosk=0$/u);
+  expect((await context.cookies()).some((cookie) => cookie.name === "pc_kiosk")).toBe(false);
+  await page.goto("/");
   await expect(page).toHaveURL(/\/promo$/u);
   await context.close();
 });
@@ -110,4 +116,22 @@ test("a desktop browser keeps the kiosk at the root address", async ({ page }) =
   await page.goto("/");
   await expect(page).toHaveURL(/\/$/u);
   await expect(page.locator(".kiosk-qr")).toBeVisible();
+});
+
+test("phone promo entry keeps query, reload, service entry and browser back", async ({
+  browser,
+}) => {
+  const { context, page } = await phonePage(browser, "iPhone");
+  await page.goto("/?utm_source=review&tag=one&tag=two#how");
+  await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
+  await page.reload();
+  await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
+  await page
+    .locator("section[aria-labelledby='hero-title']")
+    .getByRole("link", { name: "이용 화면 열기" })
+    .click();
+  await expect(page).toHaveURL(/\/start$/u);
+  await page.goBack();
+  await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
+  await context.close();
 });

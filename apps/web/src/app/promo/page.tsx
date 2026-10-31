@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ChevronDown, ExternalLink, LockKeyhole, Menu, X } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, ExternalLink, LockKeyhole, X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import QRCode from "qrcode";
@@ -6,7 +6,9 @@ import QRCode from "qrcode";
 import { Wordmark } from "@print-cess/ui";
 
 import { QR_COLORS } from "@/lib/qr-style";
+import { isBrowserKioskEnabled } from "@/server/demo";
 
+import { PromoMenu } from "./promo-menu";
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
 import { LegalDocumentModal } from "./legal-document-modal";
@@ -61,12 +63,13 @@ function SectionHead({
 
 export default async function PromoPage() {
   const config = supportConfig();
+  const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
   const tossQr = config.toss
     ? await QRCode.toDataURL(config.toss, { margin: 1, width: 264, color: QR_COLORS })
     : undefined;
 
   return (
-    <div className={styles.page}>
+    <div className={styles.page} lang="ko" dir="ltr">
       <a className={styles.skip} href="#main">
         본문으로 건너뛰기
       </a>
@@ -87,20 +90,7 @@ export default async function PromoPage() {
             <Link className={styles.headerCta} href="/start">
               {nav.start}
             </Link>
-            <details className={styles.menu}>
-              <summary className={styles.menuButton}>
-                <Menu aria-hidden="true" size={20} className={styles.menuOpen} />
-                <X aria-hidden="true" size={20} className={styles.menuClose} />
-                <span>{nav.menu}</span>
-              </summary>
-              <nav aria-label={`${nav.label} (메뉴)`} className={styles.menuList}>
-                {nav.items.map((item) => (
-                  <a key={item.href} href={item.href}>
-                    {item.label}
-                  </a>
-                ))}
-              </nav>
-            </details>
+            <PromoMenu />
           </div>
         </div>
       </header>
@@ -115,13 +105,13 @@ export default async function PromoPage() {
             <p className={styles.heroLead}>{hero.lead}</p>
             <p className={styles.heroGloss}>{hero.gloss}</p>
             <div className={styles.heroActions}>
-              <a className={styles.filmPrimary} href="#how">
-                {hero.cta}
-                <ArrowRight aria-hidden="true" size={20} />
-              </a>
-              <Link className={styles.filmGlass} href="/start">
+              <Link className={styles.filmPrimary} href="/start">
                 {hero.secondaryCta}
+                <ArrowRight aria-hidden="true" size={20} />
               </Link>
+              <a className={styles.filmGlass} href="#how">
+                {hero.cta}
+              </a>
             </div>
           </HeroFilm>
         </section>
@@ -129,7 +119,6 @@ export default async function PromoPage() {
         <section className={styles.statement} aria-labelledby="statement-title">
           <div className={styles.container}>
             <StatementLine id="statement-title" words={statement.words} />
-            <p className={styles.statementLead}>{statement.lead}</p>
             <ul className={styles.facts}>
               {statement.facts.map((fact) => (
                 <li key={fact.label}>
@@ -149,13 +138,15 @@ export default async function PromoPage() {
             <Journey />
             <div className={styles.tryBox}>
               <div>
-                <h3>{how.tryTitle}</h3>
-                <p>{how.tryBody}</p>
+                <h3>{kioskAvailable ? how.tryTitle : how.entryTitle}</h3>
+                <p>{kioskAvailable ? how.tryBody : how.entryBody}</p>
               </div>
               <div className={styles.tryActions}>
-                <Link className={styles.filmPrimary} href="/kiosk">
-                  {how.tryKiosk}
-                </Link>
+                {kioskAvailable ? (
+                  <Link className={styles.filmPrimary} href="/kiosk">
+                    {how.tryKiosk}
+                  </Link>
+                ) : null}
                 <Link className={styles.filmGlass} href="/start">
                   {how.tryStart}
                 </Link>
@@ -187,6 +178,13 @@ export default async function PromoPage() {
               <SectionHead kicker="개인정보" title={trust.privacyTitle} id="privacy-title">
                 <p>{trust.privacyLead}</p>
               </SectionHead>
+              <p className={styles.privacyCaveat}>{trust.privacyCaveat}</p>
+            </div>
+            <details className={styles.disclosure}>
+              <summary>
+                {trust.privacyDetails}
+                <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
+              </summary>
               <ul className={styles.privacyRows} aria-label={trust.privacyTitle}>
                 {trust.privacyRows.map((row) => (
                   <li key={row.title} data-on={row.on}>
@@ -201,8 +199,6 @@ export default async function PromoPage() {
                   </li>
                 ))}
               </ul>
-            </div>
-            <div>
               <ul className={styles.points}>
                 {trust.points.map((point) => (
                   <li key={point.title}>
@@ -211,11 +207,8 @@ export default async function PromoPage() {
                   </li>
                 ))}
               </ul>
-              <details className={styles.limits}>
-                <summary>
-                  {trust.limitsTitle}
-                  <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
-                </summary>
+              <div className={styles.limits}>
+                <h3>{trust.limitsTitle}</h3>
                 <ul>
                   {trust.limits.map((limit) => (
                     <li key={limit}>{limit}</li>
@@ -225,8 +218,8 @@ export default async function PromoPage() {
                   {trust.limitsLink}
                   <ExternalLink aria-hidden="true" size={15} />
                 </a>
-              </details>
-            </div>
+              </div>
+            </details>
           </div>
         </section>
 
@@ -239,41 +232,46 @@ export default async function PromoPage() {
             <SectionHead kicker="후원" title={support.title} id="support-title">
               <p>{support.lead}</p>
             </SectionHead>
-            <div className={styles.supportGrid}>
-              <div className={styles.supportCard}>
-                <p className={styles.pill} data-state={config.open ? "done" : "next"}>
-                  {config.open ? support.openLabel : support.closedLabel}
-                </p>
-                <h3>{support.usesTitle}</h3>
-                <ul className={styles.uses}>
-                  {support.uses.map((use) => (
-                    <li key={use}>
-                      <Check aria-hidden="true" size={18} />
-                      {use}
-                    </li>
-                  ))}
-                </ul>
-                <div className={styles.supportButtons}>
-                  <SupportAction config={config} tossQr={tossQr} />
-                </div>
-                <p className={styles.fine}>{support.fine}</p>
-              </div>
-
-              <div className={styles.free}>
-                <h3>{support.freeTitle}</h3>
-                <ul>
-                  {support.free.map((item) => (
-                    <li key={item.title}>
-                      <a href={item.href} rel="noreferrer">
-                        <strong>{item.title}</strong>
-                        <span>{item.body}</span>
-                        <ArrowRight aria-hidden="true" size={18} className={styles.freeArrow} />
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+            <div className={styles.supportEntry}>
+              <p className={styles.pill} data-state={config.open ? "done" : "next"}>
+                {config.open ? support.openLabel : support.closedLabel}
+              </p>
+              <SupportAction config={config} tossQr={tossQr} />
+              <p className={styles.fine}>{support.fine}</p>
             </div>
+            <details className={styles.disclosure}>
+              <summary>
+                {support.detailsLabel}
+                <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
+              </summary>
+              <div className={styles.supportGrid}>
+                <div>
+                  <h3>{support.usesTitle}</h3>
+                  <ul className={styles.uses}>
+                    {support.uses.map((use) => (
+                      <li key={use}>
+                        <Check aria-hidden="true" size={18} />
+                        {use}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className={styles.free}>
+                  <h3>{support.freeTitle}</h3>
+                  <ul>
+                    {support.free.map((item) => (
+                      <li key={item.title}>
+                        <a href={item.href} rel="noreferrer">
+                          <strong>{item.title}</strong>
+                          <span>{item.body}</span>
+                          <ArrowRight aria-hidden="true" size={18} className={styles.freeArrow} />
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </details>
           </div>
         </section>
 
