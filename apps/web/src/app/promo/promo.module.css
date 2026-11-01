@@ -2288,3 +2288,39 @@ details[open] > summary .faqToggle::after {
   font-size: 14px;
   line-height: 1.7;
 }
+
+/* Only the topic and its reveal control are visible until requested. */
+.page {
+  --section-y: clamp(32px, 5vw, 64px);
+}
+.sectionHead {
+  margin-bottom: 16px;
+}
+.split {
+  display: block;
+}
+.split .sectionHead {
+  max-width: none;
+  margin-bottom: 16px;
+}
+.disclosureBody {
+  padding-top: 24px;
+}
+.detailLead {
+  margin-bottom: 24px;
+  color: var(--pc-text-secondary);
+  font-size: 16px;
+  line-height: 1.7;
+}
+.disclosureBody > .facts {
+  margin-block: 24px 40px;
+}
+.disclosure > summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+.split > .sectionHead {
+  position: static;
+}
