@@ -72,6 +72,7 @@ test("a film that cannot load leaves the still in place", async ({ page }) => {
 
 test("the walkthrough follows the step being read and never prints", async ({ page }) => {
   await page.goto("/promo#how");
+  await page.getByText("단계별 사용 방법 보기", { exact: true }).click();
   const steps = page.getByRole("heading", {
     level: 3,
     name: /QR 코드 찍기|파일 고르고 인쇄하기|프린터에서 종이 받기/u,
@@ -94,6 +95,7 @@ test("the walkthrough follows the step being read and never prints", async ({ pa
 
 test("the statement band states the three steps and the facts", async ({ page }) => {
   await page.goto("/promo");
+  await page.getByText("단계별 사용 방법 보기", { exact: true }).click();
   await expect(
     page.getByRole("heading", { level: 2, name: /QR 찍고,\s*고르고,\s*받으면 끝\./u }),
   ).toBeAttached();
@@ -121,6 +123,7 @@ test("@viewport has no accessibility violations and no side scroll", async ({ pa
 
 test("the tabs show one feature at a time, each with a real link", async ({ page }) => {
   await page.goto("/promo#more");
+  await page.getByText("기능별로 살펴보기", { exact: true }).click();
   const tabs = page.getByRole("tablist");
   for (const [tab, link, path] of [
     ["인쇄", /QR 연결 안내 열기/u, "/start"],
@@ -153,16 +156,20 @@ test("support stays closed until the owner configures a destination", async ({ p
   // No payment route, amount field or card form is ever shown.
   await expect(page.getByRole("link", { name: /후원하러 가기/u })).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);
-  await expect(
-    page.getByText(/후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u),
-  ).toBeVisible();
+  const supportExplanation = page.getByText(
+    /후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u,
+  );
+  await expect(supportExplanation).not.toBeVisible();
+  await page.getByText("후원금 사용 계획과 참여 방법 보기", { exact: true }).click();
+  await expect(supportExplanation).toBeVisible();
 });
 
 test("the FAQ answers in place", async ({ page }) => {
   await page.goto("/promo#faq");
+  await page.getByText("자주 묻는 질문 보기", { exact: true }).click();
   const question = page.getByText("어떤 파일을 인쇄할 수 있나요?");
   await question.click();
-  await expect(page.getByText(/사진과 PDF는 각각 50MB 이하/u).first()).toBeVisible();
+  await expect(page.locator("#faq").getByText(/사진과 PDF는 각각 50MB 이하/u)).toBeVisible();
 });
 
 test("every product page is untouched and carries no promo media", async ({ page }) => {
@@ -201,7 +208,13 @@ test("@viewport summaries stay visible and optional detail expands without start
   const hero = page.locator("section[aria-labelledby='hero-title']");
   const entry = hero.getByRole("link", { name: "이용 화면 열기" });
   expect((await entry.boundingBox())!.y).toBeLessThan(568);
-  const previews = page.locator("#how details");
+  // All topic details stay closed initially, including on desktop.
+  for (const details of await page.locator("main > section details").all()) {
+    await expect(details).not.toHaveAttribute("open");
+  }
+  await expect(page.getByRole("tablist")).not.toBeVisible();
+  await page.getByText("단계별 사용 방법 보기", { exact: true }).click();
+  const previews = page.locator("#how details details");
   await expect(previews).toHaveCount(3);
   for (const preview of await previews.all()) await expect(preview).not.toHaveAttribute("open");
   await expect(
@@ -228,9 +241,11 @@ test("the core guide and feature destinations work without JavaScript", async ({
   });
   const page = await context.newPage();
   await page.goto("/promo");
+  await page.getByText("단계별 사용 방법 보기", { exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "프린터에서 종이 받기", exact: true }),
   ).toBeVisible();
+  await page.getByText("기능별로 살펴보기", { exact: true }).click();
   await page.locator("noscript summary").filter({ hasText: "공유" }).click();
   await expect(
     page.locator("noscript").getByRole("link", { name: "파일 보내기 열기" }),

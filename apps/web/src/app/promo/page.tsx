@@ -61,6 +61,19 @@ function SectionHead({
   );
 }
 
+/** Browser-native disclosure also works before hydration and without JavaScript. */
+function SectionDetails({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <details className={styles.disclosure} data-section-details>
+      <summary>
+        {label}
+        <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
+      </summary>
+      <div className={styles.disclosureBody}>{children}</div>
+    </details>
+  );
+}
+
 export default async function PromoPage() {
   const config = supportConfig();
   const kioskAvailable = process.env.NODE_ENV !== "production" || isBrowserKioskEnabled();
@@ -116,42 +129,38 @@ export default async function PromoPage() {
           </HeroFilm>
         </section>
 
-        <section className={styles.statement} aria-labelledby="statement-title">
-          <div className={styles.container}>
-            <StatementLine id="statement-title" words={statement.words} />
-            <ul className={styles.facts}>
-              {statement.facts.map((fact) => (
-                <li key={fact.label}>
-                  <strong>{fact.value}</strong>
-                  <span>{fact.label}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
         <section id={how.id} className={styles.section} aria-labelledby="how-title">
           <div className={styles.container}>
-            <SectionHead kicker="사용 방법" title={how.title} id="how-title">
-              <p>{how.lead}</p>
-            </SectionHead>
-            <Journey />
-            <div className={styles.tryBox}>
-              <div>
-                <h3>{kioskAvailable ? how.tryTitle : how.entryTitle}</h3>
-                <p>{kioskAvailable ? how.tryBody : how.entryBody}</p>
-              </div>
-              <div className={styles.tryActions}>
-                {kioskAvailable ? (
-                  <Link className={styles.filmPrimary} href="/kiosk">
-                    {how.tryKiosk}
+            <SectionHead kicker="사용 방법" title={how.title} id="how-title" />
+            <SectionDetails label="단계별 사용 방법 보기">
+              <p className={styles.detailLead}>{how.lead}</p>
+              <StatementLine id="statement-title" words={statement.words} />
+              <ul className={styles.facts}>
+                {statement.facts.map((fact) => (
+                  <li key={fact.label}>
+                    <strong>{fact.value}</strong>
+                    <span>{fact.label}</span>
+                  </li>
+                ))}
+              </ul>
+              <Journey />
+              <div className={styles.tryBox}>
+                <div>
+                  <h3>{kioskAvailable ? how.tryTitle : how.entryTitle}</h3>
+                  <p>{kioskAvailable ? how.tryBody : how.entryBody}</p>
+                </div>
+                <div className={styles.tryActions}>
+                  {kioskAvailable ? (
+                    <Link className={styles.filmPrimary} href="/kiosk">
+                      {how.tryKiosk}
+                    </Link>
+                  ) : null}
+                  <Link className={styles.filmGlass} href="/start">
+                    {how.tryStart}
                   </Link>
-                ) : null}
-                <Link className={styles.filmGlass} href="/start">
-                  {how.tryStart}
-                </Link>
+                </div>
               </div>
-            </div>
+            </SectionDetails>
           </div>
         </section>
 
@@ -161,10 +170,11 @@ export default async function PromoPage() {
           aria-labelledby="more-title"
         >
           <div className={styles.container}>
-            <SectionHead kicker="기능" title={more.title} id="more-title">
-              <p>{more.lead}</p>
-            </SectionHead>
-            <MoreTabs />
+            <SectionHead kicker="기능" title={more.title} id="more-title" />
+            <SectionDetails label="기능별로 살펴보기">
+              <p className={styles.detailLead}>{more.lead}</p>
+              <MoreTabs />
+            </SectionDetails>
           </div>
         </section>
 
@@ -175,16 +185,15 @@ export default async function PromoPage() {
         >
           <div className={`${styles.container} ${styles.split}`}>
             <div>
-              <SectionHead kicker="개인정보" title={trust.privacyTitle} id="privacy-title">
-                <p>{trust.privacyLead}</p>
-              </SectionHead>
-              <p className={styles.privacyCaveat}>{trust.privacyCaveat}</p>
+              <SectionHead kicker="개인정보" title={trust.privacyTitle} id="privacy-title" />
             </div>
             <details className={styles.disclosure}>
               <summary>
                 {trust.privacyDetails}
                 <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
               </summary>
+              <p className={styles.privacyCaveat}>{trust.privacyLead}</p>
+              <p className={styles.privacyCaveat}>{trust.privacyCaveat}</p>
               <ul className={styles.privacyRows} aria-label={trust.privacyTitle}>
                 {trust.privacyRows.map((row) => (
                   <li key={row.title} data-on={row.on}>
@@ -229,9 +238,7 @@ export default async function PromoPage() {
           aria-labelledby="support-title"
         >
           <div className={styles.container}>
-            <SectionHead kicker="후원" title={support.title} id="support-title">
-              <p>{support.lead}</p>
-            </SectionHead>
+            <SectionHead kicker="후원" title={support.title} id="support-title" />
             <div className={styles.supportEntry}>
               <p className={styles.pill} data-state={config.open ? "done" : "next"}>
                 {config.open ? support.openLabel : support.closedLabel}
@@ -244,6 +251,7 @@ export default async function PromoPage() {
                 {support.detailsLabel}
                 <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
               </summary>
+              <p className={styles.detailLead}>{support.lead}</p>
               <div className={styles.supportGrid}>
                 <div>
                   <h3>{support.usesTitle}</h3>
@@ -278,17 +286,19 @@ export default async function PromoPage() {
         <section id={faq.id} className={styles.section} aria-labelledby="faq-title">
           <div className={`${styles.container} ${styles.split}`}>
             <SectionHead kicker="FAQ" title={faq.title} id="faq-title" />
-            <div className={styles.faq}>
-              {faq.items.map((item) => (
-                <details key={item.q}>
-                  <summary>
-                    <span>{item.q}</span>
-                    <span className={styles.faqToggle} aria-hidden="true" />
-                  </summary>
-                  <p>{item.a}</p>
-                </details>
-              ))}
-            </div>
+            <SectionDetails label="자주 묻는 질문 보기">
+              <div className={styles.faq}>
+                {faq.items.map((item) => (
+                  <details key={item.q}>
+                    <summary>
+                      <span>{item.q}</span>
+                      <span className={styles.faqToggle} aria-hidden="true" />
+                    </summary>
+                    <p>{item.a}</p>
+                  </details>
+                ))}
+              </div>
+            </SectionDetails>
           </div>
         </section>
       </main>
