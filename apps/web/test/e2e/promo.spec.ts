@@ -156,9 +156,12 @@ test("support stays closed until the owner configures a destination", async ({ p
   // No payment route, amount field or card form is ever shown.
   await expect(page.getByRole("link", { name: /후원하러 가기/u })).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);
-  await expect(
-    page.getByText(/후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u),
-  ).toBeVisible();
+  const supportExplanation = page.getByText(
+    /후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u,
+  );
+  await expect(supportExplanation).not.toBeVisible();
+  await page.getByText("후원금 사용 계획과 참여 방법 보기", { exact: true }).click();
+  await expect(supportExplanation).toBeVisible();
 });
 
 test("the FAQ answers in place", async ({ page }) => {
