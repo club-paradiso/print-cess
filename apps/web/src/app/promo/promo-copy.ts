@@ -7,15 +7,15 @@
 
 export const REPOSITORY_URL = "https://github.com/club-paradiso/print-cess";
 
+/** Top tabs. Home holds the hero, support and the FAQ; every other tab is a full view. */
 export const nav = {
-  label: "이 페이지",
+  label: "페이지 탭",
   items: [
-    { href: "#how", label: "사용 방법" },
-    { href: "#more", label: "기능" },
-    { href: "#support", label: "후원" },
-    { href: "#faq", label: "자주 묻는 질문" },
+    { href: "#top", label: "홈", view: "home" },
+    { href: "#how", label: "사용 방법", view: "how" },
+    { href: "#more", label: "기능", view: "more" },
+    { href: "#privacy", label: "개인정보", view: "privacy" },
   ],
-  menu: "메뉴",
   start: "이용 화면",
 } as const;
 
@@ -44,7 +44,7 @@ export const statement = {
 export const how = {
   id: "how",
   title: "QR 코드로 연결하고, 파일을 골라요",
-  lead: "프린터 옆 화면에서 시작해요. 단계별 화면 예시도 확인할 수 있어요.",
+  lead: "프린터 옆 화면에서 시작해서, 휴대전화로 고르고, 프린터에서 받아요. 단계마다 휴대전화에 뜨는 화면을 예시로 붙였어요.",
   mockNote: "화면 예시예요. 이 화면에서는 인쇄되지 않아요.",
   dockLabel: "화면 예시",
   previewLabel: "화면 예시 보기",
@@ -99,7 +99,7 @@ export const how = {
 
 export const more = {
   title: "인쇄·공유·스캔",
-  lead: "인쇄는 프린터 옆 화면이 필요해요. 파일 공유와 문서 스캔은 기기에서 시작할 수 있어요.",
+  lead: "인쇄는 프린터 옆 화면이 있어야 시작돼요. 파일 공유와 문서 스캔은 지금 쓰는 기기에서 바로 열 수 있어요.",
   conditionsLabel: "쓰기 전에 알아 둘 점",
   items: [
     {
@@ -145,7 +145,6 @@ export const more = {
 } as const;
 
 export const trust = {
-  privacyDetails: "파일 처리와 삭제 범위 보기",
   privacyCaveat:
     "서비스의 파일 삭제가 브라우저 기록·프린터 저장소·제공 업체의 백업까지 즉시 지운다는 뜻은 아니에요.",
   privacyTitle: "파일은 암호화해서 보내요",
@@ -186,10 +185,10 @@ export const trust = {
 
 export const support = {
   id: "support",
-  title: "개발 후원",
+  // A no-break space keeps "한 잔" together when the heading wraps.
+  title: "개발자한테 커피 한\u00a0잔 보태고 싶다면",
   lead: "후원은 선택이에요. 후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요.",
   usesTitle: "후원금 사용 계획",
-  detailsLabel: "후원금 사용 계획과 참여 방법 보기",
   uses: [
     "서버와 저장소 같은 서비스 운영 비용",
     "실제 프린터로 하는 시험",
@@ -237,6 +236,7 @@ export const support = {
 export const faq = {
   id: "faq",
   title: "자주 묻는 질문",
+  lead: "질문을 누르면 답이 펼쳐져요.",
   items: [
     {
       q: "가입이나 앱 설치가 필요한가요?",
