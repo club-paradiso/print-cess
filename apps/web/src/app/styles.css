@@ -1400,3 +1400,26 @@ ol.mobile-selected li::before {
   min-height: 44px;
   font-size: 15px;
 }
+
+/* Policy links at the foot of /start. The privacy policy is set apart in
+   weight and colour so it is easy to find, as the PIPC writing guide asks. */
+.home-legal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 18px;
+  margin: 24px auto 0;
+  padding: 8px 16px max(16px, env(safe-area-inset-bottom));
+  font-size: 0.875rem;
+}
+.home-legal a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--pc-text-secondary);
+  text-underline-offset: 3px;
+}
+.home-legal a.home-legal__privacy {
+  color: var(--pc-text-brand);
+  font-weight: 800;
+}

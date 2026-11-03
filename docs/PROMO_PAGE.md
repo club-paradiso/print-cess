@@ -76,3 +76,21 @@ Toss link) are what `/promo` is meant to show. Set them in the Vercel project's 
 variables; with none set, the section says the window is not open yet and offers free ways to
 help. Support never changes a feature or a quota. Before enabling it in Production, the owner
 should confirm that soliciting support is permitted for Club Paradiso.
+
+## Policies and notices
+
+The footer links to `/legal`, a separate set of Korean pages that a visitor can read on a phone
+without zooming or scrolling sideways: 개인정보 처리방침 (`/legal/privacy`), 이용약관
+(`/legal/terms`), 보안 정책 (`/legal/security`) and 라이선스·오픈소스 고지 (`/legal/licenses`). Each
+opens with a plain-language summary, then a contents list; tables turn into stacked cards below
+640 px. The privacy policy link is first and set apart in weight and colour, and `/start` carries
+the same links, so the policy stays reachable from the service itself (개인정보 보호법 시행령
+제31조제2항).
+
+The pages replaced a modal that showed the raw English `SECURITY.md`, `docs/PRIVACY.md` and
+`LICENSE` text in a `<pre>` block. `legal.test.tsx` checks the items the law requires, the
+retention values against `.env.example`, that every runtime dependency in `apps/web/package.json`
+is listed with its declared licence, and that the licence files served under `public/licenses`
+are byte-identical to their sources. The privacy officer comes from
+`PRINT_CESS_PRIVACY_OFFICER` and `PRINT_CESS_PRIVACY_CONTACT_EMAIL`; with no email set, the page
+says no direct address is published yet and points to the feedback form and the repository.

@@ -93,10 +93,10 @@ test("the walkthrough follows the step being read and never prints", async ({ pa
 });
 
 test("the statement band states the three steps and the facts", async ({ page }) => {
-  await page.goto("/promo");
+  await page.goto("/promo#how");
   await expect(
     page.getByRole("heading", { level: 2, name: /QR 찍고,\s*고르고,\s*받으면 끝\./u }),
-  ).toBeAttached();
+  ).toBeVisible();
   await expect(page.getByText("새로 설치할 앱")).toBeAttached();
   // The print lines feed out once the line is read.
   const line = page.locator("#statement-title");
@@ -106,7 +106,6 @@ test("the statement band states the three steps and the facts", async ({ page })
 
 test("the trust section says what it is and is not", async ({ page }) => {
   await page.goto("/promo#privacy");
-  await page.getByText("파일 처리와 삭제 범위 보기").click();
   await expect(page.getByRole("heading", { name: "지금은 개발·시연 단계예요" })).toHaveCount(0);
   await expect(page.getByText(/계정이 필요 없어요/u)).toBeVisible();
   await expect(page.getByText(/즉시 지워진다는 약속은 아니에요/u)).toBeVisible();
@@ -153,16 +152,18 @@ test("support stays closed until the owner configures a destination", async ({ p
   // No payment route, amount field or card form is ever shown.
   await expect(page.getByRole("link", { name: /후원하러 가기/u })).toHaveCount(0);
   await expect(page.locator("form")).toHaveCount(0);
-  await expect(
-    page.getByText(/후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u),
-  ).toBeVisible();
+  const supportExplanation = page.getByText(
+    /후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요/u,
+  );
+  await expect(supportExplanation).toBeVisible();
+  await expect(page.getByRole("heading", { name: "후원금 사용 계획" })).toBeVisible();
 });
 
 test("the FAQ answers in place", async ({ page }) => {
   await page.goto("/promo#faq");
   const question = page.getByText("어떤 파일을 인쇄할 수 있나요?");
   await question.click();
-  await expect(page.getByText(/사진과 PDF는 각각 50MB 이하/u).first()).toBeVisible();
+  await expect(page.locator("#faq").getByText(/사진과 PDF는 각각 50MB 이하/u)).toBeVisible();
 });
 
 test("every product page is untouched and carries no promo media", async ({ page }) => {
@@ -173,34 +174,49 @@ test("every product page is untouched and carries no promo media", async ({ page
   }
 });
 
-test("@viewport menu dismisses with Escape, restores focus and closes after navigation", async ({
-  page,
-}) => {
+test("@viewport top tabs open one full view each and mark the current tab", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/promo");
-  const menu = page.locator("header details");
-  const toggle = menu.locator("summary");
-  await toggle.click();
-  await expect(menu).toHaveAttribute("open", "");
-  await menu.getByRole("link", { name: "사용 방법", exact: true }).focus();
-  await page.keyboard.press("Escape");
-  await expect(menu).not.toHaveAttribute("open");
-  await expect(toggle).toBeFocused();
-  await toggle.press("Enter");
-  await menu.getByRole("link", { name: "사용 방법", exact: true }).click();
+  const tabs = page.getByRole("navigation", { name: "페이지 탭" });
+  await expect(tabs.getByRole("link", { name: "홈", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  // Home keeps only the hero, support and the FAQ.
+  await expect(page.locator("#support")).toBeVisible();
+  await expect(page.locator("#faq")).toBeVisible();
+  for (const id of ["#how", "#more", "#privacy"]) await expect(page.locator(id)).toBeHidden();
+
+  await tabs.getByRole("link", { name: "사용 방법", exact: true }).click();
   await expect(page).toHaveURL(/#how$/u);
-  await expect(menu).not.toHaveAttribute("open");
+  await expect(page.locator("#how")).toBeVisible();
+  await expect(page.locator("#support")).toBeHidden();
   await expect(page.locator("#how-title")).toBeFocused();
+  await expect(tabs.getByRole("link", { name: "사용 방법", exact: true })).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+
+  await tabs.getByRole("link", { name: "개인정보", exact: true }).click();
+  await expect(page).toHaveURL(/#privacy$/u);
+  await expect(page.getByText(/즉시 지워진다는 약속은 아니에요/u)).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/#how$/u);
+  await expect(page.locator("#how")).toBeVisible();
 });
 
-test("@viewport summaries stay visible and optional detail expands without starting a print", async ({
-  page,
-}) => {
+test("@viewport a tab shows its whole view and step previews stay optional", async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 568 });
   await page.goto("/promo");
   const hero = page.locator("section[aria-labelledby='hero-title']");
   const entry = hero.getByRole("link", { name: "이용 화면 열기" });
   expect((await entry.boundingBox())!.y).toBeLessThan(568);
+  await page
+    .getByRole("navigation", { name: "페이지 탭" })
+    .getByRole("link", { name: "사용 방법" })
+    .click();
+  // Nothing in the view is folded away except the per-step phone previews.
+  await expect(page.locator("#how > div > details")).toHaveCount(0);
   const previews = page.locator("#how details");
   await expect(previews).toHaveCount(3);
   for (const preview of await previews.all()) await expect(preview).not.toHaveAttribute("open");
@@ -211,14 +227,6 @@ test("@viewport summaries stay visible and optional detail expands without start
   await expect(previews.nth(1)).toHaveAttribute("open", "");
   await expect(page.getByRole("button", { name: /A4 한 부 인쇄/u })).toHaveCount(0);
   await expectNoSideScroll(page);
-  for (const label of ["파일 처리와 삭제 범위 보기", "후원금 사용 계획과 참여 방법 보기"]) {
-    const details = page
-      .locator("details")
-      .filter({ has: page.locator("summary", { hasText: label }) });
-    await expect(details).not.toHaveAttribute("open");
-    await details.locator("summary").click();
-    await expect(details).toHaveAttribute("open", "");
-  }
 });
 
 test("the core guide and feature destinations work without JavaScript", async ({ browser }) => {
@@ -227,10 +235,13 @@ test("the core guide and feature destinations work without JavaScript", async ({
     viewport: { width: 375, height: 812 },
   });
   const page = await context.newPage();
-  await page.goto("/promo");
+  // Without JavaScript the tabs still switch views: CSS :target picks the view.
+  await page.goto("/promo#how");
   await expect(
     page.getByRole("heading", { name: "프린터에서 종이 받기", exact: true }),
   ).toBeVisible();
+  await expect(page.locator("#support")).toBeHidden();
+  await page.goto("/promo#more");
   await page.locator("noscript summary").filter({ hasText: "공유" }).click();
   await expect(
     page.locator("noscript").getByRole("link", { name: "파일 보내기 열기" }),
@@ -259,7 +270,7 @@ test("@viewport the promo fits the full viewport matrix", async ({ page }) => {
     const layout = await page.evaluate(() => ({
       height: document.documentElement.scrollHeight,
       overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
-      sections: [...document.querySelectorAll("main > section")].map((element) => ({
+      sections: [...document.querySelectorAll("main > [data-view] > section")].map((element) => ({
         id: element.id || element.getAttribute("aria-labelledby"),
         top: Math.round(element.getBoundingClientRect().top + scrollY),
         height: Math.round(element.getBoundingClientRect().height),
@@ -274,20 +285,35 @@ test("@viewport the promo fits the full viewport matrix", async ({ page }) => {
   if (evidence) writeFileSync(join(evidence, "after.json"), JSON.stringify(metrics, null, 2));
 });
 
-test("@viewport legal documents have touch targets, readable dialogs and native focus return", async ({
+test("@viewport legal documents open as readable pages with no sideways scroll", async ({
   page,
 }) => {
   await page.goto("/promo");
-  for (const name of ["보안 정책", "개인정보 문서", "라이선스(Apache-2.0)"]) {
-    const trigger = page.getByRole("button", { name, exact: true });
-    expect((await trigger.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-    await trigger.click();
-    const dialog = page.getByRole("dialog", { name, exact: true });
-    await expect(dialog).toBeVisible();
-    const close = dialog.getByRole("button", { name: "닫기", exact: true });
-    expect((await close.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-    await close.press("Escape");
-    await expect(dialog).not.toBeVisible();
-    await expect(trigger).toBeFocused();
+  const footer = page.locator("footer");
+  for (const [name, path] of [
+    ["개인정보 처리방침", "/legal/privacy"],
+    ["이용약관", "/legal/terms"],
+    ["보안 정책", "/legal/security"],
+    ["라이선스·오픈소스 고지", "/legal/licenses"],
+  ] as const) {
+    const link = footer.getByRole("link", { name, exact: true });
+    expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await expect(link).toHaveAttribute("href", path);
+  }
+
+  await footer.getByRole("link", { name: "개인정보 처리방침", exact: true }).click();
+  await expect(page).toHaveURL(/\/legal\/privacy$/u);
+  await expect(page.getByRole("heading", { level: 1, name: "개인정보 처리방침" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "한눈에 보기" })).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+  for (const path of ["/legal/terms", "/legal/security", "/legal/licenses", "/legal"]) {
+    await page.goto(path);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth),
+      path,
+    ).toBeLessThanOrEqual(0);
   }
 });
