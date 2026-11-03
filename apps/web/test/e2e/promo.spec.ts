@@ -163,7 +163,9 @@ test("the FAQ answers in place", async ({ page }) => {
   await page.goto("/promo#faq");
   const question = page.getByText("어떤 파일을 인쇄할 수 있나요?");
   await question.click();
-  await expect(page.locator("#faq").getByText(/사진과 PDF는 각각 50MB 이하/u)).toBeVisible();
+  await expect(
+    page.locator("#faq").getByText(/HWP나 다른 문서는 휴대전화에서 PDF로 저장/u),
+  ).toBeVisible();
 });
 
 test("every product page is untouched and carries no promo media", async ({ page }) => {
