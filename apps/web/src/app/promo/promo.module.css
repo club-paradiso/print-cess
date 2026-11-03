@@ -329,6 +329,15 @@
   gap: 12px;
   margin-top: 32px;
 }
+/* Under the catchphrase, the lead, gloss and buttons are centred in the hero
+   column. The eyebrow and the catchphrase keep their alignment. */
+.heroLead,
+.heroGloss {
+  text-align: center;
+}
+.heroActions {
+  justify-content: center;
+}
 .heroStatus {
   max-width: 520px;
   margin-top: 22px !important;

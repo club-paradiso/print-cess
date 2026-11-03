@@ -1,3 +1,5 @@
+import { encodePdfSafeJpeg } from "./pdf-marker-guard";
+
 export type ScanPoint = { x: number; y: number };
 export type ScanPixelData = { data: Uint8ClampedArray; width: number; height: number };
 export type DocumentQuad = [ScanPoint, ScanPoint, ScanPoint, ScanPoint];
@@ -823,12 +825,23 @@ function rotateCanvas(canvas: HTMLCanvasElement, rotation: number): HTMLCanvasEl
   return output;
 }
 
-function canvasBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error("scanImageError"))),
-      "image/jpeg",
-      quality,
-    );
-  });
+/**
+ * Scan pages are embedded byte for byte in the PDF, so a JPEG whose compressed
+ * data happens to spell a refused marker (`/AA`, `/JS`, ...) would get a clean
+ * scan rejected by the kiosk. See pdf-marker-guard.
+ */
+async function canvasBlob(canvas: HTMLCanvasElement, quality: number): Promise<Blob> {
+  const { blob } = await encodePdfSafeJpeg(
+    (attempt) =>
+      new Promise((resolve, reject) => {
+        canvas.toBlob(
+          (result) => (result ? resolve(result) : reject(new Error("scanImageError"))),
+          "image/jpeg",
+          attempt,
+        );
+      }),
+    quality,
+    () => new Error("scanImageError"),
+  );
+  return blob;
 }
