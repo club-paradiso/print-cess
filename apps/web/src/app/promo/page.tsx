@@ -102,7 +102,7 @@ export default async function PromoPage() {
           </a>
           <PromoTabs />
           <div className={styles.headerActions}>
-            <Link className={styles.headerCta} href="/start">
+            <Link className={styles.headerCta} href={KIOSK_VIEW_ONCE_PATH}>
               {nav.start}
             </Link>
           </div>
