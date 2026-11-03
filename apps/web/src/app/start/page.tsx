@@ -220,6 +220,17 @@ export default async function HomePage({
           </li>
         </ul>
       </nav>
+
+      {/* 개인정보 보호법 시행령 제31조제2항: the policy stays reachable from the
+          service itself. The documents are Korean, so the labels are too. */}
+      <nav className="home-legal" aria-label="정책과 고지" lang="ko">
+        <a className="home-legal__privacy" href="/legal/privacy">
+          개인정보 처리방침
+        </a>
+        <a href="/legal/terms">이용약관</a>
+        <a href="/legal/security">보안 정책</a>
+        <a href="/legal/licenses">라이선스</a>
+      </nav>
     </main>
   );
 }

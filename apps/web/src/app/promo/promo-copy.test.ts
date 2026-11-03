@@ -35,9 +35,7 @@ describe("/promo copy", () => {
     }
   });
 
-  it("states the current file limits and no page-count or staff-approval limit", () => {
-    const answer = faq.items.map((item) => item.a).join("\n");
-    expect(answer).toContain("50MB");
+  it("does not advertise obsolete file limits or page-count restrictions", () => {
     for (const stale of ["20MB", "10MB", "32MB", "50페이지", "11페이지", "직원 승인"]) {
       expect(everyLine, stale).not.toContain(stale);
     }

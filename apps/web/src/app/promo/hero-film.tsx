@@ -137,9 +137,16 @@ export function HeroFilm({ children }: { children: ReactNode }) {
     const root = document.documentElement;
     const copy = element.querySelector<HTMLElement>("[data-hero-copy]");
     let frame = 0;
+    // Phones keep the header solid: its second row of tabs must stay readable.
+    const wide = window.matchMedia("(min-width: 1000px)");
     const update = () => {
       frame = 0;
       const header = 76;
+      // A hidden home view (another tab is open) has no box at all.
+      if (!wide.matches || element.getClientRects().length === 0) {
+        root.dataset.promoOverFilm = "";
+        return;
+      }
       const stage = element.getBoundingClientRect();
       const copyTop = copy?.getBoundingClientRect().top ?? stage.top;
       root.dataset.promoOverFilm = stage.bottom > header && copyTop > header ? "true" : "";
@@ -150,7 +157,12 @@ export function HeroFilm({ children }: { children: ReactNode }) {
     update();
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", schedule);
+    // promo-tabs.tsx names the open view on <main>; switching views moves no scroll.
+    const views = new MutationObserver(schedule);
+    const main = document.getElementById("main");
+    if (main) views.observe(main, { attributes: true, attributeFilter: ["data-active-view"] });
     return () => {
+      views.disconnect();
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", schedule);
       if (frame) window.cancelAnimationFrame(frame);
