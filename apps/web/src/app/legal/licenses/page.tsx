@@ -110,10 +110,10 @@ export default function LicensesPage() {
       <LegalSection id="lgpl" title="4. LGPL 구성 요소">
         <ul>
           <li>
-            <strong>heic-to 1.6.6</strong>(LGPL-3.0, libheif 포함): 아이폰 HEIC 사진을 브라우저에서
-            JPEG로 바꿔요. 고치지 않은 원본을 따로 불러오는 별도 모듈로 쓰기 때문에, 호환되는 다른
-            버전으로 바꿔 끼울 수 있어요. <a href="/licenses/heic-to-LGPL-3.0.txt">라이선스 전문</a>{" "}
-            ·{" "}
+            <strong>heic-to 1.6.6</strong>(LGPL-3.0, libheif 포함): HEIC 사진(휴대전화 카메라의
+            고효율 사진 형식)을 브라우저에서 JPEG로 바꿔요. 고치지 않은 원본을 따로 불러오는 별도
+            모듈로 쓰기 때문에, 호환되는 다른 버전으로 바꿔 끼울 수 있어요.{" "}
+            <a href="/licenses/heic-to-LGPL-3.0.txt">라이선스 전문</a> ·{" "}
             <a href="https://github.com/hoppergee/heic-to" rel="noreferrer">
               소스 코드
             </a>
