@@ -61,11 +61,13 @@ import {
   ApiClientError,
 } from "@/lib/api-client";
 
+import { readSelectedFileBytes } from "@/lib/file-validation";
 import {
   FileValidationError,
   validateMobileDocument,
   type ValidatedMobileFile,
 } from "@/lib/mobile-document-validation";
+import { PdfPasswordCancelled, unlockLockedPdf, type PdfPasswordRequest } from "@/lib/unlock-pdf";
 import { splitFirstSentence } from "@/lib/first-sentence";
 import { watchPrintStatus, type PrintWatchState } from "@/lib/print-status";
 import { parseSessionFragment } from "@/lib/session-fragment";
@@ -73,10 +75,19 @@ import { clearBrowserSiteData } from "@/lib/session-teardown";
 import { useVisitorLocale, type Text } from "@/lib/use-visitor-locale";
 
 import { DocumentPreview } from "./document-preview";
+import { PdfPasswordStep } from "./pdf-password-step";
 import { formatBatchCopy, printBatchCopy, type PrintBatchCopy } from "./print-batch-copy";
 
 type Stage =
-  "boot" | "file" | "preview" | "transfer" | "progress" | "complete" | "closed" | "error";
+  | "boot"
+  | "file"
+  | "password"
+  | "preview"
+  | "transfer"
+  | "progress"
+  | "complete"
+  | "closed"
+  | "error";
 type ClaimedSession = Awaited<ReturnType<typeof claimSession>>;
 type SelectedDocument = { file: File; validated: ValidatedMobileFile };
 
@@ -86,6 +97,7 @@ const AUTOMATIC_SHUTDOWN_MS = 30_000;
 const HELP_KEYS: Record<Stage, string> = {
   boot: "helpProgress",
   file: "helpFile",
+  password: "helpFile",
   preview: "helpPreview",
   transfer: "helpProgress",
   progress: "helpProgress",
@@ -180,6 +192,31 @@ export function BatchMobileFlow({
   const fileInput = useRef<HTMLInputElement>(null);
   const watchAbort = useRef<AbortController>(null);
   const claimAttempt = useRef<{ sessionId: string; outcome: Promise<ClaimOutcome> }>(null);
+  const [passwordRequest, setPasswordRequest] = useState<PdfPasswordRequest>();
+  const [unlocking, setUnlocking] = useState(false);
+  const passwordAnswer = useRef<((password: string | null) => void) | null>(null);
+
+  // A locked PDF pauses the pick on the password step. The unlocker awaits this
+  // promise, so the visitor's answer (or giving up) resumes it exactly once.
+  const askPdfPassword = useCallback(
+    (request: PdfPasswordRequest) =>
+      new Promise<string | null>((resolve) => {
+        passwordAnswer.current = resolve;
+        setUnlocking(false);
+        setPasswordRequest(request);
+        setStage("password");
+      }),
+    [],
+  );
+
+  const answerPdfPassword = useCallback((password: string | null) => {
+    const resolve = passwordAnswer.current;
+    passwordAnswer.current = null;
+    setUnlocking(password !== null);
+    resolve?.(password);
+  }, []);
+
+  useEffect(() => () => passwordAnswer.current?.(null), []);
 
   // An input keeps its value after a rejected pick, and choosing the same file
   // again then fires no change event. The iCloud notice asks for exactly that
@@ -291,12 +328,34 @@ export function BatchMobileFlow({
       }
 
       const next: SelectedDocument[] = [];
+      let unlockedAny = false;
       try {
         for (const file of files) {
-          const validated = await validateMobileDocument(file, {
-            allowHwp: supportsHwp,
-            allowHwpx: supportsHwpx,
-          });
+          let validated: ValidatedMobileFile;
+          try {
+            validated = await validateMobileDocument(file, {
+              allowHwp: supportsHwp,
+              allowHwpx: supportsHwpx,
+            });
+          } catch (error) {
+            if (!(error instanceof FileValidationError) || error.code !== "lockedPdf") throw error;
+            // Unlock on this phone: the password and the original never leave it.
+            const original = await readSelectedFileBytes(file);
+            try {
+              const unlocked = await unlockLockedPdf(original, file.name, askPdfPassword);
+              validated = {
+                bytes: unlocked.bytes,
+                fileKind: "pdf",
+                pageCount: unlocked.pageCount,
+                normalized: true,
+              };
+              unlockedAny = true;
+            } finally {
+              original.fill(0);
+              setUnlocking(false);
+              setPasswordRequest(undefined);
+            }
+          }
           next.push({ file, validated });
         }
         if (
@@ -308,10 +367,13 @@ export function BatchMobileFlow({
         }
         clearDocuments();
         setDocuments(next);
+        if (unlockedAny) setFileNoticeKey("pdfUnlockedNotice");
         setStage("preview");
       } catch (error) {
         for (const item of next) item.validated.bytes.fill(0);
         resetPickers();
+        setStage("file");
+        if (error instanceof PdfPasswordCancelled) return;
         if (error instanceof BatchSelectionError) setBatchError(error.message);
         else setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
       }
@@ -321,6 +383,7 @@ export function BatchMobileFlow({
       copy.batchTooLarge,
       copy.tooManyFiles,
       resetPickers,
+      askPdfPassword,
       supportsHwp,
       supportsHwpx,
     ],
@@ -548,10 +611,25 @@ export function BatchMobileFlow({
         </section>
       ) : null}
 
+      {stage === "password" && passwordRequest ? (
+        <PdfPasswordStep
+          request={passwordRequest}
+          busy={unlocking}
+          text={text}
+          onSubmit={(password) => answerPdfPassword(password)}
+          onCancel={() => answerPdfPassword(null)}
+        />
+      ) : null}
+
       {stage === "preview" && documents.length > 0 ? (
         <section className="mobile-step mobile-step--preview">
           <h1>{single ? text("checkDocument") : copy.checkFiles}</h1>
           <p>{single ? text("previewHelp") : copy.previewHelp}</p>
+          {fileNoticeKey === "pdfUnlockedNotice" ? (
+            <p className="mobile-file-notice" role="status">
+              {text(fileNoticeKey)}
+            </p>
+          ) : null}
           {timeLeft}
           {single && documents[0] ? (
             <>

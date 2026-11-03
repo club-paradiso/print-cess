@@ -85,6 +85,19 @@ beyond the stated threat model.
   PDF as active HTML. Because a PDF name may hex-escape any character, scan for those markers in
   both the raw bytes and the form with `#xx` escapes decoded; a substring scan of the raw bytes
   alone is bypassed by escaping one letter of the name.
+- A password-protected PDF is unlocked on the visitor's phone only, never on the kiosk or the
+  server (`apps/web/src/lib/unlock-pdf.ts`). The phone asks for the password (at most five
+  attempts), opens the file with PDF.js, draws every page to a JPEG and rebuilds a new,
+  unencrypted image PDF. Only that rebuilt PDF enters the normal end-to-end encrypted upload, so
+  the password and the original encrypted file never leave the phone, and the kiosk still rejects
+  any PDF that carries `/Encrypt`. The password is not stored, logged, autofilled or sent.
+- A PDF whose issuer switched printing off (owner password without the print permission) is
+  refused, with or without the open password. Removing an issuer's print restriction is a policy
+  decision this kiosk does not make on the visitor's behalf. DRM wrappers that PDF.js cannot open
+  stay refused.
+- Page pictures inside a rebuilt PDF are re-encoded when their compressed bytes happen to spell a
+  marker that either inspector refuses (`/AA`, `/JS`, `/URI` and the rest), so a clean document
+  is not mistaken for active content.
 - Keep plaintext in bounded memory. If a renderer requires a temporary file, use an
   application-owned ACL-restricted directory, random name, immediate deletion, and startup cleanup.
   Never use the original filename, Downloads, or Documents.

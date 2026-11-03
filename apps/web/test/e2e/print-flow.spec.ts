@@ -319,14 +319,71 @@ test("a gallery photo taken sideways reaches the preview", async ({ page, contex
   await expect(mobile.getByText(/will not open/u)).toHaveCount(0);
 });
 
-test("a locked PDF is rejected with a safe alternative", async ({ page, context }) => {
+test("a locked PDF is unlocked on the phone after the right password", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const uploads: string[] = [];
+  mobile.on("request", (request) => {
+    if (request.method() !== "GET") uploads.push(request.postData() ?? "");
+  });
+  await mobile.getByTestId("file-input").setInputFiles({
+    name: "synthetic-locked.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(2, "fixture-only-password")),
+  });
+
+  await expect(mobile.getByRole("heading", { name: "This PDF is locked" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(mobile.getByText(/synthetic-locked\.pdf/u)).toBeVisible();
+  await expect(mobile.getByText("5 tries left")).toBeVisible();
+  const field = mobile.getByTestId("pdf-password-input");
+  await expect(field).toHaveAttribute("type", "password");
+  await expect(field).toHaveAttribute("autocomplete", "off");
+
+  await field.fill("not-the-password");
+  await mobile.getByRole("button", { name: "Unlock" }).click();
+  await expect(mobile.locator(".mobile-file-error")).toHaveText(/That password is not right/u, {
+    timeout: 30_000,
+  });
+  await expect(mobile.getByText("4 tries left")).toBeVisible();
+  await expect(field).toHaveValue("");
+
+  await field.fill("fixture-only-password");
+  await mobile.getByRole("button", { name: "Unlock" }).click();
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 60_000,
+  });
+  await expect(mobile.getByText(/Unlocked on this phone/u)).toBeVisible();
+  await expect(mobile.locator("canvas")).toBeVisible({ timeout: 30_000 });
+  const transitions: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().endsWith("/transition")) transitions.push(request.postData() ?? "");
+  });
+  await mobile.getByRole("button", { name: "Print 1 copy" }).click();
+  // The kiosk re-validates the rebuilt PDF itself before it moves on to printing.
+  await expect
+    .poll(() => transitions.some((body) => body.includes('"printing"')), { timeout: 60_000 })
+    .toBe(true);
+  // The password is typed on the phone only: no request carried it anywhere.
+  expect(uploads.some((body) => body.includes("fixture-only-password"))).toBe(false);
+});
+
+test("giving up on a locked PDF goes back to choosing a file", async ({ page, context }) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("file-input").setInputFiles({
     name: "synthetic-locked.pdf",
     mimeType: "application/pdf",
     buffer: Buffer.from(await createSyntheticPdf(1, "fixture-only-password")),
   });
-  await expect(mobile.getByText(/This PDF has a password/u)).toBeVisible();
+  await expect(mobile.getByRole("heading", { name: "This PDF is locked" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await mobile.getByRole("button", { name: "Pick a different file" }).click();
+  await expect(mobile.getByRole("heading", { name: "Pick files to print" })).toBeVisible();
+  await expect(mobile.locator(".mobile-file-error")).toHaveCount(0);
 });
 
 test("a synthetic PDF is validated and previewed", async ({ page, context }) => {
