@@ -19,6 +19,9 @@ export type FileValidationCode =
   | "imageConversionUnsupported"
   | "tooLarge"
   | "lockedPdf"
+  | "wrongPdfPassword"
+  | "printRestrictedPdf"
+  | "pdfPasswordTooManyTries"
   | "damagedFile";
 
 const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
@@ -224,6 +227,19 @@ function readWithFileReader(file: Blob): Promise<ArrayBuffer> {
 
 function waitForFileProvider(delayMs: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
+/**
+ * True when validatePdf would refuse these bytes for an /Encrypt or active
+ * content marker. Generated PDFs (rebuilt from page pictures) check their
+ * image data with this, because compressed bytes can spell a marker by chance.
+ */
+export function containsRefusedPdfMarker(bytes: Uint8Array): boolean {
+  const searchable = new TextDecoder("latin1").decode(bytes);
+  const decodedNames = decodePdfNameEscapes(searchable);
+  return ["/Encrypt", ...ACTIVE_PDF_MARKERS].some(
+    (marker) => searchable.includes(marker) || decodedNames.includes(marker),
+  );
 }
 
 export async function validatePdf(

@@ -154,6 +154,20 @@ const en = {
     "This file is too big. Keep photos and PDFs under 50 MB, or save only the pages you need.",
   lockedPdf:
     "This PDF has a password. Open it on your phone and take a screenshot of the pages you need.",
+  pdfPasswordTitle: "This PDF is locked",
+  pdfPasswordHelp:
+    "Enter the password for {{name}}. The file is unlocked on this phone, and the password is never sent.",
+  pdfPasswordLabel: "PDF password",
+  pdfPasswordShow: "Show password",
+  pdfPasswordSubmit: "Unlock",
+  pdfPasswordAttemptsLeft: "{{count}} tries left",
+  pdfUnlocking: "Unlocking the PDF…",
+  wrongPdfPassword: "That password is not right. Check it and try again.",
+  printRestrictedPdf:
+    "Whoever issued this PDF turned printing off, so it cannot be printed here. Ask the issuer for a printable copy.",
+  pdfPasswordTooManyTries:
+    "Too many wrong passwords. Check the password, then choose the file again.",
+  pdfUnlockedNotice: "Unlocked on this phone. Each page will print as a picture.",
   damagedFile:
     "This file could not be read. If it is in iCloud, wait for the download to finish and choose it again. Otherwise, save it again or take a clear screenshot.",
   fingerprintMismatch:
@@ -435,6 +449,20 @@ const ko = {
     "사진이나 PDF를 고르세요. HWP, 워드, 엑셀, 파워포인트 파일은 먼저 PDF로 저장한 뒤 고르세요.",
   tooLarge: "파일이 너무 커요. 사진과 PDF는 50MB 이하로 줄이거나 필요한 페이지만 저장하세요.",
   lockedPdf: "암호가 걸린 PDF예요. 휴대전화에서 열어 필요한 페이지를 캡처해 저장하세요.",
+  pdfPasswordTitle: "암호가 걸린 PDF예요",
+  pdfPasswordHelp:
+    "{{name}}의 비밀번호를 입력하세요. 잠금은 이 휴대전화에서만 풀리고, 비밀번호는 어디에도 보내지 않아요.",
+  pdfPasswordLabel: "PDF 비밀번호",
+  pdfPasswordShow: "비밀번호 보기",
+  pdfPasswordSubmit: "잠금 풀기",
+  pdfPasswordAttemptsLeft: "{{count}}번 더 시도할 수 있어요",
+  pdfUnlocking: "PDF 잠금을 푸는 중…",
+  wrongPdfPassword: "비밀번호가 맞지 않아요. 확인하고 다시 입력하세요.",
+  printRestrictedPdf:
+    "발급한 곳에서 인쇄를 막아 둔 PDF라 여기서 인쇄할 수 없어요. 발급처에서 인쇄용 문서를 받으세요.",
+  pdfPasswordTooManyTries:
+    "비밀번호가 여러 번 틀렸어요. 비밀번호를 확인한 뒤 파일을 다시 고르세요.",
+  pdfUnlockedNotice: "이 휴대전화에서 잠금을 풀었어요. 각 페이지는 이미지로 인쇄돼요.",
   damagedFile:
     "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 고르세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
   fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 찍으세요.",
@@ -703,6 +731,17 @@ const zhCN = {
   unsupportedType: "请选照片或 PDF。HWP、Word、Excel、PowerPoint 文件要先存成 PDF 再选。",
   tooLarge: "文件太大了。照片要小于 50 MB，PDF 要小于 50 MB，或者只保存需要的几页。",
   lockedPdf: "这个 PDF 有密码。请在手机上打开，把需要的页截图保存。",
+  pdfPasswordTitle: "这个 PDF 有密码",
+  pdfPasswordHelp: "请输入 {{name}} 的密码。文件只在这部手机上解锁，密码不会发送到任何地方。",
+  pdfPasswordLabel: "PDF 密码",
+  pdfPasswordShow: "显示密码",
+  pdfPasswordSubmit: "解锁",
+  pdfPasswordAttemptsLeft: "还可以试 {{count}} 次",
+  pdfUnlocking: "正在解锁 PDF…",
+  wrongPdfPassword: "密码不对。请检查后再输入。",
+  printRestrictedPdf: "签发方禁止打印这个 PDF，所以这里无法打印。请向签发方索取可打印的文件。",
+  pdfPasswordTooManyTries: "密码错误次数太多。请确认密码后重新选择文件。",
+  pdfUnlockedNotice: "已在这部手机上解锁。每一页会以图片形式打印。",
   damagedFile: "这个文件打不开。请重新保存，或者截一张清楚的图。",
   fingerprintMismatch: "没办法确认这个连接。请重新扫大屏幕上的二维码。",
   networkError: "连接断了。请检查手机流量，然后重新扫二维码。",
@@ -965,6 +1004,20 @@ const id = {
     "Berkas ini terlalu besar. Foto harus di bawah 50 MB dan PDF di bawah 50 MB, atau simpan hanya halaman yang diperlukan.",
   lockedPdf:
     "PDF ini punya kata sandi. Buka di ponsel Anda, lalu simpan halaman yang perlu sebagai tangkapan layar.",
+  pdfPasswordTitle: "PDF ini dikunci",
+  pdfPasswordHelp:
+    "Masukkan kata sandi untuk {{name}}. File dibuka di ponsel ini saja, dan kata sandi tidak dikirim ke mana pun.",
+  pdfPasswordLabel: "Kata sandi PDF",
+  pdfPasswordShow: "Tampilkan kata sandi",
+  pdfPasswordSubmit: "Buka kunci",
+  pdfPasswordAttemptsLeft: "Sisa {{count}} kali percobaan",
+  pdfUnlocking: "Membuka kunci PDF…",
+  wrongPdfPassword: "Kata sandi salah. Periksa lalu coba lagi.",
+  printRestrictedPdf:
+    "Penerbit PDF ini mematikan fitur cetak, jadi tidak bisa dicetak di sini. Minta salinan yang bisa dicetak dari penerbitnya.",
+  pdfPasswordTooManyTries:
+    "Terlalu banyak kata sandi salah. Periksa kata sandinya, lalu pilih file lagi.",
+  pdfUnlockedNotice: "Kunci dibuka di ponsel ini. Setiap halaman akan dicetak sebagai gambar.",
   damagedFile: "Berkas ini tidak bisa dibuka. Simpan ulang, atau ambil tangkapan layar yang jelas.",
   fingerprintMismatch: "Sambungan ini tidak dapat diperiksa. Pindai lagi kode QR di layar besar.",
   networkError: "Sambungan terputus. Periksa data seluler Anda, lalu pindai lagi kode QR.",
@@ -1245,6 +1298,20 @@ const fil = {
     "Masyadong malaki ang file. Dapat mas maliit sa 50 MB ang larawan at mas maliit sa 50 MB ang PDF, o i-save lang ang mga pahinang kailangan.",
   lockedPdf:
     "May password ang PDF na ito. Buksan ito sa telepono mo at i-screenshot ang mga pahinang kailangan.",
+  pdfPasswordTitle: "Naka-lock ang PDF na ito",
+  pdfPasswordHelp:
+    "Ilagay ang password ng {{name}}. Sa phone na ito lang bubuksan ang file, at hindi ipapadala kahit saan ang password.",
+  pdfPasswordLabel: "Password ng PDF",
+  pdfPasswordShow: "Ipakita ang password",
+  pdfPasswordSubmit: "I-unlock",
+  pdfPasswordAttemptsLeft: "{{count}} subok pa ang natitira",
+  pdfUnlocking: "Ina-unlock ang PDF…",
+  wrongPdfPassword: "Mali ang password. Tingnan at subukan ulit.",
+  printRestrictedPdf:
+    "Pinatay ng nag-isyu ang pag-print ng PDF na ito, kaya hindi ito mapi-print dito. Humingi ng kopyang puwedeng i-print sa nag-isyu.",
+  pdfPasswordTooManyTries:
+    "Masyadong maraming maling password. Tingnan ang password, saka piliin ulit ang file.",
+  pdfUnlockedNotice: "Na-unlock sa phone na ito. Ipi-print ang bawat pahina bilang larawan.",
   damagedFile:
     "Hindi mabuksan ang file na ito. I-save itong muli, o kumuha ng malinaw na screenshot.",
   fingerprintMismatch:
@@ -1529,6 +1596,19 @@ const vi = {
     "Tệp này quá lớn. Ảnh phải dưới 50 MB và PDF dưới 50 MB, hoặc chỉ lưu những trang bạn cần.",
   lockedPdf:
     "Tệp PDF này có mật khẩu. Hãy mở trên điện thoại và chụp ảnh màn hình những trang cần.",
+  pdfPasswordTitle: "PDF này có mật khẩu",
+  pdfPasswordHelp:
+    "Nhập mật khẩu của {{name}}. Tệp chỉ được mở khóa trên điện thoại này, mật khẩu không được gửi đi đâu.",
+  pdfPasswordLabel: "Mật khẩu PDF",
+  pdfPasswordShow: "Hiện mật khẩu",
+  pdfPasswordSubmit: "Mở khóa",
+  pdfPasswordAttemptsLeft: "Còn {{count}} lần thử",
+  pdfUnlocking: "Đang mở khóa PDF…",
+  wrongPdfPassword: "Mật khẩu không đúng. Kiểm tra rồi thử lại.",
+  printRestrictedPdf:
+    "Nơi cấp PDF này đã tắt chức năng in, nên không thể in ở đây. Hãy xin nơi cấp bản có thể in.",
+  pdfPasswordTooManyTries: "Nhập sai mật khẩu quá nhiều lần. Kiểm tra mật khẩu rồi chọn lại tệp.",
+  pdfUnlockedNotice: "Đã mở khóa trên điện thoại này. Mỗi trang sẽ được in dưới dạng hình ảnh.",
   damagedFile: "Tệp này không mở được. Hãy lưu lại, hoặc chụp ảnh màn hình rõ nét.",
   fingerprintMismatch: "Không kiểm tra được kết nối này. Hãy quét lại mã QR trên màn hình lớn.",
   networkError: "Mất kết nối. Hãy kiểm tra dữ liệu di động, rồi quét lại mã QR.",
@@ -1798,6 +1878,19 @@ const th = {
   tooLarge:
     "ไฟล์นี้ใหญ่เกินไป รูปต้องไม่เกิน 50 MB และ PDF ไม่เกิน 50 MB หรือเก็บเฉพาะหน้าที่ต้องการ",
   lockedPdf: "PDF นี้มีรหัสผ่าน เปิดในมือถือแล้วถ่ายภาพหน้าจอหน้าที่ต้องการ",
+  pdfPasswordTitle: "PDF นี้ล็อกอยู่",
+  pdfPasswordHelp:
+    "ใส่รหัสผ่านของ {{name}} ไฟล์จะถูกปลดล็อกในมือถือเครื่องนี้เท่านั้น และรหัสผ่านจะไม่ถูกส่งไปที่ใด",
+  pdfPasswordLabel: "รหัสผ่าน PDF",
+  pdfPasswordShow: "แสดงรหัสผ่าน",
+  pdfPasswordSubmit: "ปลดล็อก",
+  pdfPasswordAttemptsLeft: "ลองได้อีก {{count}} ครั้ง",
+  pdfUnlocking: "กำลังปลดล็อก PDF…",
+  wrongPdfPassword: "รหัสผ่านไม่ถูกต้อง ตรวจสอบแล้วลองอีกครั้ง",
+  printRestrictedPdf:
+    "ผู้ออกเอกสารปิดการพิมพ์ PDF นี้ไว้ จึงพิมพ์ที่นี่ไม่ได้ ขอสำเนาที่พิมพ์ได้จากผู้ออกเอกสาร",
+  pdfPasswordTooManyTries: "ใส่รหัสผ่านผิดหลายครั้งเกินไป ตรวจสอบรหัสผ่านแล้วเลือกไฟล์ใหม่",
+  pdfUnlockedNotice: "ปลดล็อกในมือถือเครื่องนี้แล้ว แต่ละหน้าจะพิมพ์เป็นรูปภาพ",
   damagedFile: "ไฟล์นี้เปิดไม่ได้ บันทึกใหม่ หรือถ่ายภาพหน้าจอให้ชัด",
   fingerprintMismatch: "ตรวจสอบการเชื่อมต่อนี้ไม่ได้ สแกนคิวอาร์โค้ดบนจอใหญ่อีกครั้ง",
   networkError: "การเชื่อมต่อหลุด ตรวจอินเทอร์เน็ตมือถือ แล้วสแกนคิวอาร์โค้ดอีกครั้ง",
@@ -2065,6 +2158,19 @@ const ne = {
   tooLarge:
     "यो फाइल धेरै ठूलो छ। फोटो 50 MB र PDF 50 MB भन्दा कम हुनुपर्छ, वा चाहिने पृष्ठ मात्र राख्नुहोस्।",
   lockedPdf: "यो PDF मा पासवर्ड छ। फोनमा खोलेर चाहिने पृष्ठको स्क्रिनसट लिनुहोस्।",
+  pdfPasswordTitle: "यो PDF लक गरिएको छ",
+  pdfPasswordHelp:
+    "{{name}} को पासवर्ड हाल्नुहोस्। फाइल यही फोनमा मात्र खोलिन्छ, पासवर्ड कतै पठाइँदैन।",
+  pdfPasswordLabel: "PDF पासवर्ड",
+  pdfPasswordShow: "पासवर्ड देखाउनुहोस्",
+  pdfPasswordSubmit: "अनलक गर्नुहोस्",
+  pdfPasswordAttemptsLeft: "अझै {{count}} पटक प्रयास गर्न सकिन्छ",
+  pdfUnlocking: "PDF अनलक हुँदैछ…",
+  wrongPdfPassword: "पासवर्ड मिलेन। जाँचेर फेरि प्रयास गर्नुहोस्।",
+  printRestrictedPdf:
+    "जारी गर्नेले यो PDF को प्रिन्ट बन्द गरेको छ, त्यसैले यहाँ प्रिन्ट हुँदैन। जारी गर्नेसँग प्रिन्ट गर्न मिल्ने प्रति माग्नुहोस्।",
+  pdfPasswordTooManyTries: "धेरै पटक गलत पासवर्ड हालियो। पासवर्ड जाँचेर फाइल फेरि छान्नुहोस्।",
+  pdfUnlockedNotice: "यही फोनमा अनलक भयो। हरेक पृष्ठ तस्बिरको रूपमा प्रिन्ट हुन्छ।",
   damagedFile: "यो फाइल खुल्दैन। फेरि सेभ गर्नुहोस्, वा स्पष्ट स्क्रिनसट लिनुहोस्।",
   fingerprintMismatch: "यो जडान जाँच्न सकिएन। ठूलो पर्दाको QR कोड फेरि स्क्यान गर्नुहोस्।",
   networkError: "जडान टुट्यो। मोबाइल डाटा जाँच्नुहोस्, त्यसपछि QR कोड फेरि स्क्यान गर्नुहोस्।",
@@ -2337,6 +2443,20 @@ const km = {
   tooLarge:
     "ឯកសារនេះធំពេក។ រូបថតត្រូវតិចជាង 50 MB និង PDF តិចជាង 50 MB ឬរក្សាទុកតែទំព័រដែលត្រូវការ។",
   lockedPdf: "PDF នេះមានពាក្យសម្ងាត់។ បើកក្នុងទូរស័ព្ទ ហើយថតអេក្រង់ទំព័រដែលត្រូវការ។",
+  pdfPasswordTitle: "PDF នេះត្រូវបានចាក់សោ",
+  pdfPasswordHelp:
+    "បញ្ចូលពាក្យសម្ងាត់សម្រាប់ {{name}}។ ឯកសារត្រូវបានដោះសោតែនៅលើទូរស័ព្ទនេះប៉ុណ្ណោះ ហើយពាក្យសម្ងាត់មិនត្រូវបានផ្ញើទៅណាទេ។",
+  pdfPasswordLabel: "ពាក្យសម្ងាត់ PDF",
+  pdfPasswordShow: "បង្ហាញពាក្យសម្ងាត់",
+  pdfPasswordSubmit: "ដោះសោ",
+  pdfPasswordAttemptsLeft: "នៅសល់ {{count}} ដងទៀត",
+  pdfUnlocking: "កំពុងដោះសោ PDF…",
+  wrongPdfPassword: "ពាក្យសម្ងាត់មិនត្រឹមត្រូវ។ សូមពិនិត្យហើយសាកម្តងទៀត។",
+  printRestrictedPdf:
+    "អ្នកចេញឯកសារបានបិទការបោះពុម្ព PDF នេះ ដូច្នេះមិនអាចបោះពុម្ពនៅទីនេះបានទេ។ សូមស្នើច្បាប់ចម្លងដែលអាចបោះពុម្ពបានពីអ្នកចេញឯកសារ។",
+  pdfPasswordTooManyTries:
+    "បញ្ចូលពាក្យសម្ងាត់ខុសច្រើនដងពេក។ សូមពិនិត្យពាក្យសម្ងាត់ ហើយជ្រើសឯកសារម្តងទៀត។",
+  pdfUnlockedNotice: "បានដោះសោនៅលើទូរស័ព្ទនេះ។ ទំព័រនីមួយៗនឹងបោះពុម្ពជារូបភាព។",
   damagedFile: "ឯកសារនេះបើកមិនបាន។ រក្សាទុកម្តងទៀត ឬថតអេក្រង់ឱ្យច្បាស់។",
   fingerprintMismatch: "មិនអាចពិនិត្យការតភ្ជាប់នេះបានទេ។ ស្កេនកូដ QR លើអេក្រង់ធំម្តងទៀត។",
   networkError: "ការតភ្ជាប់បានដាច់។ ពិនិត្យទិន្នន័យទូរស័ព្ទ រួចស្កេនកូដ QR ម្តងទៀត។",
@@ -2605,6 +2725,20 @@ const ar = {
   tooLarge:
     "هذا الملف كبير جدًا. يجب أن تكون الصور أقل من 50 MB وملفات PDF أقل من 50 MB، أو احفظ الصفحات التي تحتاجها فقط.",
   lockedPdf: "ملف PDF هذا محمي بكلمة مرور. افتحه على هاتفك والتقط صورة شاشة للصفحات التي تحتاجها.",
+  pdfPasswordTitle: "ملف PDF هذا مقفل",
+  pdfPasswordHelp:
+    "أدخل كلمة مرور {{name}}. يُفتح الملف على هذا الهاتف فقط، ولا تُرسَل كلمة المرور إلى أي مكان.",
+  pdfPasswordLabel: "كلمة مرور PDF",
+  pdfPasswordShow: "إظهار كلمة المرور",
+  pdfPasswordSubmit: "فتح القفل",
+  pdfPasswordAttemptsLeft: "المحاولات المتبقية: {{count}}",
+  pdfUnlocking: "جارٍ فتح قفل PDF…",
+  wrongPdfPassword: "كلمة المرور غير صحيحة. تحقق منها وحاول مرة أخرى.",
+  printRestrictedPdf:
+    "أوقفت الجهة المُصدِرة الطباعة لهذا الملف، لذا لا يمكن طباعته هنا. اطلب من الجهة المُصدِرة نسخة قابلة للطباعة.",
+  pdfPasswordTooManyTries:
+    "أُدخلت كلمة مرور خاطئة مرات كثيرة. تحقق من كلمة المرور ثم اختر الملف مرة أخرى.",
+  pdfUnlockedNotice: "فُتح القفل على هذا الهاتف. ستُطبع كل صفحة كصورة.",
   damagedFile: "هذا الملف لا يُفتح. احفظه مرة أخرى، أو التقط صورة شاشة واضحة.",
   fingerprintMismatch:
     "لم نتمكّن من التحقّق من هذا الاتصال. امسح رمز QR على الشاشة الكبيرة مرة أخرى.",
@@ -2874,6 +3008,21 @@ const ru = {
   tooLarge:
     "Этот файл слишком большой. Фото должно быть меньше 50 МБ, а PDF меньше 50 МБ, либо сохраните только нужные страницы.",
   lockedPdf: "У этого PDF есть пароль. Откройте его на телефоне и снимите нужные страницы.",
+  pdfPasswordTitle: "Этот PDF защищён паролем",
+  pdfPasswordHelp:
+    "Введите пароль для {{name}}. Файл открывается только на этом телефоне, пароль никуда не отправляется.",
+  pdfPasswordLabel: "Пароль PDF",
+  pdfPasswordShow: "Показать пароль",
+  pdfPasswordSubmit: "Открыть",
+  pdfPasswordAttemptsLeft: "Осталось попыток: {{count}}",
+  pdfUnlocking: "Открываем PDF…",
+  wrongPdfPassword: "Пароль неверный. Проверьте и попробуйте ещё раз.",
+  printRestrictedPdf:
+    "Тот, кто выдал этот PDF, запретил его печать, поэтому здесь его не напечатать. Попросите у выдавшей организации версию для печати.",
+  pdfPasswordTooManyTries:
+    "Слишком много неверных паролей. Проверьте пароль и выберите файл снова.",
+  pdfUnlockedNotice:
+    "Файл открыт на этом телефоне. Каждая страница будет напечатана как изображение.",
   damagedFile: "Этот файл не открывается. Сохраните его снова или сделайте чёткий снимок экрана.",
   fingerprintMismatch:
     "Не удалось проверить это соединение. Отсканируйте QR-код на большом экране ещё раз.",
@@ -3152,6 +3301,20 @@ const mn = {
     "Энэ файл хэтэрхий том. Зураг 50 MB-аас, PDF 50 MB-аас бага байх ёстой. Эсвэл шаардлагатай хуудсаа хадгална уу.",
   lockedPdf:
     "Энэ PDF нууц үгтэй. Утсан дээрээ нээгээд шаардлагатай хуудсуудын дэлгэцийн зургийг авна уу.",
+  pdfPasswordTitle: "Энэ PDF түгжээтэй",
+  pdfPasswordHelp:
+    "{{name}} файлын нууц үгийг оруулна уу. Файлыг зөвхөн энэ утсан дээр нээх бөгөөд нууц үгийг хаашаа ч илгээхгүй.",
+  pdfPasswordLabel: "PDF нууц үг",
+  pdfPasswordShow: "Нууц үгийг харуулах",
+  pdfPasswordSubmit: "Түгжээ тайлах",
+  pdfPasswordAttemptsLeft: "Дахиад {{count}} удаа оролдох боломжтой",
+  pdfUnlocking: "PDF-ийн түгжээг тайлж байна…",
+  wrongPdfPassword: "Нууц үг буруу байна. Шалгаад дахин оролдоно уу.",
+  printRestrictedPdf:
+    "Энэ PDF-ийг гаргасан газар хэвлэхийг хориглосон тул энд хэвлэх боломжгүй. Гаргасан газраас хэвлэх боломжтой хувийг авна уу.",
+  pdfPasswordTooManyTries:
+    "Нууц үгийг хэт олон удаа буруу оруулсан. Нууц үгээ шалгаад файлаа дахин сонгоно уу.",
+  pdfUnlockedNotice: "Энэ утсан дээр түгжээг тайлсан. Хуудас бүр зураг хэлбэрээр хэвлэгдэнэ.",
   damagedFile: "Энэ файл нээгдэхгүй байна. Дахин хадгалах эсвэл тод дэлгэцийн зураг авна уу.",
   fingerprintMismatch:
     "Энэ холболтыг шалгаж чадсангүй. Том дэлгэцэн дээрх QR кодыг дахин уншуулна уу.",
@@ -3432,6 +3595,20 @@ const uk = {
   tooLarge:
     "Цей файл завеликий. Фото має бути менше 50 МБ, а PDF менше 50 МБ, або збережіть лише потрібні сторінки.",
   lockedPdf: "Цей PDF має пароль. Відкрийте його на телефоні й зніміть потрібні сторінки.",
+  pdfPasswordTitle: "Цей PDF захищено паролем",
+  pdfPasswordHelp:
+    "Введіть пароль для {{name}}. Файл відкривається лише на цьому телефоні, пароль нікуди не надсилається.",
+  pdfPasswordLabel: "Пароль PDF",
+  pdfPasswordShow: "Показати пароль",
+  pdfPasswordSubmit: "Відкрити",
+  pdfPasswordAttemptsLeft: "Залишилося спроб: {{count}}",
+  pdfUnlocking: "Відкриваємо PDF…",
+  wrongPdfPassword: "Пароль неправильний. Перевірте й спробуйте ще раз.",
+  printRestrictedPdf:
+    "Той, хто видав цей PDF, заборонив друк, тому тут його не надрукувати. Попросіть у видавця версію для друку.",
+  pdfPasswordTooManyTries: "Забагато неправильних паролів. Перевірте пароль і виберіть файл знову.",
+  pdfUnlockedNotice:
+    "Файл відкрито на цьому телефоні. Кожна сторінка друкуватиметься як зображення.",
   damagedFile: "Цей файл не відкривається. Збережіть його ще раз або зробіть чіткий знімок.",
   fingerprintMismatch:
     "Не вдалося перевірити це з’єднання. Відскануйте QR-код на великому екрані ще раз.",
