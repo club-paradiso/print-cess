@@ -25,6 +25,13 @@ below.
 - [ ] **Data location/log/backup retention.** Document regions and retention for request logs,
       access logs, QStash delivery, Redis, Blob deletion/backups, support access, and security
       telemetry. Application deletion cannot prove immediate provider-backup erasure.
+- [ ] **Privacy officer and visitor-facing policy.** Set `PRINT_CESS_PRIVACY_OFFICER` and
+      `PRINT_CESS_PRIVACY_CONTACT_EMAIL` so `/legal/privacy` names a reachable officer, confirm the
+      actual Vercel/Upstash/Railway regions listed there, and have the 개인정보 처리방침, 이용약관
+      and the refund promise in 이용약관 제3조 reviewed by the owner before real visitors use it.
+- [ ] **Donations.** Public solicitation of 1천만원 or more a year needs registration under
+      「기부금품의 모집ㆍ사용 및 기부문화 활성화에 관한 법률」 제4조. Confirm the support section stays
+      below that line or register, and confirm tax treatment of what is received.
 - [ ] **Brand/trademark/site-language review.** Approve Print-cess by Paradiso naming and confirm no
       confusion with Printess or an official government service.
 

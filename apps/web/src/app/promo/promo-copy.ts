@@ -6,7 +6,6 @@
  */
 
 export const REPOSITORY_URL = "https://github.com/club-paradiso/print-cess";
-const DOCS_URL = `${REPOSITORY_URL}/blob/main/docs`;
 
 export const nav = {
   label: "이 페이지",
@@ -181,8 +180,8 @@ export const trust = {
     "인쇄가 끝나면 이 화면의 저장 데이터를 비우고 화면을 닫지만, 브라우저 방문 기록과 휴대전화 사진첩의 원본은 그대로예요.",
     "‘숫자 네 자리와 도형’으로 받는 선택 방식에서는 서버가 3분 동안 열쇠를 맡아 둬요. QR 코드와 링크로 보낼 때는 그렇지 않아요.",
   ],
-  limitsLink: "개인정보 문서 읽기",
-  limitsHref: `${DOCS_URL}/PRIVACY.md`,
+  limitsLink: "개인정보 처리방침 읽기",
+  limitsHref: "/legal/privacy",
 } as const;
 
 export const support = {
@@ -222,6 +221,9 @@ export const support = {
   bankCopied: "복사했어요",
   bankFailed: "복사하지 못했어요. 번호를 직접 선택해 복사하세요.",
   fine: "후원 방법을 확인한 뒤 선택할 수 있어요. 이 페이지에서 결제하지 않아요.",
+  taxNote:
+    "후원금은 서비스 이용의 대가가 아니고, 기부금 영수증이나 세금 혜택이 없어요. 자세한 내용은 이용약관 제3조에 있어요.",
+  taxHref: "/legal/terms#fee",
   freeTitle: "의견으로 참여하기",
   free: [
     {
@@ -274,8 +276,14 @@ export const footer = {
   links: [
     { label: "사용 방법", href: "#how" },
     { label: "GitHub", href: REPOSITORY_URL },
-    { label: "보안 정책", href: `${REPOSITORY_URL}/blob/main/SECURITY.md` },
-    { label: "개인정보 문서", href: `${DOCS_URL}/PRIVACY.md` },
-    { label: "라이선스(Apache-2.0)", href: `${REPOSITORY_URL}/blob/main/LICENSE` },
   ],
+  legalLabel: "정책과 고지",
+  /** 개인정보 처리방침 comes first and is set apart, as the PIPC writing guide asks. */
+  legal: [
+    { label: "개인정보 처리방침", href: "/legal/privacy", emphasis: true },
+    { label: "이용약관", href: "/legal/terms", emphasis: false },
+    { label: "보안 정책", href: "/legal/security", emphasis: false },
+    { label: "라이선스·오픈소스 고지", href: "/legal/licenses", emphasis: false },
+  ],
+  copyright: "© 2026 Club Paradiso. 소스 코드는 Apache License 2.0으로 공개해요.",
 } as const;

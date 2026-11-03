@@ -1,4 +1,4 @@
-import { ArrowRight, Check, ChevronDown, ExternalLink, LockKeyhole, X } from "lucide-react";
+import { ArrowRight, Check, ChevronDown, LockKeyhole, X } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import QRCode from "qrcode";
@@ -11,7 +11,6 @@ import { isBrowserKioskEnabled } from "@/server/demo";
 import { PromoMenu } from "./promo-menu";
 import { HeroFilm } from "./hero-film";
 import { Journey } from "./journey";
-import { LegalDocumentModal } from "./legal-document-modal";
 import { MoreTabs } from "./more-tabs";
 import { StatementLine } from "./statement-line";
 import {
@@ -223,10 +222,10 @@ export default async function PromoPage() {
                     <li key={limit}>{limit}</li>
                   ))}
                 </ul>
-                <a className={styles.textLink} href={trust.limitsHref} rel="noreferrer">
+                <Link className={styles.textLink} href={trust.limitsHref}>
                   {trust.limitsLink}
-                  <ExternalLink aria-hidden="true" size={15} />
-                </a>
+                  <ArrowRight aria-hidden="true" size={15} />
+                </Link>
               </div>
             </details>
           </div>
@@ -252,6 +251,9 @@ export default async function PromoPage() {
                 <ChevronDown aria-hidden="true" size={18} className={styles.chevron} />
               </summary>
               <p className={styles.detailLead}>{support.lead}</p>
+              <p className={styles.fine}>
+                {support.taxNote} <Link href={support.taxHref}>이용약관 보기</Link>
+              </p>
               <div className={styles.supportGrid}>
                 <div>
                   <h3>{support.usesTitle}</h3>
@@ -309,32 +311,41 @@ export default async function PromoPage() {
             <Wordmark />
             <p className={styles.footerMotto}>{hero.eyebrow}</p>
             <p className={styles.footerNote}>{footer.note}</p>
+            <p className={styles.footerNote}>{footer.copyright}</p>
           </div>
-          <nav aria-label={footer.linksLabel}>
-            <ul className={styles.footerLinks}>
-              {footer.links.map((link) => (
-                <li key={link.href}>
-                  {link.label === "보안 정책" ? (
-                    <LegalDocumentModal kind="security" label={link.label} />
-                  ) : link.label === "개인정보 문서" ? (
-                    <LegalDocumentModal kind="privacy" label={link.label} />
-                  ) : link.label === "라이선스(Apache-2.0)" ? (
-                    <LegalDocumentModal kind="license" label={link.label} />
-                  ) : (
+          <div className={styles.footerNavs}>
+            <nav aria-label={footer.linksLabel}>
+              <ul className={styles.footerLinks}>
+                {footer.links.map((link) => (
+                  <li key={link.href}>
                     <a
                       href={link.href}
                       {...(link.href.startsWith(REPOSITORY_URL) ? { rel: "noreferrer" } : {})}
                     >
                       {link.label}
                     </a>
-                  )}
+                  </li>
+                ))}
+                <li>
+                  <a href="#support">개발 후원하기</a>
                 </li>
-              ))}
-              <li>
-                <a href="#support">개발 후원하기</a>
-              </li>
-            </ul>
-          </nav>
+              </ul>
+            </nav>
+            <nav aria-label={footer.legalLabel}>
+              <ul className={styles.footerLinks}>
+                {footer.legal.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className={link.emphasis ? styles.footerEmphasis : undefined}
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
         </div>
       </footer>
     </div>

@@ -289,20 +289,35 @@ test("@viewport the promo fits the full viewport matrix", async ({ page }) => {
   if (evidence) writeFileSync(join(evidence, "after.json"), JSON.stringify(metrics, null, 2));
 });
 
-test("@viewport legal documents have touch targets, readable dialogs and native focus return", async ({
+test("@viewport legal documents open as readable pages with no sideways scroll", async ({
   page,
 }) => {
   await page.goto("/promo");
-  for (const name of ["보안 정책", "개인정보 문서", "라이선스(Apache-2.0)"]) {
-    const trigger = page.getByRole("button", { name, exact: true });
-    expect((await trigger.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-    await trigger.click();
-    const dialog = page.getByRole("dialog", { name, exact: true });
-    await expect(dialog).toBeVisible();
-    const close = dialog.getByRole("button", { name: "닫기", exact: true });
-    expect((await close.boundingBox())!.height).toBeGreaterThanOrEqual(44);
-    await close.press("Escape");
-    await expect(dialog).not.toBeVisible();
-    await expect(trigger).toBeFocused();
+  const footer = page.locator("footer");
+  for (const [name, path] of [
+    ["개인정보 처리방침", "/legal/privacy"],
+    ["이용약관", "/legal/terms"],
+    ["보안 정책", "/legal/security"],
+    ["라이선스·오픈소스 고지", "/legal/licenses"],
+  ] as const) {
+    const link = footer.getByRole("link", { name, exact: true });
+    expect((await link.boundingBox())!.height).toBeGreaterThanOrEqual(44);
+    await expect(link).toHaveAttribute("href", path);
+  }
+
+  await footer.getByRole("link", { name: "개인정보 처리방침", exact: true }).click();
+  await expect(page).toHaveURL(/\/legal\/privacy$/u);
+  await expect(page.getByRole("heading", { level: 1, name: "개인정보 처리방침" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "한눈에 보기" })).toBeVisible();
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - window.innerWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+  for (const path of ["/legal/terms", "/legal/security", "/legal/licenses", "/legal"]) {
+    await page.goto(path);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth),
+      path,
+    ).toBeLessThanOrEqual(0);
   }
 });
