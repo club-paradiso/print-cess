@@ -5,6 +5,7 @@ import QRCode from "qrcode";
 
 import { Wordmark } from "@print-cess/ui";
 
+import { KIOSK_VIEW_ONCE_PATH } from "@/lib/phone-at-kiosk";
 import { QR_COLORS } from "@/lib/qr-style";
 import { isBrowserKioskEnabled } from "@/server/demo";
 
@@ -120,7 +121,7 @@ export default async function PromoPage() {
               <p className={styles.heroLead}>{hero.lead}</p>
               <p className={styles.heroGloss}>{hero.gloss}</p>
               <div className={styles.heroActions}>
-                <Link className={styles.filmPrimary} href="/start">
+                <Link className={styles.filmPrimary} href={KIOSK_VIEW_ONCE_PATH}>
                   {hero.secondaryCta}
                   <ArrowRight aria-hidden="true" size={20} />
                 </Link>
@@ -229,7 +230,7 @@ export default async function PromoPage() {
                       {how.tryKiosk}
                     </Link>
                   ) : null}
-                  <Link className={styles.filmGlass} href="/start">
+                  <Link className={styles.filmGlass} href={KIOSK_VIEW_ONCE_PATH}>
                     {how.tryStart}
                   </Link>
                 </div>

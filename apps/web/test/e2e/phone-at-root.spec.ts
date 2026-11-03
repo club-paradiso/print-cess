@@ -34,8 +34,8 @@ for (const phone of Object.keys(PHONES) as (keyof typeof PHONES)[]) {
       .locator("section[aria-labelledby='hero-title']")
       .getByRole("link", { name: "이용 화면 열기", exact: true })
       .click();
-    await expect(page).toHaveURL(/\/start$/u);
-    await expect(page.getByRole("button", { name: "Scan QR code" })).toBeVisible();
+    await expect(page).toHaveURL(/\/\?view=kiosk$/u);
+    await expect(page.locator(".kiosk-qr")).toBeVisible();
     await page.goBack();
     await expect(page).toHaveURL(/\/promo$/u);
 
@@ -129,7 +129,7 @@ test("phone promo entry keeps query, reload, service entry and browser back", as
   // #how opens the 사용 방법 tab, so enter the service from that view's own link.
   await expect(page.locator("#how")).toBeVisible();
   await page.locator("#how").getByRole("link", { name: "이용 화면 열기" }).click();
-  await expect(page).toHaveURL(/\/start$/u);
+  await expect(page).toHaveURL(/\/\?view=kiosk$/u);
   await page.goBack();
   await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
   await context.close();
