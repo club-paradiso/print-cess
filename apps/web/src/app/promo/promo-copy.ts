@@ -6,17 +6,16 @@
  */
 
 export const REPOSITORY_URL = "https://github.com/club-paradiso/print-cess";
-const DOCS_URL = `${REPOSITORY_URL}/blob/main/docs`;
 
+/** Top tabs. Home holds the hero, support and the FAQ; every other tab is a full view. */
 export const nav = {
-  label: "이 페이지",
+  label: "페이지 탭",
   items: [
-    { href: "#how", label: "사용 방법" },
-    { href: "#more", label: "기능" },
-    { href: "#support", label: "후원" },
-    { href: "#faq", label: "자주 묻는 질문" },
+    { href: "#top", label: "홈", view: "home" },
+    { href: "#how", label: "사용 방법", view: "how" },
+    { href: "#more", label: "기능", view: "more" },
+    { href: "#privacy", label: "개인정보", view: "privacy" },
   ],
-  menu: "메뉴",
   start: "이용 화면",
 } as const;
 
@@ -45,7 +44,7 @@ export const statement = {
 export const how = {
   id: "how",
   title: "QR 코드로 연결하고, 파일을 골라요",
-  lead: "프린터 옆 화면에서 시작해요. 단계별 화면 예시도 확인할 수 있어요.",
+  lead: "프린터 옆 화면에서 시작해서, 휴대전화로 고르고, 프린터에서 받아요. 단계마다 휴대전화에 뜨는 화면을 예시로 붙였어요.",
   mockNote: "화면 예시예요. 이 화면에서는 인쇄되지 않아요.",
   dockLabel: "화면 예시",
   previewLabel: "화면 예시 보기",
@@ -100,7 +99,7 @@ export const how = {
 
 export const more = {
   title: "인쇄·공유·스캔",
-  lead: "인쇄는 프린터 옆 화면이 필요해요. 파일 공유와 문서 스캔은 기기에서 시작할 수 있어요.",
+  lead: "인쇄는 프린터 옆 화면이 있어야 시작돼요. 파일 공유와 문서 스캔은 지금 쓰는 기기에서 바로 열 수 있어요.",
   conditionsLabel: "쓰기 전에 알아 둘 점",
   items: [
     {
@@ -146,7 +145,6 @@ export const more = {
 } as const;
 
 export const trust = {
-  privacyDetails: "파일 처리와 삭제 범위 보기",
   privacyCaveat:
     "서비스의 파일 삭제가 브라우저 기록·프린터 저장소·제공 업체의 백업까지 즉시 지운다는 뜻은 아니에요.",
   privacyTitle: "파일은 암호화해서 보내요",
@@ -181,16 +179,16 @@ export const trust = {
     "인쇄가 끝나면 이 화면의 저장 데이터를 비우고 화면을 닫지만, 브라우저 방문 기록과 휴대전화 사진첩의 원본은 그대로예요.",
     "‘숫자 네 자리와 도형’으로 받는 선택 방식에서는 서버가 3분 동안 열쇠를 맡아 둬요. QR 코드와 링크로 보낼 때는 그렇지 않아요.",
   ],
-  limitsLink: "개인정보 문서 읽기",
-  limitsHref: `${DOCS_URL}/PRIVACY.md`,
+  limitsLink: "개인정보 처리방침 읽기",
+  limitsHref: "/legal/privacy",
 } as const;
 
 export const support = {
   id: "support",
-  title: "개발 후원",
+  // A no-break space keeps "한 잔" together when the heading wraps.
+  title: "개발자한테 커피 한\u00a0잔 보태고 싶다면",
   lead: "후원은 선택이에요. 후원하지 않아도 인쇄·공유·스캔 기능을 이용할 수 있어요.",
   usesTitle: "후원금 사용 계획",
-  detailsLabel: "후원금 사용 계획과 참여 방법 보기",
   uses: [
     "서버와 저장소 같은 서비스 운영 비용",
     "실제 프린터로 하는 시험",
@@ -222,6 +220,9 @@ export const support = {
   bankCopied: "복사했어요",
   bankFailed: "복사하지 못했어요. 번호를 직접 선택해 복사하세요.",
   fine: "후원 방법을 확인한 뒤 선택할 수 있어요. 이 페이지에서 결제하지 않아요.",
+  taxNote:
+    "후원금은 서비스 이용의 대가가 아니고, 기부금 영수증이나 세금 혜택이 없어요. 자세한 내용은 이용약관 제3조에 있어요.",
+  taxHref: "/legal/terms#fee",
   freeTitle: "의견으로 참여하기",
   free: [
     {
@@ -235,6 +236,7 @@ export const support = {
 export const faq = {
   id: "faq",
   title: "자주 묻는 질문",
+  lead: "질문을 누르면 답이 펼쳐져요.",
   items: [
     {
       q: "가입이나 앱 설치가 필요한가요?",
@@ -242,7 +244,7 @@ export const faq = {
     },
     {
       q: "어떤 파일을 인쇄할 수 있나요?",
-      a: "사진 또는 PDF예요. 사진과 PDF는 각각 50MB 이하이고, 페이지 수 제한은 없어요. 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요. HWPX는 프린터가 지원할 때만 고를 수 있어요.",
+      a: "사진과 PDF를 인쇄할 수 있어요. HWPX는 프린터가 지원할 때만 고를 수 있고, HWP나 다른 문서는 휴대전화에서 PDF로 저장한 뒤 고르세요.",
     },
     {
       q: "QR 코드가 안 찍히거나 시간이 지났다고 해요.",
@@ -250,15 +252,11 @@ export const faq = {
     },
     {
       q: "내 문서는 어디에 남나요?",
-      a: "휴대전화에서 잠근 상태로 보내고, 서버에는 잠긴 파일만 잠깐 있어요. 인쇄가 끝나거나 실패하거나 취소되면 지우도록 되어 있어요. 다만 브라우저 방문 기록이나 사진첩의 원본은 그대로예요.",
+      a: "파일은 암호화해서 전송해요. 인쇄가 끝나거나 실패하거나 취소되면 서버에 임시로 저장된 파일을 삭제하도록 설계했어요. 휴대전화에 있는 원본 파일은 삭제되지 않아요.",
     },
     {
       q: "인쇄할 파일이 없으면 어떻게 하나요?",
-      a: "인쇄할 파일을 먼저 휴대전화에 저장하세요. 예약 서류가 필요하다면 예약한 분이나 항공사·여행사에 요청해 받으세요. Print-cess에서 문서를 발급하거나 찾아 주지는 않아요.",
-    },
-    {
-      q: "인쇄 요금을 결제해야 하나요?",
-      a: "이용 화면에는 인쇄 요금 결제 기능이 없어요. 개발 후원은 선택이며 인쇄 요금과 별개예요.",
+      a: "인쇄할 파일을 먼저 휴대전화에 저장하세요.",
     },
     {
       q: "후원해야만 이용할 수 있나요?",
@@ -274,8 +272,14 @@ export const footer = {
   links: [
     { label: "사용 방법", href: "#how" },
     { label: "GitHub", href: REPOSITORY_URL },
-    { label: "보안 정책", href: `${REPOSITORY_URL}/blob/main/SECURITY.md` },
-    { label: "개인정보 문서", href: `${DOCS_URL}/PRIVACY.md` },
-    { label: "라이선스(Apache-2.0)", href: `${REPOSITORY_URL}/blob/main/LICENSE` },
   ],
+  legalLabel: "정책과 고지",
+  /** 개인정보 처리방침 comes first and is set apart, as the PIPC writing guide asks. */
+  legal: [
+    { label: "개인정보 처리방침", href: "/legal/privacy", emphasis: true },
+    { label: "이용약관", href: "/legal/terms", emphasis: false },
+    { label: "보안 정책", href: "/legal/security", emphasis: false },
+    { label: "라이선스·오픈소스 고지", href: "/legal/licenses", emphasis: false },
+  ],
+  copyright: "© 2026 Club Paradiso. 소스 코드는 Apache License 2.0으로 공개해요.",
 } as const;

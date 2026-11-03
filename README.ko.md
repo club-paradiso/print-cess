@@ -149,5 +149,8 @@ Windows 키오스크는 GitHub Actions에서 빌드하고 테스트합니다. �
 Print-cess는 [Apache License 2.0](LICENSE)으로 배포합니다. 외부 구성 요소의 고지는
 [`NOTICE`](NOTICE)에서 확인하세요.
 
+이용자용 개인정보 처리방침, 이용약관, 보안 정책, 라이선스·오픈소스 고지는 웹 앱의 `/legal`에 한국어로
+있습니다(원본: `apps/web/src/app/legal`). 내용을 바꾸면 이 저장소의 원문 문서도 함께 맞춰 주세요.
+
 라이선스는 코드에만 적용되고 이름에는 적용되지 않습니다. 고친 버전을 공식 서비스인 것처럼 보이게
 하는 데 "Print-cess", "Club Paradiso"라는 이름과 로고를 쓸 수 없습니다.
