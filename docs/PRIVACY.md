@@ -127,7 +127,10 @@ Before use at any institution, the responsible institution must review and appro
 - Windows crash dump/page file/spool policy and printer firmware/job retention;
 - incident response, data-subject inquiry handling, and physical abandoned-print disposal.
 
-This repository is not itself an institutional privacy notice.
+This repository is not itself an institutional privacy notice. The visitor-facing 개인정보
+처리방침 for the service Club Paradiso runs is served at `/legal/privacy` (source:
+`apps/web/src/app/legal/privacy/page.tsx`); it restates this document for visitors and must change
+with it. An institution that installs Print-cess itself publishes its own policy.
 
 ## Logs and metrics
 

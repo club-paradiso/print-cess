@@ -1,0 +1,480 @@
+/* /legal: privacy policy, terms, security policy and licences. Readable first:
+   one column of 68ch, a table of contents, a plain-language summary on top,
+   and tables that scroll on their own instead of the page on a phone. Inline
+   styles are rejected by the production CSP, so everything lives here. */
+
+.page {
+  --font: "Pretendard Variable", Pretendard, var(--pc-font-sans);
+  --hairline: rgb(28 20 21 / 10%);
+  --hairline-strong: rgb(28 20 21 / 18%);
+  --gutter: max(16px, env(safe-area-inset-left), env(safe-area-inset-right), min(4vw, 32px));
+
+  min-height: 100dvh;
+  background: var(--pc-background);
+  color: var(--pc-text-primary);
+  font-family: var(--font);
+  font-size: 16.5px;
+  line-height: 1.75;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+}
+.page :where(h1, h2, h3, p, ul, ol) {
+  margin: 0;
+}
+.page :where(a, button, summary):focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+.page a {
+  color: var(--pc-text-brand);
+  text-underline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: 12px;
+  top: -80px;
+  z-index: 10;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+}
+.skip:focus {
+  top: 12px;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  border-bottom: 1px solid var(--hairline);
+  background: rgb(255 255 255 / 92%);
+  backdrop-filter: blur(10px);
+}
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  max-width: 1120px;
+  min-height: 60px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+.brand {
+  display: inline-flex;
+  color: inherit;
+  text-decoration: none;
+}
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  color: var(--pc-text-primary) !important;
+  font-size: 15px;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 32px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px var(--gutter) 64px;
+}
+@media (min-width: 960px) {
+  .layout {
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 56px;
+    padding-top: 48px;
+  }
+}
+
+/* Document switcher: every legal page is one tap away from the others. */
+.docNav {
+  min-width: 0;
+  align-self: start;
+}
+@media (min-width: 960px) {
+  .docNav {
+    position: sticky;
+    top: 84px;
+  }
+}
+.docNavTitle {
+  margin-bottom: 8px !important;
+  color: var(--pc-text-muted);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.docList {
+  display: flex;
+  gap: 8px;
+  padding: 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+@media (min-width: 960px) {
+  .docList {
+    flex-direction: column;
+    gap: 2px;
+    overflow: visible;
+  }
+}
+.docList a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--hairline-strong);
+  border-radius: 999px;
+  background: var(--pc-surface);
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+@media (min-width: 960px) {
+  .docList a {
+    border: 0;
+    border-radius: 8px;
+    background: none;
+  }
+  .docList a:hover {
+    background: var(--pc-surface-sunken);
+  }
+}
+.docList a[aria-current="page"] {
+  border-color: var(--pc-text-brand);
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand);
+  font-weight: 750;
+}
+/* The law asks the privacy policy to stand out from the other links. */
+.emphasis {
+  font-weight: 800 !important;
+  color: var(--pc-text-brand) !important;
+}
+
+.article {
+  min-width: 0;
+  max-width: 72ch;
+}
+.kicker {
+  color: var(--pc-text-brand);
+  font-size: 14px;
+  font-weight: 750;
+}
+.title {
+  margin-top: 6px !important;
+  font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -0.03em;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 12px !important;
+  color: var(--pc-text-muted);
+  font-size: 14.5px;
+}
+.lead {
+  margin-top: 20px !important;
+  color: var(--pc-text-secondary);
+  font-size: 17.5px;
+}
+
+/* Plain-language summary: the part most visitors read and then stop. */
+.summary {
+  display: grid;
+  gap: 10px;
+  margin: 28px 0 0;
+  padding: 20px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: var(--pc-surface);
+  box-shadow: 0 1px 2px rgb(28 20 21 / 4%);
+}
+.summaryTitle {
+  font-size: 17px;
+  font-weight: 800;
+}
+.summaryList {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .summaryList {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.summaryList li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--pc-surface-sunken);
+}
+.summaryList strong {
+  font-size: 14px;
+  color: var(--pc-text-muted);
+  font-weight: 700;
+}
+.summaryList span {
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
+.toc {
+  margin-top: 28px;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--pc-surface);
+}
+.toc summary {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 18px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.toc ol {
+  display: grid;
+  gap: 2px;
+  padding: 0 18px 16px;
+  list-style: none;
+}
+.toc a {
+  display: inline-block;
+  padding: 6px 0;
+  color: var(--pc-text-secondary);
+  text-decoration: none;
+}
+.toc a:hover {
+  text-decoration: underline;
+}
+
+.section {
+  margin-top: 44px;
+  scroll-margin-top: 84px;
+}
+.section h2 {
+  font-size: 1.32rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+.section h3 {
+  margin-top: 20px !important;
+  font-size: 1.06rem;
+  font-weight: 750;
+}
+.section > * + * {
+  margin-top: 12px !important;
+}
+.section ul,
+.section ol {
+  padding-left: 1.3em;
+}
+.section li + li {
+  margin-top: 6px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--pc-surface);
+}
+.table {
+  width: 100%;
+  min-width: 560px;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.table caption {
+  padding: 12px 14px 0;
+  color: var(--pc-text-muted);
+  font-size: 14px;
+  text-align: start;
+}
+.table th,
+.table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--hairline);
+  text-align: start;
+  vertical-align: top;
+}
+.table thead th {
+  background: var(--pc-surface-sunken);
+  font-size: 14px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+/* On a phone each row becomes a small card, label above value, so nothing
+   has to be scrolled sideways to be read. */
+@media (max-width: 639px) {
+  .table {
+    min-width: 0;
+  }
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .table caption {
+    display: block;
+    padding-bottom: 4px;
+  }
+  .table,
+  .table tbody,
+  .table tr,
+  .table th,
+  .table td {
+    display: block;
+  }
+  .table tr {
+    padding: 4px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .table tr:last-child {
+    border-bottom: 0;
+  }
+  .table th,
+  .table td {
+    padding: 6px 14px;
+    border-bottom: 0;
+  }
+  .table tbody th {
+    padding-top: 12px;
+    font-size: 15.5px;
+  }
+  .table td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    color: var(--pc-text-muted);
+    font-size: 13px;
+    font-weight: 700;
+  }
+}
+
+.note {
+  padding: 14px 16px;
+  border-left: 4px solid var(--pc-crimson-300);
+  border-radius: 0 10px 10px 0;
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-secondary);
+  font-size: 15.5px;
+}
+
+.fullText {
+  border: 1px solid var(--hairline);
+  border-radius: 12px;
+  background: var(--pc-surface);
+}
+.fullText summary {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  padding: 0 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.fullText > div {
+  padding: 0 16px 16px;
+}
+
+.cards {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px !important;
+  padding: 0;
+  list-style: none;
+}
+@media (min-width: 640px) {
+  .cards {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.cards a {
+  display: grid;
+  gap: 6px;
+  height: 100%;
+  padding: 20px;
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  background: var(--pc-surface);
+  color: var(--pc-text-primary);
+  text-decoration: none;
+}
+.cards a:hover {
+  border-color: var(--pc-text-brand);
+}
+.cards strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+.cards span {
+  color: var(--pc-text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.footer {
+  border-top: 1px solid var(--hairline);
+  background: var(--pc-surface);
+}
+.footerInner {
+  display: grid;
+  gap: 8px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 28px var(--gutter) max(32px, env(safe-area-inset-bottom));
+  color: var(--pc-text-muted);
+  font-size: 14px;
+}
+
+@media print {
+  .header,
+  .docNav,
+  .toc,
+  .footer,
+  .skip {
+    display: none !important;
+  }
+  .layout {
+    display: block;
+    padding: 0;
+  }
+  .page {
+    background: #fff;
+  }
+}

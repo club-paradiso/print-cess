@@ -152,5 +152,9 @@ Please report security problems privately, as described in [`SECURITY.md`](SECUR
 Print-cess is licensed under the [Apache License 2.0](LICENSE). See [`NOTICE`](NOTICE) for
 third-party notices.
 
+The visitor-facing privacy policy (개인정보 처리방침), terms of use, security policy and licence
+notices are served in Korean at `/legal` (source: `apps/web/src/app/legal`). Keep them in step with
+the documents in this repository.
+
 The license covers the code, not the names. "Print-cess" and "Club Paradiso", and their logos, may
 not be used to present a modified version as the official service.
