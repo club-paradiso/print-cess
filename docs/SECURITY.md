@@ -95,9 +95,10 @@ beyond the stated threat model.
   refused, with or without the open password. Removing an issuer's print restriction is a policy
   decision this kiosk does not make on the visitor's behalf. DRM wrappers that PDF.js cannot open
   stay refused.
-- Page pictures inside a rebuilt PDF are re-encoded when their compressed bytes happen to spell a
-  marker that either inspector refuses (`/AA`, `/JS`, `/URI` and the rest), so a clean document
-  is not mistaken for active content.
+- Page pictures inside any PDF this app builds (scans and unlocked PDFs) are re-encoded when their
+  compressed bytes happen to spell a marker that either inspector refuses (`/AA`, `/JS`, `/URI`
+  and the rest), so a clean document is not mistaken for active content
+  (`apps/web/src/lib/pdf-marker-guard.ts`).
 - Keep plaintext in bounded memory. If a renderer requires a temporary file, use an
   application-owned ACL-restricted directory, random name, immediate deletion, and startup cleanup.
   Never use the original filename, Downloads, or Documents.

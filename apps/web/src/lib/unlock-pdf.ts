@@ -1,6 +1,7 @@
 import { MAX_PLAINTEXT_BYTES } from "@print-cess/protocol";
 
-import { containsRefusedPdfMarker, FileValidationError } from "./file-validation";
+import { FileValidationError } from "./file-validation";
+import { containsKioskProhibitedToken, encodePdfSafeJpeg } from "./pdf-marker-guard";
 import { buildScannedPdf, type PdfImagePage } from "./scan-pdf";
 
 /**
@@ -32,7 +33,7 @@ export type PdfProtection =
 export const MAX_PDF_PASSWORD_ATTEMPTS = 5;
 /** Same long edge the Windows kiosk uses when it rasterises a PDF page (A4 at ~200 dpi). */
 export const UNLOCK_LONG_EDGE_PIXELS = 2_339;
-const JPEG_QUALITIES = [0.9, 0.89, 0.88, 0.87, 0.86, 0.85] as const;
+const JPEG_QUALITY = 0.9;
 const MAX_PDF_PASSWORD_LENGTH = 128;
 
 /** PDF.js permission flags (PermissionFlag in pdfjs-dist/shared/util). */
@@ -75,45 +76,7 @@ export type UnlockOptions = {
   onPage?: (done: number, total: number) => void;
 };
 
-/**
- * The Windows kiosk refuses any PDF whose raw bytes contain one of these names
- * followed by a PDF delimiter (PdfDocumentInspector.ProhibitedTokens), and it
- * does not skip image streams. Compressed JPEG data can hold such a run purely
- * by chance, so every page picture is checked and re-encoded if it does.
- */
-const KIOSK_PROHIBITED_TOKENS = [
-  "/JavaScript",
-  "/JS",
-  "/OpenAction",
-  "/Launch",
-  "/EmbeddedFile",
-  "/Filespec",
-  "/AA",
-  "/URI",
-  "/Encrypt",
-] as const;
-const PDF_DELIMITERS = new Set([0, 9, 10, 12, 13, 32, 0x2f, 0x3c, 0x3e, 0x5b, 0x5d, 0x28, 0x29]);
-
-function containsWindowsKioskToken(bytes: Uint8Array): boolean {
-  const searchable = new TextDecoder("latin1").decode(bytes);
-  for (const token of KIOSK_PROHIBITED_TOKENS) {
-    let offset = searchable.indexOf(token);
-    while (offset >= 0) {
-      const after = offset + token.length;
-      if (after === bytes.length || PDF_DELIMITERS.has(bytes[after]!)) return true;
-      offset = searchable.indexOf(token, offset + 1);
-    }
-  }
-  return false;
-}
-
-/**
- * True when either inspector would refuse these bytes: the Windows kiosk
- * (token + delimiter) or the browser validatePdf (plain or #-escaped marker).
- */
-export function containsKioskProhibitedToken(bytes: Uint8Array): boolean {
-  return containsWindowsKioskToken(bytes) || containsRefusedPdfMarker(bytes);
-}
+export { containsKioskProhibitedToken } from "./pdf-marker-guard";
 
 export function containsEncryptMarker(bytes: Uint8Array): boolean {
   const searchable = new TextDecoder("latin1").decode(bytes);
@@ -297,21 +260,19 @@ export async function rasterizeWithCanvas(page: PdfJsPage): Promise<PdfImagePage
     context.fillStyle = "white";
     context.fillRect(0, 0, canvas.width, canvas.height);
     await page.render({ canvas, canvasContext: context, viewport }).promise;
-    for (const quality of JPEG_QUALITIES) {
-      const blob = await new Promise<Blob>((resolve, reject) =>
-        canvas.toBlob(
-          (result) => (result ? resolve(result) : reject(new Error("toBlob failed"))),
-          "image/jpeg",
-          quality,
+    const { bytes } = await encodePdfSafeJpeg(
+      (quality) =>
+        new Promise<Blob>((resolve, reject) =>
+          canvas.toBlob(
+            (result) => (result ? resolve(result) : reject(new Error("toBlob failed"))),
+            "image/jpeg",
+            quality,
+          ),
         ),
-      );
-      const bytes = new Uint8Array(await blob.arrayBuffer());
-      if (!containsKioskProhibitedToken(bytes)) {
-        return { bytes, width: canvas.width, height: canvas.height };
-      }
-      bytes.fill(0);
-    }
-    throw new FileValidationError("damagedFile");
+      JPEG_QUALITY,
+      () => new FileValidationError("damagedFile"),
+    );
+    return { bytes, width: canvas.width, height: canvas.height };
   } finally {
     // Release the backing store right away; iOS Safari caps total canvas memory.
     canvas.width = 0;
