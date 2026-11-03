@@ -126,10 +126,9 @@ test("phone promo entry keeps query, reload, service entry and browser back", as
   await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
   await page.reload();
   await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
-  await page
-    .locator("section[aria-labelledby='hero-title']")
-    .getByRole("link", { name: "이용 화면 열기" })
-    .click();
+  // #how opens the 사용 방법 tab, so enter the service from that view's own link.
+  await expect(page.locator("#how")).toBeVisible();
+  await page.locator("#how").getByRole("link", { name: "이용 화면 열기" }).click();
   await expect(page).toHaveURL(/\/start$/u);
   await page.goBack();
   await expect(page).toHaveURL(/\/promo\?utm_source=review&tag=one&tag=two#how$/u);
