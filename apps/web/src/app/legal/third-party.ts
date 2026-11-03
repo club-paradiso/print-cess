@@ -17,7 +17,7 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "Next.js",
     packages: ["next"],
-    version: "16.4.2",
+    version: "16.4.3",
     license: "MIT",
     url: "https://github.com/vercel/next.js",
   },
@@ -31,21 +31,21 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "i18next",
     packages: ["i18next"],
-    version: "26.5.6",
+    version: "26.5.11",
     license: "MIT",
     url: "https://github.com/i18next/i18next",
   },
   {
     name: "react-i18next",
     packages: ["react-i18next"],
-    version: "17.1.3",
+    version: "17.1.9",
     license: "MIT",
     url: "https://github.com/i18next/react-i18next",
   },
   {
     name: "Lucide",
     packages: ["lucide-react"],
-    version: "1.61.0",
+    version: "1.64.0",
     license: "ISC",
     url: "https://github.com/lucide-icons/lucide",
   },
@@ -80,7 +80,7 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "heic-to",
     packages: ["heic-to"],
-    version: "1.6.6",
+    version: "1.6.7",
     license: "LGPL-3.0",
     url: "https://github.com/hoppergee/heic-to",
   },
@@ -94,7 +94,7 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "Upstash Redis SDK",
     packages: ["@upstash/redis"],
-    version: "1.39.0",
+    version: "1.40.0",
     license: "MIT",
     url: "https://github.com/upstash/redis-js",
   },
@@ -108,7 +108,7 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "AWS SDK for JavaScript v3 (S3)",
     packages: ["@aws-sdk/client-s3", "@aws-sdk/s3-request-presigner"],
-    version: "3.1156.0",
+    version: "3.1160.0",
     license: "Apache-2.0",
     url: "https://github.com/aws/aws-sdk-js-v3",
   },
@@ -122,7 +122,7 @@ export const THIRD_PARTY: readonly ThirdPartyComponent[] = [
   {
     name: "node-redis",
     packages: ["redis"],
-    version: "6.3.0",
+    version: "6.3.1",
     license: "MIT",
     url: "https://github.com/redis/node-redis",
   },
