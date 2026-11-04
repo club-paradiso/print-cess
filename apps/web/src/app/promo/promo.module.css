@@ -329,10 +329,11 @@
   gap: 12px;
   margin-top: 32px;
 }
-/* Under the catchphrase, the lead, gloss and buttons are centred in the hero
-   column. The eyebrow and the catchphrase keep their alignment. */
-.heroLead,
-.heroGloss {
+/* The hero copy is one centred block: the column shrinks to its widest line
+   and the eyebrow, catchphrase, lead and buttons share its centre line. It
+   stays on the left, so the film's subject is not covered. */
+.heroCopy {
+  width: fit-content;
   text-align: center;
 }
 .heroActions {
