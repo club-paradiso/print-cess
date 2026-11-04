@@ -158,7 +158,7 @@ export default function TermsPage() {
             “Print-cess”, “Club Paradiso”라는 이름과 로고는 Apache License가 사용을 허락하지 않아요.
             출처를 밝히는 일반적인 경우를 빼고는 쓰려면 미리 허락을 받아야 해요.
           </li>
-          <li>소개 페이지의 영상은 AI로 만든 시연 영상이고, 실제 장소나 설치 사례가 아니에요.</li>
+          <li>소개 페이지의 영상은 AI로 제작한 연출 영상이고, 실제 장소나 설치 사례가 아니에요.</li>
         </ul>
       </LegalSection>
 

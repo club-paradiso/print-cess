@@ -175,7 +175,7 @@ export default function LicensesPage() {
 
       <LegalSection id="media" title="7. 영상과 이미지">
         <p>
-          소개 페이지의 대학교 도서관·공항 영상은 Google Gemini로 만든 AI 시연 영상이에요. 실제
+          소개 페이지의 대학교 도서관·공항 영상은 Google Gemini로 제작한 AI 연출 영상이에요. 실제
           장소나 설치 사례가 아니고, 영상에 보이던 프린터 제조사 로고는 지웠어요. 아이콘은
           Lucide(ISC)를 써요.
         </p>
