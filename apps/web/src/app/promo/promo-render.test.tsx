@@ -15,5 +15,6 @@ describe("promo destinations in production builds", () => {
     const html = renderToStaticMarkup(await PromoPage());
     expect(html.includes('href="/kiosk"')).toBe(enabled);
     expect(html).toContain('href="/start"');
+    expect(html).toContain('href="/?view=kiosk"');
   });
 });
