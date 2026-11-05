@@ -4,7 +4,14 @@
  * upload an HWP/HWPX file that the browser can never print.
  */
 export function restrictBrowserPrintCapabilities<
-  T extends { supportsHwp?: boolean; supportsHwpx?: boolean; supportsBundle?: boolean },
+  T extends {
+    protocolVersion: number;
+    kioskPublicKey: string;
+    kioskPublicKeyFingerprint: string;
+    supportsHwp?: boolean;
+    supportsHwpx?: boolean;
+    supportsBundle?: boolean;
+  },
 >(input: T) {
   return { ...input, supportsHwpx: false, supportsHwp: false, supportsBundle: true };
 }
