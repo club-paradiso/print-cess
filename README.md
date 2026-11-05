@@ -43,6 +43,14 @@ For counters, `/visitor` shows a QR code, the print progress and a countdown. A 
 takes part through an ordinary browser, without installing software or working around endpoint
 controls, and `/#environment` checks that browser.
 
+## Hangul document printing
+
+HWP/HWPX are accepted by the mobile print flow even when the kiosk is a browser.
+The phone converts unsupported native formats to a locally rendered, verified
+PDF using same-origin WebAssembly and bundled Korean fonts; the original
+document is never sent to a third-party converter. Layout may differ for
+some complex documents. See [cross-platform HWP/HWPX printing](docs/HANCOM_BROWSER_RENDERING.md).
+
 ## How it protects documents
 
 - **Encrypted on the phone.** The file is encrypted before it leaves the device (P-256 ECDH,
