@@ -116,9 +116,9 @@ const en = {
   imageConversionUnsupported:
     "This phone cannot open that photo. Save it as JPG in your photo app, or take a screenshot, then pick it again.",
   hwpxUnavailable:
-  hancomConversionFailed: "This HWP/HWPX file could not be converted to PDF on this device. Check the file or try another browser.",
     "This printer cannot open an HWPX file. Save the document as a PDF and pick it again.",
   hwpxPreview: "HWPX document · printed by the Windows kiosk",
+  hancomConversionFailed: "This HWP/HWPX file could not be converted to PDF on this device. Check the file or try another browser.",
   locationPhotos: "Open my photos",
   locationFiles: "Open my files",
   cancelled: "No file picked yet. Tap one of the two buttons below.",
@@ -415,8 +415,8 @@ const ko = {
   imageConversionUnsupported:
     "이 휴대전화에서는 이 사진을 열 수 없어요. 사진 앱에서 JPG로 저장하거나 화면을 캡처한 뒤 다시 고르세요.",
   hwpxUnavailable: "이 프린터는 HWPX 파일을 열 수 없어요. 문서를 PDF로 저장한 뒤 다시 고르세요.",
-  hancomConversionFailed: "이 기기에서 HWP/HWPX를 PDF로 변환하지 못했어요. 파일을 확인하거나 다른 브라우저에서 다시 시도해 주세요.",
   hwpxPreview: "HWPX 문서 · 윈도우 키오스크에서 인쇄",
+  hancomConversionFailed: "이 기기에서 HWP/HWPX를 PDF로 변환하지 못했어요. 파일을 확인하거나 다른 브라우저에서 다시 시도해 주세요.",
   locationPhotos: "사진에서 고르기",
   locationFiles: "파일에서 고르기",
   cancelled: "아직 고른 문서가 없어요. 아래 두 버튼 중 하나를 누르세요.",
@@ -699,8 +699,8 @@ const zhCN = {
     "请在手机上把这个文档存成 PDF，然后重新选。我们不会把你的文档发给别的公司去转换。",
   imageConversionUnsupported: "这台手机打不开这种照片。请在相册里存成 JPG，或者截图，然后重新选。",
   hwpxUnavailable: "这台打印机打不开 HWPX 文件。请把文档存成 PDF 再选。",
-  hancomConversionFailed: "此设备无法将 HWP/HWPX 转成 PDF。请检查文件或换个浏览器重试。",
   hwpxPreview: "HWPX 文档 · 由 Windows 自助机打印",
+  hancomConversionFailed: "此设备无法将 HWP/HWPX 转成 PDF。请检查文件或换个浏览器重试。",
   locationPhotos: "打开我的照片",
   locationFiles: "打开我的文件",
   cancelled: "还没有选文件。点下面两个按钮中的一个。",
@@ -969,9 +969,9 @@ const id = {
   imageConversionUnsupported:
     "Ponsel ini tidak bisa membuka foto itu. Simpan sebagai JPG di aplikasi foto, atau ambil tangkapan layar, lalu pilih lagi.",
   hwpxUnavailable:
-  hancomConversionFailed: "File HWP/HWPX ini tidak dapat diubah ke PDF pada perangkat ini. Periksa file atau coba browser lain.",
     "Printer ini tidak bisa membuka berkas HWPX. Simpan dokumen sebagai PDF lalu pilih lagi.",
   hwpxPreview: "Dokumen HWPX · dicetak oleh kios Windows",
+  hancomConversionFailed: "File HWP/HWPX ini tidak dapat diubah ke PDF pada perangkat ini. Periksa file atau coba browser lain.",
   locationPhotos: "Buka foto saya",
   locationFiles: "Buka berkas saya",
   cancelled: "Belum ada berkas. Ketuk salah satu dari dua tombol di bawah.",
@@ -1263,9 +1263,9 @@ const fil = {
   imageConversionUnsupported:
     "Hindi mabuksan ng teleponong ito ang larawang iyon. I-save itong JPG sa photo app, o kumuha ng screenshot, pagkatapos piliin itong muli.",
   hwpxUnavailable:
-  hancomConversionFailed: "Hindi ma-convert sa PDF ang HWP/HWPX sa device na ito. Suriin ang file o gumamit ng ibang browser.",
     "Hindi mabuksan ng printer na ito ang HWPX file. I-save ang dokumento bilang PDF at piliin itong muli.",
   hwpxPreview: "Dokumentong HWPX · ipi-print ng Windows kiosk",
+  hancomConversionFailed: "Hindi ma-convert sa PDF ang HWP/HWPX sa device na ito. Suriin ang file o gumamit ng ibang browser.",
   locationPhotos: "Buksan ang mga larawan ko",
   locationFiles: "Buksan ang mga file ko",
   cancelled: "Wala pang file. I-tap ang isa sa dalawang butones sa ibaba.",
@@ -1564,8 +1564,8 @@ const vi = {
   imageConversionUnsupported:
     "Điện thoại này không mở được ảnh đó. Hãy lưu thành JPG trong ứng dụng ảnh, hoặc chụp ảnh màn hình, rồi chọn lại.",
   hwpxUnavailable: "Máy in này không mở được tệp HWPX. Hãy lưu tài liệu thành PDF rồi chọn lại.",
-  hancomConversionFailed: "Không thể chuyển HWP/HWPX sang PDF trên thiết bị này. Hãy kiểm tra tệp hoặc thử trình duyệt khác.",
   hwpxPreview: "Tài liệu HWPX · in bằng kiosk Windows",
+  hancomConversionFailed: "Không thể chuyển HWP/HWPX sang PDF trên thiết bị này. Hãy kiểm tra tệp hoặc thử trình duyệt khác.",
   locationPhotos: "Mở ảnh của tôi",
   locationFiles: "Mở tệp của tôi",
   cancelled: "Chưa có tệp nào. Nhấn một trong hai nút ở dưới.",
@@ -1848,8 +1848,8 @@ const th = {
   imageConversionUnsupported:
     "มือถือนี้เปิดรูปแบบนั้นไม่ได้ บันทึกเป็น JPG ในแอปรูปภาพ หรือถ่ายภาพหน้าจอ แล้วเลือกใหม่",
   hwpxUnavailable: "เครื่องพิมพ์นี้เปิดไฟล์ HWPX ไม่ได้ บันทึกเอกสารเป็น PDF แล้วเลือกใหม่",
-  hancomConversionFailed: "อุปกรณ์นี้แปลงไฟล์ HWP/HWPX เป็น PDF ไม่ได้ โปรดตรวจสอบไฟล์หรือลองเบราว์เซอร์อื่น",
   hwpxPreview: "เอกสาร HWPX · พิมพ์ด้วยคีออสก์ Windows",
+  hancomConversionFailed: "อุปกรณ์นี้แปลงไฟล์ HWP/HWPX เป็น PDF ไม่ได้ โปรดตรวจสอบไฟล์หรือลองเบราว์เซอร์อื่น",
   locationPhotos: "เปิดรูปของฉัน",
   locationFiles: "เปิดไฟล์ของฉัน",
   cancelled: "ยังไม่ได้เลือกไฟล์ แตะปุ่มใดปุ่มหนึ่งด้านล่าง",
@@ -2128,9 +2128,9 @@ const ne = {
   imageConversionUnsupported:
     "यो फोनले त्यो फोटो खोल्न सक्दैन। फोटो एपमा JPG मा सेभ गर्नुहोस् वा स्क्रिनसट लिनुहोस्, त्यसपछि फेरि छान्नुहोस्।",
   hwpxUnavailable:
-  hancomConversionFailed: "यो उपकरणमा HWP/HWPX लाई PDF मा बदल्न सकिएन। फाइल जाँच्नुहोस् वा अर्को ब्राउजर प्रयोग गर्नुहोस्।",
     "यो प्रिन्टरले HWPX फाइल खोल्न सक्दैन। कागजातलाई PDF मा सेभ गरेर फेरि छान्नुहोस्।",
   hwpxPreview: "HWPX कागजात · Windows किओस्कले प्रिन्ट गर्छ",
+  hancomConversionFailed: "यो उपकरणमा HWP/HWPX लाई PDF मा बदल्न सकिएन। फाइल जाँच्नुहोस् वा अर्को ब्राउजर प्रयोग गर्नुहोस्।",
   locationPhotos: "मेरो फोटो खोल्नुहोस्",
   locationFiles: "मेरो फाइल खोल्नुहोस्",
   cancelled: "अझै फाइल छानिएको छैन। तलका दुई बटनमध्ये एउटा थिच्नुहोस्।",
@@ -2414,9 +2414,9 @@ const km = {
   imageConversionUnsupported:
     "ទូរស័ព្ទនេះមិនអាចបើករូបថតនោះបានទេ។ រក្សាទុកជា JPG ក្នុងកម្មវិធីរូបថត ឬថតអេក្រង់ រួចជ្រើសម្តងទៀត។",
   hwpxUnavailable:
-  hancomConversionFailed: "ឧបករណ៍នេះមិនអាចបម្លែង HWP/HWPX ទៅ PDF បានទេ។ សូមពិនិត្យឯកសារ ឬសាកល្បងកម្មវិធីរុករកផ្សេង។",
     "ម៉ាស៊ីនបោះពុម្ពនេះមិនអាចបើកឯកសារ HWPX បានទេ។ រក្សាទុកឯកសារជា PDF រួចជ្រើសម្តងទៀត។",
   hwpxPreview: "ឯកសារ HWPX · បោះពុម្ពដោយគីអូស Windows",
+  hancomConversionFailed: "ឧបករណ៍នេះមិនអាចបម្លែង HWP/HWPX ទៅ PDF បានទេ។ សូមពិនិត្យឯកសារ ឬសាកល្បងកម្មវិធីរុករកផ្សេង។",
   locationPhotos: "បើករូបថតរបស់ខ្ញុំ",
   locationFiles: "បើកឯកសាររបស់ខ្ញុំ",
   cancelled: "មិនទាន់មានឯកសារទេ។ ចុចប៊ូតុងមួយក្នុងចំណោមពីរខាងក្រោម។",
@@ -2698,8 +2698,8 @@ const ar = {
   imageConversionUnsupported:
     "لا يستطيع هذا الهاتف فتح تلك الصورة. احفظها بصيغة JPG في تطبيق الصور، أو التقط صورة شاشة، ثم اخترها مرة أخرى.",
   hwpxUnavailable: "لا تستطيع هذه الطابعة فتح ملف HWPX. احفظ المستند بصيغة PDF واختره مرة أخرى.",
-  hancomConversionFailed: "تعذّر تحويل ملف HWP/HWPX إلى PDF على هذا الجهاز. تحقّق من الملف أو جرّب متصفحًا آخر.",
   hwpxPreview: "مستند HWPX · تطبعه محطة Windows",
+  hancomConversionFailed: "تعذّر تحويل ملف HWP/HWPX إلى PDF على هذا الجهاز. تحقّق من الملف أو جرّب متصفحًا آخر.",
   locationPhotos: "افتح صوري",
   locationFiles: "افتح ملفاتي",
   cancelled: "لا يوجد ملف بعد. اضغط أحد الزرين في الأسفل.",
@@ -2981,9 +2981,9 @@ const ru = {
   imageConversionUnsupported:
     "Этот телефон не может открыть такое фото. Сохраните его как JPG в приложении «Фото» или сделайте снимок экрана, затем выберите снова.",
   hwpxUnavailable:
-  hancomConversionFailed: "Не удалось преобразовать HWP/HWPX в PDF на этом устройстве. Проверьте файл или попробуйте другой браузер.",
     "Этот принтер не может открыть файл HWPX. Сохраните документ как PDF и выберите его снова.",
   hwpxPreview: "Документ HWPX · печатает киоск Windows",
+  hancomConversionFailed: "Не удалось преобразовать HWP/HWPX в PDF на этом устройстве. Проверьте файл или попробуйте другой браузер.",
   locationPhotos: "Открыть мои фото",
   locationFiles: "Открыть мои файлы",
   cancelled: "Файл ещё не выбран. Нажмите одну из двух кнопок ниже.",
@@ -3274,9 +3274,9 @@ const mn = {
   imageConversionUnsupported:
     "Энэ утас тэр зургийг нээж чадахгүй. Зургийн апп дээр JPG болгож хадгалах эсвэл дэлгэцийн зураг аваад дахин сонгоно уу.",
   hwpxUnavailable:
-  hancomConversionFailed: "Энэ төхөөрөмж дээр HWP/HWPX файлыг PDF болгон хөрвүүлж чадсангүй. Файлаа шалгах эсвэл өөр хөтөч ашиглана уу.",
     "Энэ хэвлэгч HWPX файлыг нээж чадахгүй. Баримтыг PDF болгож хадгалаад дахин сонгоно уу.",
   hwpxPreview: "HWPX баримт · Windows киоск хэвлэнэ",
+  hancomConversionFailed: "Энэ төхөөрөмж дээр HWP/HWPX файлыг PDF болгон хөрвүүлж чадсангүй. Файлаа шалгах эсвэл өөр хөтөч ашиглана уу.",
   locationPhotos: "Зургаа нээх",
   locationFiles: "Файлаа нээх",
   cancelled: "Файл сонгоогүй байна. Доорх хоёр товчийн аль нэгийг дарна уу.",
@@ -3570,9 +3570,9 @@ const uk = {
   imageConversionUnsupported:
     "Цей телефон не може відкрити таке фото. Збережіть його як JPG у застосунку «Фото» або зробіть знімок екрана, потім виберіть знову.",
   hwpxUnavailable:
-  hancomConversionFailed: "Не вдалося перетворити HWP/HWPX на PDF на цьому пристрої. Перевірте файл або спробуйте інший браузер.",
     "Цей принтер не може відкрити файл HWPX. Збережіть документ як PDF і виберіть його знову.",
   hwpxPreview: "Документ HWPX · друкує кіоск Windows",
+  hancomConversionFailed: "Не вдалося перетворити HWP/HWPX на PDF на цьому пристрої. Перевірте файл або спробуйте інший браузер.",
   locationPhotos: "Відкрити мої фото",
   locationFiles: "Відкрити мої файли",
   cancelled: "Файл ще не вибрано. Натисніть одну з двох кнопок нижче.",
