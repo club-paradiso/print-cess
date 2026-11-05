@@ -28,6 +28,18 @@ const files = [
     digest: "2aa2b20905b4136808a0126d8e36e5c0f576715c",
   },
   {
+    name: "OFL-NanumGothic.txt",
+    url: `https://raw.githubusercontent.com/google/fonts/${googleFontsCommit}/ofl/nanumgothic/OFL.txt`,
+    algorithm: "git-blob-sha1",
+    digest: "69ff40157d0bba4c65e4ecf77564e1f01d0b02a5",
+  },
+  {
+    name: "OFL-NanumMyeongjo.txt",
+    url: `https://raw.githubusercontent.com/google/fonts/${googleFontsCommit}/ofl/nanummyeongjo/OFL.txt`,
+    algorithm: "git-blob-sha1",
+    digest: "f1277166eb2e0a38c6a487149827c5c3b34d4e2b",
+  },
+  {
     name: "NanumMyeongjo-Regular.ttf",
     url: `https://raw.githubusercontent.com/google/fonts/${googleFontsCommit}/ofl/nanummyeongjo/NanumMyeongjo-Regular.ttf`,
     algorithm: "git-blob-sha1",
