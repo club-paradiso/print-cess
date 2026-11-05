@@ -5,6 +5,6 @@
  */
 export function restrictBrowserPrintCapabilities<
   T extends { supportsHwp?: boolean; supportsHwpx?: boolean; supportsBundle?: boolean },
->(input: T): T & { supportsHwp: false; supportsHwpx: false; supportsBundle: true } {
+>(input: T) {
   return { ...input, supportsHwpx: false, supportsHwp: false, supportsBundle: true };
 }
