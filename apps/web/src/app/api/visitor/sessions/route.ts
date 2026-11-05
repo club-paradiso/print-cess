@@ -9,6 +9,7 @@ import { ServiceError } from "@/server/errors";
 import { secretMatches } from "@/server/auth";
 import { isValidVisitorOperatorCookie, VISITOR_OPERATOR_COOKIE } from "@/server/visitor-operator";
 import { clientAddress } from "@/server/request-identity";
+import { restrictBrowserPrintCapabilities } from "@/lib/browser-print-capabilities";
 
 export const runtime = "nodejs";
 
@@ -33,7 +34,9 @@ export async function POST(request: Request) {
         throw new ServiceError("unauthorized", "Kiosk registration is not authorized.", 401);
       }
     }
-    const input = await readJson(request, createSessionRequestSchema);
+    const input = restrictBrowserPrintCapabilities(
+      await readJson(request, createSessionRequestSchema),
+    );
     const { session, uploadToken, kioskToken } = await createVisitorPrintSession(input);
     after(async () => {
       await sweepDueOrphans(server, Date.now(), 3).catch(() => undefined);
