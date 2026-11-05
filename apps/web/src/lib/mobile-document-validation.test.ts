@@ -1,13 +1,12 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { convertHangulInBrowser } from "./hangul-browser-conversion";
+
+import { validateMobileDocument } from "./mobile-document-validation";
 
 vi.mock("./hangul-browser-conversion", () => ({
   convertHangulInBrowser: vi.fn(),
 }));
-
-
-import { validateMobileDocument } from "./mobile-document-validation";
 
 function structuralHwp(properties = 0, includeScriptStream = false): File {
   const bytes = new Uint8Array(2048);
@@ -39,23 +38,23 @@ describe("mobile HWP validation", () => {
 
   it("converts legacy HWP on a browser kiosk instead of requiring native Hancom", async () => {
     vi.mocked(convertHangulInBrowser).mockRejectedValue(new Error("renderer error"));
-    await expect(validateMobileDocument(structuralHwp(), { allowHwp: false }))
-      .rejects.toMatchObject({ code: "hancomConversionFailed" });
+    const attempt = validateMobileDocument(structuralHwp(), { allowHwp: false });
+    await expect(attempt).rejects.toMatchObject({ code: "hancomConversionFailed" });
     expect(convertHangulInBrowser).toHaveBeenCalledOnce();
   });
 
   it("never sends a scripted HWP into a browser renderer", async () => {
-    await expect(validateMobileDocument(structuralHwp(0, true), { allowHwp: false }))
-      .rejects.toMatchObject({ code: "damagedFile" });
+    const attempt = validateMobileDocument(structuralHwp(0, true), { allowHwp: false });
+    await expect(attempt).rejects.toMatchObject({ code: "damagedFile" });
     expect(convertHangulInBrowser).not.toHaveBeenCalled();
   });
 
-
-  it("accepts HWP only when the native kiosk advertises Hancom support", async () => {
+  it("keeps native HWP printing when supported, but converts on other kiosks", async () => {
     const file = structuralHwp();
 
+    vi.mocked(convertHangulInBrowser).mockRejectedValue(new Error("render failed"));
     await expect(validateMobileDocument(file)).rejects.toMatchObject({
-      code: "hwpxUnavailable",
+      code: "hancomConversionFailed",
     });
     await expect(validateMobileDocument(file, { allowHwp: true })).resolves.toMatchObject({
       fileKind: "hwp",
