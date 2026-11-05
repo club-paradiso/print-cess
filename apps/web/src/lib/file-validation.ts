@@ -16,6 +16,7 @@ export type FileValidationCode =
   | "unsupportedType"
   | "documentNeedsPdf"
   | "hwpxUnavailable"
+  | "hancomConversionFailed"
   | "imageConversionUnsupported"
   | "tooLarge"
   | "lockedPdf"

@@ -74,7 +74,7 @@ Direct HWPX printing is available only in the native Windows kiosk. The mobile b
 original HWPX inside the existing encrypted envelope; the kiosk validates the package, writes it to
 an application-owned temporary directory, asks an installed Hancom Office automation component to
 render PDF, validates the generated PDF, prints it through the existing fixed policy, and clears
-both temporary files. The public browser kiosk does not claim or emulate HWPX printing.
+both temporary files. A browser kiosk receives a PDF locally rendered on the sending phone, as described in [browser rendering](HANCOM_BROWSER_RENDERING.md); it does not run Hancom Office.
 
 Before enabling the capability:
 

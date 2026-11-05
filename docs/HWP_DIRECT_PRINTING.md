@@ -1,6 +1,6 @@
 # HWP direct printing
 
-Legacy `.hwp` files are accepted only by a native Windows kiosk that has the approved Hancom Office automation component and file-path security module configured. The public browser kiosk does not render or print HWP.
+Legacy `.hwp` files are accepted only by a native Windows kiosk that has the approved Hancom Office automation component and file-path security module configured. A browser kiosk receives a locally rendered PDF from the sending phone, so it can print HWP/HWPX via the standard PDF path without Hancom Office. See [browser rendering](HANCOM_BROWSER_RENDERING.md).
 
 ## Processing path
 
