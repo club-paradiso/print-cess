@@ -67,7 +67,7 @@ test("WebP is normalized on the phone and printed through the JPEG path", async 
   });
 });
 
-test("Malformed HWP is rejected before invoking the local renderer", async ({
+test("Malformed HWP selection is rejected before the local browser converter can process it", async ({
   page,
   context,
 }) => {
