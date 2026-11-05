@@ -32,6 +32,11 @@ export async function POST(request: Request) {
 
     const input = {
       ...(await readJson(request, createSessionRequestSchema)),
+      // Only the native Windows kiosk can render Hancom documents. Never trust
+      // client-submitted capability flags from a browser kiosk, which would
+      // otherwise offer HWP/HWPX on the phone and fail after the upload.
+      supportsHwpx: false,
+      supportsHwp: false,
       supportsBundle: true,
     };
     const { session, uploadToken, kioskToken } = await createPrintSession(input);
