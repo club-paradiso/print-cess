@@ -1,0 +1,10 @@
+/**
+ * The browser kiosk has no Hancom renderer. Client-supplied capability flags
+ * cannot turn native document support on: advertising it would let a visitor
+ * upload an HWP/HWPX file that the browser can never print.
+ */
+export function restrictBrowserPrintCapabilities<
+  T extends { supportsHwp?: boolean; supportsHwpx?: boolean; supportsBundle?: boolean },
+>(input: T): T & { supportsHwp: false; supportsHwpx: false; supportsBundle: true } {
+  return { ...input, supportsHwpx: false, supportsHwp: false, supportsBundle: true };
+}
