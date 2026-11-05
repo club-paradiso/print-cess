@@ -478,12 +478,10 @@ export function BatchMobileFlow({
   // visitor is still on the second step, and telling them to collect output
   // that does not exist yet would send them to an empty printer.
   const step = stage === "complete" ? 3 : 2;
-  const supportsHancom = supportsHwp || supportsHwpx;
-  const hancomLabel = hancomFormatLabel(supportsHwp, supportsHwpx);
-  const rules = (supportsHancom ? copy.rulesHancom : copy.rules).replaceAll(
-    "HWP/HWPX",
-    hancomLabel,
-  );
+  // Local WASM conversion allows both Hancom formats even for browser kiosks.
+  const supportsHancom = true;
+  const hancomLabel = "HWP/HWPX";
+  const rules = copy.rulesHancom;
   const single = documents.length === 1;
   const reminder = helpForStage(stage, text, copy);
   const secondsLeft = claimed ? Math.max(0, Math.ceil((claimed.expiresAt - now) / 1000)) : 0;
@@ -568,7 +566,7 @@ export function BatchMobileFlow({
             hidden
             multiple
             type="file"
-            accept={documentAccept(supportsHwp, supportsHwpx)}
+            accept={documentAccept()}
             onChange={(event) => void chooseFiles(event.target.files)}
           />
           {batchError ? (
@@ -1001,16 +999,11 @@ function SingleAction({
   );
 }
 
-function hancomFormatLabel(supportsHwp: boolean, supportsHwpx: boolean): string {
-  if (supportsHwp === supportsHwpx) return "HWP/HWPX";
-  return supportsHwp ? "HWP" : "HWPX";
-}
-
 function applyHancomLabel(value: string, label: string): string {
   return value.replaceAll("HWP/HWPX", label).replaceAll("HWPX", label);
 }
 
-function documentAccept(supportsHwp: boolean, supportsHwpx: boolean): string {
+function documentAccept(): string {
   const base = [
     "application/pdf",
     ".pdf",
@@ -1027,10 +1020,14 @@ function documentAccept(supportsHwp: boolean, supportsHwpx: boolean): string {
     ".tif",
     ".tiff",
   ];
-  const hancom: string[] = [];
-  if (supportsHwp) hancom.push("application/x-hwp", "application/haansofthwp", ".hwp");
-  if (supportsHwpx) hancom.push("application/hwp+zip", ".hwpx");
-  return [...base, ...hancom].join(",");
+  return [
+    ...base,
+    "application/x-hwp",
+    "application/haansofthwp",
+    "application/hwp+zip",
+    ".hwp",
+    ".hwpx",
+  ].join(",");
 }
 
 class BatchSelectionError extends Error {}
