@@ -67,7 +67,7 @@ test("WebP is normalized on the phone and printed through the JPEG path", async 
   });
 });
 
-test("HWP selection gives a privacy-preserving PDF conversion instruction", async ({
+test("Malformed HWP is rejected before invoking the local renderer", async ({
   page,
   context,
 }) => {
@@ -79,7 +79,6 @@ test("HWP selection gives a privacy-preserving PDF conversion instruction", asyn
   });
 
   const fileError = mobile.locator(".mobile-file-error");
-  await expect(fileError).toContainText("This printer cannot open an HWP/HWPX file");
-  await expect(fileError).toContainText("Save the document as a PDF");
+  await expect(fileError).toContainText("This file could not be read");
   await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toHaveCount(0);
 });
