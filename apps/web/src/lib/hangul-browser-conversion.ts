@@ -1,6 +1,13 @@
 const HANGUL_WORKER_URL = "/hancom-rhwp/convert.worker.js";
 const HANGUL_CONVERSION_TIMEOUT_MS = 150_000;
 
+type HangulWorkerResponse = {
+  id?: number;
+  ok?: boolean;
+  pdf?: ArrayBuffer;
+  pageCount?: number;
+};
+
 /**
  * Converts HWP/HWPX locally before the existing encrypted PDF print protocol.
  * All renderer/font assets are same-origin and pinned during deployment.
@@ -22,12 +29,7 @@ export async function convertHangulInBrowser(bytes: Uint8Array): Promise<Uint8Ar
     const timeout = setTimeout(() => {
       if (close()) reject(new Error("Hangul rendering timed out"));
     }, HANGUL_CONVERSION_TIMEOUT_MS);
-    worker.onmessage = (event: MessageEvent<{
-      id?: number;
-      ok?: boolean;
-      pdf?: ArrayBuffer;
-      pageCount?: number;
-    }>) => {
+    worker.onmessage = (event: MessageEvent<HangulWorkerResponse>) => {
       const payload = event.data;
       if (payload?.id !== 1) return;
       if (
