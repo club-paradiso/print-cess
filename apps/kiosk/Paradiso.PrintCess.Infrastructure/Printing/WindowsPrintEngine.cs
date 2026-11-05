@@ -38,11 +38,11 @@ public sealed class WindowsPrintEngine : IPrintEngine
         {
             try
             {
-                completion.TrySetResult(PrintOnStaAsync(
+                completion.TrySetResult(PrintOnSta(
                     document,
                     settings,
                     onReadyToSubmit,
-                    cancellationToken).GetAwaiter().GetResult());
+                    cancellationToken));
             }
             catch (OperationCanceledException exception)
             {
@@ -82,7 +82,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
         }
     }
 
-    private static async Task<PrintResult> PrintOnStaAsync(
+    private static PrintResult PrintOnSta(
         ValidatedDocument document,
         PrintSettings settings,
         Func<CancellationToken, Task>? onReadyToSubmit,
@@ -122,7 +122,7 @@ public sealed class WindowsPrintEngine : IPrintEngine
             FixedDocument fixedDocument;
             try
             {
-                fixedDocument = await RenderDocumentAsync(document, cancellationToken);
+                fixedDocument = RenderDocument(document, cancellationToken);
             }
             catch (Exception exception) when (exception is InvalidDataException or ArgumentException or COMException or ProtocolException or OutOfMemoryException)
             {
@@ -132,7 +132,9 @@ public sealed class WindowsPrintEngine : IPrintEngine
             cancellationToken.ThrowIfCancellationRequested();
             if (onReadyToSubmit is not null)
             {
-                await onReadyToSubmit(cancellationToken);
+                // Keep the printer queue, print ticket, FixedDocument and XPS writer on
+                // this same STA thread even when the idempotency gate is asynchronous.
+                onReadyToSubmit(cancellationToken).GetAwaiter().GetResult();
             }
 
             var submissionStarted = false;
@@ -180,16 +182,21 @@ public sealed class WindowsPrintEngine : IPrintEngine
         return ticket;
     }
 
-    private static async Task<FixedDocument> RenderDocumentAsync(
+    private static FixedDocument RenderDocument(
         ValidatedDocument document,
         CancellationToken cancellationToken)
     {
+        // Hancom-to-PDF and PDF page rendering can finish on a pool thread.
+        // Waiting here on the dedicated print STA is intentional: the
+        // FixedDocument, FixedPage and Image objects below MUST be created
+        // on the same STA as the XPS writer, not on an await continuation.
+        // No synchronization context is installed on the dedicated thread.
         var renderedPages = document.Kind == DocumentKind.Bundle
-            ? await RenderBundleAsync(document.Content, cancellationToken)
-            : await RenderPagesAsync(
+            ? RenderBundleAsync(document.Content, cancellationToken).GetAwaiter().GetResult()
+            : RenderPagesAsync(
                 document.Content,
                 document.Kind,
-                cancellationToken);
+                cancellationToken).GetAwaiter().GetResult();
 
         if (renderedPages.Count == 0)
         {

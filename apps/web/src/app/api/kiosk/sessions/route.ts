@@ -8,6 +8,7 @@ import { assertAllowedOrigin, errorResponse, json, readJson } from "@/server/htt
 import { enforceRateLimit } from "@/server/rate-limit";
 import { createPrintSession, getRuntime, sweepDueOrphans } from "@/server/runtime";
 import { clientAddress } from "@/server/request-identity";
+import { restrictBrowserPrintCapabilities } from "@/lib/browser-print-capabilities";
 
 export const runtime = "nodejs";
 
@@ -30,10 +31,9 @@ export async function POST(request: Request) {
 
     enforceRateLimit(`browser-kiosk-create:${clientAddress(request)}`, 20, 60_000);
 
-    const input = {
-      ...(await readJson(request, createSessionRequestSchema)),
-      supportsBundle: true,
-    };
+    const input = restrictBrowserPrintCapabilities(
+      await readJson(request, createSessionRequestSchema),
+    );
     const { session, uploadToken, kioskToken } = await createPrintSession(input);
     after(async () => {
       await sweepDueOrphans(server, Date.now(), 3).catch(() => undefined);
