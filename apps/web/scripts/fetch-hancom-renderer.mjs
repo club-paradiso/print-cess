@@ -6,7 +6,12 @@ import { mkdir, readFile, rename, rm, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const publicDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "hancom-rhwp");
+const publicDir = join(
+  dirname(fileURLToPath(import.meta.url)),
+  "..",
+  "public",
+  "hancom-rhwp",
+);
 const googleFontsCommit = "bbda7253fc363238b05d97515ca71f8ae49c4fa9";
 const files = [
   {
@@ -87,7 +92,9 @@ async function fetchPinned(file) {
       lastError = error;
     }
   }
-  throw new Error(`Cannot install pinned Hancom renderer asset ${file.name}: ${lastError}`);
+  throw new Error(
+    `Cannot install pinned Hancom renderer asset ${file.name}: ${lastError}`,
+  );
 }
 
 await mkdir(publicDir, { recursive: true });
