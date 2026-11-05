@@ -21,7 +21,11 @@ describe("browser kiosk print capabilities", () => {
   });
 
   it("preserves all non-capability session credentials", () => {
-    const input = { protocolVersion: 1, kioskPublicKey: "public", kioskPublicKeyFingerprint: "fingerprint" };
+    const input = {
+      protocolVersion: 1,
+      kioskPublicKey: "public",
+      kioskPublicKeyFingerprint: "fingerprint",
+    };
     expect(restrictBrowserPrintCapabilities(input)).toEqual({
       ...input,
       supportsHwp: false,
