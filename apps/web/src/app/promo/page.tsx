@@ -118,7 +118,11 @@ export default async function PromoPage() {
               <h1 id="hero-title">
                 <span>{hero.titleLines[0]}</span> <span>{hero.titleLines[1]}</span>
               </h1>
-              <p className={styles.heroLead}>{hero.lead}</p>
+              <p className={styles.heroLead}>
+                {hero.lead.split(/(?<=,) /).map((part, i) => (
+                  <span key={i}>{i > 0 ? ` ${part}` : part}</span>
+                ))}
+              </p>
               <p className={styles.heroGloss}>{hero.gloss}</p>
               <div className={styles.heroActions}>
                 <Link className={styles.filmPrimary} href={KIOSK_VIEW_ONCE_PATH}>
