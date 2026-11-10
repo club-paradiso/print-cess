@@ -7,3 +7,7 @@ const source = join(root, "..", "node_modules", "pdfjs-dist", "build", "pdf.work
 const destination = join(root, "..", "public", "pdf.worker.min.mjs");
 await mkdir(dirname(destination), { recursive: true });
 await copyFile(source, destination);
+
+// Build-time only: serve the pinned converter and OFL Korean fonts from the
+// Print-cess origin. No browser needs to contact GitHub or a conversion API.
+await import("./fetch-hancom-renderer.mjs");

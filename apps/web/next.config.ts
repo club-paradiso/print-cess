@@ -33,7 +33,13 @@ const config: NextConfig = {
     return { beforeFiles: blobRelayRewrites(), afterFiles: [], fallback: [] };
   },
   async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
+    return [
+      { source: "/:path*", headers: securityHeaders },
+      {
+        source: "/hancom-rhwp/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+    ];
   },
 };
 

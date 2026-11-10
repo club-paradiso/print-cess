@@ -18,6 +18,9 @@ work/
 outputs/
 packages/test-fixtures/generated/
 apps/web/public/pdf.worker.min.mjs
+apps/web/public/hancom-rhwp/rhwptopdf.umd.js
+apps/web/public/hancom-rhwp/rhwptopdf.umd_bg.wasm
+apps/web/public/hancom-rhwp/*.ttf
 .print-cess/
 .vercel
 # Provisioning credential files (see scripts/provisioning/README.md). These hold

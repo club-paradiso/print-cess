@@ -1,6 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+import { convertHangulInBrowser } from "./hangul-browser-conversion";
 
 import { validateMobileDocument } from "./mobile-document-validation";
+
+vi.mock("./hangul-browser-conversion", () => ({
+  convertHangulInBrowser: vi.fn(),
+}));
 
 function structuralHwp(properties = 0, includeScriptStream = false): File {
   const bytes = new Uint8Array(2048);
@@ -28,11 +34,33 @@ function utf16(value: string): Uint8Array {
 }
 
 describe("mobile HWP validation", () => {
-  it("accepts HWP only when the native kiosk advertises Hancom support", async () => {
+  beforeEach(() => {
+    vi.mocked(convertHangulInBrowser).mockReset();
+  });
+
+  it("converts legacy HWP on a browser kiosk instead of requiring native Hancom", async () => {
+    vi.mocked(convertHangulInBrowser).mockImplementation(() => {
+      throw new Error("renderer error");
+    });
+    const attempt = validateMobileDocument(structuralHwp(), { allowHwp: false });
+    await expect(attempt).rejects.toMatchObject({ code: "hancomConversionFailed" });
+    expect(convertHangulInBrowser).toHaveBeenCalledOnce();
+  });
+
+  it("never sends a scripted HWP into a browser renderer", async () => {
+    const attempt = validateMobileDocument(structuralHwp(0, true), { allowHwp: false });
+    await expect(attempt).rejects.toMatchObject({ code: "damagedFile" });
+    expect(convertHangulInBrowser).not.toHaveBeenCalled();
+  });
+
+  it("keeps native HWP printing when supported, but converts on other kiosks", async () => {
     const file = structuralHwp();
 
+    vi.mocked(convertHangulInBrowser).mockImplementation(() => {
+      throw new Error("render failed");
+    });
     await expect(validateMobileDocument(file)).rejects.toMatchObject({
-      code: "hwpxUnavailable",
+      code: "hancomConversionFailed",
     });
     await expect(validateMobileDocument(file, { allowHwp: true })).resolves.toMatchObject({
       fileKind: "hwp",
