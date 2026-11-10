@@ -63,7 +63,8 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  background: rgb(255 255 255 / 96%);
+  /* Opaque, so the page scrolling underneath never shows through. */
+  background: #fff;
   border-bottom: 1px solid var(--hairline);
 }
 .headerInner {
@@ -313,6 +314,8 @@
   color: var(--accent-on-dark);
 }
 .heroLead {
+  word-break: keep-all;
+  text-wrap: balance;
   font-size: clamp(1.2rem, 1rem + 0.8vw, 1.6rem);
   font-weight: 700;
   line-height: 1.4;
@@ -380,6 +383,21 @@
   text-align: end;
 }
 
+/* Below the wide layout the copy block sits in the middle of the screen,
+   not against the left gutter. Wide screens keep it on the left, clear of
+   the film's subject. */
+@media (max-width: 999px) {
+  .heroCopy {
+    margin-inline: auto;
+  }
+  .credit {
+    left: var(--gutter);
+    right: var(--gutter);
+    max-width: none;
+    text-align: center;
+  }
+}
+
 /* An unbroken take: both clips drift very slowly the whole time, so neither
    the long crossfade nor a clip's own restart ever reads as a cut. */
 .scene {
@@ -405,7 +423,8 @@
   .film {
     position: relative;
     z-index: 0;
-    height: clamp(150px, 27svh, 250px);
+    /* The header overlays the top of the strip, so add its height back. */
+    height: calc(var(--header-h) + clamp(180px, 30svh, 280px));
   }
   .shade {
     background:
@@ -424,6 +443,10 @@
   }
   .eyebrow {
     font-size: 13px;
+  }
+  /* Break after the comma, so each clause stays on one line. */
+  .heroLead span {
+    display: block;
   }
   .heroLead {
     font-size: 16px;
@@ -469,7 +492,7 @@
     margin: 0 auto;
     padding: 0 0 20px;
     font-size: 11px;
-    text-align: start;
+    text-align: center;
   }
 }
 
@@ -727,6 +750,9 @@
   color: var(--pc-text-secondary);
   font-size: 16px;
   line-height: 1.5;
+  /* Narrow columns: even out the lines so no word is left alone. */
+  word-break: keep-all;
+  text-wrap: balance;
 }
 :global(html[data-promo-motion="reduced"]) .statementLine span {
   background-size: 100% 0.07em !important;
