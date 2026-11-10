@@ -14,7 +14,7 @@
     "create:readiness-evidence-template": "node scripts/acceptance/create-readiness-evidence-template.mjs",
     "dev": "turbo run dev --parallel",
     "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format:check": "prettier --check . || (prettier --write apps/web/public/hancom-rhwp/convert.worker.js apps/web/scripts/fetch-hancom-renderer.mjs && git diff -- apps/web/public/hancom-rhwp/convert.worker.js apps/web/scripts/fetch-hancom-renderer.mjs && exit 1)",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
