@@ -37,7 +37,9 @@ describe("mobile HWP validation", () => {
   beforeEach(() => vi.mocked(convertHangulInBrowser).mockReset());
 
   it("converts legacy HWP on a browser kiosk instead of requiring native Hancom", async () => {
-    vi.mocked(convertHangulInBrowser).mockRejectedValue(new Error("renderer error"));
+    vi.mocked(convertHangulInBrowser).mockImplementation(() => {
+      throw new Error("renderer error");
+    });
     const attempt = validateMobileDocument(structuralHwp(), { allowHwp: false });
     await expect(attempt).rejects.toMatchObject({ code: "hancomConversionFailed" });
     expect(convertHangulInBrowser).toHaveBeenCalledOnce();
@@ -52,7 +54,9 @@ describe("mobile HWP validation", () => {
   it("keeps native HWP printing when supported, but converts on other kiosks", async () => {
     const file = structuralHwp();
 
-    vi.mocked(convertHangulInBrowser).mockRejectedValue(new Error("render failed"));
+    vi.mocked(convertHangulInBrowser).mockImplementation(() => {
+      throw new Error("render failed");
+    });
     await expect(validateMobileDocument(file)).rejects.toMatchObject({
       code: "hancomConversionFailed",
     });
