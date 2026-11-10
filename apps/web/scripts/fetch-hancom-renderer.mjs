@@ -49,10 +49,7 @@ const files = [
 
 function digestOf(buffer, algorithm) {
   if (algorithm === "sha256") return createHash("sha256").update(buffer).digest("hex");
-  return createHash("sha1")
-    .update(`blob ${buffer.length}\0`)
-    .update(buffer)
-    .digest("hex");
+  return createHash("sha1").update(`blob ${buffer.length}\0`).update(buffer).digest("hex");
 }
 
 async function fetchPinned(file) {
@@ -87,9 +84,7 @@ async function fetchPinned(file) {
       lastError = error;
     }
   }
-  throw new Error(
-    `Cannot install pinned Hancom renderer asset ${file.name}: ${lastError}`,
-  );
+  throw new Error(`Cannot install pinned Hancom renderer asset ${file.name}: ${lastError}`);
 }
 
 await mkdir(publicDir, { recursive: true });

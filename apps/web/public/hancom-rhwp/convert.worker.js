@@ -49,10 +49,9 @@ self.addEventListener("message", async (event) => {
     // The returned view may be owned by WebAssembly memory. Copy before
     // transferring, or transfer would detach the WASM heap.
     const pdf = Uint8Array.from(result);
-    self.postMessage(
-      { id, ok: true, pdf: pdf.buffer, pageCount: analysis.pageCount },
-      [pdf.buffer],
-    );
+    self.postMessage({ id, ok: true, pdf: pdf.buffer, pageCount: analysis.pageCount }, [
+      pdf.buffer,
+    ]);
   } catch {
     // Avoid leaking document contents or parser details to the UI or logs.
     self.postMessage({ id, ok: false });
