@@ -34,7 +34,9 @@ function utf16(value: string): Uint8Array {
 }
 
 describe("mobile HWP validation", () => {
-  beforeEach(() => vi.mocked(convertHangulInBrowser).mockReset());
+  beforeEach(() => {
+    vi.mocked(convertHangulInBrowser).mockReset();
+  });
 
   it("converts legacy HWP on a browser kiosk instead of requiring native Hancom", async () => {
     vi.mocked(convertHangulInBrowser).mockImplementation(() => {
