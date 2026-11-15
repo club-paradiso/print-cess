@@ -17,7 +17,12 @@ concurrency:
 jobs:
   web:
     name: Web
-    runs-on: ubuntu-latest
+    # Pinned: the WebKit build that the pinned Playwright release downloads is
+    # linked against Ubuntu 24.04's ICU (libicudata.so.74). ubuntu-latest moved
+    # to 26.04 (ICU 78) in November 2026, and WebKit then fails to launch, so
+    # every iPhone-viewport test fails before it starts. Revisit when Playwright
+    # ships a WebKit build for 26.04.
+    runs-on: ubuntu-24.04
     timeout-minutes: 35
     env:
       CI: "true"
