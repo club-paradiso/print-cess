@@ -378,6 +378,7 @@ export class BulkSender {
       const fragments = bulkFragmentCount(sealed.byteLength, frameBytes);
       const payloadBytes = frameBytes - BULK_DATA_HEADER_BYTES;
       for (let fragment = 0; fragment < fragments; fragment += 1) {
+        if (this.#cancelled) return;
         if (channel.bufferedAmount > highWater) await waitForDrain(channel, signal);
         if (!channel.isOpen) throw new ChannelClosedError();
         channel.send(

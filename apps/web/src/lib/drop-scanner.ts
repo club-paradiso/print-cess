@@ -123,7 +123,28 @@ const SCAN_INTERVAL_MS = 220;
 const FALLBACK_MAX_DIMENSION = 960;
 
 export function startDropScanner(video: HTMLVideoElement): Promise<DropScanner> {
-  return startCodeScanner(video, parseDropCode);
+  return startCodeScanner(video, (rawValue) => {
+    // A bulk-transfer QR scanned from the ordinary receive screen opens the
+    // bulk receiver instead of failing as an unknown drop. The destination is
+    // rebuilt from the parsed code on this origin, never taken from the QR.
+    const bulkCode = parseBulkLink(rawValue);
+    if (bulkCode) {
+      window.location.assign(`/bulk/receive#c=${bulkCode}`);
+      return null;
+    }
+    return parseDropCode(rawValue);
+  });
+}
+
+/** The code inside a `/bulk/receive#c=…` link, or null for anything else. */
+export function parseBulkLink(rawValue: string): string | null {
+  try {
+    const url = new URL(rawValue.trim(), "https://placeholder.invalid");
+    if (url.pathname !== "/bulk/receive") return null;
+    return parseDropCode(`https://placeholder.invalid/receive${url.hash}`);
+  } catch {
+    return null;
+  }
 }
 
 /**

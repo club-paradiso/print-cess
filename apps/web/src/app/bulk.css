@@ -1,0 +1,180 @@
+/* Bulk Transfer 2.0. Reuses the hand-off screens' tokens, list rows, and
+   progress bar; only the windowed list, the link indicator, and the batch
+   panel are new. */
+
+.bulk-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: start;
+  margin: 0;
+  padding: 6px 12px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary) !important;
+  font-size: 15px !important;
+  font-weight: 700;
+}
+.bulk-link svg {
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.bulk-link--ok {
+  background: var(--pc-success-surface);
+  color: var(--pc-success) !important;
+}
+.bulk-link--warn {
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand) !important;
+}
+.bulk-link--error {
+  background: var(--pc-destructive-surface);
+  color: var(--pc-destructive) !important;
+}
+.bulk-link--cloud {
+  margin: 12px 16px 0;
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand) !important;
+}
+
+.bulk-spin {
+  animation: bulk-spin 1s linear infinite;
+}
+@keyframes bulk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bulk-spin {
+    animation: none;
+  }
+}
+
+/* A windowed list: rows are absolutely positioned inside a tall spacer, and
+   only the visible ones exist in the DOM. */
+.bulk-list {
+  position: relative;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--pc-border);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface);
+  max-block-size: 60vh;
+}
+.bulk-list:focus-visible {
+  outline: 3px solid var(--pc-focus-ring);
+  outline-offset: 2px;
+}
+.bulk-list__inner {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bulk-row {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-start: 0;
+  block-size: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-block-end: 1px solid var(--pc-border);
+}
+.bulk-row .drop-file__icon {
+  width: 36px;
+  height: 36px;
+}
+.bulk-row .drop-file-list__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bulk-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.bulk-count {
+  padding: 3px 10px;
+  border-radius: var(--pc-radius-pill);
+  background: var(--pc-surface-sunken);
+  color: var(--pc-text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+}
+.bulk-count--saved,
+.bulk-count--downloadStarted {
+  background: var(--pc-success-surface);
+  color: var(--pc-success);
+}
+.bulk-count--stored {
+  background: var(--pc-surface-brand-subtle);
+  color: var(--pc-text-brand);
+}
+.bulk-count--failed {
+  background: var(--pc-destructive-surface);
+  color: var(--pc-destructive);
+}
+
+.bulk-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 8px;
+}
+
+.bulk-current,
+.bulk-note {
+  margin: 0;
+  color: var(--pc-text-muted) !important;
+  font-size: 15px !important;
+  overflow-wrap: anywhere;
+}
+
+.bulk-save-options {
+  display: grid;
+  gap: 10px;
+}
+
+.bulk-batch,
+.bulk-consent {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 2px solid var(--pc-brand-muted);
+  border-radius: var(--pc-radius-lg);
+  background: var(--pc-surface-brand-subtle);
+}
+.bulk-batch h2,
+.bulk-consent h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.bulk-code {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+.bulk-code input {
+  min-height: 52px;
+  padding: 0 14px;
+  border: 2px solid var(--pc-border);
+  border-radius: var(--pc-radius-md, 12px);
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.bulk-entry {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}

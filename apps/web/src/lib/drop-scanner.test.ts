@@ -215,3 +215,14 @@ describe("startCodeScanner", () => {
     expect(pendingScript()).toBeNull();
   });
 });
+
+describe("bulk links seen by the ordinary scanner", () => {
+  it("extracts the code only from a bulk receive link", async () => {
+    const { parseBulkLink } = await import("./drop-scanner");
+    expect(parseBulkLink("https://print-cess.example/bulk/receive#c=23456789ABCD")).toBe(
+      "23456789ABCD",
+    );
+    expect(parseBulkLink("https://print-cess.example/receive#c=23456789ABCD")).toBeNull();
+    expect(parseBulkLink("not a link")).toBeNull();
+  });
+});

@@ -28,6 +28,20 @@ export type LinkState =
 
 export type SessionFailure = "expired" | "taken" | "unsupported" | "notFound" | "tooManyRetries";
 
+/**
+ * Waits for the send buffer to empty. A cancel message is queued behind any
+ * data already buffered; closing at once would discard it with the data, and
+ * the other device would see a lost connection instead of a cancellation.
+ */
+async function drained(link: PeerLink, limitMs = 3000): Promise<void> {
+  for (let waited = 0; waited < limitMs; waited += 50) {
+    if (!link.channel.isOpen || link.channel.bufferedAmount === 0) break;
+    await sleep(50).catch(() => undefined);
+  }
+  // One more beat for the last message to leave the SCTP queue.
+  await sleep(150).catch(() => undefined);
+}
+
 export function buildBulkLink(origin: string, code: string): string {
   return `${origin}/bulk/receive#c=${code}`;
 }
@@ -35,6 +49,8 @@ export function buildBulkLink(origin: string, code: string): string {
 /** Drives one sender through first connection, transfer, and any reconnections. */
 type SendSessionOptions = Omit<SenderOptions, "keys"> & {
   iceServers: BulkIceServer[];
+  /** The other device cancelled. */
+  onRemoteCancel?: () => void;
   onLinkState: (state: LinkState) => void;
   onFailure: (failure: SessionFailure) => void;
 };
@@ -84,9 +100,13 @@ export class BulkSendSession {
         failures = 0;
         this.options.onLinkState(await link.route());
         const outcome = await this.engine.attach(link.channel, link.handshake);
+        if (outcome === "cancelled") await drained(link);
         link.close();
         this.#link = null;
-        if (outcome === "cancelled") break;
+        if (outcome === "cancelled") {
+          if (!this.#stopped) this.options.onRemoteCancel?.();
+          break;
+        }
         this.options.onLinkState("disconnected");
       } catch (error) {
         if (!(error instanceof BulkConnectError)) throw error;
@@ -123,7 +143,7 @@ export class BulkSendSession {
   public async stop(): Promise<void> {
     this.#stopped = true;
     this.engine.cancel();
-    await sleep(50).catch(() => undefined);
+    if (this.#link) await drained(this.#link);
     this.#link?.close();
     this.#controller.abort();
     await deleteBulkRoom(this.#keys.roomId, this.#ownerToken);
@@ -141,6 +161,7 @@ export class BulkReceiveSession {
     private readonly keys: BulkKeys,
     private readonly options: Omit<ReceiverOptions, "keys"> & {
       iceServers: BulkIceServer[];
+      onRemoteCancel?: () => void;
       onLinkState: (state: LinkState) => void;
       onFailure: (failure: SessionFailure) => void;
     },
@@ -169,7 +190,10 @@ export class BulkReceiveSession {
         const outcome = await this.engine.attach(link.channel, link.handshake);
         link.close();
         this.#link = null;
-        if (outcome === "cancelled") break;
+        if (outcome === "cancelled") {
+          if (!this.#stopped && !this.#localCancel) this.options.onRemoteCancel?.();
+          break;
+        }
         if (outcome === "rejected") {
           this.options.onFailure("notFound");
           this.options.onLinkState("failed");
@@ -206,6 +230,14 @@ export class BulkReceiveSession {
         );
       }
     }
+  }
+
+  #localCancel = false;
+
+  /** Cancels from this side: the sender is told, the active file is discarded. */
+  public async cancel(): Promise<void> {
+    this.#localCancel = true;
+    await this.engine.cancel();
   }
 
   public async stop(): Promise<void> {

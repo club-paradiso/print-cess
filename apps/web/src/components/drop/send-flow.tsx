@@ -40,6 +40,7 @@ import {
   TertiaryButton,
 } from "@print-cess/ui";
 
+import { bulkCopy } from "@/components/bulk/bulk-copy";
 import { SourcePicker } from "@/components/shared/source-picker";
 
 import { getDropCapabilities, getDropStatus, revokeDrop } from "@/lib/drop-client";
@@ -417,6 +418,15 @@ export function SendFlow({
           <p className="drop-privacy">
             <LockKeyhole aria-hidden="true" /> {text("dropPrivacyNote")}
           </p>
+          {back ? null : (
+            <a
+              className="drop-link drop-switch bulk-entry"
+              href="/bulk/send"
+              data-testid="bulk-entry"
+            >
+              <Files aria-hidden="true" /> {bulkCopy(locale).bulkEntry}
+            </a>
+          )}
           {back ? (
             <TertiaryButton className="drop-back" onClick={back.onBack}>
               <ArrowLeft aria-hidden="true" /> {back.label}

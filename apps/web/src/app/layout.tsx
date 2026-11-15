@@ -12,6 +12,7 @@ import "./styles.css";
 import "./kiosk.css";
 import "./admin.css";
 import "./drop.css";
+import "./bulk.css";
 import "./workstation.css";
 import "./visitor.css";
 import "./multi-print.css";
