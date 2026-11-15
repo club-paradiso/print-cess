@@ -96,7 +96,7 @@ describe("bulk engine benchmark", () => {
       const totalBytes = sizes.reduce((sum, size) => sum + size, 0);
       const files = sizes.map((size, index) =>
         syntheticSource(
-          (NAMES[index % NAMES.length] ?? "%").replace("%", String(index % 997)),
+          (NAMES[index % NAMES.length] ?? "%").replaceAll("%", String(index % 997)),
           size,
           index + 1,
         ),
