@@ -313,7 +313,7 @@ export class BulkSender {
   }
 
   async #pump(channel: BulkChannel, frameBytes: number, highWater: number, signal: AbortSignal) {
-    const { manifest, keys } = this.#options;
+    const { manifest } = this.#options;
     while (!signal.aborted && !this.#cancelled) {
       if (!this.#current) {
         const want = this.#wants.shift();
@@ -347,31 +347,14 @@ export class BulkSender {
       }
 
       const block = current.next;
-      const length = bulkBlockPlaintextBytes(entry.size, block);
-      let plaintext: Uint8Array;
-      try {
-        const start = block * BULK_BLOCK_BYTES;
-        plaintext = new Uint8Array(await source.slice(start, start + length).arrayBuffer());
-      } catch {
-        plaintext = new Uint8Array(0);
-        if (length > 0) {
-          this.#markUnreadable(current.file);
-          continue;
-        }
-      }
-      if (plaintext.byteLength !== length) {
+      const sealed = await this.#sealedBlock(current.file, block);
+      if (sealed === "unreadable") {
         // The file changed or vanished under us (a photo library revoking access).
         this.#markUnreadable(current.file);
         continue;
       }
-      const fileKey = await this.#fileKey(keys, current.file);
-      const sealed = await sealBulkBlock(
-        fileKey,
-        keys,
-        { file: current.file, block, blockCount },
-        plaintext,
-      );
-      plaintext.fill(0);
+      // Read and seal the next block while this one is on the wire.
+      if (block + 1 < blockCount) void this.#sealedBlock(current.file, block + 1, true);
       // The file may have been rewound while sealing; only send what is still wanted.
       if (this.#current !== current || current.next !== block) continue;
 
@@ -394,6 +377,49 @@ export class BulkSender {
       this.#outstanding.set(`${current.file}:${block}`, Date.now());
       current.next = block + 1;
     }
+  }
+
+  #prefetch: { file: number; block: number; result: Promise<Uint8Array | "unreadable"> } | null =
+    null;
+
+  /**
+   * One block, read from the source and sealed. With `prefetch`, the result is
+   * kept for the next call, so reading the next block from disk and sealing it
+   * overlaps with sending this one. At most one extra block is held.
+   */
+  #sealedBlock(file: number, block: number, prefetch = false): Promise<Uint8Array | "unreadable"> {
+    const cached = this.#prefetch;
+    if (cached && cached.file === file && cached.block === block) {
+      if (!prefetch) this.#prefetch = null;
+      return cached.result;
+    }
+    const result = this.#readAndSeal(file, block);
+    if (prefetch) this.#prefetch = { file, block, result };
+    return result;
+  }
+
+  async #readAndSeal(file: number, block: number): Promise<Uint8Array | "unreadable"> {
+    const { manifest, keys } = this.#options;
+    const entry = manifest[file];
+    const source = this.#options.files[file];
+    if (!entry || !source) return "unreadable";
+    const blockCount = bulkBlockCount(entry.size);
+    const length = bulkBlockPlaintextBytes(entry.size, block);
+    let plaintext: Uint8Array;
+    try {
+      const start = block * BULK_BLOCK_BYTES;
+      plaintext =
+        length === 0
+          ? new Uint8Array(0)
+          : new Uint8Array(await source.slice(start, start + length).arrayBuffer());
+    } catch {
+      return "unreadable";
+    }
+    if (plaintext.byteLength !== length) return "unreadable";
+    const fileKey = await this.#fileKey(keys, file);
+    const sealed = await sealBulkBlock(fileKey, keys, { file, block, blockCount }, plaintext);
+    plaintext.fill(0);
+    return sealed;
   }
 
   #markUnreadable(file: number): void {

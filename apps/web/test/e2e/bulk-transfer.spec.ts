@@ -175,6 +175,54 @@ test.describe("bulk transfer", () => {
     }
   });
 
+  test("recovers from a lost connection and finishes without starting over", async ({
+    browser,
+  }) => {
+    test.setTimeout(240_000);
+    const sender = await browser.newContext();
+    const receiver = await browser.newContext();
+    await noPickers(receiver);
+    const files: Payload[] = Array.from({ length: 24 }, (_, index) => ({
+      name: `r${index}.mp4`,
+      mimeType: "video/mp4",
+      buffer: Buffer.alloc(1_800_000, index + 1),
+    }));
+    try {
+      const sending = await sender.newPage();
+      const code = await startSending(sending, files);
+      const receiving = await receiver.newPage();
+      await receiving.goto(`/bulk/receive#c=${code}`);
+      await receiving.getByTestId("bulk-save-batch").click();
+      await expect
+        .poll(
+          async () =>
+            Number(await receiving.getByTestId("bulk-progress").getAttribute("data-percent")),
+          {
+            timeout: 60_000,
+          },
+        )
+        .toBeGreaterThan(5);
+      // Drop the peer connection from the sending side mid-transfer.
+      await sending.evaluate(() =>
+        (window as unknown as { __printCessBulkDropLink: () => void }).__printCessBulkDropLink(),
+      );
+      await expect(receiving.locator('[data-link-state="disconnected"]')).toBeVisible({
+        timeout: 30_000,
+      });
+      await expect(receiving.locator('[data-link-state="direct"]')).toBeVisible({
+        timeout: 90_000,
+      });
+      await expect(receiving.getByTestId("bulk-receive-title")).toHaveText("모두 받았어요", {
+        timeout: 120_000,
+      });
+      await expect(receiving.getByTestId("bulk-counts")).toHaveText("브라우저에 보관 24");
+      await expect(sending.getByTestId("bulk-send-done")).toContainText("브라우저에 보관 24");
+    } finally {
+      await sender.close();
+      await receiver.close();
+    }
+  });
+
   test("never switches to cloud storage without explicit consent", async ({ page }) => {
     const cloudRequests: string[] = [];
     page.on("request", (request) => {

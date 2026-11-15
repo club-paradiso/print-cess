@@ -58,9 +58,26 @@ type Active = {
   blockCount: number;
   size: number;
   sink: BulkFileSink;
+  /** Next block to assemble and decrypt. */
   nextBlock: number;
+  /** Blocks whose write the destination has confirmed (and that were acknowledged). */
+  written: number;
   retries: number;
+  /** Ordered writes in flight; at most MAX_PENDING_WRITES at once. */
+  writeChain: Promise<void>;
+  pendingWrites: Promise<void>[];
+  writeFailed: boolean;
+  /** Set when the file is abandoned, so queued writes are skipped. */
+  dead: boolean;
 };
+
+/**
+ * Writes are pipelined: the next block is assembled and decrypted while the
+ * previous ones are still being written, in order. Acknowledgements still go
+ * out only after each write resolves, so backpressure is unchanged; the
+ * receiver simply stops serialising "decrypt, then wait for the disk".
+ */
+const MAX_PENDING_WRITES = 4;
 
 /**
  * Pulls files one at a time, decrypts and authenticates every block, writes it
@@ -228,7 +245,11 @@ export class BulkReceiver {
         this.#enqueue(async () => {
           if (this.#pauseReason() === "local") send({ t: "pause" });
           if (this.#active) {
-            send({ t: "want", file: this.#active.file, from: this.#active.nextBlock });
+            const active = this.#active;
+            await active.writeChain;
+            // Blocks decrypted but not written before the drop are asked for again.
+            active.nextBlock = active.written;
+            send({ t: "want", file: active.file, from: active.nextBlock });
           } else if (this.#finishedSent) {
             send({ t: "finished" });
           } else {
@@ -397,23 +418,47 @@ export class BulkReceiver {
       await this.#rerequest(active);
       return;
     }
-    try {
-      await active.sink.write(plaintext);
-    } catch {
+    if (active.writeFailed) {
       plaintext.fill(0);
-      await this.#failActive("storage");
-      await this.#advance();
+      await this.#onWriteFailure();
       return;
     }
-    plaintext.fill(0);
     const block = active.nextBlock;
     active.nextBlock += 1;
     active.retries = 0;
-    this.#doneBytes += bulkBlockPlaintextBytes(active.size, block);
-    this.#send?.({ t: "ack", file: active.file, block });
-    this.#emit();
+    const write = active.writeChain.then(async () => {
+      if (active.dead || active.writeFailed) {
+        plaintext.fill(0);
+        return;
+      }
+      try {
+        await active.sink.write(plaintext);
+      } catch {
+        active.writeFailed = true;
+        return;
+      } finally {
+        plaintext.fill(0);
+      }
+      if (active.dead) return;
+      active.written = block + 1;
+      this.#doneBytes += bulkBlockPlaintextBytes(active.size, block);
+      this.#send?.({ t: "ack", file: active.file, block });
+      this.#emit();
+    });
+    active.writeChain = write;
+    active.pendingWrites.push(write);
+    if (active.pendingWrites.length >= MAX_PENDING_WRITES) {
+      await active.pendingWrites.shift();
+    }
 
     if (active.nextBlock === active.blockCount) {
+      await active.writeChain;
+      active.pendingWrites = [];
+      if (active.writeFailed || this.#active !== active) {
+        if (this.#active === active) await this.#onWriteFailure();
+        else await this.#advance();
+        return;
+      }
       await this.#completeActive();
       await this.#advance();
     }
@@ -431,6 +476,26 @@ export class BulkReceiver {
     this.#send?.({ t: "want", file: active.file, from: active.nextBlock });
   }
 
+  /**
+   * A destination write failed. If emptying the batch would make room, the
+   * file goes back to the front of the queue and the transfer pauses for the
+   * visitor; otherwise the file fails with reason "storage".
+   */
+  async #onWriteFailure(): Promise<void> {
+    const active = this.#active;
+    if (!active) return;
+    if (this.#target?.handleWriteFailure?.()) {
+      await this.#abortActive();
+      this.#queue.unshift(active.file);
+      this.#storageFull = true;
+      this.#emit(true);
+      this.#options.onStorageFull?.();
+      return;
+    }
+    await this.#failActive("storage");
+    await this.#advance();
+  }
+
   async #completeActive(): Promise<void> {
     const active = this.#active;
     if (!active) return;
@@ -438,7 +503,7 @@ export class BulkReceiver {
     try {
       outcome = await active.sink.finish();
     } catch {
-      await this.#failActive("storage");
+      await this.#onWriteFailure();
       return;
     }
     this.#active = null;
@@ -451,8 +516,10 @@ export class BulkReceiver {
     const active = this.#active;
     if (!active) return;
     this.#active = null;
+    active.dead = true;
+    await active.writeChain;
     await active.sink.abort().catch(() => undefined);
-    for (let block = 0; block < active.nextBlock; block += 1) {
+    for (let block = 0; block < active.written; block += 1) {
       this.#doneBytes -= bulkBlockPlaintextBytes(active.size, block);
     }
     this.#markFailed(active.file, reason);
@@ -469,8 +536,10 @@ export class BulkReceiver {
     const active = this.#active;
     if (!active) return;
     this.#active = null;
+    active.dead = true;
+    await active.writeChain;
     await active.sink.abort().catch(() => undefined);
-    for (let block = 0; block < active.nextBlock; block += 1) {
+    for (let block = 0; block < active.written; block += 1) {
       this.#doneBytes -= bulkBlockPlaintextBytes(active.size, block);
     }
     this.#states[active.file] = FILE_STATE.pending;
@@ -513,7 +582,12 @@ export class BulkReceiver {
         size: entry.size,
         sink,
         nextBlock: 0,
+        written: 0,
         retries: 0,
+        writeChain: Promise.resolve(),
+        pendingWrites: [],
+        writeFailed: false,
+        dead: false,
       };
       this.#states[file] = FILE_STATE.active;
       this.#send?.({ t: "want", file, from: 0 });

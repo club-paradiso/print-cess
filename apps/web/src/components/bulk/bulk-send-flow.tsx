@@ -150,6 +150,7 @@ export function BulkSendFlow({ initialLocale }: { initialLocale?: SupportedLocal
     const created = await BulkSendSession.create({
       files,
       manifest,
+      ...devFrameBytes(),
       iceServers: capabilities?.iceServers ?? [],
       onLinkState: setLinkState,
       onFailure: setFailure,
@@ -468,4 +469,17 @@ function failureText(failure: SessionFailure | null, copy: ReturnType<typeof bul
     default:
       return copy.errorRetries;
   }
+}
+
+/**
+ * Outside Production only: `?frame=<bytes>` overrides the data-channel message
+ * size so the browser benchmark can compare frame sizes. Production always
+ * uses the protocol default (16 KiB, or the negotiated maximum if smaller).
+ */
+function devFrameBytes(): { frameBytes?: number } {
+  if (process.env.NODE_ENV === "production") return {};
+  const value = Number(new URLSearchParams(window.location.search).get("frame"));
+  return Number.isInteger(value) && value >= 1024 && value <= 256 * 1024
+    ? { frameBytes: value }
+    : {};
 }

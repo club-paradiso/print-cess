@@ -19,4 +19,11 @@ export interface BulkSaveTarget {
   /** Synchronous capacity check for the next file, against the target's current budget. */
   reserve(file: { size: number }): ReserveResult;
   open(file: { name: string; type: string; size: number }, index: number): Promise<BulkFileSink>;
+  /**
+   * A write failed (typically the browser's real quota was smaller than its
+   * estimate). Returns true when emptying the current batch would make room,
+   * in which case the file is retried after the visitor saves the batch
+   * instead of being reported as failed.
+   */
+  handleWriteFailure?(): boolean;
 }

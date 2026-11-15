@@ -136,6 +136,10 @@ Set each value at the appropriate Vercel environment scope. Never commit real va
 | `QSTASH_TOKEN`                                           | Preview sender token, at least 20 characters                   | Separate sender token, at least 20 characters          |
 | `QSTASH_CURRENT_SIGNING_KEY` / `QSTASH_NEXT_SIGNING_KEY` | Preview receiver keys, each at least 20 characters             | Separate receiver keys, each at least 20 characters    |
 | `CLEANUP_WORKER_SECRET`                                  | Shared only with the Preview Railway worker, at least 32 chars | Separate Production worker secret                      |
+| `PRINT_CESS_BULK_STUN_URLS`                              | Optional; default public STUN, `none` disables                 | Optional; approved STUN server(s) or default           |
+| `PRINT_CESS_BULK_TURN_*` (URLS, USERNAME, CREDENTIAL)    | Unset (no relay)                                               | Unset unless a relay is approved; all three together   |
+| `PRINT_CESS_BULK_HOURLY_ROOMS`                           | Optional; default `30`                                         | Optional; default `30`                                 |
+| `PRINT_CESS_BULK_CLOUD_FALLBACK`                         | Optional; `false` hides the consented v1 fallback              | Optional                                               |
 
 If Vercel Deployment Protection guards the Preview URL, configure a Protection
 Bypass for Automation secret and set the same value only as

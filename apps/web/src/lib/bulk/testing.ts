@@ -99,7 +99,12 @@ export function createChannelPair(options: PairOptions = {}): {
   const schedule = () => {
     if (scheduled) return;
     scheduled = true;
-    setTimeout(pump, 0);
+    // setImmediate where it exists: nested setTimeout(0) is clamped to 1 ms,
+    // which would throttle the simulated link rather than the engine.
+    const immediate = (globalThis as { setImmediate?: (callback: () => void) => unknown })
+      .setImmediate;
+    if (immediate) immediate(pump);
+    else setTimeout(pump, 0);
   };
   const pump = () => {
     scheduled = false;
@@ -137,14 +142,38 @@ export function createChannelPair(options: PairOptions = {}): {
   return { a, b, close: pair.close, stats };
 }
 
-/** The byte a synthetic file holds at an offset. Cheap, deterministic, and not periodic per block. */
+/**
+ * Synthetic content: a fixed pseudo-random table read at a seed-dependent
+ * rotation. Generating and checking bytes is then a native copy or compare,
+ * so benchmarks measure the engine rather than a byte loop. The table length
+ * is prime, so content does not repeat at block or chunk boundaries, and each
+ * seed reads a different rotation, so two files mixed up are detected.
+ */
+const TABLE_LENGTH = 1_048_573;
+const TABLE = (() => {
+  const table = new Uint8Array(TABLE_LENGTH * 2);
+  let state = 0x2545f491;
+  for (let index = 0; index < TABLE_LENGTH; index += 1) {
+    state ^= state << 13;
+    state ^= state >>> 17;
+    state ^= state << 5;
+    table[index] = state & 0xff;
+  }
+  table.copyWithin(TABLE_LENGTH, 0, TABLE_LENGTH);
+  return table;
+})();
+
 export function syntheticByte(seed: number, offset: number): number {
-  return (offset * 31 + seed * 7 + (offset >>> 9) * 13) & 0xff;
+  return TABLE[(offset + seed * 7919) % TABLE_LENGTH] ?? 0;
 }
 
 export function fillSynthetic(seed: number, offset: number, out: Uint8Array): void {
-  for (let index = 0; index < out.byteLength; index += 1) {
-    out[index] = syntheticByte(seed, offset + index);
+  let written = 0;
+  while (written < out.byteLength) {
+    const start = (offset + written + seed * 7919) % TABLE_LENGTH;
+    const take = Math.min(out.byteLength - written, TABLE_LENGTH);
+    out.set(TABLE.subarray(start, start + take), written);
+    written += take;
   }
 }
 
@@ -185,6 +214,14 @@ export class VerifyingTarget implements BulkSaveTarget {
   public outcome: BulkFileOutcome = "saved";
   /** Fail the next write of this file once, to imitate a storage error. */
   public failWriteFor: number | null = null;
+  /** Writes fail once this many bytes are held, imitating a real quota below the estimate. */
+  public hardQuotaBytes = Infinity;
+  /** Whether emptying the batch would help (a batch target with items). */
+  public canFreeOnFailure = false;
+
+  public handleWriteFailure(): boolean {
+    return this.canFreeOnFailure && this.usedBytes > 0;
+  }
 
   public constructor(private readonly seeds: (index: number) => number) {}
 
@@ -205,15 +242,13 @@ export class VerifyingTarget implements BulkSaveTarget {
           this.failWriteFor = null;
           throw new Error("disk full");
         }
+        if (this.usedBytes + chunk.byteLength > this.hardQuotaBytes) {
+          throw new DOMException("quota", "QuotaExceededError");
+        }
         if (this.writeDelayMs > 0) await new Promise((r) => setTimeout(r, this.writeDelayMs));
         const view = expected.subarray(0, chunk.byteLength);
         fillSynthetic(seed, offset, view);
-        for (let i = 0; i < chunk.byteLength; i += 1) {
-          if (chunk[i] !== view[i]) {
-            this.mismatches.push(index);
-            break;
-          }
-        }
+        if (!sameBytes(chunk, view)) this.mismatches.push(index);
         offset += chunk.byteLength;
         this.usedBytes += chunk.byteLength;
       },
@@ -231,4 +266,21 @@ export class VerifyingTarget implements BulkSaveTarget {
       },
     };
   }
+}
+
+function sameBytes(left: Uint8Array, right: Uint8Array): boolean {
+  if (left.byteLength !== right.byteLength) return false;
+  const words = left.byteLength >>> 2;
+  if (left.byteOffset % 4 === 0 && right.byteOffset % 4 === 0) {
+    const a = new Uint32Array(left.buffer, left.byteOffset, words);
+    const b = new Uint32Array(right.buffer, right.byteOffset, words);
+    for (let index = 0; index < words; index += 1) if (a[index] !== b[index]) return false;
+    for (let index = words * 4; index < left.byteLength; index += 1) {
+      if (left[index] !== right[index]) return false;
+    }
+    return true;
+  }
+  for (let index = 0; index < left.byteLength; index += 1)
+    if (left[index] !== right[index]) return false;
+  return true;
 }

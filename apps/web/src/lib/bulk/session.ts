@@ -9,7 +9,7 @@ import { BULK_MAX_GENERATIONS, type BulkIceServer } from "@print-cess/protocol";
 
 import { BulkReceiver, type ReceiverOptions } from "./receiver";
 import { BulkSender, type SenderOptions } from "./sender";
-import { deleteBulkRoom } from "./signal-client";
+import { deleteBulkRoom, pollBulkAnswer } from "./signal-client";
 import {
   BulkConnectError,
   connectAsReceiver,
@@ -27,6 +27,20 @@ export type LinkState =
   "preparing" | "waiting" | "connecting" | "direct" | "relay" | "disconnected" | "failed";
 
 export type SessionFailure = "expired" | "taken" | "unsupported" | "notFound" | "tooManyRetries";
+
+/**
+ * Outside Production builds only, end-to-end tests can drop the live channel
+ * to exercise reconnection, exactly as the send screen exposes its transfer
+ * code to tests outside Production.
+ */
+function exposeTestSeam(link: PeerLink): void {
+  if (process.env.NODE_ENV === "production" || typeof window === "undefined") return;
+  (window as unknown as { __printCessBulkDropLink?: () => void }).__printCessBulkDropLink = () =>
+    link.pc.close();
+}
+
+/** Well inside the room's 30-minute sliding expiry. */
+const KEEP_ALIVE_MS = 5 * 60_000;
 
 /**
  * Waits for the send buffer to empty. A cancel message is queued behind any
@@ -98,8 +112,16 @@ export class BulkSendSession {
         });
         this.#link = link;
         failures = 0;
+        exposeTestSeam(link);
         this.options.onLinkState(await link.route());
-        const outcome = await this.engine.attach(link.channel, link.handshake);
+        // A long transfer must still be able to reconnect: keep the room alive
+        // (a cheap owner read that slides its expiry) while the channel is up.
+        const keepAlive = setInterval(() => {
+          void pollBulkAnswer(keys.roomId, this.#ownerToken, signal).catch(() => undefined);
+        }, KEEP_ALIVE_MS);
+        const outcome = await this.engine
+          .attach(link.channel, link.handshake)
+          .finally(() => clearInterval(keepAlive));
         if (outcome === "cancelled") await drained(link);
         link.close();
         this.#link = null;
@@ -167,6 +189,10 @@ export class BulkReceiveSession {
     },
   ) {
     this.engine = new BulkReceiver({ ...options, keys });
+    if (process.env.NODE_ENV !== "production" && typeof window !== "undefined") {
+      (window as unknown as { __printCessBulkReceiver?: BulkReceiver }).__printCessBulkReceiver =
+        this.engine;
+    }
   }
 
   public async run(): Promise<void> {

@@ -363,6 +363,35 @@ describe("transfer engine", () => {
     pair.close();
   });
 
+  it("treats a quota error mid-batch as a full batch, not a failed file", async () => {
+    const files = corpus([BULK_BLOCK_BYTES, BULK_BLOCK_BYTES, BULK_BLOCK_BYTES, BULK_BLOCK_BYTES]);
+    const target = new VerifyingTarget((index) => index + 1);
+    target.outcome = "stored";
+    // The browser claimed plenty of room but only 2.5 blocks fit.
+    target.hardQuotaBytes = 2.5 * BULK_BLOCK_BYTES;
+    target.canFreeOnFailure = true;
+    let fullEvents = 0;
+    const receiver = new BulkReceiver({
+      keys,
+      onManifest: () => receiver.start(target),
+      onStorageFull: () => {
+        fullEvents += 1;
+        setTimeout(() => {
+          target.usedBytes = 0;
+          receiver.storageFreed();
+        }, 10);
+      },
+    });
+    const sender = new BulkSender({ keys, files, manifest: manifestOf(files) });
+    const { pair } = await connect(sender, receiver);
+    await untilFinished(receiver);
+    expect(fullEvents).toBeGreaterThanOrEqual(1);
+    expect(receiver.snapshot().counts.stored).toBe(4);
+    expect(receiver.snapshot().counts.failed).toBe(0);
+    expect(target.mismatches).toEqual([]);
+    pair.close();
+  });
+
   it("fails a file the destination cannot hold, and a storage write error, then retries", async () => {
     const files = corpus([BULK_BLOCK_BYTES, 5 * BULK_BLOCK_BYTES, BULK_BLOCK_BYTES]);
     const target = new VerifyingTarget((index) => index + 1);

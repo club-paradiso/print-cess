@@ -218,6 +218,13 @@ export class BatchTarget implements BulkSaveTarget {
 
   readonly #names = new Map<number, string>();
 
+  public handleWriteFailure(): boolean {
+    if (this.items.length === 0) return false;
+    // The estimate was optimistic: treat what is held now as the real budget.
+    this.#budget = Math.max(1, this.#used);
+    return true;
+  }
+
   /** Deletes the batch from browser storage once the visitor has saved it. */
   public async clear(): Promise<void> {
     if (this.#directory) {
