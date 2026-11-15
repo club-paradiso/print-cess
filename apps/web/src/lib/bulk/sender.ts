@@ -278,6 +278,16 @@ export class BulkSender {
       case "done":
         if (message.file < this.#states.length) {
           this.#states[message.file] = outcomeCode(message.outcome);
+          if (message.outcome !== "failed") {
+            // A file the receiver finished counts in full, even if some of its
+            // acknowledgements were lost with a dropped connection.
+            const size = this.#options.manifest[message.file]?.size ?? 0;
+            const blockCount = bulkBlockCount(size);
+            for (let block = this.#ackedBlocks[message.file] ?? 0; block < blockCount; block += 1) {
+              this.#doneBytes += bulkBlockPlaintextBytes(size, block);
+            }
+            this.#ackedBlocks[message.file] = blockCount;
+          }
           if (message.outcome === "failed") {
             // A failed file can be retried; its acknowledged bytes no longer count.
             const size = this.#options.manifest[message.file]?.size ?? 0;

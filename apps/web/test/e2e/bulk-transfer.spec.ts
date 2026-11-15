@@ -151,14 +151,26 @@ test.describe("bulk transfer", () => {
     const sender = await browser.newContext();
     const receiver = await browser.newContext();
     await noPickers(receiver);
-    const files: Payload[] = Array.from({ length: 30 }, (_, index) => ({
-      name: `v${index}.mp4`,
-      mimeType: "video/mp4",
-      buffer: Buffer.alloc(1_500_000, index),
-    }));
+    // Large enough that the transfer cannot finish before the cancel tap.
+    // Playwright caps one input call at 50 MB, so the selection is built in
+    // three calls, exactly as a visitor adding more files would.
+    const batch = (offset: number): Payload[] =>
+      Array.from({ length: 30 }, (_, index) => ({
+        name: `v${offset + index}.mp4`,
+        mimeType: "video/mp4",
+        buffer: Buffer.alloc(1_500_000, offset + index),
+      }));
     try {
       const sending = await sender.newPage();
-      const code = await startSending(sending, files);
+      await sending.goto("/bulk/send");
+      for (const offset of [0, 30, 60]) {
+        await sending.setInputFiles('[data-testid="bulk-file-input"]', batch(offset));
+      }
+      await expect(sending.getByTestId("bulk-selection-summary")).toContainText("90개");
+      await sending.getByTestId("bulk-start").click();
+      const share = sending.locator("[data-transfer-code]");
+      await expect(share).toHaveAttribute("data-transfer-code", /^[0-9A-HJKMNP-TV-Z]{12}$/u);
+      const code = (await share.getAttribute("data-transfer-code"))!;
       const receiving = await receiver.newPage();
       await receiving.goto(`/bulk/receive#c=${code}`);
       await receiving.getByTestId("bulk-save-batch").click();

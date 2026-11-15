@@ -291,9 +291,39 @@ describe("transfer engine", () => {
     expect(target.mismatches).toEqual([]);
     expect(target.opened).toBe(2); // the interrupted file's sink was kept, not reopened
     expect(receiver.snapshot().doneBytes).toBe(12 * BULK_BLOCK_BYTES);
+    await new Promise((r) => setTimeout(r, 20));
+    // The sender's account matches the receiver's after the reconnect.
+    expect(sender.snapshot().counts.saved).toBe(2);
+    expect(sender.snapshot().doneBytes).toBe(12 * BULK_BLOCK_BYTES);
     // The second connection carried roughly what was missing, not everything again.
     const missing = 12 * BULK_BLOCK_BYTES - writtenBefore;
     expect(bytesOnSecond).toBeLessThan(missing + 6 * BULK_BLOCK_BYTES);
+    second.pair.close();
+  });
+
+  it("re-reports outcomes lost with a dropped connection", async () => {
+    const files = corpus([BULK_BLOCK_BYTES, BULK_BLOCK_BYTES, 6 * BULK_BLOCK_BYTES]);
+    const target = new VerifyingTarget((index) => index + 1);
+    const sender = new BulkSender({ keys, files, manifest: manifestOf(files) });
+    const receiver = new BulkReceiver({ keys, onManifest: () => receiver.start(target) });
+    // Swallow every "done" on the first connection, as if each was lost in flight.
+    const first = await connect(sender, receiver, {
+      tamper: (data) =>
+        typeof data === "string" && data.includes('"t":"done"') ? '{"t":"resume"}' : data,
+    });
+    await new Promise<void>((resolve) => {
+      const tick = () =>
+        receiver.fileState(1) === FILE_STATE.saved ? resolve() : setTimeout(tick, 1);
+      tick();
+    });
+    first.pair.close();
+    await first.sending;
+    expect(sender.fileState(0)).not.toBe(FILE_STATE.saved);
+    const second = await connect(sender, receiver, {}, 2);
+    await untilFinished(receiver);
+    await new Promise((r) => setTimeout(r, 20));
+    expect(sender.snapshot().counts.saved).toBe(3);
+    expect(sender.snapshot().doneBytes).toBe(8 * BULK_BLOCK_BYTES);
     second.pair.close();
   });
 

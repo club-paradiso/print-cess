@@ -26,6 +26,7 @@ import { safeMediaType, uniqueSafeNames } from "./names";
 import type { BulkFileSink, BulkSaveTarget } from "./save-target";
 import {
   FILE_STATE,
+  FILE_STATE_NAMES,
   countStates,
   outcomeCode,
   type PauseReason,
@@ -244,6 +245,13 @@ export class BulkReceiver {
       if (this.#manifest && this.#target) {
         this.#enqueue(async () => {
           if (this.#pauseReason() === "local") send({ t: "pause" });
+          // An outcome sent just before the drop may never have arrived. Report
+          // every finished file again; the sender treats repeats as no-ops.
+          this.#states.forEach((state, file) => {
+            if (state >= FILE_STATE.saved) {
+              send({ t: "done", file, outcome: FILE_STATE_NAMES[state] as BulkFileOutcome });
+            }
+          });
           if (this.#active) {
             const active = this.#active;
             await active.writeChain;
