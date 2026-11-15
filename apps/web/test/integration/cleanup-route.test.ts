@@ -12,6 +12,7 @@ vi.mock("@/server/runtime", () => runtimeMock);
 vi.mock("@/server/cleanup/qstash", () => qstashMock);
 
 const pairingPrune = vi.fn().mockResolvedValue(undefined);
+const bulkRoomPrune = vi.fn().mockResolvedValue(undefined);
 
 import { POST } from "@/app/api/cleanup/route";
 
@@ -46,6 +47,7 @@ beforeEach(() => {
     config,
     sessions: { get: vi.fn().mockResolvedValue(null) },
     pairings: { pruneExpired: pairingPrune },
+    bulkRooms: { pruneExpired: bulkRoomPrune },
   });
   runtimeMock.sweepDueOrphans.mockResolvedValue({
     attempted: 0,
@@ -71,6 +73,7 @@ describe("cleanup route worker authorization", () => {
     expect(response.status).toBe(200);
     expect(runtimeMock.sweepDueOrphans).toHaveBeenCalledOnce();
     expect(pairingPrune).toHaveBeenCalledOnce();
+    expect(bulkRoomPrune).toHaveBeenCalledOnce();
   });
 
   it("rejects an incorrect worker secret", async () => {

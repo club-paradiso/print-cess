@@ -1,4 +1,5 @@
 import type {
+  BulkRoomRecord,
   DropRecord,
   PairingRecord,
   PrintSession,
@@ -137,6 +138,25 @@ export interface PairingStore {
   recordMiss(now: number): Promise<void>;
   /** Wrong guesses, across every caller, in the current window. */
   recentMisses(now: number): Promise<number>;
+}
+
+/**
+ * The signalling mailbox for a direct bulk transfer: one small record per room,
+ * holding two encrypted connection descriptions and a counter. File bytes,
+ * file names, and per-file progress never pass through it.
+ */
+export interface BulkRoomStore {
+  create(room: BulkRoomRecord): Promise<void>;
+  /** Returns null for an unknown or expired room. */
+  get(roomId: string, now: number): Promise<BulkRoomRecord | null>;
+  /** Atomic read-modify-write; throws 404 for an unknown or expired room. */
+  mutate(
+    roomId: string,
+    now: number,
+    mutation: (room: BulkRoomRecord) => BulkRoomRecord,
+  ): Promise<BulkRoomRecord>;
+  remove(roomId: string): Promise<void>;
+  pruneExpired(now: number): Promise<void>;
 }
 
 export type SignedBlobOperation = {

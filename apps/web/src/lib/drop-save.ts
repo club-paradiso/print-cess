@@ -460,7 +460,7 @@ function fileOptions(type: string): FilePropertyBag {
  * those types are handed over as opaque bytes; the file name keeps its
  * extension either way.
  */
-function downloadOptions(type: string): FilePropertyBag {
+export function downloadOptions(type: string): FilePropertyBag {
   const options = fileOptions(type);
   return options.type && ACTIVE_CONTENT_TYPE.test(options.type)
     ? { type: "application/octet-stream" }

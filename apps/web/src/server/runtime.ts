@@ -15,8 +15,12 @@ import { InProcessCleanupScheduler } from "./cleanup/in-process";
 import { PersistentSweepCleanupScheduler } from "./cleanup/persistent-sweep";
 import { QStashCleanupScheduler } from "./cleanup/qstash";
 import { loadConfig, type ServerConfig } from "./config";
+import { MemoryBulkRoomStore } from "./bulk-room-store/memory";
+import { RailwayPostgresBulkRoomStore } from "./bulk-room-store/postgres";
+import { RedisBulkRoomStore } from "./bulk-room-store/redis";
 import type {
   BlobTransport,
+  BulkRoomStore,
   CleanupScheduler,
   DropStore,
   PairingStore,
@@ -48,6 +52,7 @@ export type ServerRuntime = {
   sessions: SessionStore;
   drops: DropStore;
   pairings: PairingStore;
+  bulkRooms: BulkRoomStore;
   blobs: BlobTransport;
   cleanup: CleanupScheduler;
 };
@@ -79,22 +84,29 @@ export function getRuntime(): ServerRuntime {
         : config.sessionProvider === "railway-postgres"
           ? new RailwayPostgresPairingStore()
           : new RedisPairingStore(new UpstashScriptClient());
+    const bulkRooms: BulkRoomStore =
+      config.sessionProvider === "railway-redis"
+        ? new RedisBulkRoomStore(createNodeRedisScriptClient())
+        : config.sessionProvider === "railway-postgres"
+          ? new RailwayPostgresBulkRoomStore()
+          : new RedisBulkRoomStore(new UpstashScriptClient());
     const blobs: BlobTransport =
       config.blobProvider === "railway-s3" ? new S3BlobTransport() : new VercelBlobTransport();
     const cleanup: CleanupScheduler =
       config.cleanupProvider === "railway-worker"
         ? new PersistentSweepCleanupScheduler()
         : new QStashCleanupScheduler(`${config.publicBaseUrl}/api/cleanup`);
-    runtime = { config, sessions, drops, pairings, blobs, cleanup };
+    runtime = { config, sessions, drops, pairings, bulkRooms, blobs, cleanup };
   } else {
     const sessions = new MemorySessionStore();
     const drops = new MemoryDropStore();
     const pairings = new MemoryPairingStore();
+    const bulkRooms = new MemoryBulkRoomStore();
     const blobs = new LocalEncryptedBlobTransport(config.publicBaseUrl);
     const cleanup = new InProcessCleanupScheduler(async (sessionId) => {
       await cleanupSession(runtime, sessionId);
     });
-    runtime = { config, sessions, drops, pairings, blobs, cleanup };
+    runtime = { config, sessions, drops, pairings, bulkRooms, blobs, cleanup };
   }
   globalThis.__printCessRuntime = runtime;
   return runtime;

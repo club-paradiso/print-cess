@@ -29,6 +29,17 @@ fix.
 - All success, failure, cancellation, expiry, and restart paths converge on cleanup.
 - An unknown print submission state counts as a failure and is never retried automatically.
 
+## Direct bulk transfers
+
+`/bulk/send` and `/bulk/receive` move files over a WebRTC data channel. The server stores only a
+short-lived room record: an identifier derived from the transfer code, a hash of the sender's owner
+token, a generation counter, and AES-GCM-sealed SDP. The DTLS fingerprints inside that SDP are
+authenticated by the code-derived key and confirmed by an HMAC handshake on the open channel; every
+content block is additionally AES-GCM sealed per file. The trade-offs against the v1 hand-off —
+both pages must stay open, each browser learns the other's network candidates, and a public STUN
+server sees each browser's public address unless `PRINT_CESS_BULK_STUN_URLS` is changed — are
+documented in `docs/BULK_TRANSFER.md`, section 5.
+
 ## Tokens and sessions
 
 - Generate session IDs with at least 128 bits of CSPRNG entropy and upload/kiosk tokens with 256

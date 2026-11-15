@@ -7,6 +7,12 @@ machinery and shares nothing with the print session state machine.
 
 Entry points are `/send` and `/receive`. No kiosk, printer, or QR from the big screen is involved.
 
+> **Bulk Transfer 2.0.** Hand-offs of up to 3,000 files go browser to browser over WebRTC instead
+> (`/bulk/send`, `/bulk/receive`), with the service acting only as an encrypted signalling mailbox.
+> That is a separate, versioned protocol (v2) and does not change anything in this document; this
+> v1 flow remains the store-and-forward path and the consented fallback when a direct connection
+> cannot be made. See `BULK_TRANSFER.md` and `adr/0003-bulk-direct-transfer.md`.
+
 ---
 
 ## Shape of a transfer

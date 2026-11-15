@@ -89,6 +89,20 @@ To stop one sender from filling the storage, each client address has an hourly a
 transfers and bytes, counted in the shared store. The store sees only a SHA-256 hash of the address
 salted with the hour, never the address itself, and the record expires within two hours.
 
+## Direct bulk transfers
+
+A bulk transfer (`/bulk/send`, `/bulk/receive`) does not store files, file names, sizes or counts
+on the service: they travel only between the two browsers. The signalling store holds one record
+per transfer — an identifier derived from the transfer code, a hash of the owner token, and two
+encrypted connection descriptions — for at most 30 minutes after the sender's last activity (never
+more than 12 hours), and room creation is counted against an hourly allowance keyed by a salted
+hash of the address. Two disclosures differ from the v1 hand-off: the two browsers learn each
+other's network candidates (WebRTC requires it; local addresses are obscured by mDNS in current
+browsers), and, by default, each browser asks a public STUN server (`stun.l.google.com`) for its
+public address. Operators can set `PRINT_CESS_BULK_STUN_URLS=none` or an approved STUN server.
+Files a receiver holds in browser storage are deleted when the visitor empties the batch, cancels,
+or next opens a bulk receive page. See `BULK_TRANSFER.md`.
+
 ## Deletion triggers and backstops
 
 Explicit cleanup runs after successful print, print failure, cancellation, QR/work expiry,

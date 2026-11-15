@@ -28,6 +28,9 @@ export default defineConfig({
       PUBLIC_BASE_URL: "http://127.0.0.1:3000",
       ALLOWED_ORIGINS: "http://127.0.0.1:3000",
       ADMIN_DIAGNOSTICS_SECRET: "print-cess-e2e-admin-only",
+      // Bulk-transfer tests connect two local browser contexts over host
+      // candidates; no public STUN server is contacted from CI.
+      PRINT_CESS_BULK_STUN_URLS: "none",
     },
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
