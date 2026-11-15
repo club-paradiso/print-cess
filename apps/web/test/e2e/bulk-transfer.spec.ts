@@ -102,10 +102,9 @@ test.describe("bulk transfer", () => {
       expect(received.get("IMG_0001.JPG")).toBe(sha(files[0]!.buffer));
       expect(received.get("IMG_0001 (2).JPG")).toBe(sha(files[1]!.buffer));
       expect(received.get("clip.mov")).toBe(sha(files[4]!.buffer));
-      // Headless Chromium in CI reports every non-ASCII blob download as
-      // "download" (reproduced with a bare anchor, independent of this code),
-      // so the Korean file is matched by content and its name is checked on
-      // screen instead.
+      // CI runs with a UTF-8 locale; without one, Chromium names every
+      // non-ASCII download "download" regardless of this code.
+      expect(received.get("보고서 최종.hwpx")).toBe(sha(files[2]!.buffer));
       expect(digests.has(sha(files[2]!.buffer))).toBe(true);
       await expect(receiving.getByText("보고서 최종.hwpx")).toBeVisible();
       await expect(receiving.getByTestId("bulk-handed-over")).toBeVisible();

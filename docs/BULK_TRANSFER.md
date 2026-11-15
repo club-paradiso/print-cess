@@ -213,9 +213,10 @@ share sheet put a file in Photos.
 | Screen wake lock               | Requested when available                                      | Requested when available; not yet tested                          | Requested when available  |
 | Small-screen layout            | Tested at Pixel 7 viewport                                    | WebKit not installed in CI container — not yet tested             | Tested (Pixel 7 viewport) |
 
-Observed in this environment: headless Chromium reports every non-ASCII blob download name as
-`download` (reproduced with a bare anchor, independent of this feature). Korean names are displayed
-correctly on screen and file contents verify; real-browser naming must be checked on devices.
+Korean download names: Chromium sanitizes every non-ASCII download name to `download` when the
+process runs without a UTF-8 locale. CI sets `LANG=C.UTF-8` (see `.github/workflows/ci.yml`), and
+the E2E asserts the Korean name and its SHA-256 digest under that locale. Real-device naming is on
+the checklist.
 
 ---
 
