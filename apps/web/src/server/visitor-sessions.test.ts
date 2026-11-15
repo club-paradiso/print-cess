@@ -9,7 +9,13 @@ import {
 } from "@print-cess/crypto";
 import { PROTOCOL_VERSION, type PrintSession } from "@print-cess/protocol";
 
-import type { BlobTransport, CleanupScheduler, DropStore, PairingStore } from "./contracts";
+import type {
+  BlobTransport,
+  CleanupScheduler,
+  DropStore,
+  PairingStore,
+  BulkRoomStore,
+} from "./contracts";
 import { loadConfig } from "./config";
 import {
   cleanupSession,
@@ -58,6 +64,7 @@ function stubRuntime(
     sessions,
     drops: unsupportedStore as unknown as DropStore,
     pairings: unsupportedStore as unknown as PairingStore,
+    bulkRooms: unsupportedStore as unknown as BulkRoomStore,
     blobs: stubBlobs(onDelete),
     cleanup,
   };
