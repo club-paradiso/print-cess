@@ -314,6 +314,53 @@ test("consumes the pairing after two wrong shapes", async ({ browser }) => {
   }
 });
 
+test("@viewport four pairing slots and the keypad fit a 320px WebKit phone", async ({
+  page,
+}) => {
+  // Explicitly exercise the minimum width even when the device profile is
+  // larger. The interactive keypad should not need a hardware keyboard.
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto("/receive");
+  await waitForReceiveHydration(page);
+
+  const slots = page.locator(".pairing-entry--slots .pairing-slot");
+  await expect(slots).toHaveCount(4);
+  const layout = await page.evaluate(() => {
+    const row = document.querySelector(".pairing-entry--slots");
+    const keypad = document.querySelector(".pairing-keypad");
+    if (!row || !keypad) throw new Error("Pairing controls missing");
+    const rowRect = row.getBoundingClientRect();
+    const keypadRect = keypad.getBoundingClientRect();
+    return {
+      viewportWidth: document.documentElement.clientWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+      rowLeft: rowRect.left,
+      rowRight: rowRect.right,
+      keypadLeft: keypadRect.left,
+      keypadRight: keypadRect.right,
+    };
+  });
+  expect(layout.scrollWidth).toBeLessThanOrEqual(layout.viewportWidth + 1);
+  expect(layout.rowLeft).toBeGreaterThanOrEqual(0);
+  expect(layout.rowRight).toBeLessThanOrEqual(layout.viewportWidth + 1);
+  expect(layout.keypadLeft).toBeGreaterThanOrEqual(0);
+  expect(layout.keypadRight).toBeLessThanOrEqual(layout.viewportWidth + 1);
+
+  for (const digit of "123") {
+    await page.getByTestId(`pairing-key-${digit}`).click();
+  }
+  await expect(slots.filter({ hasText: /^[1-3]$/u })).toHaveCount(3);
+  await page.getByTestId("pairing-key-back").click();
+  await expect(slots.filter({ hasText: /^[1-2]$/u })).toHaveCount(2);
+  await page.getByTestId("pairing-key-4").click();
+  await page.getByTestId("pairing-key-5").click();
+  await expect(page.getByTestId("pairing-entry")).toHaveText("1245");
+  await expect(page.getByTestId("pairing-shape-circle")).toBeVisible();
+  await page.locator(".pairing-back").click();
+  await expect(slots.filter({ hasText: /^[0-9]$/u })).toHaveCount(0);
+  await expect(page.getByTestId("pairing-key-1")).toBeEnabled();
+});
+
 test("says so plainly when four digits match nothing", async ({ page }) => {
   await page.goto("/receive");
   await waitForReceiveHydration(page);
