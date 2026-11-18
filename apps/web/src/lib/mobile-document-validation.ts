@@ -37,7 +37,7 @@ async function normalizePdfForKiosk(bytes: Uint8Array): Promise<ValidatedMobileF
 
 function hasPdfHeaderWithinPreamble(bytes: Uint8Array): boolean {
   const prefix = new TextDecoder("ascii").decode(bytes.subarray(0, 1024));
-  return /%PDF-[12]\\.[0-9]/u.test(prefix);
+  return /%PDF-[12]\.[0-9]/u.test(prefix);
 }
 
 export async function validateMobileDocument(
@@ -69,7 +69,7 @@ export async function validateMobileDocument(
       if (
         error.code === "unsupportedType" &&
         file.type !== "application/pdf" &&
-        !/\\.pdf$/iu.test(file.name)
+        !/\.pdf$/iu.test(file.name)
       ) {
         throw error;
       }
