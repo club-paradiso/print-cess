@@ -140,7 +140,8 @@ export async function validateFileForMobile(
     } catch (error) {
       if (!(error instanceof FileValidationError) || error.code !== "unsupportedType") throw error;
       if (classification === "document") throw new FileValidationError("documentNeedsPdf");
-      if (classification === "image") return normalizeBrowserImage(file);
+      if (classification === "image")
+        return normalizeBrowserImage(stableImageFromBytes(file, bytes));
       throw error;
     }
 
@@ -162,11 +163,16 @@ export async function validateFileForMobile(
       bytes.byteLength > MAX_PLAINTEXT_BYTES ||
       !dimensionsWithinLimits(dimensions.width, dimensions.height)
     ) {
-      return normalizeBrowserImage(file);
+      return normalizeBrowserImage(stableImageFromBytes(file, bytes));
     }
 
     validateDimensions(dimensions.width, dimensions.height);
-    await verifyBrowserImageDecode(file, dimensions);
+    // Decoding the original provider-backed File here can fail *after* a
+    // successful iCloud read. Verify the exact local bytes we will print.
+    await verifyBrowserImageDecode(
+      new Blob([asBlobPart(bytes)], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
+      dimensions,
+    );
     preserveOriginal = true;
     return {
       bytes,
@@ -427,6 +433,28 @@ export function parseJpegDimensions(bytes: Uint8Array): { width: number; height:
   throw new FileValidationError("damagedFile");
 }
 
+/**
+ * File.arrayBuffer()/FileReader return ordinary ArrayBuffers. Keep that view
+ * when creating a stable Blob instead of copying another 50 MiB in Safari.
+ */
+function asBlobPart(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
+  return bytes.buffer instanceof ArrayBuffer
+    ? (bytes as Uint8Array<ArrayBuffer>)
+    : (bytes.slice() as Uint8Array<ArrayBuffer>);
+}
+
+/**
+ * Materialize a stable, self-contained snapshot before image decoding or
+ * HEIC conversion. After a cloud provider completes the first read, it may
+ * revoke the temporary native File handle. No later step should reopen it.
+ */
+function stableImageFromBytes(original: File, bytes: Uint8Array): File {
+  return new File([asBlobPart(bytes)], original.name, {
+    type: original.type,
+    lastModified: original.lastModified,
+  });
+}
+
 async function normalizeBrowserImage(file: File): Promise<ValidatedMobileFile> {
   let decoded: Awaited<ReturnType<typeof decodeBrowserImage>> | undefined;
   try {
@@ -594,7 +622,7 @@ export function decodedDimensionsMatch(
 }
 
 async function verifyBrowserImageDecode(
-  file: File,
+  file: Blob,
   expected: { width: number; height: number },
 ): Promise<void> {
   if (typeof createImageBitmap !== "function") return;
