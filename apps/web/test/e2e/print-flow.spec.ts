@@ -398,10 +398,18 @@ test("a cloud photo preview uses validated bytes even after the provider returns
     .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
     .toBe(24);
 
-  const previewBytes = await image.evaluate(async (element: HTMLImageElement) =>
-    Array.from(new Uint8Array(await (await fetch(element.src)).arrayBuffer())),
-  );
-  expect(previewBytes).toEqual(verifiedBytes);
+  // Blob URLs are intentionally blocked by this app's connect-src CSP.
+  // Read the actual rendered pixels instead of fetching the preview URL.
+  const previewPixel = await image.evaluate((element: HTMLImageElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas unavailable");
+    context.drawImage(element, 0, 0);
+    return Array.from(context.getImageData(0, 0, 1, 1).data);
+  });
+  expect(previewPixel).toEqual([0, 119, 204, 255]);
 });
 
 test("a gallery photo taken sideways reaches the preview", async ({ page, context }) => {
