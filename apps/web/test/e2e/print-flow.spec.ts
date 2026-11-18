@@ -457,7 +457,10 @@ test("@viewport cloud-backed PDF recovers from a transient iOS File API failure"
       if (this.name === "icloud-document.pdf" && failOnce) {
         failOnce = false;
         return new Promise<ArrayBuffer>((_resolve, reject) => {
-          setTimeout(() => reject(new DOMException("iCloud is downloading", "NotReadableError")), 650);
+          setTimeout(
+            () => reject(new DOMException("iCloud is downloading", "NotReadableError")),
+            650,
+          );
         });
       }
       return nativeRead.call(this);
