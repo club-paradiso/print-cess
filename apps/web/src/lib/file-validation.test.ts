@@ -92,10 +92,11 @@ describe("file validation", () => {
     const originalFileReader = globalThis.FileReader;
     vi.stubGlobal("FileReader", undefined);
     try {
-      const payload = new TextEncoder().encode("%PDF-1.7\\n1 0 obj\\n%%EOF");
+      const payload = new TextEncoder().encode("%PDF-1.7\n1 0 obj\n%%EOF");
       const file = new File([payload], "cloud.pdf", { type: "" });
       const nativeRead = file.arrayBuffer.bind(file);
-      const read = vi.fn<() => Promise<ArrayBuffer>>()
+      const read = vi
+        .fn<() => Promise<ArrayBuffer>>()
         .mockResolvedValueOnce(payload.slice(0, 7).buffer)
         .mockImplementation(nativeRead);
       Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
@@ -104,6 +105,13 @@ describe("file validation", () => {
     } finally {
       vi.stubGlobal("FileReader", originalFileReader);
     }
+  });
+
+  it("accepts fully readable iCloud bytes even when the provider reports a stale size of zero", async () => {
+    const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
+    const file = new File([payload], "ready-in-files.pdf", { type: "" });
+    Object.defineProperty(file, "size", { configurable: true, value: 0 });
+    await expect(readSelectedFileBytes(file)).resolves.toEqual(payload);
   });
 
   it("parses PNG dimensions from IHDR", () => {
