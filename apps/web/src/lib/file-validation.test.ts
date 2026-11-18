@@ -111,7 +111,11 @@ describe("file validation", () => {
     const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
     const file = new File([payload], "ready-in-files.pdf", { type: "" });
     Object.defineProperty(file, "size", { configurable: true, value: 0 });
-    await expect(readSelectedFileBytes(file)).resolves.toEqual(payload);
+    Object.defineProperty(file, "arrayBuffer", {
+      configurable: true,
+      value: () => Promise.resolve(payload.slice().buffer),
+    });
+    await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
   });
 
   it("times out a stuck iCloud provider instead of leaving the page spinning", async () => {
@@ -142,11 +146,10 @@ describe("file validation", () => {
       const payload = new TextEncoder().encode("%PDF-1.7\n1 0 obj\n%%EOF");
       const file = new File([payload], "icloud.pdf", { type: "application/pdf" });
       Object.defineProperty(file, "size", { configurable: true, value: 0 });
-      const realRead = file.arrayBuffer.bind(file);
       const read = vi
         .fn<() => Promise<ArrayBuffer>>()
         .mockResolvedValueOnce(payload.slice(0, 8).buffer)
-        .mockImplementation(realRead);
+        .mockResolvedValue(payload.slice().buffer);
       Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
       await expect(readSelectedFileBytes(file, { retryDelaysMs: [0, 1] })).resolves.toEqual(
         payload,
@@ -159,12 +162,37 @@ describe("file validation", () => {
 
   it("uses FileReader when the modern File API cannot access a local provider", async () => {
     const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
-    const file = new File([payload], "local-copy.pdf", { type: "application/pdf" });
-    Object.defineProperty(file, "arrayBuffer", {
-      configurable: true,
-      value: () => Promise.reject(new DOMException("unavailable", "NotReadableError")),
-    });
-    await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
+    const previousReader = globalThis.FileReader;
+    class ProviderFileReader {
+      result: ArrayBuffer | null = null;
+      error: Error | null = null;
+      private readonly listeners = new Map<string, () => void>();
+
+      addEventListener(type: string, listener: () => void): void {
+        this.listeners.set(type, listener);
+      }
+
+      readAsArrayBuffer(): void {
+        this.result = payload.slice().buffer;
+        queueMicrotask(() => this.listeners.get("load")?.());
+      }
+
+      abort(): void {
+        this.listeners.get("abort")?.();
+      }
+    }
+
+    vi.stubGlobal("FileReader", ProviderFileReader);
+    try {
+      const file = new File([payload], "local-copy.pdf", { type: "application/pdf" });
+      Object.defineProperty(file, "arrayBuffer", {
+        configurable: true,
+        value: () => Promise.reject(new DOMException("unavailable", "NotReadableError")),
+      });
+      await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
+    } finally {
+      vi.stubGlobal("FileReader", previousReader);
+    }
   });
 
   it("parses PNG dimensions from IHDR", () => {
