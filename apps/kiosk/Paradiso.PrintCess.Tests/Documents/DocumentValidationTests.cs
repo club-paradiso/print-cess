@@ -116,7 +116,7 @@ public sealed class DocumentValidationTests
         // The lightweight inspector cannot count pages stored in /ObjStm.
         // This fixture tests only the preflight; Windows.Data.Pdf remains
         // responsible for rejecting an invalid cross-reference or page tree.
-        var pdf = "%PDF-1.7\\n1 0 obj<</Type/ObjStm /N 1 /First 0 /Length 1>>stream\\nx\\nendstream\\nendobj\\nstartxref\\n0\\n%%EOF\\n"u8;
+        var pdf = "%PDF-1.7\n1 0 obj<</Type/ObjStm /N 1 /First 0 /Length 1>>stream\nx\nendstream\nendobj\nstartxref\n0\n%%EOF\n"u8;
         using var validated = _validator.Validate(pdf, DocumentKind.Pdf, null, TestDocuments.SessionId);
         Assert.Null(validated.Properties.PageCount);
     }
