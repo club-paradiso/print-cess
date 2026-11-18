@@ -169,7 +169,7 @@ export async function validateFileForMobile(
     // Decoding the original provider-backed File here can fail *after* a
     // successful iCloud read. Verify the exact local bytes we will print.
     await verifyBrowserImageDecode(
-      new Blob([bytes.slice().buffer], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
+      new Blob([asBlobPart(bytes)], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
       dimensions,
     );
     preserveOriginal = true;
@@ -437,8 +437,18 @@ export function parseJpegDimensions(bytes: Uint8Array): { width: number; height:
  * HEIC conversion. After a cloud provider completes the first read, it may
  * revoke the temporary native File handle. No later step should reopen it.
  */
+/**
+ * File.arrayBuffer()/FileReader return ordinary ArrayBuffers. Keep that view
+ * when creating a stable Blob instead of copying another 50 MiB in Safari.
+ */
+function asBlobPart(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
+  return bytes.buffer instanceof ArrayBuffer
+    ? (bytes as Uint8Array<ArrayBuffer>)
+    : (bytes.slice() as Uint8Array<ArrayBuffer>);
+}
+
 function stableImageFromBytes(original: File, bytes: Uint8Array): File {
-  return new File([bytes.slice().buffer], original.name, {
+  return new File([asBlobPart(bytes)], original.name, {
     type: original.type,
     lastModified: original.lastModified,
   });
