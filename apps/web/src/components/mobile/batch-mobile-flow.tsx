@@ -617,6 +617,9 @@ export function BatchMobileFlow({
             accept="image/*,.heic,.heif,.webp,.avif,.bmp,.gif,.tif,.tiff"
             onChange={(event) => receivePickerSelection(event.currentTarget)}
           />
+          {/* iOS Files and third-party cloud providers may hide valid PDFs
+              when constrained by mixed MIME/extension accept filters.
+              Allow selection here; local validation still gates upload. */}
           <input
             ref={fileInput}
             data-testid="file-input"
@@ -626,10 +629,6 @@ export function BatchMobileFlow({
             aria-hidden="true"
             multiple
             type="file"
-            // Do not use an accept filter here: iOS Files and third-party
-            // providers sometimes hide perfectly valid PDFs and cloud files
-            // when a mixed MIME/extension filter is supplied. We validate
-            // every chosen file locally before upload instead.
             onChange={(event) => receivePickerSelection(event.currentTarget)}
           />
           {selectionBusy ? (
