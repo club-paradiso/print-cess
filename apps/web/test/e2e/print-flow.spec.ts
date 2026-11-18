@@ -298,7 +298,10 @@ test("a rejected pick clears the picker so the same file can be chosen again", a
   }
 });
 
-test("cancelling a file picker keeps the claimed session ready", async ({ page, context }) => {
+test("@viewport cancelling a file picker keeps the claimed session ready", async ({
+  page,
+  context,
+}) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("file-input").dispatchEvent("cancel");
   await expect(mobile.getByRole("heading", { name: "Pick files to print" })).toBeVisible();
