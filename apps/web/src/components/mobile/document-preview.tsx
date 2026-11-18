@@ -30,7 +30,8 @@ export function DocumentPreview({
       return undefined;
     // Never reopen the original provider-backed iCloud File for preview.
     // The preview must display the exact validated bytes that will be sent.
-    return new Blob([validated.bytes.slice().buffer], {
+    // Blob copies the buffer on construction; avoid another large slice on iOS.
+    return new Blob([validated.bytes as Uint8Array<ArrayBuffer>], {
       type: validated.fileKind === "png" ? "image/png" : "image/jpeg",
     });
   }, [validated.bytes, validated.fileKind]);
