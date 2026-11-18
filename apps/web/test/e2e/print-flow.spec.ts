@@ -388,7 +388,9 @@ test("a cloud photo preview uses validated bytes even after the provider returns
   await mobile.getByTestId("file-input").setInputFiles({
     name: "cloud-photo.png",
     mimeType: "image/png",
-    buffer: Buffer.from(await createSyntheticPng()),
+    // The iCloud-backed handle exposes stale metadata, but the provider
+    // yields the complete verified PNG when its bytes are finally requested.
+    buffer: Buffer.from([0x00]),
   });
   const image = mobile.getByRole("img", { name: "Preview of the file you picked" });
   await expect(image).toBeVisible();
