@@ -6,13 +6,20 @@ export type FileSource = {
   label: string;
   hint?: string | undefined;
   onPick: () => void;
+  disabled?: boolean;
 };
 
 export function SourcePicker({ sources }: { sources: readonly FileSource[] }) {
   return (
     <div className="source-picker">
       {sources.map((source) => (
-        <button key={source.id} type="button" className="source-tile" onClick={source.onPick}>
+        <button
+          key={source.id}
+          type="button"
+          className="source-tile"
+          onClick={source.onPick}
+          disabled={source.disabled}
+        >
           <span className="source-tile__icon" aria-hidden="true">
             {source.icon}
           </span>
