@@ -359,6 +359,47 @@ test("@viewport Files picker does not hide unsupported cloud documents and expla
   await expect(mobile.getByRole("button", { name: "Open my files" })).toBeEnabled();
 });
 
+test("a cloud photo preview uses validated bytes even after the provider returns different data", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const verifiedBytes = await mobile.evaluate(async () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 24;
+    canvas.height = 24;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas unavailable");
+    context.fillStyle = "#0077cc";
+    context.fillRect(0, 0, 24, 24);
+    const image = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!image) throw new Error("PNG encoder unavailable");
+    return Array.from(new Uint8Array(await image.arrayBuffer()));
+  });
+
+  await mobile.evaluate((bytes) => {
+    const nativeRead = File.prototype.arrayBuffer;
+    File.prototype.arrayBuffer = function () {
+      if (this.name === "cloud-photo.png") return Promise.resolve(Uint8Array.from(bytes).buffer);
+      return nativeRead.call(this);
+    };
+  }, verifiedBytes);
+
+  await mobile.getByTestId("file-input").setInputFiles({
+    name: "cloud-photo.png",
+    mimeType: "image/png",
+    buffer: Buffer.from(await createSyntheticPng()),
+  });
+  const image = mobile.getByRole("img", { name: "Preview of the file you picked" });
+  await expect(image).toBeVisible();
+  await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBe(24);
+
+  const previewBytes = await image.evaluate(async (element: HTMLImageElement) =>
+    Array.from(new Uint8Array(await (await fetch(element.src)).arrayBuffer())),
+  );
+  expect(previewBytes).toEqual(verifiedBytes);
+});
+
 test("a gallery photo taken sideways reaches the preview", async ({ page, context }) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("photo-input").setInputFiles({
