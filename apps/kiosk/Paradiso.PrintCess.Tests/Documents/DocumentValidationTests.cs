@@ -111,6 +111,26 @@ public sealed class DocumentValidationTests
     }
 
     [Fact]
+    public void CountsCompactPdfTypePageEntriesWithoutCountingThePagesTree()
+    {
+        var compact = TestDocuments.OnePagePdf().Concat(
+            "\n2 0 obj <</Type/Page>> endobj\n3 0 obj <</Type/Pages>> endobj\n%%EOF"u8.ToArray()).ToArray();
+        using var validated = _validator.Validate(compact, DocumentKind.Pdf, null, TestDocuments.SessionId);
+        Assert.Equal(2, validated.Properties.PageCount);
+    }
+
+    [Fact]
+    public void DefersCompressedObjectStreamPageCountToTheWindowsPdfRenderer()
+    {
+        // The lightweight inspector cannot count pages stored in /ObjStm.
+        // This fixture tests only the preflight; Windows.Data.Pdf remains
+        // responsible for rejecting an invalid cross-reference or page tree.
+        var pdf = "%PDF-1.7\n1 0 obj<</Type/ObjStm /N 1 /First 0 /Length 1>>stream\nx\nendstream\nendobj\nstartxref\n0\n%%EOF\n"u8;
+        using var validated = _validator.Validate(pdf, DocumentKind.Pdf, null, TestDocuments.SessionId);
+        Assert.Null(validated.Properties.PageCount);
+    }
+
+    [Fact]
     public void RejectsCorruptImageCrcAndTrailingData()
     {
         var changed = TestDocuments.OnePixelPng();

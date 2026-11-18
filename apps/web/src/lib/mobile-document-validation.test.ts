@@ -3,9 +3,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { convertHangulInBrowser } from "./hangul-browser-conversion";
 
 import { validateMobileDocument } from "./mobile-document-validation";
+import { unlockPdf } from "./unlock-pdf";
 
 vi.mock("./hangul-browser-conversion", () => ({
   convertHangulInBrowser: vi.fn(),
+}));
+vi.mock("./unlock-pdf", () => ({ unlockPdf: vi.fn() }));
+vi.mock("pdfjs-dist", () => ({
+  GlobalWorkerOptions: { workerSrc: "" },
+  getDocument: vi.fn(),
 }));
 
 function structuralHwp(properties = 0, includeScriptStream = false): File {
@@ -76,5 +82,63 @@ describe("mobile HWP validation", () => {
     await expect(
       validateMobileDocument(structuralHwp(0, true), { allowHwp: true }),
     ).rejects.toMatchObject({ code: "damagedFile" });
+  });
+});
+
+describe("PDF kiosk compatibility", () => {
+  beforeEach(async () => {
+    vi.mocked(unlockPdf).mockReset();
+    const pdfjs = await import("pdfjs-dist");
+    vi.mocked(pdfjs.getDocument).mockReset();
+    vi.mocked(pdfjs.getDocument).mockReturnValue({
+      promise: Promise.resolve({ numPages: 1, cleanup: vi.fn() }),
+      destroy: vi.fn(),
+    } as never);
+  });
+
+  const pdf = (body: string) => {
+    const bytes = new TextEncoder().encode(`%PDF-1.7\n${body}\n%%EOF`);
+    return new File([bytes], "iCloud.pdf", { type: "" });
+  };
+
+  it("keeps a clean PDF unchanged", async () => {
+    const result = await validateMobileDocument(pdf("1 0 obj<</Type /Page>>endobj"));
+    expect(result).toMatchObject({ fileKind: "pdf", pageCount: 1, normalized: false });
+    expect(unlockPdf).not.toHaveBeenCalled();
+  });
+
+  it("flattens a PDF containing a kiosk-only forbidden URI before upload", async () => {
+    const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 2 });
+    const selected = pdf("1 0 obj<</Type /Page /URI (https://example.com)>>endobj");
+    const result = await validateMobileDocument(selected);
+    expect(result).toMatchObject({
+      bytes: safeBytes,
+      fileKind: "pdf",
+      pageCount: 2,
+      normalized: true,
+    });
+    expect(unlockPdf).toHaveBeenCalledOnce();
+  });
+
+  it("never sends an active PDF original to the kiosk, flattening the page pictures", async () => {
+    const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
+    const selected = pdf("1 0 obj<</OpenAction 2 0 R /Type /Page>>endobj");
+    const result = await validateMobileDocument(selected);
+    expect(result.normalized).toBe(true);
+    expect(result.bytes).toBe(safeBytes);
+  });
+
+  it("does not bypass password protection", async () => {
+    const selected = pdf("1 0 obj<</Encrypt 2 0 R>>endobj");
+    await expect(validateMobileDocument(selected)).rejects.toMatchObject({ code: "lockedPdf" });
+    expect(unlockPdf).not.toHaveBeenCalled();
+  });
+
+  it("rejects a flagged PDF when safe rasterisation fails", async () => {
+    vi.mocked(unlockPdf).mockRejectedValue(new Error("rendering failed"));
+    const selected = pdf("1 0 obj<</OpenAction 2 0 R>>endobj");
+    await expect(validateMobileDocument(selected)).rejects.toThrow("rendering failed");
   });
 });
