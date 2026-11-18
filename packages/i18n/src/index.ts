@@ -170,6 +170,8 @@ const en = {
   pdfPasswordTooManyTries:
     "Too many wrong passwords. Check the password, then choose the file again.",
   pdfUnlockedNotice: "Unlocked on this phone. Each page will print as a picture.",
+  fileNotReady:
+    "The file is not ready. In Files or iCloud Drive, finish downloading it, then return and select it again.",
   damagedFile:
     "This file could not be read. If it is in iCloud, wait for the download to finish and choose it again. Otherwise, save it again or take a clear screenshot.",
   fingerprintMismatch:
@@ -467,6 +469,7 @@ const ko = {
   pdfPasswordTooManyTries:
     "비밀번호가 여러 번 틀렸어요. 비밀번호를 확인한 뒤 파일을 다시 고르세요.",
   pdfUnlockedNotice: "이 휴대전화에서 잠금을 풀었어요. 각 페이지는 이미지로 인쇄돼요.",
+  fileNotReady: "파일을 아직 읽을 수 없어요. iPhone의 '파일' 앱이나 iCloud Drive에서 다운로드를 완료한 다음 다시 선택하세요.",
   damagedFile:
     "파일을 읽지 못했어요. iCloud 파일이면 다운로드가 끝난 뒤 다시 고르세요. 그래도 안 되면 다시 저장하거나 화면을 선명하게 캡처하세요.",
   fingerprintMismatch: "연결이 안전한지 확인하지 못했어요. 큰 화면의 QR 코드를 다시 찍으세요.",
@@ -747,6 +750,7 @@ const zhCN = {
   printRestrictedPdf: "签发方禁止打印这个 PDF，所以这里无法打印。请向签发方索取可打印的文件。",
   pdfPasswordTooManyTries: "密码错误次数太多。请确认密码后重新选择文件。",
   pdfUnlockedNotice: "已在这部手机上解锁。每一页会以图片形式打印。",
+  fileNotReady: "文件尚未准备好。请先在“文件”或 iCloud Drive 中下载完成，然后返回重新选择。",
   damagedFile: "这个文件打不开。请重新保存，或者截一张清楚的图。",
   fingerprintMismatch: "没办法确认这个连接。请重新扫大屏幕上的二维码。",
   networkError: "连接断了。请检查手机流量，然后重新扫二维码。",
@@ -1025,6 +1029,8 @@ const id = {
   pdfPasswordTooManyTries:
     "Terlalu banyak kata sandi salah. Periksa kata sandinya, lalu pilih file lagi.",
   pdfUnlockedNotice: "Kunci dibuka di ponsel ini. Setiap halaman akan dicetak sebagai gambar.",
+  fileNotReady:
+    "File belum siap dibaca. Selesaikan unduhan di Files atau iCloud Drive, lalu pilih lagi.",
   damagedFile: "Berkas ini tidak bisa dibuka. Simpan ulang, atau ambil tangkapan layar yang jelas.",
   fingerprintMismatch: "Sambungan ini tidak dapat diperiksa. Pindai lagi kode QR di layar besar.",
   networkError: "Sambungan terputus. Periksa data seluler Anda, lalu pindai lagi kode QR.",
@@ -1321,6 +1327,8 @@ const fil = {
   pdfPasswordTooManyTries:
     "Masyadong maraming maling password. Tingnan ang password, saka piliin ulit ang file.",
   pdfUnlockedNotice: "Na-unlock sa phone na ito. Ipi-print ang bawat pahina bilang larawan.",
+  fileNotReady:
+    "Hindi pa handang basahin ang file. Tapusin ang pag-download sa Files o iCloud Drive, saka piliin muli.",
   damagedFile:
     "Hindi mabuksan ang file na ito. I-save itong muli, o kumuha ng malinaw na screenshot.",
   fingerprintMismatch:
@@ -1620,6 +1628,8 @@ const vi = {
     "Nơi cấp PDF này đã tắt chức năng in, nên không thể in ở đây. Hãy xin nơi cấp bản có thể in.",
   pdfPasswordTooManyTries: "Nhập sai mật khẩu quá nhiều lần. Kiểm tra mật khẩu rồi chọn lại tệp.",
   pdfUnlockedNotice: "Đã mở khóa trên điện thoại này. Mỗi trang sẽ được in dưới dạng hình ảnh.",
+  fileNotReady:
+    "Tệp chưa sẵn sàng. Hãy tải xuống hoàn tất trong Tệp hoặc iCloud Drive, rồi chọn lại.",
   damagedFile: "Tệp này không mở được. Hãy lưu lại, hoặc chụp ảnh màn hình rõ nét.",
   fingerprintMismatch: "Không kiểm tra được kết nối này. Hãy quét lại mã QR trên màn hình lớn.",
   networkError: "Mất kết nối. Hãy kiểm tra dữ liệu di động, rồi quét lại mã QR.",
@@ -1904,6 +1914,8 @@ const th = {
     "ผู้ออกเอกสารปิดการพิมพ์ PDF นี้ไว้ จึงพิมพ์ที่นี่ไม่ได้ ขอสำเนาที่พิมพ์ได้จากผู้ออกเอกสาร",
   pdfPasswordTooManyTries: "ใส่รหัสผ่านผิดหลายครั้งเกินไป ตรวจสอบรหัสผ่านแล้วเลือกไฟล์ใหม่",
   pdfUnlockedNotice: "ปลดล็อกในมือถือเครื่องนี้แล้ว แต่ละหน้าจะพิมพ์เป็นรูปภาพ",
+  fileNotReady:
+    "ไฟล์ยังไม่พร้อมใช้งาน โปรดดาวน์โหลดในแอปไฟล์หรือ iCloud Drive ให้เสร็จ แล้วเลือกอีกครั้ง",
   damagedFile: "ไฟล์นี้เปิดไม่ได้ บันทึกใหม่ หรือถ่ายภาพหน้าจอให้ชัด",
   fingerprintMismatch: "ตรวจสอบการเชื่อมต่อนี้ไม่ได้ สแกนคิวอาร์โค้ดบนจอใหญ่อีกครั้ง",
   networkError: "การเชื่อมต่อหลุด ตรวจอินเทอร์เน็ตมือถือ แล้วสแกนคิวอาร์โค้ดอีกครั้ง",
@@ -2186,6 +2198,7 @@ const ne = {
     "जारी गर्नेले यो PDF को प्रिन्ट बन्द गरेको छ, त्यसैले यहाँ प्रिन्ट हुँदैन। जारी गर्नेसँग प्रिन्ट गर्न मिल्ने प्रति माग्नुहोस्।",
   pdfPasswordTooManyTries: "धेरै पटक गलत पासवर्ड हालियो। पासवर्ड जाँचेर फाइल फेरि छान्नुहोस्।",
   pdfUnlockedNotice: "यही फोनमा अनलक भयो। हरेक पृष्ठ तस्बिरको रूपमा प्रिन्ट हुन्छ।",
+  fileNotReady: "फाइल अझै तयार छैन। Files वा iCloud Drive मा डाउनलोड पूरा गरेर फेरि छान्नुहोस्।",
   damagedFile: "यो फाइल खुल्दैन। फेरि सेभ गर्नुहोस्, वा स्पष्ट स्क्रिनसट लिनुहोस्।",
   fingerprintMismatch: "यो जडान जाँच्न सकिएन। ठूलो पर्दाको QR कोड फेरि स्क्यान गर्नुहोस्।",
   networkError: "जडान टुट्यो। मोबाइल डाटा जाँच्नुहोस्, त्यसपछि QR कोड फेरि स्क्यान गर्नुहोस्।",
@@ -2474,6 +2487,7 @@ const km = {
   pdfPasswordTooManyTries:
     "បញ្ចូលពាក្យសម្ងាត់ខុសច្រើនដងពេក។ សូមពិនិត្យពាក្យសម្ងាត់ ហើយជ្រើសឯកសារម្តងទៀត។",
   pdfUnlockedNotice: "បានដោះសោនៅលើទូរស័ព្ទនេះ។ ទំព័រនីមួយៗនឹងបោះពុម្ពជារូបភាព។",
+  fileNotReady: "ឯកសារមិនទាន់រួចរាល់ទេ។ សូមទាញយកឱ្យចប់ក្នុង Files ឬ iCloud Drive រួចជ្រើសម្តងទៀត។",
   damagedFile: "ឯកសារនេះបើកមិនបាន។ រក្សាទុកម្តងទៀត ឬថតអេក្រង់ឱ្យច្បាស់។",
   fingerprintMismatch: "មិនអាចពិនិត្យការតភ្ជាប់នេះបានទេ។ ស្កេនកូដ QR លើអេក្រង់ធំម្តងទៀត។",
   networkError: "ការតភ្ជាប់បានដាច់។ ពិនិត្យទិន្នន័យទូរស័ព្ទ រួចស្កេនកូដ QR ម្តងទៀត។",
@@ -2758,6 +2772,8 @@ const ar = {
   pdfPasswordTooManyTries:
     "أُدخلت كلمة مرور خاطئة مرات كثيرة. تحقق من كلمة المرور ثم اختر الملف مرة أخرى.",
   pdfUnlockedNotice: "فُتح القفل على هذا الهاتف. ستُطبع كل صفحة كصورة.",
+  fileNotReady:
+    "الملف غير جاهز للقراءة. أكمل تنزيله في «الملفات» أو iCloud Drive، ثم اختره مجددًا.",
   damagedFile: "هذا الملف لا يُفتح. احفظه مرة أخرى، أو التقط صورة شاشة واضحة.",
   fingerprintMismatch:
     "لم نتمكّن من التحقّق من هذا الاتصال. امسح رمز QR على الشاشة الكبيرة مرة أخرى.",
@@ -3044,6 +3060,8 @@ const ru = {
     "Слишком много неверных паролей. Проверьте пароль и выберите файл снова.",
   pdfUnlockedNotice:
     "Файл открыт на этом телефоне. Каждая страница будет напечатана как изображение.",
+  fileNotReady:
+    "Файл ещё не готов. Дождитесь загрузки в «Файлах» или iCloud Drive, затем выберите его снова.",
   damagedFile: "Этот файл не открывается. Сохраните его снова или сделайте чёткий снимок экрана.",
   fingerprintMismatch:
     "Не удалось проверить это соединение. Отсканируйте QR-код на большом экране ещё раз.",
@@ -3338,6 +3356,8 @@ const mn = {
   pdfPasswordTooManyTries:
     "Нууц үгийг хэт олон удаа буруу оруулсан. Нууц үгээ шалгаад файлаа дахин сонгоно уу.",
   pdfUnlockedNotice: "Энэ утсан дээр түгжээг тайлсан. Хуудас бүр зураг хэлбэрээр хэвлэгдэнэ.",
+  fileNotReady:
+    "Файл хараахан бэлэн биш байна. Files эсвэл iCloud Drive-д татаж дуусаад дахин сонгоно уу.",
   damagedFile: "Энэ файл нээгдэхгүй байна. Дахин хадгалах эсвэл тод дэлгэцийн зураг авна уу.",
   fingerprintMismatch:
     "Энэ холболтыг шалгаж чадсангүй. Том дэлгэцэн дээрх QR кодыг дахин уншуулна уу.",
@@ -3634,6 +3654,8 @@ const uk = {
   pdfPasswordTooManyTries: "Забагато неправильних паролів. Перевірте пароль і виберіть файл знову.",
   pdfUnlockedNotice:
     "Файл відкрито на цьому телефоні. Кожна сторінка друкуватиметься як зображення.",
+  fileNotReady:
+    "Файл ще не готовий. Дочекайтеся завантаження у «Файлах» або iCloud Drive і виберіть його знову.",
   damagedFile: "Цей файл не відкривається. Збережіть його ще раз або зробіть чіткий знімок.",
   fingerprintMismatch:
     "Не вдалося перевірити це з’єднання. Відскануйте QR-код на великому екрані ще раз.",
