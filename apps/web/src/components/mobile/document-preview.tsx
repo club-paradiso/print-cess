@@ -28,12 +28,13 @@ export function DocumentPreview({
       validated.fileKind === "hwpx"
     )
       return undefined;
-    return validated.normalized
-      ? new Blob([validated.bytes.slice().buffer], {
-          type: validated.fileKind === "png" ? "image/png" : "image/jpeg",
-        })
-      : file;
-  }, [file, validated.bytes, validated.fileKind, validated.normalized]);
+    // Never reopen the original provider-backed iCloud File for preview.
+    // The preview must display the exact validated bytes that will be sent.
+    // Blob copies the buffer on construction; avoid another large slice on iOS.
+    return new Blob([validated.bytes as Uint8Array<ArrayBuffer>], {
+      type: validated.fileKind === "png" ? "image/png" : "image/jpeg",
+    });
+  }, [validated.bytes, validated.fileKind]);
 
   const attachPreview = useCallback(
     (image: HTMLImageElement | null) => {

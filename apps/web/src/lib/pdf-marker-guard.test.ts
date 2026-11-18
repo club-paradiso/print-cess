@@ -4,6 +4,7 @@ import {
   containsKioskProhibitedToken,
   encodePdfSafeJpeg,
   jpegQualityLadder,
+  needsKioskPdfNormalization,
 } from "./pdf-marker-guard";
 
 const latin1 = (value: string) => new Uint8Array(Array.from(value, (c) => c.charCodeAt(0)));
@@ -51,5 +52,29 @@ describe("PDF marker guard for embedded JPEGs", () => {
         () => new Error("scanImageError"),
       ),
     ).rejects.toThrow("scanImageError");
+  });
+});
+
+describe("PDF kiosk compatibility preflight", () => {
+  const pdf = (body: string) => latin1(`%PDF-1.7\n${body}\n%%EOF\n`);
+
+  it("passes the canonical safe envelope", () => {
+    expect(needsKioskPdfNormalization(pdf("1 0 obj <</Type /Page>> endobj"))).toBe(false);
+  });
+
+  it("normalizes PDFs that the kiosk would reject for active links", () => {
+    expect(needsKioskPdfNormalization(pdf("/URI (https://example.org)"))).toBe(true);
+  });
+
+  it("normalizes PDFs with a PDF.js-supported preamble", () => {
+    expect(needsKioskPdfNormalization(latin1("preamble\n%PDF-1.7\n%%EOF"))).toBe(true);
+  });
+
+  it("normalizes PDFs with an EOF outside the kiosk trailer window", () => {
+    const source = pdf("1 0 obj <</Type /Page>> endobj");
+    const padded = new Uint8Array(source.length + 2200);
+    padded.set(source);
+    padded.fill(0x20, source.length);
+    expect(needsKioskPdfNormalization(padded)).toBe(true);
   });
 });

@@ -88,6 +88,113 @@ describe("file validation", () => {
     }
   });
 
+  it("retries a short iCloud provider read instead of treating a partial PDF as complete", async () => {
+    const originalFileReader = globalThis.FileReader;
+    vi.stubGlobal("FileReader", undefined);
+    try {
+      const payload = new TextEncoder().encode("%PDF-1.7\n1 0 obj\n%%EOF");
+      const file = new File([payload], "cloud.pdf", { type: "" });
+      const nativeRead = file.arrayBuffer.bind(file);
+      const read = vi
+        .fn<() => Promise<ArrayBuffer>>()
+        .mockResolvedValueOnce(payload.slice(0, 7).buffer)
+        .mockImplementation(nativeRead);
+      Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
+      await expect(readSelectedFileBytes(file)).resolves.toEqual(payload);
+      expect(read).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.stubGlobal("FileReader", originalFileReader);
+    }
+  });
+
+  it("accepts fully readable iCloud bytes even when the provider reports a stale size of zero", async () => {
+    const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
+    const file = new File([payload], "ready-in-files.pdf", { type: "" });
+    Object.defineProperty(file, "size", { configurable: true, value: 0 });
+    Object.defineProperty(file, "arrayBuffer", {
+      configurable: true,
+      value: () => Promise.resolve(payload.slice().buffer),
+    });
+    await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
+  });
+
+  it("times out a stuck iCloud provider instead of leaving the page spinning", async () => {
+    const previousReader = globalThis.FileReader;
+    vi.stubGlobal("FileReader", undefined);
+    try {
+      const file = new File(["pdf bytes"], "waiting.pdf", { type: "application/pdf" });
+      Object.defineProperty(file, "arrayBuffer", {
+        configurable: true,
+        value: () => new Promise<ArrayBuffer>(() => undefined),
+      });
+      await expect(
+        readSelectedFileBytes(file, {
+          retryDelaysMs: [0],
+          perReadTimeoutMs: 15,
+          totalTimeoutMs: 100,
+        }),
+      ).rejects.toMatchObject({ code: "fileNotReady" });
+    } finally {
+      vi.stubGlobal("FileReader", previousReader);
+    }
+  });
+
+  it("retries a zero-sized iCloud PDF when the first read contains only a header", async () => {
+    const previousReader = globalThis.FileReader;
+    vi.stubGlobal("FileReader", undefined);
+    try {
+      const payload = new TextEncoder().encode("%PDF-1.7\n1 0 obj\n%%EOF");
+      const file = new File([payload], "icloud.pdf", { type: "application/pdf" });
+      Object.defineProperty(file, "size", { configurable: true, value: 0 });
+      const read = vi
+        .fn<() => Promise<ArrayBuffer>>()
+        .mockResolvedValueOnce(payload.slice(0, 8).buffer)
+        .mockResolvedValue(payload.slice().buffer);
+      Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
+      await expect(readSelectedFileBytes(file, { retryDelaysMs: [0, 1] })).resolves.toEqual(
+        payload,
+      );
+      expect(read).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.stubGlobal("FileReader", previousReader);
+    }
+  });
+
+  it("uses FileReader when the modern File API cannot access a local provider", async () => {
+    const payload = new TextEncoder().encode("%PDF-1.7\n%%EOF");
+    const previousReader = globalThis.FileReader;
+    class ProviderFileReader {
+      result: ArrayBuffer | null = null;
+      error: Error | null = null;
+      private readonly listeners = new Map<string, () => void>();
+
+      addEventListener(type: string, listener: () => void): void {
+        this.listeners.set(type, listener);
+      }
+
+      readAsArrayBuffer(): void {
+        this.result = payload.slice().buffer;
+        queueMicrotask(() => this.listeners.get("load")?.());
+      }
+
+      abort(): void {
+        this.listeners.get("abort")?.();
+      }
+    }
+
+    vi.stubGlobal("FileReader", ProviderFileReader);
+    try {
+      const file = new File([payload], "local-copy.pdf", { type: "application/pdf" });
+      Object.defineProperty(file, "arrayBuffer", {
+        configurable: true,
+        value: () => Promise.reject(new DOMException("unavailable", "NotReadableError")),
+      });
+      await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
+    } finally {
+      vi.stubGlobal("FileReader", previousReader);
+    }
+  });
+
   it("parses PNG dimensions from IHDR", () => {
     const bytes = new Uint8Array(24);
     bytes.set([137, 80, 78, 71, 13, 10, 26, 10]);
@@ -95,6 +202,35 @@ describe("file validation", () => {
     view.setUint32(16, 1170, false);
     view.setUint32(20, 1654, false);
     expect(parsePngDimensions(bytes)).toEqual({ width: 1170, height: 1654 });
+  });
+
+  it("decodes a cloud photo only from the verified bytes, without reopening the native File", async () => {
+    const bytes = new Uint8Array(24);
+    bytes.set([137, 80, 78, 71, 13, 10, 26, 10]);
+    const view = new DataView(bytes.buffer);
+    view.setUint32(16, 16, false);
+    view.setUint32(20, 12, false);
+
+    const file = new File([bytes], "icloud-photo.png", { type: "image/png" });
+    const providerRead = vi.fn(async () => bytes.slice().buffer);
+    Object.defineProperty(file, "arrayBuffer", { configurable: true, value: providerRead });
+    const previousDecoder = globalThis.createImageBitmap;
+    const decode = vi.fn(async (source: Blob) => {
+      expect(source).not.toBe(file);
+      expect(new Uint8Array(await source.arrayBuffer())).toEqual(bytes);
+      return { width: 16, height: 12, close: vi.fn() };
+    });
+    vi.stubGlobal("createImageBitmap", decode);
+    try {
+      const validated = await validateFileForMobile(file);
+      expect(validated.fileKind).toBe("png");
+      expect(validated.normalized).toBe(false);
+      expect(validated.bytes).toEqual(bytes);
+      expect(providerRead).toHaveBeenCalledTimes(1);
+      expect(decode).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.stubGlobal("createImageBitmap", previousDecoder);
+    }
   });
 
   it("accepts a photo whose decoded axes are swapped by its EXIF orientation", () => {

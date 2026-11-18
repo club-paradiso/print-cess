@@ -298,12 +298,121 @@ test("a rejected pick clears the picker so the same file can be chosen again", a
   }
 });
 
-test("cancelling a file picker keeps the claimed session ready", async ({ page, context }) => {
+test("@viewport cancelling a file picker keeps the claimed session ready", async ({
+  page,
+  context,
+}) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("file-input").dispatchEvent("cancel");
   await expect(mobile.getByRole("heading", { name: "Pick files to print" })).toBeVisible();
   await expect(mobile.getByRole("button", { name: "Open my photos" })).toBeVisible();
   await expect(mobile.getByRole("button", { name: "Open my files" })).toBeVisible();
+});
+
+test("@viewport tapping Files opens a native picker and accepts an iCloud-style PDF", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const choose = mobile.getByRole("button", { name: "Open my files" });
+  const chooserEvent = mobile.waitForEvent("filechooser");
+  await choose.click();
+  const chooser = await chooserEvent;
+  expect(chooser.isMultiple()).toBe(true);
+  await chooser.setFiles({
+    name: "icloud-export.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await mobile.getByRole("button", { name: "Pick a different file" }).click();
+  await expect(mobile.getByTestId("file-input")).toHaveValue("");
+  const secondEvent = mobile.waitForEvent("filechooser");
+  await choose.click();
+  const secondChooser = await secondEvent;
+  await secondChooser.setFiles({
+    name: "icloud-export.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+});
+
+test("@viewport Files picker does not hide unsupported cloud documents and explains PDF export", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const input = mobile.getByTestId("file-input");
+  await expect(input).not.toHaveAttribute("accept");
+  const chooserEvent = mobile.waitForEvent("filechooser");
+  await mobile.getByRole("button", { name: "Open my files" }).click();
+  const chooser = await chooserEvent;
+  await chooser.setFiles({
+    name: "icloud-pages-export.docx",
+    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    buffer: Buffer.from("not an actual document"),
+  });
+  await expect(mobile.getByText(/Save this document as a PDF on your phone/u)).toBeVisible();
+  await expect(input).toHaveValue("");
+  await expect(mobile.getByRole("button", { name: "Open my files" })).toBeEnabled();
+});
+
+test("a cloud photo preview uses validated bytes even after the provider returns different data", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const verifiedBytes = await mobile.evaluate(async () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 24;
+    canvas.height = 24;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas unavailable");
+    context.fillStyle = "#0077cc";
+    context.fillRect(0, 0, 24, 24);
+    const image = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+    if (!image) throw new Error("PNG encoder unavailable");
+    return Array.from(new Uint8Array(await image.arrayBuffer()));
+  });
+
+  await mobile.evaluate((bytes) => {
+    const nativeRead = File.prototype.arrayBuffer;
+    File.prototype.arrayBuffer = function () {
+      if (this.name === "cloud-photo.png") return Promise.resolve(Uint8Array.from(bytes).buffer);
+      return nativeRead.call(this);
+    };
+  }, verifiedBytes);
+
+  await mobile.getByTestId("file-input").setInputFiles({
+    name: "cloud-photo.png",
+    mimeType: "image/png",
+    // The iCloud-backed handle exposes stale metadata, but the provider
+    // yields the complete verified PNG when its bytes are finally requested.
+    buffer: Buffer.from([0x00]),
+  });
+  const image = mobile.getByRole("img", { name: "Preview of the file you picked" });
+  await expect(image).toBeVisible();
+  await expect
+    .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+    .toBe(24);
+
+  // Blob URLs are intentionally blocked by this app's connect-src CSP.
+  // Read the actual rendered pixels instead of fetching the preview URL.
+  const previewPixel = await image.evaluate((element: HTMLImageElement) => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1;
+    canvas.height = 1;
+    const context = canvas.getContext("2d");
+    if (!context) throw new Error("Canvas unavailable");
+    context.drawImage(element, 0, 0);
+    return Array.from(context.getImageData(0, 0, 1, 1).data);
+  });
+  expect(previewPixel).toEqual([0, 119, 204, 255]);
 });
 
 test("a gallery photo taken sideways reaches the preview", async ({ page, context }) => {
@@ -442,6 +551,44 @@ test("browser Back never restores QR credentials after claim", async ({ page, co
   const { mobile } = await openMobile(page, context);
   await mobile.goBack();
   expect(mobile.url()).not.toMatch(/[#&](?:t|fp)=/u);
+});
+
+test("@viewport cloud-backed PDF recovers from a transient iOS File API failure", async ({
+  page,
+  context,
+}) => {
+  const sessionUrl = await openSession(page);
+  const mobile = await context.newPage();
+  await mobile.addInitScript(() => {
+    const nativeRead = File.prototype.arrayBuffer;
+    let failOnce = true;
+    File.prototype.arrayBuffer = function () {
+      if (this.name === "icloud-document.pdf" && failOnce) {
+        failOnce = false;
+        return new Promise<ArrayBuffer>((_resolve, reject) => {
+          setTimeout(
+            () => reject(new DOMException("iCloud is downloading", "NotReadableError")),
+            650,
+          );
+        });
+      }
+      return nativeRead.call(this);
+    };
+  });
+  await mobile.goto(sessionUrl);
+  await expect(mobile.getByRole("heading", { name: "Pick files to print" })).toBeVisible();
+
+  await mobile.getByTestId("file-input").setInputFiles({
+    name: "icloud-document.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("button", { name: "Open my files" })).toBeDisabled();
+  await expect(mobile.getByText("Getting your file ready")).toBeVisible();
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(mobile.getByRole("button", { name: "Print 1 copy" })).toBeVisible();
 });
 
 test("@viewport primary controls fit and pass basic accessibility checks", async ({
