@@ -88,6 +88,24 @@ describe("file validation", () => {
     }
   });
 
+  it("retries a short iCloud provider read instead of treating a partial PDF as complete", async () => {
+    const originalFileReader = globalThis.FileReader;
+    vi.stubGlobal("FileReader", undefined);
+    try {
+      const payload = new TextEncoder().encode("%PDF-1.7\\n1 0 obj\\n%%EOF");
+      const file = new File([payload], "cloud.pdf", { type: "" });
+      const nativeRead = file.arrayBuffer.bind(file);
+      const read = vi.fn<() => Promise<ArrayBuffer>>()
+        .mockResolvedValueOnce(payload.slice(0, 7).buffer)
+        .mockImplementation(nativeRead);
+      Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
+      await expect(readSelectedFileBytes(file)).resolves.toEqual(payload);
+      expect(read).toHaveBeenCalledTimes(2);
+    } finally {
+      vi.stubGlobal("FileReader", originalFileReader);
+    }
+  });
+
   it("parses PNG dimensions from IHDR", () => {
     const bytes = new Uint8Array(24);
     bytes.set([137, 80, 78, 71, 13, 10, 26, 10]);
