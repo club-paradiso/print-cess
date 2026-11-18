@@ -306,6 +306,59 @@ test("cancelling a file picker keeps the claimed session ready", async ({ page, 
   await expect(mobile.getByRole("button", { name: "Open my files" })).toBeVisible();
 });
 
+test("@viewport tapping Files opens a native picker and accepts an iCloud-style PDF", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const choose = mobile.getByRole("button", { name: "Open my files" });
+  const chooserEvent = mobile.waitForEvent("filechooser");
+  await choose.click();
+  const chooser = await chooserEvent;
+  expect(chooser.isMultiple()).toBe(true);
+  await chooser.setFiles({
+    name: "icloud-export.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await mobile.getByRole("button", { name: "Pick a different file" }).click();
+  await expect(mobile.getByTestId("file-input")).toHaveValue("");
+  const secondEvent = mobile.waitForEvent("filechooser");
+  await choose.click();
+  const secondChooser = await secondEvent;
+  await secondChooser.setFiles({
+    name: "icloud-export.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+});
+
+test("@viewport Files picker does not hide unsupported cloud documents and explains PDF export", async ({
+  page,
+  context,
+}) => {
+  const { mobile } = await openMobile(page, context);
+  const input = mobile.getByTestId("file-input");
+  await expect(input).not.toHaveAttribute("accept");
+  const chooserEvent = mobile.waitForEvent("filechooser");
+  await mobile.getByRole("button", { name: "Open my files" }).click();
+  const chooser = await chooserEvent;
+  await chooser.setFiles({
+    name: "icloud-pages-export.docx",
+    mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    buffer: Buffer.from("not an actual document"),
+  });
+  await expect(mobile.getByText(/Save this document as a PDF on your phone/u)).toBeVisible();
+  await expect(input).toHaveValue("");
+  await expect(mobile.getByRole("button", { name: "Open my files" })).toBeEnabled();
+});
+
 test("a gallery photo taken sideways reaches the preview", async ({ page, context }) => {
   const { mobile } = await openMobile(page, context);
   await mobile.getByTestId("photo-input").setInputFiles({
