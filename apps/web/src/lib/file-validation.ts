@@ -245,7 +245,7 @@ function isCompleteProviderRead(file: File, bytes: Uint8Array): boolean {
   // Never treat a header-only PDF as complete merely because the stale size
   // was zero. PDF.js is responsible for the stronger structural check later.
   if (file.size === 0) {
-    if (file.type === "application/pdf" || /\\.pdf$/iu.test(file.name)) {
+    if (file.type === "application/pdf" || /\.pdf$/iu.test(file.name)) {
       const tail = new TextDecoder("ascii").decode(
         bytes.subarray(Math.max(0, bytes.length - 2048)),
       );
