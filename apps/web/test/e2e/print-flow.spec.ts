@@ -392,7 +392,9 @@ test("a cloud photo preview uses validated bytes even after the provider returns
   });
   const image = mobile.getByRole("img", { name: "Preview of the file you picked" });
   await expect(image).toBeVisible();
-  await expect.poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth)).toBe(24);
+  await expect
+    .poll(() => image.evaluate((element: HTMLImageElement) => element.naturalWidth))
+    .toBe(24);
 
   const previewBytes = await image.evaluate(async (element: HTMLImageElement) =>
     Array.from(new Uint8Array(await (await fetch(element.src)).arrayBuffer())),
