@@ -140,7 +140,8 @@ export async function validateFileForMobile(
     } catch (error) {
       if (!(error instanceof FileValidationError) || error.code !== "unsupportedType") throw error;
       if (classification === "document") throw new FileValidationError("documentNeedsPdf");
-      if (classification === "image") return normalizeBrowserImage(stableImageFromBytes(file, bytes));
+      if (classification === "image")
+        return normalizeBrowserImage(stableImageFromBytes(file, bytes));
       throw error;
     }
 
@@ -433,11 +434,6 @@ export function parseJpegDimensions(bytes: Uint8Array): { width: number; height:
 }
 
 /**
- * Materialize a stable, self-contained snapshot before image decoding or
- * HEIC conversion. After a cloud provider completes the first read, it may
- * revoke the temporary native File handle. No later step should reopen it.
- */
-/**
  * File.arrayBuffer()/FileReader return ordinary ArrayBuffers. Keep that view
  * when creating a stable Blob instead of copying another 50 MiB in Safari.
  */
@@ -447,6 +443,11 @@ function asBlobPart(bytes: Uint8Array): Uint8Array<ArrayBuffer> {
     : (bytes.slice() as Uint8Array<ArrayBuffer>);
 }
 
+/**
+ * Materialize a stable, self-contained snapshot before image decoding or
+ * HEIC conversion. After a cloud provider completes the first read, it may
+ * revoke the temporary native File handle. No later step should reopen it.
+ */
 function stableImageFromBytes(original: File, bytes: Uint8Array): File {
   return new File([asBlobPart(bytes)], original.name, {
     type: original.type,
