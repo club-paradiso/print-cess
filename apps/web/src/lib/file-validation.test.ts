@@ -148,9 +148,9 @@ describe("file validation", () => {
         .mockResolvedValueOnce(payload.slice(0, 8).buffer)
         .mockImplementation(realRead);
       Object.defineProperty(file, "arrayBuffer", { configurable: true, value: read });
-      await expect(
-        readSelectedFileBytes(file, { retryDelaysMs: [0, 1] }),
-      ).resolves.toEqual(payload);
+      await expect(readSelectedFileBytes(file, { retryDelaysMs: [0, 1] })).resolves.toEqual(
+        payload,
+      );
       expect(read).toHaveBeenCalledTimes(2);
     } finally {
       vi.stubGlobal("FileReader", previousReader);
@@ -164,9 +164,7 @@ describe("file validation", () => {
       configurable: true,
       value: () => Promise.reject(new DOMException("unavailable", "NotReadableError")),
     });
-    await expect(
-      readSelectedFileBytes(file, { retryDelaysMs: [0] }),
-    ).resolves.toEqual(payload);
+    await expect(readSelectedFileBytes(file, { retryDelaysMs: [0] })).resolves.toEqual(payload);
   });
 
   it("parses PNG dimensions from IHDR", () => {
