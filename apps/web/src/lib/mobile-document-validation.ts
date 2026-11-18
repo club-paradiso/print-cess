@@ -10,6 +10,8 @@ import {
 import { convertHangulInBrowser } from "./hangul-browser-conversion";
 import { isHwpSelection, validateHwpHeader } from "./hwp-validation";
 import { isHwpxSelection, validateHwpxHeader } from "./hwpx-validation";
+import { containsKioskProhibitedToken } from "./pdf-marker-guard";
+import { unlockPdf } from "./unlock-pdf";
 
 export { FileValidationError } from "./file-validation";
 export type { ValidatedMobileFile } from "./file-validation";
@@ -21,12 +23,49 @@ export async function validateMobileDocument(
   const hwpx = isHwpxSelection(file);
   const hwp = !hwpx && isHwpSelection(file);
   if (!hwpx && !hwp) {
-    return validateFileForMobile(file, {
-      ...(options.allowHwpx === undefined ? {} : { allowHwpx: options.allowHwpx }),
-      ...(options.trustedGeneratedPdf === undefined
-        ? {}
-        : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
-    });
+    let validated: ValidatedMobileFile;
+    try {
+      validated = await validateFileForMobile(file, {
+        ...(options.allowHwpx === undefined ? {} : { allowHwpx: options.allowHwpx }),
+        ...(options.trustedGeneratedPdf === undefined
+          ? {}
+          : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
+      });
+    } catch (error) {
+      // A legitimate PDF can contain a forbidden marker in an image stream.
+      // The phone must not pass that original through to the kiosk. If PDF.js
+      // can render it, rebuild *only* the page pictures, dropping all scripts,
+      // actions, attachments and links. Truly corrupt PDFs still fail closed.
+      if (!(error instanceof FileValidationError) || error.code !== "damagedFile") throw error;
+      const original = await readSelectedFileBytes(file);
+      try {
+        if (
+          original.byteLength > MAX_PLAINTEXT_BYTES ||
+          original.byteLength < 5 ||
+          new TextDecoder("ascii").decode(original.subarray(0, 5)) !== "%PDF-" ||
+          !containsKioskProhibitedToken(original)
+        ) {
+          throw error;
+        }
+        const safe = await unlockPdf(original, undefined);
+        return { bytes: safe.bytes, fileKind: "pdf", pageCount: safe.pageCount, normalized: true };
+      } finally {
+        original.fill(0);
+      }
+    }
+
+    // The browser's PDF policy is less restrictive than the Windows kiosk's
+    // (notably /URI, /JS and /Filespec). Flatten here rather than showing a
+    // preview and letting the kiosk reject the print after upload.
+    if (validated.fileKind === "pdf" && containsKioskProhibitedToken(validated.bytes)) {
+      try {
+        const safe = await unlockPdf(validated.bytes, undefined);
+        return { bytes: safe.bytes, fileKind: "pdf", pageCount: safe.pageCount, normalized: true };
+      } finally {
+        validated.bytes.fill(0);
+      }
+    }
+    return validated;
   }
 
   if (file.size > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
