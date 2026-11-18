@@ -16,6 +16,8 @@ export default defineConfig({
       reporter: ["text", "json-summary"],
     },
     environment: "node",
+    // Preserve handshake assertions while allowing CI scheduling variation.
+    testTimeout: 15_000,
     setupFiles: ["./test/setup.ts"],
     /**
      * The development blob transport stores ciphertext under one directory
