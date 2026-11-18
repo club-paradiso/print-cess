@@ -64,27 +64,35 @@ internal static class PdfDocumentInspector
     {
         var count = 0;
         var offset = 0;
-        while ((offset = content[offset..].IndexOf("/Type"u8)) >= 0)
+        while (offset < content.Length)
         {
-            var absolute = offset;
-            while (absolute < content.Length && !IsWhitespace(content[absolute]))
+            var candidate = content[offset..].IndexOf("/Type"u8);
+            if (candidate < 0)
             {
-                absolute++;
+                break;
             }
 
-            while (absolute < content.Length && IsWhitespace(content[absolute]))
+            var afterName = offset + candidate + 5;
+            // PDF name objects are delimited by whitespace OR punctuation.
+            // "/Type/Page" is as valid as "/Type /Page" and is common in
+            // compact PDFs exported by phones and desktop PDF producers.
+            if (afterName < content.Length && IsDelimiter(content[afterName]))
             {
-                absolute++;
+                var value = afterName;
+                while (value < content.Length && IsWhitespace(content[value]))
+                {
+                    value++;
+                }
+
+                if (value + 5 <= content.Length &&
+                    content.Slice(value, 5).SequenceEqual("/Page"u8) &&
+                    (value + 5 == content.Length || IsDelimiter(content[value + 5])))
+                {
+                    count++;
+                }
             }
 
-            if (absolute + 5 <= content.Length && content.Slice(absolute, 5).SequenceEqual("/Page"u8) &&
-                (absolute + 5 == content.Length || IsDelimiter(content[absolute + 5])))
-            {
-                count++;
-            }
-
-            content = content[(offset + 5)..];
-            offset = 0;
+            offset = afterName;
         }
 
         return count;
