@@ -246,7 +246,9 @@ function isCompleteProviderRead(file: File, bytes: Uint8Array): boolean {
   // was zero. PDF.js is responsible for the stronger structural check later.
   if (file.size === 0) {
     if (file.type === "application/pdf" || /\\.pdf$/iu.test(file.name)) {
-      const tail = new TextDecoder("ascii").decode(bytes.subarray(Math.max(0, bytes.length - 2048)));
+      const tail = new TextDecoder("ascii").decode(
+        bytes.subarray(Math.max(0, bytes.length - 2048)),
+      );
       return tail.includes("%%EOF");
     }
     return bytes.byteLength >= 16;
