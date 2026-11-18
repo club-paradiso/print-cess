@@ -204,6 +204,35 @@ describe("file validation", () => {
     expect(parsePngDimensions(bytes)).toEqual({ width: 1170, height: 1654 });
   });
 
+  it("decodes a cloud photo only from the verified bytes, without reopening the native File", async () => {
+    const bytes = new Uint8Array(24);
+    bytes.set([137, 80, 78, 71, 13, 10, 26, 10]);
+    const view = new DataView(bytes.buffer);
+    view.setUint32(16, 16, false);
+    view.setUint32(20, 12, false);
+
+    const file = new File([bytes], "icloud-photo.png", { type: "image/png" });
+    const providerRead = vi.fn(async () => bytes.slice().buffer);
+    Object.defineProperty(file, "arrayBuffer", { configurable: true, value: providerRead });
+    const previousDecoder = globalThis.createImageBitmap;
+    const decode = vi.fn(async (source: Blob) => {
+      expect(source).not.toBe(file);
+      expect(new Uint8Array(await source.arrayBuffer())).toEqual(bytes);
+      return { width: 16, height: 12, close: vi.fn() };
+    });
+    vi.stubGlobal("createImageBitmap", decode);
+    try {
+      const validated = await validateFileForMobile(file);
+      expect(validated.fileKind).toBe("png");
+      expect(validated.normalized).toBe(false);
+      expect(validated.bytes).toEqual(bytes);
+      expect(providerRead).toHaveBeenCalledTimes(1);
+      expect(decode).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.stubGlobal("createImageBitmap", previousDecoder);
+    }
+  });
+
   it("accepts a photo whose decoded axes are swapped by its EXIF orientation", () => {
     const stored = { width: 4032, height: 3024 };
     expect(decodedDimensionsMatch(stored, { width: 3024, height: 4032 })).toBe(true);
