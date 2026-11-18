@@ -1,3 +1,5 @@
+<!-- prettier-ignore-start -->
+
 # iPhone/iPad, iCloud Drive and native file-picker acceptance
 
 Automated WebKit and Chromium tests check our app's behavior, not the real iOS Files
@@ -110,3 +112,5 @@ complete without an unrecoverable UI state; invalid/unavailable files fail with
 an actionable and localized message; the bytes confirmed in preview match
 what is submitted; and the separate physical printer matrix is approved.
 Physical acceptance is **pending until signed evidence exists**.
+
+<!-- prettier-ignore-end -->
