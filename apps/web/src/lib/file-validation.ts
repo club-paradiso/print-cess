@@ -174,7 +174,10 @@ export async function validateFileForMobile(
   };
 }
 
-const FILE_READ_RETRY_DELAYS_MS = [0, 120, 360] as const;
+// iCloud/Files providers may still be downloading a document when the picker
+// returns. WebKit sometimes supplies a short or empty read before the full
+// file is available. Give the provider a bounded chance to finish.
+const FILE_READ_RETRY_DELAYS_MS = [0, 250, 750, 1500, 3000] as const;
 
 /**
  * iOS Safari can hand a File backed by iCloud Drive to the page before the
@@ -188,7 +191,7 @@ export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
 
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
-      if (bytes.byteLength > 0) return bytes;
+      if (bytes.byteLength > 0 && bytes.byteLength === file.size) return bytes;
     } catch {
       // Try FileReader below, then give the provider a moment before retrying.
     }
@@ -196,10 +199,11 @@ export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
     if (typeof FileReader !== "undefined") {
       try {
         const bytes = new Uint8Array(await readWithFileReader(file));
-        if (bytes.byteLength > 0) return bytes;
+        if (bytes.byteLength > 0 && bytes.byteLength === file.size) return bytes;
       } catch {
         // Continue to the next attempt. Do not label a transient provider read
-        // failure as a corrupt file until every local read path has failed.
+        // failure or a truncated cloud-provider read as a corrupt file until
+        // every local read path has failed.
       }
     }
   }
