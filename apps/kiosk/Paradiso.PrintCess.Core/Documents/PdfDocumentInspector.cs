@@ -43,6 +43,17 @@ internal static class PdfDocumentInspector
         var pages = CountPages(content);
         if (pages < 1)
         {
+            // PDF 1.5+ may put all page dictionaries inside compressed object
+            // streams. Counting raw "/Type /Page" text then returns zero even
+            // when the PDF is valid. Defer the exact count and structural
+            // verification to Windows.Data.Pdf during rendering. The ordinary
+            // header/EOF, encryption and active-content checks still apply.
+            if (ContainsToken(content, "/ObjStm"u8) &&
+                content.IndexOf("startxref"u8) >= 0)
+            {
+                return new DocumentProperties(null, null, null);
+            }
+
             throw new DocumentValidationException(DocumentValidationError.CorruptPdf);
         }
 
