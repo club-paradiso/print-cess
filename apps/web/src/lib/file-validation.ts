@@ -169,7 +169,7 @@ export async function validateFileForMobile(
     // Decoding the original provider-backed File here can fail *after* a
     // successful iCloud read. Verify the exact local bytes we will print.
     await verifyBrowserImageDecode(
-      new Blob([bytes], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
+      new Blob([bytes.slice().buffer], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
       dimensions,
     );
     preserveOriginal = true;
@@ -438,7 +438,7 @@ export function parseJpegDimensions(bytes: Uint8Array): { width: number; height:
  * revoke the temporary native File handle. No later step should reopen it.
  */
 function stableImageFromBytes(original: File, bytes: Uint8Array): File {
-  return new File([bytes], original.name, {
+  return new File([bytes.slice().buffer], original.name, {
     type: original.type,
     lastModified: original.lastModified,
   });
