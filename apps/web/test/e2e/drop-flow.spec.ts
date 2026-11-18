@@ -314,9 +314,7 @@ test("consumes the pairing after two wrong shapes", async ({ browser }) => {
   }
 });
 
-test("@viewport four pairing slots and the keypad fit a 320px WebKit phone", async ({
-  page,
-}) => {
+test("@viewport four pairing slots and the keypad fit a 320px WebKit phone", async ({ page }) => {
   // Explicitly exercise the minimum width even when the device profile is
   // larger. The interactive keypad should not need a hardware keyboard.
   await page.setViewportSize({ width: 320, height: 568 });
