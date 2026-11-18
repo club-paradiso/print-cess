@@ -96,10 +96,10 @@ describe("PDF kiosk compatibility", () => {
     } as never);
   });
 
-  const pdf = (body: string) =>
-    new File([new TextEncoder().encode("%PDF-1.7\n" + body + "\n%%EOF")], "iCloud.pdf", {
-      type: "",
-    });
+  const pdf = (body: string) => {
+    const bytes = new TextEncoder().encode(`%PDF-1.7\n${body}\n%%EOF`);
+    return new File([bytes], "iCloud.pdf", { type: "" });
+  };
 
   it("keeps a clean PDF unchanged", async () => {
     const result = await validateMobileDocument(pdf("1 0 obj<</Type /Page>>endobj"));
@@ -110,9 +110,8 @@ describe("PDF kiosk compatibility", () => {
   it("flattens a PDF containing a kiosk-only forbidden URI before upload", async () => {
     const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
     vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 2 });
-    const result = await validateMobileDocument(
-      pdf("1 0 obj<</Type /Page /URI (https://example.com)>>endobj"),
-    );
+    const selected = pdf("1 0 obj<</Type /Page /URI (https://example.com)>>endobj");
+    const result = await validateMobileDocument(selected);
     expect(result).toMatchObject({
       bytes: safeBytes,
       fileKind: "pdf",
@@ -125,24 +124,21 @@ describe("PDF kiosk compatibility", () => {
   it("never sends an active PDF original to the kiosk, flattening the page pictures", async () => {
     const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
     vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
-    const result = await validateMobileDocument(
-      pdf("1 0 obj<</OpenAction 2 0 R /Type /Page>>endobj"),
-    );
+    const selected = pdf("1 0 obj<</OpenAction 2 0 R /Type /Page>>endobj");
+    const result = await validateMobileDocument(selected);
     expect(result.normalized).toBe(true);
     expect(result.bytes).toBe(safeBytes);
   });
 
   it("does not bypass password protection", async () => {
-    await expect(
-      validateMobileDocument(pdf("1 0 obj<</Encrypt 2 0 R>>endobj")),
-    ).rejects.toMatchObject({ code: "lockedPdf" });
+    const selected = pdf("1 0 obj<</Encrypt 2 0 R>>endobj");
+    await expect(validateMobileDocument(selected)).rejects.toMatchObject({ code: "lockedPdf" });
     expect(unlockPdf).not.toHaveBeenCalled();
   });
 
   it("rejects a flagged PDF when safe rasterisation fails", async () => {
     vi.mocked(unlockPdf).mockRejectedValue(new Error("rendering failed"));
-    await expect(
-      validateMobileDocument(pdf("1 0 obj<</OpenAction 2 0 R>>endobj")),
-    ).rejects.toThrow("rendering failed");
+    const selected = pdf("1 0 obj<</OpenAction 2 0 R>>endobj");
+    await expect(validateMobileDocument(selected)).rejects.toThrow("rendering failed");
   });
 });
