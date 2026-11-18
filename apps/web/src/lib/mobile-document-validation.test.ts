@@ -109,13 +109,13 @@ describe("PDF kiosk compatibility", () => {
 
   it("flattens a PDF containing a kiosk-only forbidden URI before upload", async () => {
     const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
-    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 2 });
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
     const selected = pdf("1 0 obj<</Type /Page /URI (https://example.com)>>endobj");
     const result = await validateMobileDocument(selected);
     expect(result).toMatchObject({
       bytes: safeBytes,
       fileKind: "pdf",
-      pageCount: 2,
+      pageCount: 1,
       normalized: true,
     });
     expect(unlockPdf).toHaveBeenCalledOnce();
