@@ -224,8 +224,15 @@ export function BatchMobileFlow({
   // again then fires no change event. The iCloud notice asks for exactly that
   // second pick once the download finishes, so every rejection clears both.
   const resetPickers = useCallback(() => {
-    if (photoInput.current) photoInput.current.value = "";
-    if (fileInput.current) fileInput.current.value = "";
+    for (const input of [photoInput.current, fileInput.current]) {
+      if (!input) continue;
+      try {
+        input.value = "";
+      } catch {
+        // Some mobile file providers revoke an input while the Files sheet is
+        // closing. Clearing must never itself break the retry path.
+      }
+    }
   }, []);
 
   const clearDocuments = useCallback(() => {
@@ -279,12 +286,17 @@ export function BatchMobileFlow({
     const inputs = [photoInput.current, fileInput.current].filter(
       (input): input is HTMLInputElement => Boolean(input),
     );
-    const announce = () => setFileNoticeKey("cancelled");
+    const announce = () => {
+      if (!selectionInProgress.current) {
+        resetPickers();
+        setFileNoticeKey("cancelled");
+      }
+    };
     for (const input of inputs) input.addEventListener("cancel", announce);
     return () => {
       for (const input of inputs) input.removeEventListener("cancel", announce);
     };
-  }, [stage]);
+  }, [resetPickers, stage]);
 
   useEffect(() => {
     let active = true;
@@ -317,9 +329,8 @@ export function BatchMobileFlow({
   }, [sessionId]);
 
   const chooseFiles = useCallback(
-    async (incoming: FileList | null) => {
-      if (!incoming || incoming.length === 0 || selectionInProgress.current) return;
-      const files = Array.from(incoming);
+    async (files: readonly File[]) => {
+      if (files.length === 0 || selectionInProgress.current) return;
       setFileErrorKey(undefined);
       setBatchError(undefined);
       setFileNoticeKey(undefined);
@@ -383,6 +394,9 @@ export function BatchMobileFlow({
         if (error instanceof BatchSelectionError) setBatchError(error.message);
         else setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
       } finally {
+        // Keep the native input alive while an iCloud-backed File is being
+        // hydrated. Clearing it earlier can revoke a lazy provider handle.
+        resetPickers();
         selectionInProgress.current = false;
         setSelectionBusy(false);
       }
@@ -397,6 +411,37 @@ export function BatchMobileFlow({
       supportsHwpx,
     ],
   );
+
+  // Snapshot FileList synchronously: iOS/WebKit can replace the live list
+  // when its native Files sheet closes. Do not reset the actual input until
+  // the selected cloud-backed File objects have finished reading.
+  const receivePickerSelection = useCallback(
+    (input: HTMLInputElement) => {
+      try {
+        const picked = input.files ? Array.from(input.files) : [];
+        if (picked.length === 0) {
+          resetPickers();
+          return;
+        }
+        void chooseFiles(picked);
+      } catch {
+        resetPickers();
+        setFileErrorKey("fileNotReady");
+      }
+    },
+    [chooseFiles, resetPickers],
+  );
+
+  const openPicker = useCallback((input: HTMLInputElement | null) => {
+    if (!input || selectionInProgress.current) return;
+    try {
+      // Keep this synchronous in the user's click handler. WebKit only allows
+      // opening the native picker while the original user gesture is active.
+      input.click();
+    } catch {
+      setFileErrorKey("fileNotReady");
+    }
+  }, []);
 
   const cancelClaim = useCallback(async () => {
     if (mobileToken) await cancelSession(sessionId, mobileToken).catch(() => undefined);
@@ -564,21 +609,28 @@ export function BatchMobileFlow({
             ref={photoInput}
             data-testid="photo-input"
             disabled={selectionBusy}
-            hidden
+            className="drop-visually-hidden"
+            tabIndex={-1}
+            aria-hidden="true"
             multiple
             type="file"
             accept="image/*,.heic,.heif,.webp,.avif,.bmp,.gif,.tif,.tiff"
-            onChange={(event) => void chooseFiles(event.target.files)}
+            onChange={(event) => receivePickerSelection(event.currentTarget)}
           />
           <input
             ref={fileInput}
             data-testid="file-input"
             disabled={selectionBusy}
-            hidden
+            className="drop-visually-hidden"
+            tabIndex={-1}
+            aria-hidden="true"
             multiple
             type="file"
-            accept={documentAccept()}
-            onChange={(event) => void chooseFiles(event.target.files)}
+            // Do not use an accept filter here: iOS Files and third-party
+            // providers sometimes hide perfectly valid PDFs and cloud files
+            // when a mixed MIME/extension filter is supplied. We validate
+            // every chosen file locally before upload instead.
+            onChange={(event) => receivePickerSelection(event.currentTarget)}
           />
           {selectionBusy ? (
             <p className="mobile-file-notice" role="status">
@@ -608,7 +660,7 @@ export function BatchMobileFlow({
                 label: text("locationPhotos"),
                 hint: copy.photosHint,
                 disabled: selectionBusy,
-                onPick: () => photoInput.current?.click(),
+                onPick: () => openPicker(photoInput.current),
               },
               {
                 id: "files",
@@ -616,7 +668,7 @@ export function BatchMobileFlow({
                 label: text("locationFiles"),
                 hint: copy.filesHint,
                 disabled: selectionBusy,
-                onPick: () => fileInput.current?.click(),
+                onPick: () => openPicker(fileInput.current),
               },
             ]}
           />
@@ -1018,33 +1070,6 @@ function SingleAction({
 
 function applyHancomLabel(value: string, label: string): string {
   return value.replaceAll("HWP/HWPX", label).replaceAll("HWPX", label);
-}
-
-function documentAccept(): string {
-  const base = [
-    "application/pdf",
-    ".pdf",
-    "image/*",
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".heic",
-    ".heif",
-    ".webp",
-    ".avif",
-    ".bmp",
-    ".gif",
-    ".tif",
-    ".tiff",
-  ];
-  return [
-    ...base,
-    "application/x-hwp",
-    "application/haansofthwp",
-    "application/hwp+zip",
-    ".hwp",
-    ".hwpx",
-  ].join(",");
 }
 
 class BatchSelectionError extends Error {}
