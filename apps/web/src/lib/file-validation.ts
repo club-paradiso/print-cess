@@ -191,7 +191,7 @@ export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
 
     try {
       const bytes = new Uint8Array(await file.arrayBuffer());
-      if (bytes.byteLength > 0 && bytes.byteLength === file.size) return bytes;
+      if (bytes.byteLength > 0 && bytes.byteLength >= file.size) return bytes;
     } catch {
       // Try FileReader below, then give the provider a moment before retrying.
     }
@@ -199,7 +199,7 @@ export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
     if (typeof FileReader !== "undefined") {
       try {
         const bytes = new Uint8Array(await readWithFileReader(file));
-        if (bytes.byteLength > 0 && bytes.byteLength === file.size) return bytes;
+        if (bytes.byteLength > 0 && bytes.byteLength >= file.size) return bytes;
       } catch {
         // Continue to the next attempt. Do not label a transient provider read
         // failure or a truncated cloud-provider read as a corrupt file until
