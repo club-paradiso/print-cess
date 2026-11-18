@@ -182,6 +182,7 @@ export function BatchMobileFlow({
   const [batchError, setBatchError] = useState<string>();
   const [fileNoticeKey, setFileNoticeKey] = useState<string>();
   const [selectionBusy, setSelectionBusy] = useState(false);
+  const [pickerGeneration, setPickerGeneration] = useState(0);
   const selectionInProgress = useRef(false);
   const [progressKey, setProgressKey] = useState("encrypting");
   const [watching, setWatching] = useState<PrintWatchState>({ kind: "waiting" });
@@ -224,15 +225,22 @@ export function BatchMobileFlow({
   // again then fires no change event. The iCloud notice asks for exactly that
   // second pick once the download finishes, so every rejection clears both.
   const resetPickers = useCallback(() => {
+    let needsFreshInput = false;
     for (const input of [photoInput.current, fileInput.current]) {
       if (!input) continue;
       try {
         input.value = "";
+        // Some Safari providers silently ignore a value reset. Remount the
+        // native input if the selected file is still attached.
+        if (input.value || input.files?.length) needsFreshInput = true;
       } catch {
-        // Some mobile file providers revoke an input while the Files sheet is
-        // closing. Clearing must never itself break the retry path.
+        // A cloud provider can invalidate a picker while closing its sheet.
+        // Replacing the node guarantees a fresh selection, even for the same
+        // file name, without resetting it while the File is being read.
+        needsFreshInput = true;
       }
     }
+    if (needsFreshInput) setPickerGeneration((current) => current + 1);
   }, []);
 
   const clearDocuments = useCallback(() => {
@@ -606,6 +614,7 @@ export function BatchMobileFlow({
           <p>{rules}</p>
           {timeLeft}
           <input
+            key={`photo-${pickerGeneration}`}
             ref={photoInput}
             data-testid="photo-input"
             disabled={selectionBusy}
@@ -621,6 +630,7 @@ export function BatchMobileFlow({
               when constrained by mixed MIME/extension accept filters.
               Allow selection here; local validation still gates upload. */}
           <input
+            key={`file-${pickerGeneration}`}
             ref={fileInput}
             data-testid="file-input"
             disabled={selectionBusy}
