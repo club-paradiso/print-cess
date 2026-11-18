@@ -168,7 +168,10 @@ export async function validateFileForMobile(
     validateDimensions(dimensions.width, dimensions.height);
     // Decoding the original provider-backed File here can fail *after* a
     // successful iCloud read. Verify the exact local bytes we will print.
-    await verifyBrowserImageDecode(new Blob([bytes], { type: fileKind === "png" ? "image/png" : "image/jpeg" }), dimensions);
+    await verifyBrowserImageDecode(
+      new Blob([bytes], { type: fileKind === "png" ? "image/png" : "image/jpeg" }),
+      dimensions,
+    );
     preserveOriginal = true;
     return {
       bytes,
@@ -608,7 +611,7 @@ export function decodedDimensionsMatch(
 }
 
 async function verifyBrowserImageDecode(
-  file: File,
+  file: Blob,
   expected: { width: number; height: number },
 ): Promise<void> {
   if (typeof createImageBitmap !== "function") return;
