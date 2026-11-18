@@ -10,11 +10,35 @@ import {
 import { convertHangulInBrowser } from "./hangul-browser-conversion";
 import { isHwpSelection, validateHwpHeader } from "./hwp-validation";
 import { isHwpxSelection, validateHwpxHeader } from "./hwpx-validation";
-import { containsKioskProhibitedToken } from "./pdf-marker-guard";
+import { needsKioskPdfNormalization } from "./pdf-marker-guard";
 import { unlockPdf } from "./unlock-pdf";
 
 export { FileValidationError } from "./file-validation";
 export type { ValidatedMobileFile } from "./file-validation";
+
+/**
+ * Renders a PDF's printable page appearances into a new safe PDF. A source
+ * accepted by PDF.js but rejected by the kiosk cannot pass straight through.
+ * Text/links/scripts/attachments are not retained; the preview uses the same
+ * normalized bytes that are sent to the printer.
+ */
+async function normalizePdfForKiosk(bytes: Uint8Array): Promise<ValidatedMobileFile> {
+  const safe = await unlockPdf(bytes, undefined);
+  try {
+    if (needsKioskPdfNormalization(safe.bytes)) throw new FileValidationError("damagedFile");
+    const pages = await validatePdf(safe.bytes);
+    if (pages !== safe.pageCount) throw new FileValidationError("damagedFile");
+    return { bytes: safe.bytes, fileKind: "pdf", pageCount: pages, normalized: true };
+  } catch (error) {
+    safe.bytes.fill(0);
+    throw error;
+  }
+}
+
+function hasPdfHeaderWithinPreamble(bytes: Uint8Array): boolean {
+  const prefix = new TextDecoder("ascii").decode(bytes.subarray(0, 1024));
+  return /%PDF-[12]\.[0-9]/u.test(prefix);
+}
 
 export async function validateMobileDocument(
   file: File,
@@ -32,35 +56,49 @@ export async function validateMobileDocument(
           : { trustedGeneratedPdf: options.trustedGeneratedPdf }),
       });
     } catch (error) {
-      // A legitimate PDF can contain a forbidden marker in an image stream.
-      // The phone must not pass that original through to the kiosk. If PDF.js
-      // can render it, rebuild *only* the page pictures, dropping all scripts,
-      // actions, attachments and links. Truly corrupt PDFs still fail closed.
-      if (!(error instanceof FileValidationError) || error.code !== "damagedFile") throw error;
+      if (
+        !(error instanceof FileValidationError) ||
+        (error.code !== "damagedFile" && error.code !== "unsupportedType")
+      ) {
+        throw error;
+      }
+      // PDF.js can repair certain malformed cross-references and accept
+      // a legitimate PDF with a header after a small preamble. The Windows
+      // kiosk requires a canonical first-byte header and EOF near the end.
+      // The recovered file is *always* rasterized, never forwarded unchanged.
+      if (
+        error.code === "unsupportedType" &&
+        file.type !== "application/pdf" &&
+        !/\.pdf$/iu.test(file.name)
+      ) {
+        throw error;
+      }
+      if (file.size > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
       const original = await readSelectedFileBytes(file);
       try {
-        if (
-          original.byteLength > MAX_PLAINTEXT_BYTES ||
-          original.byteLength < 5 ||
-          new TextDecoder("ascii").decode(original.subarray(0, 5)) !== "%PDF-" ||
-          !containsKioskProhibitedToken(original)
-        ) {
-          throw error;
+        if (original.byteLength > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
+        if (!hasPdfHeaderWithinPreamble(original)) throw error;
+        try {
+          return await normalizePdfForKiosk(original);
+        } catch (conversionError) {
+          // If the PDF engine asks for a password that was not detected by
+          // the lightweight marker scan, use the existing local password flow.
+          if (
+            conversionError instanceof FileValidationError &&
+            conversionError.code === "wrongPdfPassword"
+          ) {
+            throw new FileValidationError("lockedPdf");
+          }
+          throw conversionError;
         }
-        const safe = await unlockPdf(original, undefined);
-        return { bytes: safe.bytes, fileKind: "pdf", pageCount: safe.pageCount, normalized: true };
       } finally {
         original.fill(0);
       }
     }
 
-    // The browser's PDF policy is less restrictive than the Windows kiosk's
-    // (notably /URI, /JS and /Filespec). Flatten here rather than showing a
-    // preview and letting the kiosk reject the print after upload.
-    if (validated.fileKind === "pdf" && containsKioskProhibitedToken(validated.bytes)) {
+    if (validated.fileKind === "pdf" && needsKioskPdfNormalization(validated.bytes)) {
       try {
-        const safe = await unlockPdf(validated.bytes, undefined);
-        return { bytes: safe.bytes, fileKind: "pdf", pageCount: safe.pageCount, normalized: true };
+        return await normalizePdfForKiosk(validated.bytes);
       } finally {
         validated.bytes.fill(0);
       }
@@ -84,23 +122,25 @@ export async function validateMobileDocument(
   }
 
   // A licensed Windows kiosk can still print the original document directly.
-  // Every other kiosk receives a locally rendered, verified PDF instead;
-  // neither the server nor the kiosk needs to understand HWP/HWPX.
+  // Every other kiosk receives a locally rendered, verified PDF instead.
   if ((hwp && options.allowHwp) || (hwpx && options.allowHwpx)) {
     return { bytes, fileKind: hwpx ? "hwpx" : "hwp", pageCount: 1, normalized: false };
   }
 
   let pdf: Uint8Array | undefined;
+  let preservePdf = false;
   try {
     pdf = await convertHangulInBrowser(bytes);
     if (pdf.byteLength > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
+    if (needsKioskPdfNormalization(pdf)) return await normalizePdfForKiosk(pdf);
     const pageCount = await validatePdf(pdf);
+    preservePdf = true;
     return { bytes: pdf, fileKind: "pdf", pageCount, normalized: true };
   } catch (error) {
-    pdf?.fill(0);
     if (error instanceof FileValidationError && error.code === "tooLarge") throw error;
     throw new FileValidationError("hancomConversionFailed");
   } finally {
+    if (!preservePdf) pdf?.fill(0);
     bytes.fill(0);
   }
 }

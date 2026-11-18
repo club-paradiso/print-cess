@@ -181,6 +181,8 @@ export function BatchMobileFlow({
   const [fileErrorKey, setFileErrorKey] = useState<string>();
   const [batchError, setBatchError] = useState<string>();
   const [fileNoticeKey, setFileNoticeKey] = useState<string>();
+  const [selectionBusy, setSelectionBusy] = useState(false);
+  const selectionInProgress = useRef(false);
   const [progressKey, setProgressKey] = useState("encrypting");
   const [watching, setWatching] = useState<PrintWatchState>({ kind: "waiting" });
   const [supportsHwpx, setSupportsHwpx] = useState(false);
@@ -316,7 +318,7 @@ export function BatchMobileFlow({
 
   const chooseFiles = useCallback(
     async (incoming: FileList | null) => {
-      if (!incoming || incoming.length === 0) return;
+      if (!incoming || incoming.length === 0 || selectionInProgress.current) return;
       const files = Array.from(incoming);
       setFileErrorKey(undefined);
       setBatchError(undefined);
@@ -327,6 +329,10 @@ export function BatchMobileFlow({
         return;
       }
 
+      // A cloud provider may take several seconds to hydrate a selected file.
+      // Do not let a second picker event race the first job into preview.
+      selectionInProgress.current = true;
+      setSelectionBusy(true);
       const next: SelectedDocument[] = [];
       let unlockedAny = false;
       try {
@@ -376,6 +382,9 @@ export function BatchMobileFlow({
         if (error instanceof PdfPasswordCancelled) return;
         if (error instanceof BatchSelectionError) setBatchError(error.message);
         else setFileErrorKey(error instanceof FileValidationError ? error.code : "damagedFile");
+      } finally {
+        selectionInProgress.current = false;
+        setSelectionBusy(false);
       }
     },
     [
@@ -554,6 +563,7 @@ export function BatchMobileFlow({
           <input
             ref={photoInput}
             data-testid="photo-input"
+            disabled={selectionBusy}
             hidden
             multiple
             type="file"
@@ -563,13 +573,18 @@ export function BatchMobileFlow({
           <input
             ref={fileInput}
             data-testid="file-input"
+            disabled={selectionBusy}
             hidden
             multiple
             type="file"
             accept={documentAccept()}
             onChange={(event) => void chooseFiles(event.target.files)}
           />
-          {batchError ? (
+          {selectionBusy ? (
+            <p className="mobile-file-notice" role="status">
+              {text("encrypting")}
+            </p>
+          ) : batchError ? (
             <p className="mobile-file-error" role="alert">
               {batchError}
             </p>
@@ -592,6 +607,7 @@ export function BatchMobileFlow({
                 icon: <ImageIcon />,
                 label: text("locationPhotos"),
                 hint: copy.photosHint,
+                disabled: selectionBusy,
                 onPick: () => photoInput.current?.click(),
               },
               {
@@ -599,6 +615,7 @@ export function BatchMobileFlow({
                 icon: <Files />,
                 label: text("locationFiles"),
                 hint: copy.filesHint,
+                disabled: selectionBusy,
                 onPick: () => fileInput.current?.click(),
               },
             ]}

@@ -23,7 +23,8 @@ export type FileValidationCode =
   | "wrongPdfPassword"
   | "printRestrictedPdf"
   | "pdfPasswordTooManyTries"
-  | "damagedFile";
+  | "damagedFile"
+  | "fileNotReady";
 
 const PNG_SIGNATURE = new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
 const ACTIVE_PDF_MARKERS = ["/JavaScript", "/OpenAction", "/Launch", "/EmbeddedFile", "/AA"];
@@ -119,114 +120,208 @@ export async function validateFileForMobile(
   if (file.size > sourceLimit) throw new FileValidationError("tooLarge");
 
   const bytes = await readSelectedFileBytes(file);
-  if (bytes.byteLength > sourceLimit) throw new FileValidationError("tooLarge");
-  if (classification === "hwpx") {
-    if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
-    try {
-      validateHwpxHeader(bytes);
-    } catch {
-      throw new FileValidationError("damagedFile");
-    }
-    return { bytes, fileKind: "hwpx", pageCount: 1, normalized: false };
-  }
-
-  let fileKind: FileKind;
+  let preserveOriginal = false;
   try {
-    fileKind = detectFileKind(bytes);
-  } catch (error) {
-    if (!(error instanceof FileValidationError) || error.code !== "unsupportedType") throw error;
-    if (classification === "document") throw new FileValidationError("documentNeedsPdf");
-    if (classification === "image") return normalizeBrowserImage(file);
-    throw error;
-  }
+    if (bytes.byteLength > sourceLimit) throw new FileValidationError("tooLarge");
+    if (classification === "hwpx") {
+      if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
+      try {
+        validateHwpxHeader(bytes);
+      } catch {
+        throw new FileValidationError("damagedFile");
+      }
+      preserveOriginal = true;
+      return { bytes, fileKind: "hwpx", pageCount: 1, normalized: false };
+    }
 
-  if (fileKind === "hwpx") {
-    if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
-    return { bytes, fileKind, pageCount: 1, normalized: false };
-  }
+    let fileKind: FileKind;
+    try {
+      fileKind = detectFileKind(bytes);
+    } catch (error) {
+      if (!(error instanceof FileValidationError) || error.code !== "unsupportedType") throw error;
+      if (classification === "document") throw new FileValidationError("documentNeedsPdf");
+      if (classification === "image") return normalizeBrowserImage(file);
+      throw error;
+    }
 
-  if (fileKind === "pdf") {
-    if (bytes.byteLength > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
+    if (fileKind === "hwpx") {
+      if (!options.allowHwpx) throw new FileValidationError("hwpxUnavailable");
+      preserveOriginal = true;
+      return { bytes, fileKind, pageCount: 1, normalized: false };
+    }
+
+    if (fileKind === "pdf") {
+      if (bytes.byteLength > MAX_PLAINTEXT_BYTES) throw new FileValidationError("tooLarge");
+      const pageCount = await validatePdf(bytes);
+      preserveOriginal = true;
+      return { bytes, fileKind, pageCount, normalized: false };
+    }
+
+    const dimensions = fileKind === "png" ? parsePngDimensions(bytes) : parseJpegDimensions(bytes);
+    if (
+      bytes.byteLength > MAX_PLAINTEXT_BYTES ||
+      !dimensionsWithinLimits(dimensions.width, dimensions.height)
+    ) {
+      return normalizeBrowserImage(file);
+    }
+
+    validateDimensions(dimensions.width, dimensions.height);
+    await verifyBrowserImageDecode(file, dimensions);
+    preserveOriginal = true;
     return {
       bytes,
       fileKind,
-      pageCount: await validatePdf(bytes),
+      pageCount: 1,
+      ...dimensions,
       normalized: false,
     };
+  } finally {
+    // Reading a 50 MiB file can temporarily double the memory use on iOS.
+    // When validation fails or a photo is re-encoded, release this copy. Only
+    // buffers actually returned to the print pipeline remain live.
+    if (!preserveOriginal) bytes.fill(0);
   }
-
-  const dimensions = fileKind === "png" ? parsePngDimensions(bytes) : parseJpegDimensions(bytes);
-  if (
-    bytes.byteLength > MAX_PLAINTEXT_BYTES ||
-    !dimensionsWithinLimits(dimensions.width, dimensions.height)
-  ) {
-    return normalizeBrowserImage(file);
-  }
-
-  validateDimensions(dimensions.width, dimensions.height);
-  await verifyBrowserImageDecode(file, dimensions);
-  return {
-    bytes,
-    fileKind,
-    pageCount: 1,
-    ...dimensions,
-    normalized: false,
-  };
 }
 
-// iCloud/Files providers may still be downloading a document when the picker
-// returns. WebKit sometimes supplies a short or empty read before the full
-// file is available. Give the provider a bounded chance to finish.
+export type SelectedFileReadOptions = {
+  /** Allows short, deterministic timeout tests without waiting for a cloud provider. */
+  retryDelaysMs?: readonly number[];
+  perReadTimeoutMs?: number;
+  totalTimeoutMs?: number;
+};
+
 const FILE_READ_RETRY_DELAYS_MS = [0, 250, 750, 1500, 3000] as const;
+const FILE_READ_TOTAL_TIMEOUT_MS = 30_000;
+const FILE_READ_ATTEMPT_TIMEOUT_MS = 6_000;
 
 /**
- * iOS Safari can hand a File backed by iCloud Drive to the page before the
- * provider is ready to serve its bytes. A single arrayBuffer() failure is not
- * proof that the document is corrupt. Retry briefly and fall back to
- * FileReader, which uses a different WebKit read path on older/iOS builds.
+ * The Files picker may return an iCloud-backed File before its provider has
+ * downloaded the bytes. Prefer arrayBuffer; fall back to FileReader for older
+ * WebKit, and retry partial/empty reads without transmitting anything. Each
+ * read and the entire operation have deadlines so a stalled provider never
+ * leaves the print UI spinning indefinitely.
  */
-export async function readSelectedFileBytes(file: File): Promise<Uint8Array> {
-  for (const delayMs of FILE_READ_RETRY_DELAYS_MS) {
-    if (delayMs > 0) await waitForFileProvider(delayMs);
+export async function readSelectedFileBytes(
+  file: File,
+  options: SelectedFileReadOptions = {},
+): Promise<Uint8Array> {
+  const delays = options.retryDelaysMs ?? FILE_READ_RETRY_DELAYS_MS;
+  const deadline = Date.now() + (options.totalTimeoutMs ?? FILE_READ_TOTAL_TIMEOUT_MS);
+  const perReadTimeoutMs = options.perReadTimeoutMs ?? FILE_READ_ATTEMPT_TIMEOUT_MS;
 
+  for (const delayMs of delays) {
+    if (Date.now() >= deadline) break;
+    if (delayMs > 0) await waitForFileProvider(Math.min(delayMs, deadline - Date.now()));
+
+    const arrayTimeout = Math.min(perReadTimeoutMs, deadline - Date.now());
+    if (arrayTimeout <= 0) break;
     try {
-      const bytes = new Uint8Array(await file.arrayBuffer());
-      if (bytes.byteLength > 0 && bytes.byteLength >= file.size) return bytes;
+      const bytes = new Uint8Array(await readArrayBufferWithTimeout(file, arrayTimeout));
+      if (isCompleteProviderRead(file, bytes)) return bytes;
+      bytes.fill(0);
     } catch {
-      // Try FileReader below, then give the provider a moment before retrying.
+      // WebKit may time out or report NotReadableError while iCloud downloads.
     }
 
     if (typeof FileReader !== "undefined") {
+      const readerTimeout = Math.min(perReadTimeoutMs, deadline - Date.now());
+      if (readerTimeout <= 0) break;
       try {
-        const bytes = new Uint8Array(await readWithFileReader(file));
-        if (bytes.byteLength > 0 && bytes.byteLength >= file.size) return bytes;
+        const bytes = new Uint8Array(await readWithFileReader(file, readerTimeout));
+        if (isCompleteProviderRead(file, bytes)) return bytes;
+        bytes.fill(0);
       } catch {
-        // Continue to the next attempt. Do not label a transient provider read
-        // failure or a truncated cloud-provider read as a corrupt file until
-        // every local read path has failed.
+        // Try again only while the deadline permits.
       }
     }
   }
 
-  throw new FileValidationError("damagedFile");
+  throw new FileValidationError("fileNotReady");
 }
 
-function readWithFileReader(file: Blob): Promise<ArrayBuffer> {
+function isCompleteProviderRead(file: File, bytes: Uint8Array): boolean {
+  if (bytes.byteLength === 0 || (file.size > 0 && bytes.byteLength < file.size)) return false;
+  // WebKit sometimes reports size=0 for a not-yet-hydrated iCloud file.
+  // Never treat a header-only PDF as complete merely because the stale size
+  // was zero. PDF.js is responsible for the stronger structural check later.
+  if (file.size === 0) {
+    if (file.type === "application/pdf" || /\.pdf$/iu.test(file.name)) {
+      const tail = new TextDecoder("ascii").decode(
+        bytes.subarray(Math.max(0, bytes.length - 2048)),
+      );
+      return tail.includes("%%EOF");
+    }
+    return bytes.byteLength >= 16;
+  }
+  return true;
+}
+
+function readArrayBufferWithTimeout(file: File, timeoutMs: number): Promise<ArrayBuffer> {
+  return new Promise((resolve, reject) => {
+    let settled = false;
+    const timer = setTimeout(() => {
+      settled = true;
+      reject(new Error("File provider read timed out"));
+    }, timeoutMs);
+    void file.arrayBuffer().then(
+      (bytes) => {
+        if (settled) {
+          // A late cloud-provider reply must not remain in memory after retry.
+          new Uint8Array(bytes).fill(0);
+          return;
+        }
+        settled = true;
+        clearTimeout(timer);
+        resolve(bytes);
+      },
+      (error: unknown) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        reject(error);
+      },
+    );
+  });
+}
+
+function readWithFileReader(file: Blob, timeoutMs: number): Promise<ArrayBuffer> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+    let settled = false;
+    const finish = (result: ArrayBuffer | Error) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      if (result instanceof ArrayBuffer) resolve(result);
+      else reject(result);
+    };
+    const timer = setTimeout(() => {
+      finish(new Error("FileReader timed out"));
+      try {
+        reader.abort();
+      } catch {
+        // A completed or closed reader needs no cancellation.
+      }
+    }, timeoutMs);
     reader.addEventListener(
       "load",
-      () => {
-        if (reader.result instanceof ArrayBuffer) resolve(reader.result);
-        else reject(new Error("FileReader returned a non-binary result"));
-      },
+      () =>
+        finish(
+          reader.result instanceof ArrayBuffer
+            ? reader.result
+            : new Error("FileReader returned a non-binary result"),
+        ),
       { once: true },
     );
-    reader.addEventListener("error", () => reject(reader.error ?? new Error("FileReader failed")), {
+    reader.addEventListener("error", () => finish(reader.error ?? new Error("FileReader failed")), {
       once: true,
     });
-    reader.addEventListener("abort", () => reject(new Error("FileReader aborted")), { once: true });
-    reader.readAsArrayBuffer(file);
+    reader.addEventListener("abort", () => finish(new Error("FileReader aborted")), { once: true });
+    try {
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      finish(error instanceof Error ? error : new Error("FileReader failed"));
+    }
   });
 }
 

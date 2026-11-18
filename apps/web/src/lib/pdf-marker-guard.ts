@@ -43,6 +43,32 @@ export function containsKioskProhibitedToken(bytes: Uint8Array): boolean {
   return containsWindowsKioskToken(bytes) || containsRefusedPdfMarker(bytes);
 }
 
+/**
+ * Mirror the kiosk's lightweight PDF envelope checks before encryption.
+ * A PDF that PDF.js can read may still be rejected by the Windows kiosk
+ * (preamble before the header, trailing bytes beyond the EOF window, or
+ * embedded links/active-content names). Normalize those on the phone.
+ * This is a compatibility signal, not a proof that the PDF can print.
+ */
+export function needsKioskPdfNormalization(bytes: Uint8Array): boolean {
+  if (bytes.byteLength < 16) return true;
+  if (
+    bytes[0] !== 0x25 ||
+    bytes[1] !== 0x50 ||
+    bytes[2] !== 0x44 ||
+    bytes[3] !== 0x46 ||
+    bytes[4] !== 0x2d ||
+    (bytes[5] !== 0x31 && bytes[5] !== 0x32) ||
+    bytes[6] !== 0x2e
+  ) {
+    return true;
+  }
+  const tail = new TextDecoder("ascii").decode(
+    bytes.subarray(Math.max(0, bytes.byteLength - 2048)),
+  );
+  return !tail.includes("%%EOF") || containsKioskProhibitedToken(bytes);
+}
+
 /** Qualities tried in order; each step changes the compressed bytes. */
 export function jpegQualityLadder(start: number): number[] {
   return Array.from({ length: 6 }, (_, step) => Math.round((start - step * 0.01) * 100) / 100);

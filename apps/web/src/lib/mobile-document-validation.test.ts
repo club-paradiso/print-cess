@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { convertHangulInBrowser } from "./hangul-browser-conversion";
 
-import { validateMobileDocument } from "./mobile-document-validation";
+import { FileValidationError, validateMobileDocument } from "./mobile-document-validation";
 import { unlockPdf } from "./unlock-pdf";
 
 vi.mock("./hangul-browser-conversion", () => ({
@@ -109,13 +109,13 @@ describe("PDF kiosk compatibility", () => {
 
   it("flattens a PDF containing a kiosk-only forbidden URI before upload", async () => {
     const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
-    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 2 });
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
     const selected = pdf("1 0 obj<</Type /Page /URI (https://example.com)>>endobj");
     const result = await validateMobileDocument(selected);
     expect(result).toMatchObject({
       bytes: safeBytes,
       fileKind: "pdf",
-      pageCount: 2,
+      pageCount: 1,
       normalized: true,
     });
     expect(unlockPdf).toHaveBeenCalledOnce();
@@ -134,6 +134,50 @@ describe("PDF kiosk compatibility", () => {
     const selected = pdf("1 0 obj<</Encrypt 2 0 R>>endobj");
     await expect(validateMobileDocument(selected)).rejects.toMatchObject({ code: "lockedPdf" });
     expect(unlockPdf).not.toHaveBeenCalled();
+  });
+
+  it("repairs a PDF with a noncanonical header instead of refusing the file name", async () => {
+    const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
+    const selected = pdf("1 0 obj<</Type /Page>>endobj");
+    const source = new File([new TextEncoder().encode("preamble\n"), selected], "download.pdf", {
+      type: "application/pdf",
+    });
+    const result = await validateMobileDocument(source);
+    expect(result).toMatchObject({ fileKind: "pdf", normalized: true });
+    expect(result.bytes).toBe(safeBytes);
+  });
+
+  it("does not mistake a non-PDF file for a recoverable PDF", async () => {
+    const selected = new File(["not a document"], "not-a-pdf.pdf", {
+      type: "application/pdf",
+    });
+    await expect(validateMobileDocument(selected)).rejects.toMatchObject({
+      code: "unsupportedType",
+    });
+    expect(unlockPdf).not.toHaveBeenCalled();
+  });
+
+  it("keeps password-protected recovery in the explicit password flow", async () => {
+    vi.mocked(unlockPdf).mockRejectedValue(new FileValidationError("wrongPdfPassword"));
+    const selected = new File(["preamble\n%PDF-1.7\ntrailer"], "password.pdf", {
+      type: "application/pdf",
+    });
+    await expect(validateMobileDocument(selected)).rejects.toMatchObject({
+      code: "lockedPdf",
+    });
+  });
+
+  it("normalizes a browser-converted HWP PDF before the kiosk can reject its links", async () => {
+    const source = structuralHwp();
+    const converted = new TextEncoder().encode("%PDF-1.7\n/URI (test)\n%%EOF");
+    const safeBytes = new TextEncoder().encode("%PDF-1.7\nclean\n%%EOF");
+    vi.mocked(convertHangulInBrowser).mockResolvedValue(converted);
+    vi.mocked(unlockPdf).mockResolvedValue({ bytes: safeBytes, pageCount: 1 });
+    const result = await validateMobileDocument(source, { allowHwp: false });
+    expect(result).toMatchObject({ bytes: safeBytes, fileKind: "pdf", normalized: true });
+    expect(unlockPdf).toHaveBeenCalledOnce();
+    expect(converted.every((byte) => byte === 0)).toBe(true);
   });
 
   it("rejects a flagged PDF when safe rasterisation fails", async () => {

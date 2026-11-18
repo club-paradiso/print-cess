@@ -444,6 +444,44 @@ test("browser Back never restores QR credentials after claim", async ({ page, co
   expect(mobile.url()).not.toMatch(/[#&](?:t|fp)=/u);
 });
 
+test("@viewport cloud-backed PDF recovers from a transient iOS File API failure", async ({
+  page,
+  context,
+}) => {
+  const sessionUrl = await openSession(page);
+  const mobile = await context.newPage();
+  await mobile.addInitScript(() => {
+    const nativeRead = File.prototype.arrayBuffer;
+    let failOnce = true;
+    File.prototype.arrayBuffer = function () {
+      if (this.name === "icloud-document.pdf" && failOnce) {
+        failOnce = false;
+        return new Promise<ArrayBuffer>((_resolve, reject) => {
+          setTimeout(
+            () => reject(new DOMException("iCloud is downloading", "NotReadableError")),
+            650,
+          );
+        });
+      }
+      return nativeRead.call(this);
+    };
+  });
+  await mobile.goto(sessionUrl);
+  await expect(mobile.getByRole("heading", { name: "Pick files to print" })).toBeVisible();
+
+  await mobile.getByTestId("file-input").setInputFiles({
+    name: "icloud-document.pdf",
+    mimeType: "application/pdf",
+    buffer: Buffer.from(await createSyntheticPdf(1)),
+  });
+  await expect(mobile.getByRole("button", { name: "Open my files" })).toBeDisabled();
+  await expect(mobile.getByText("Getting your file ready")).toBeVisible();
+  await expect(mobile.getByRole("heading", { name: "Is this the right page?" })).toBeVisible({
+    timeout: 30_000,
+  });
+  await expect(mobile.getByRole("button", { name: "Print 1 copy" })).toBeVisible();
+});
+
 test("@viewport primary controls fit and pass basic accessibility checks", async ({
   page,
   context,
