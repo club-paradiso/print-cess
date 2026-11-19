@@ -16,8 +16,7 @@ export default defineConfig({
       reporter: ["text", "json-summary"],
     },
     environment: "node",
-    // WebRTC-like async handshakes can exceed Vitest's default 5s on loaded CI.
-    // Keep assertions and internal protocol deadlines unchanged.
+    // Preserve handshake assertions while allowing CI scheduling variation.
     testTimeout: 15_000,
     setupFiles: ["./test/setup.ts"],
     /**
