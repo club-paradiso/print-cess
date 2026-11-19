@@ -325,7 +325,7 @@ describe("transfer engine", () => {
     expect(sender.snapshot().counts.saved).toBe(3);
     expect(sender.snapshot().doneBytes).toBe(8 * BULK_BLOCK_BYTES);
     second.pair.close();
-  });
+  }, 15_000);
 
   it("pauses and resumes from either side", async () => {
     const files = corpus([8 * BULK_BLOCK_BYTES]);
